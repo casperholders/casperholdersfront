@@ -120,7 +120,7 @@
                   Set the number of CSPR you want to stake
                 </v-card-subtitle>
                 <v-card-text>
-                  <v-text-field v-model.number="CSPRToStake" :value="CSPRToStake" type="number" :min="minimumCSPRStake"
+                  <v-text-field color="white" v-model.number="CSPRToStake" :value="CSPRToStake" type="number" :min="minimumCSPRStake"
                                 :max="maxStake" label="Number of CSPR to stake" required
                                 append-outer-icon="mdi-plus" @click:append-outer="increment" prepend-icon="mdi-minus"
                                 @click:prepend="decrement"></v-text-field>

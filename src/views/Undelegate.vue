@@ -127,7 +127,7 @@
                   Set the number of CSPR you want to retrieve from stacking
                 </v-card-subtitle>
                 <v-card-text>
-                  <v-text-field v-model.number="CSPRToUnstack" :value="CSPRToUnstack" type="number"
+                  <v-text-field color="white" v-model.number="CSPRToUnstack" :value="CSPRToUnstack" type="number"
                                 :min="minimumCSPRUnstack"
                                 :max="Math.trunc(stakingBalance)" label="Number of CSPR to stake" required
                                 append-outer-icon="mdi-plus" @click:append-outer="increment" prepend-icon="mdi-minus"
