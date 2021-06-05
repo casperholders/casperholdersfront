@@ -288,7 +288,7 @@
                 color="primary"
                 @click="balance = null; delegationProcess = 2"
               >
-                Stake more
+                Unstack more
               </v-btn>
             </v-stepper-content>
           </v-stepper>
@@ -437,7 +437,7 @@ export default {
         },
         async getDeployResult() {
             try {
-                const undelegateResultData = await (await fetch("http://localhost:3000/undelegate/result/" + this.deployHash))
+                const undelegateResultData = await (await fetch("http://localhost:3000/undelegate/result/" + this.deployHash)).json()
                 if (undelegateResultData.status !== "Unknown") {
                     this.deployCost = undelegateResultData.cost / 1000000000
                     this.deployResultErrorMessage = undelegateResultData.message

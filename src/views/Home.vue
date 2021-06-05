@@ -5,7 +5,7 @@
     class="flex-column justify-center px-0"
   >
     <v-card class="align-center rounded-xl secondary">
-      <v-card-title class="justify-center text-h2"><b style="color: red">C</b>asper<b style="color: red">H</b>olders
+      <v-card-title class="justify-center text-h2"><b style="color: #ff473e">C</b>asper<b style="color: #ff473e">H</b>olders
       </v-card-title>
       <v-card-subtitle class="text-center mt-2 text-subtitle-1">
         Welcome to CasperHolders.<br />
@@ -123,10 +123,9 @@
       <v-card-actions class="justify-center">
         <v-btn
           large
-          color="quaternary"
+          color="tertiary"
           class="rounded-pill mb-3"
-          href="https://github.com/KillianH/casperholdersfront"
-          target="_blank"
+          href="#"
         >
           <v-icon left large class="mr-3">mdi-github</v-icon>
           Technical information (Soon. See FAQ)
