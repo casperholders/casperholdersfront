@@ -18,10 +18,12 @@ spec:
         name: casperholders-app
     spec:
       containers:
-        - name: casperholders-app
-          image: killianh/casperholders:front
-          imagePullPolicy: Always
-          ports:
+        envFrom:
+        - configMapRef:
+            name: casperholders-config
+        image: killianh/casperholders:front
+        name: casperholders-app
+        ports:
           - containerPort: 80
           resources: {}
       restartPolicy: Always

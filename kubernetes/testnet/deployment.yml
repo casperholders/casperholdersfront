@@ -18,7 +18,9 @@ spec:
         name: testnet-casperholders-app
     spec:
       containers:
-        - name: testnet-casperholders-app
+          envFrom:
+          - configMapRef:
+              name: testnet-casperholders-config
           image: killianh/casperholders:testnet-front
           imagePullPolicy: Always
           ports:
