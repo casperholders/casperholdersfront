@@ -334,7 +334,7 @@ export default {
                     this.errorMessagesBalance = [];
                     this.balance = null;
                     try {
-                        const balanceData = await (await fetch("http://localhost:3000/balance/" + this.publicKeyHex)).json()
+                        const balanceData = await (await fetch(this.getApi()+"/balance/" + this.publicKeyHex)).json()
                         this.balance = balanceData.balance / 1000000000
                         this.loadingBalance = false
                     } catch (e) {
@@ -366,7 +366,7 @@ export default {
             this.delegationError = false;
             this.delegationErrorMessage = "";
             try {
-                const delegatePrepareData = await (await fetch('http://localhost:3000/delegate/prepare', {
+                const delegatePrepareData = await (await fetch(this.getApi()+"/delegate/prepare", {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
@@ -385,7 +385,7 @@ export default {
 
 
                     try {
-                        const delegateData = await (await fetch('http://localhost:3000/delegate/', {
+                        const delegateData = await (await fetch(this.getApi()+"/delegate/", {
                             method: 'POST',
                             headers: {
                                 'Accept': 'application/json',
@@ -420,7 +420,7 @@ export default {
         },
         async getDeployResult() {
             try {
-                const delegateResultData = await (await fetch("http://localhost:3000/delegate/result/" + this.deployHash)).json()
+                const delegateResultData = await (await fetch(this.getApi()+"/delegate/result/" + this.deployHash)).json()
                 if (delegateResultData.status !== "Unknown") {
                     this.deployCost = delegateResultData.cost / 1000000000
                     this.deployResultErrorMessage = delegateResultData.message

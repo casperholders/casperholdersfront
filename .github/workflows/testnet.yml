@@ -45,6 +45,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
+          build-args: mode="testnet"
           tags: killianh/casperholders:testnet-front
 
       - uses: azure/k8s-set-context@v1
@@ -59,7 +60,6 @@ jobs:
           manifests: |
             kubernetes/testnet/https.yml
             kubernetes/testnet/issuer.yml
-            kubernetes/testnet/config.yml
             kubernetes/testnet/deployment.yml
             kubernetes/testnet/service.yml
             kubernetes/testnet/ingress.yml

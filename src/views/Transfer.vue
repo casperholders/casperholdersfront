@@ -304,7 +304,7 @@ export default {
                 this.errorMessagesBalance = [];
                 this.balance = null;
                 try {
-                    const balanceData = await(await fetch("http://localhost:3000/balance/" + this.publicKeyHex)).json()
+                    const balanceData = await(await fetch(this.getApi()+"/balance/" + this.publicKeyHex)).json()
                     console.log(this.maxCSPRTransfer)
                     this.balance = balanceData.balance / 1000000000
                     console.log(this.maxCSPRTransfer)
@@ -399,7 +399,7 @@ export default {
                 this.deployHash = null
                 DeployUtil.validateDeploy(DeployUtil.deployFromJson(deploySinged))
                 try {
-                    let transferData = await (await fetch('http://localhost:3000/transfer/', {
+                    let transferData = await (await fetch(this.getApi()+"/transfer/", {
                         method: 'POST',
                         headers: {
                             'Accept': 'application/json',
@@ -429,7 +429,7 @@ export default {
         },
         async getDeployResult() {
             try {
-                let resultData = await (await fetch("http://localhost:3000/transfer/result/" + this.deployHash)).json();
+                let resultData = await (await fetch(this.getApi()+"/transfer/result/" + this.deployHash)).json();
                 if (resultData.status !== "Unknown") {
                     this.deployCost = resultData.cost / 1000000000
                     this.deployResultErrorMessage = resultData.message

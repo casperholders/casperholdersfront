@@ -342,7 +342,7 @@ export default {
                     this.errorMessagesBalance = [];
                     this.balance = null;
                     try {
-                        const balanceData = await (await fetch("http://localhost:3000/balance/" + this.publicKeyHex)).json()
+                        const balanceData = await (await fetch(this.getApi()+"/balance/" + this.publicKeyHex)).json()
                         this.balance = balanceData.balance / 1000000000
                         await this.getStakeBalance()
                         this.loadingBalance = false
@@ -362,7 +362,7 @@ export default {
         },
         async getStakeBalance() {
             try {
-                const stakeData = await (await fetch("http://localhost:3000/balance/stake/" + this.publicKeyHex)).json()
+                const stakeData = await (await fetch(this.getApi()+"/balance/stake/" + this.publicKeyHex)).json()
                 this.stakingBalance = stakeData.balance / 1000000000
                 this.errorMessagesBalance = [stakeData.error]
             } catch (e) {
@@ -386,7 +386,7 @@ export default {
             this.undelegationErrorMessage = "";
 
             try {
-                const undelegatePrepareData = await (await fetch('http://localhost:3000/undelegate/prepare', {
+                const undelegatePrepareData = await (await fetch(this.getApi()+"/undelegate/prepare", {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
@@ -401,7 +401,7 @@ export default {
                 try {
                     const signedDeploy = await Signer.sign(parsedDeploy, this.publicKeyHex)
                     try {
-                        const undelegateData = await (await fetch('http://localhost:3000/undelegate/', {
+                        const undelegateData = await (await fetch(this.getApi()+"/undelegate/", {
                             method: 'POST',
                             headers: {
                                 'Accept': 'application/json',
@@ -437,7 +437,7 @@ export default {
         },
         async getDeployResult() {
             try {
-                const undelegateResultData = await (await fetch("http://localhost:3000/undelegate/result/" + this.deployHash)).json()
+                const undelegateResultData = await (await fetch(this.getApi()+"/undelegate/result/" + this.deployHash)).json()
                 if (undelegateResultData.status !== "Unknown") {
                     this.deployCost = undelegateResultData.cost / 1000000000
                     this.deployResultErrorMessage = undelegateResultData.message

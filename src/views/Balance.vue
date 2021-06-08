@@ -181,14 +181,14 @@ export default {
             }
             const publicKeyHex = await Signer.getActivePublicKey()
             try {
-                let balanceData = await (await fetch("http://localhost:3000/balance/" + publicKeyHex)).json()
+                let balanceData = await (await fetch(this.getApi()+"/balance/" + publicKeyHex)).json()
                 if(balanceData.balance === undefined){
                     throw new Error("Can't retrieve balance. Please check your public key")
                 }
                 this.datacollection.labels = ['Available']
                 this.datacollection.datasets[0].data = [Number(balanceData.balance / 1000000000).toFixed(2)]
                 try {
-                    let stakeData = await (await fetch("http://localhost:3000/balance/stake/" + publicKeyHex)).json()
+                    let stakeData = await (await fetch(this.getApi()+"/balance/stake/" + publicKeyHex)).json()
                     let stake = Number(stakeData.balance / 1000000000).toFixed(2)
                     this.datacollection.datasets[0].data.push(stake)
                     if (stakeData.error !== undefined && stakeData.error !== "") {
