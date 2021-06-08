@@ -15,19 +15,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v2.1.5
-        with:
-          node-version: 14.17
-
-      - name: before_script
-        run: yarn install --non-interactive
-
-      - name: script
-        run: |
-          yarn lint
-          yarn build
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
