@@ -22,8 +22,5 @@ spec:
           image: killianh/casperholders:front
           ports:
           - containerPort: 80
-          envFrom:
-          - configMapRef:
-              name: casperholders-config
           resources: {}
       restartPolicy: Always

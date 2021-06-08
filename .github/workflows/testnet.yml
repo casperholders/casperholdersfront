@@ -45,7 +45,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          build-args: mode=testnet
+          build-args: mode="testnet"
           tags: killianh/casperholders:testnet-front
 
       - uses: azure/k8s-set-context@v1

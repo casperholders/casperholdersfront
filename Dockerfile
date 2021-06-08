@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN yarn install
 COPY ./ .
-RUN yarn build-${mode}
+RUN yarn build --mode ${mode}
 
 FROM nginx as production-stage
 RUN mkdir /app
