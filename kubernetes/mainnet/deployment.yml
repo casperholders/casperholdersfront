@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
         envFrom:
-          - configMapRef:
-              name: casperholders-config
+        - configMapRef:
+            name: casperholders-config
         image: killianh/casperholders:front
         name: casperholders-app
         ports:
