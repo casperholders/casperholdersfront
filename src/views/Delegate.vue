@@ -43,9 +43,9 @@
                 <v-icon x-small>mdi-open-in-new</v-icon>
               </a><br />
                 <br />
-                Actually there's a commission rate of 1%. (Applies on the staking rewards only.)<br />
-                Exemple : if you receive 100 CSPR rewards from staking, CasperHolders will received 1 CSPR and you will
-                get 99 CSPR.
+                Actually there's a commission rate of 5%. (Applies on the staking rewards only.)<br />
+                Exemple : if you receive 100 CSPR rewards from staking, CasperHolders will received 5 CSPR and you will
+                get 95 CSPR.
               </p>
               <v-btn
                 class="rounded-pill"

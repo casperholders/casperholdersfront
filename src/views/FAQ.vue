@@ -43,15 +43,15 @@
         <h2 class="pb-3">Who are you ?</h2>
         <p class="text-body-1 pl-9">
           A member of the community ! You can find me on the Casper discord with this id : killian#7405<br />
-          Feel free to ping me in an appropriate channel I will try to answer your questions as fast as possible !<br />
+          Feel free to ping me in an appropriate channel I will try to answer your questions !<br />
           On the more personal note I'm a DevOps Engineer working in a French Bank.<br/>
           I'm always happy to discuss tech with any Ops or Dev :D<br />
         </p>
         <h2 class="pb-3">Why the code isn't open source ?</h2>
         <p class="text-body-1 pl-9">
-          I will try to release the full source code in the two months after the official release of the staking UI
-          from
-          Casper Network.<br />
+          I have opened a grant proposal on the DEVxDAO platform. If the grant is accepted I will release the source code ASAP.<br/>
+          Otherwise I will try to release the full source code in the comings months,<br/>
+          after the official release of the staking UI from Casper Network.<br />
           You will be able to give feedback on github and make pull request to add new features if you want !<br />
         </p>
         <h2 class="pb-3">Any other questions ?</h2>

@@ -81,7 +81,7 @@
           left
         >mdi-timeline-plus
         </v-icon>
-        Keys generation or Cross Platform Desktop Wallet<br />
+        Cross Platform Desktop Wallet<br />
         <v-icon
           color="tertiary"
           left
