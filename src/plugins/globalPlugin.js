@@ -8,7 +8,7 @@ export default {
         }
         Vue.prototype.getValidator = function (){
             return process.env.VUE_APP_VALIDATOR
-        },
+        }
         Vue.prototype.getApi = function (){
             return process.env.VUE_APP_API
         }
