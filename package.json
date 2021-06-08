@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "testnet": "vue-cli-service serve --mode testnet",
-    "build-testnet": "vue-cli-service serve --mode testnet",
+    "build-testnet": "vue-cli-service build --mode testnet",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "prod": "serve -s dist -l 8080"
