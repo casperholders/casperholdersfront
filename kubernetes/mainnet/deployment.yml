@@ -20,6 +20,7 @@ spec:
       containers:
         - name: casperholders-app
           image: killianh/casperholders:front
+          imagePullPolicy: Always
           ports:
           - containerPort: 80
           resources: {}
