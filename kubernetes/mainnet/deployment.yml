@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: casperholders-app
+  name: casperholders-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: casperholders-app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: casperholders-app
+        name: casperholders-app
+    spec:
+      containers:
+        envFrom:
+          - configMapRef:
+              name: casperholders-config
+        image: killianh/casperholders:front
+        name: casperholders-app
+        ports:
+          - containerPort: 80
+        resources: {}
+      restartPolicy: Always

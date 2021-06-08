@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: testnet-casperholders-app
+  name: testnet-casperholders-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: testnet-casperholders-app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: testnet-casperholders-app
+        name: testnet-casperholders-app
+    spec:
+      containers:
+          envFrom:
+            - configMapRef:
+                name: testnet-casperholders-config
+          image: killianh/casperholders:testnet-front
+          name: testnet-casperholders-app
+          ports:
+            - containerPort: 80
+          resources: {}
+      restartPolicy: Always

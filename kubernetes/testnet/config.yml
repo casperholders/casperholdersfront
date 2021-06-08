@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: testnet-casperholders-config
+data:
+  VUE_APP_NETWORK: casper-test
+  VUE_APP_VALIDATOR: 0106ca7c39cd272dbf21a86eeb3b36b7c26e2e9b94af64292419f7862936bca2ca
+  VUE_APP_API: https://api.testnet.casperholders.com
