@@ -1,4 +1,4 @@
-name: CICD
+name: mainnet
 
 on:
   push:
@@ -45,7 +45,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: killianh/casperholders:api
+          tags: killianh/casperholders:front
 
       - uses: azure/k8s-set-context@v1
         with:
@@ -55,7 +55,7 @@ jobs:
 
       - uses: Azure/k8s-deploy@v1.4
         with:
-          namespace: 'api-testnet-casperholders'
+          namespace: 'casperholders'
           manifests: |
             kubernetes/mainnet/https.yml
             kubernetes/mainnet/issuer.yml
