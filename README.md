@@ -1,8 +1,9 @@
 # CasperHolders
-##The first third party UI to interact with the Casper Blockchain.
 
-#CasperHolders is not affiliated with CasperNetwork / CasperAssociation.
-#This is a project from a community member.
+## The first third party UI to interact with the Casper Blockchain.
+
+## CasperHolders is not affiliated with CasperNetwork / CasperAssociation.
+## This is a project from a community member.
 
 This project contains the sources files for the CasperHolders website.
 
@@ -40,3 +41,10 @@ On Windows you must install WSL2 and Docker. The casper-client is wrapped inside
 **The software doesn't read your private key, and your private key is not saved/shared with anybody.**
 
 **The software only use the path of your private key as an argument in the casper-client CLI.**
+
+# Run locally
+
+```
+yarn install
+yarn serve
+```
