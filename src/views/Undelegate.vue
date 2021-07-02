@@ -2,7 +2,6 @@
   <v-container
     fluid
     fill-height
-    class="px-0"
   >
     <v-layout>
       <v-flex
@@ -11,7 +10,7 @@
         offset-sm3
       >
         <v-card
-          class="rounded-xl mt-9 secondary"
+          class="rounded-xl secondary"
         >
           <v-card-title class="align-center">
             <v-avatar
@@ -20,7 +19,7 @@
             >
               <v-icon>mdi-lock-open</v-icon>
             </v-avatar>
-            <v-card-title class="pl-4">Unstack</v-card-title>
+            <v-card-title class="pl-4">Unstake</v-card-title>
           </v-card-title>
           <v-stepper
             v-model="delegationProcess"
@@ -32,7 +31,7 @@
               step="1"
             >
               Your validator node
-              <small>Details about the validator you're going to undelegate (unstack).</small>
+              <small>Details about the validator you're going to undelegate (unstake).</small>
             </v-stepper-step>
 
             <v-stepper-content step="1">
@@ -49,7 +48,7 @@
                 get 95 CSPR.
               </p>
               <v-btn
-                class="rounded-pill"
+                rounded
                 color="primary"
                 @click="delegationProcess = 2"
               >
@@ -71,7 +70,7 @@
                 <p class="text-subtitle-1">
                   Connect to Casper Signer and verify your account funds.<br />
                   <v-btn
-                    class="rounded-pill"
+                    rounded
                     @click="getBalance"
                     :loading="loadingBalance"
                   >
@@ -86,19 +85,19 @@
                   <span class="text-h6">Current Balance : {{ balance }} CSPR<br /></span>
                   <span class="text-h6">Current Staking Balance : {{ stakingBalance }} CSPR<br /></span>
                   <span
-                    v-if="balance != null && stakingBalance != null && (balance < undelegateFee || stakingBalance < minimumCSPRUnstack)"
+                    v-if="balance != null && stakingBalance != null && (balance < undelegateFee || stakingBalance < minimumCSPRUnstake)"
                   >
                   <v-icon color="red">mdi-alert-circle</v-icon>
                   <b>You don't have enough stake or funds. Please stake at least {{
-                      minimumCSPRUnstack
+                      minimumCSPRUnstake
                     }} CSPR.</b><br />
-                  {{ undelegateFee }} CSPR are needed to pay for the unstack operation. (Those fees are defined by the CasperNetwork)<br />
-                  You need to unstack at least {{ minimumCSPRUnstack }} CSPR<br />
+                  {{ undelegateFee }} CSPR are needed to pay for the unstake operation. (Those fees are defined by the CasperNetwork)<br />
+                  You need to unstake at least {{ minimumCSPRUnstake }} CSPR<br />
                 </span>
                   <span
-                    v-if="balance != null && stakingBalance != null && balance >= undelegateFee && stakingBalance >= minimumCSPRUnstack"
+                    v-if="balance != null && stakingBalance != null && balance >= undelegateFee && stakingBalance >= minimumCSPRUnstake"
                   >
-                  <v-icon color="green">mdi-checkbox-marked-circle</v-icon> Everything is good ! You will be able to unstack {{
+                  <v-icon color="green">mdi-checkbox-marked-circle</v-icon> Everything is good ! You will be able to unstake {{
                       Math.trunc(stakingBalance)
                     }} CSPR maximum.
                 </span>
@@ -106,13 +105,13 @@
 
               </div>
               <v-btn
-                class="rounded-pill"
+                rounded
                 @click="balance=null; delegationProcess = 1"
               >
                 Cancel
               </v-btn>
               <v-btn
-                class="rounded-pill ml-5"
+                rounded class=" ml-5"
                 color="primary"
                 @click="delegationProcess = 3"
                 :disabled="sufficientsFunds"
@@ -126,7 +125,7 @@
               :complete="delegationProcess > 3"
             >
               Staking amount
-              <small>Set the number of CSPR you want to stake</small>
+              <small>Set the number of CSPR you want to unstake</small>
             </v-stepper-step>
 
             <v-stepper-content
@@ -135,10 +134,10 @@
               <div>
                 <v-text-field
                   color="white"
-                  v-model.number="CSPRToUnstack"
-                  :value="CSPRToUnstack"
+                  v-model.number="CSPRToUnstake"
+                  :value="CSPRToUnstake"
                   type="number"
-                  :min="minimumCSPRUnstack"
+                  :min="minimumCSPRUnstake"
                   :max="Math.trunc(stakingBalance)"
                   label="Number of CSPR to stake"
                   required
@@ -148,35 +147,35 @@
                   @click:prepend="decrement"
                 ></v-text-field>
                 <p class="text-body-1">
-                  Unstack : {{ CSPRToUnstack }} CSPR<br />
+                  Unstake : {{ CSPRToUnstake }} CSPR<br />
                   Undelegation fee : {{ undelegateFee }} CSPR<br />
                   Total transaction cost : {{ undelegateFee }} CSPR<br />
-                  Balance after unstack : {{ balance - undelegateFee + CSPRToUnstack }} CSPR<br />
+                  Balance after unstake : {{ balance - undelegateFee + CSPRToUnstake }} CSPR<br />
                 </p>
-                <p v-if="CSPRToUnstack<minimumCSPRUnstack">
+                <p v-if="CSPRToUnstake<minimumCSPRUnstake">
                   <v-icon color="red">mdi-alert-circle</v-icon>
-                  <b>You must unstack at least {{ minimumCSPRUnstack }} CSPR.</b><br />
+                  <b>You must unstake at least {{ minimumCSPRUnstake }} CSPR.</b><br />
                 </p>
-                <p v-if="CSPRToUnstack>Math.trunc(stakingBalance)">
+                <p v-if="CSPRToUnstake>Math.trunc(stakingBalance)">
                   <v-icon color="red">mdi-alert-circle</v-icon>
-                  <b>You can unstack {{ Math.trunc(stakingBalance) }} CSPR maximum.</b><br />
+                  <b>You can unstake {{ Math.trunc(stakingBalance) }} CSPR maximum.</b><br />
                 </p>
-                <p v-if="CSPRToUnstack>=minimumCSPRUnstack && CSPRToUnstack<=Math.trunc(stakingBalance)">
+                <p v-if="CSPRToUnstake>=minimumCSPRUnstake && CSPRToUnstake<=Math.trunc(stakingBalance)">
                   <v-icon color="green">mdi-checkbox-marked-circle</v-icon>
-                  <b>Everything is good ! You will stake {{ CSPRToUnstack }} CSPR.</b>
+                  <b>Everything is good ! You will unstake {{ CSPRToUnstake }} CSPR.</b>
                 </p>
               </div>
               <v-btn
-                class="rounded-pill"
+                rounded
                 @click="balance=null; delegationProcess = 2"
               >
                 Cancel
               </v-btn>
               <v-btn
-                class="rounded-pill ml-5"
+                rounded class=" ml-5"
                 color="primary"
                 @click="delegationProcess = 4"
-                :disabled="correctUnstack"
+                :disabled="correctUnstake"
               >
                 Continue
               </v-btn>
@@ -186,7 +185,7 @@
               step="4"
               :complete="delegationProcess > 4"
             >
-              Review unstack operation
+              Review unstake operation
               <small>Review the transaction</small>
             </v-stepper-step>
 
@@ -195,10 +194,10 @@
             >
               <div class="text-body-1">
                 <p>
-                  You will unstack : {{ CSPRToUnstack }} CSPR<br />
+                  You will unstake : {{ CSPRToUnstake }} CSPR<br />
                   Undelegation fee : {{ undelegateFee }} CSPR<br />
                   Total transaction : {{ undelegateFee }} CSPR<br />
-                  Balance after unstack : {{ balance - undelegateFee + CSPRToUnstack }} CSPR<br />
+                  Balance after unstake : {{ balance - undelegateFee + CSPRToUnstake }} CSPR<br />
                 </p>
                 <p class="text-h6">
                   Confirm the transaction ?
@@ -210,16 +209,16 @@
                 </p>
               </div>
               <v-btn
-                class="rounded-pill"
+                rounded
                 @click="delegationProcess = 3"
               >
                 Cancel
               </v-btn>
               <v-btn
-                class="rounded-pill ml-5"
+                rounded class=" ml-5"
                 color="primary"
                 @click="delegate"
-                :disabled="correctUnstack"
+                :disabled="correctUnstake"
                 :loading="loadUndelegateButton"
               >
                 Sign & Continue
@@ -229,8 +228,8 @@
               step="5"
               :complete="delegationProcess > 5"
             >
-              Unstack Result
-              <small>See the result of the unstacking operation</small>
+              Unstake Result
+              <small>See the result of the unstaking operation</small>
             </v-stepper-step>
 
             <v-stepper-content
@@ -258,11 +257,11 @@
                   ></v-progress-circular>
                 </span>
                   <span v-if="deployResult!=null">
-                  Status of the unstacking operation :<br />
+                  Status of the unstaking operation :<br />
                 </span>
                   <span v-if="deployResult!=null && deployResult">
-                  <v-icon color="green">mdi-checkbox-marked-circle</v-icon> Congrats ! You've unstacking : {{
-                      CSPRToUnstack
+                  <v-icon color="green">mdi-checkbox-marked-circle</v-icon> Congrats ! You've unstaked : {{
+                      CSPRToUnstake
                     }} CSPR with {{
                       deployCost
                     }} CSPR transaction fee.
@@ -275,7 +274,7 @@
                 </p>
               </div>
               <v-btn
-                class="rounded-pill"
+                rounded
                 v-if="undelegationError"
                 color="primary"
                 @click="balance = null; delegationProcess = 2"
@@ -283,12 +282,12 @@
                 Retry
               </v-btn>
               <v-btn
-                class="rounded-pill"
+                rounded
                 v-if="deployResult != null && !undelegationError"
                 color="primary"
                 @click="balance = null; delegationProcess = 2"
               >
-                Unstack more
+                Unstake more
               </v-btn>
             </v-stepper-content>
           </v-stepper>
@@ -299,7 +298,7 @@
 </template>
 
 <script>
-import {DeployUtil, Signer} from "casper-client-sdk";
+import {DeployUtil, Signer} from "casper-js-sdk";
 
 export default {
     name: 'Undelegate',
@@ -315,8 +314,8 @@ export default {
             errorBalance: false,
             delegationProcess: 1,
             undelegateFee: 1,
-            CSPRToUnstack: 1,
-            minimumCSPRUnstack: 1,
+            CSPRToUnstake: 1,
+            minimumCSPRUnstake: 1,
             deployHash: null,
             deployResult: null,
             tries: 0,
@@ -371,13 +370,13 @@ export default {
             }
         },
         increment() {
-            if (this.CSPRToUnstack < Math.trunc(this.stakingBalance)) {
-                this.CSPRToUnstack = parseInt(this.CSPRToUnstack) + 1
+            if (this.CSPRToUnstake < Math.trunc(this.stakingBalance)) {
+                this.CSPRToUnstake = parseInt(this.CSPRToUnstake) + 1
             }
         },
         decrement() {
-            if (this.CSPRToUnstack > this.minimumCSPRUnstack) {
-                this.CSPRToUnstack = parseInt(this.CSPRToUnstack) - 1
+            if (this.CSPRToUnstake > this.minimumCSPRUnstake) {
+                this.CSPRToUnstake = parseInt(this.CSPRToUnstake) - 1
             }
         },
         async delegate() {
@@ -393,13 +392,13 @@ export default {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        amount: this.CSPRToUnstack,
+                        amount: this.CSPRToUnstake,
                         from: this.publicKeyHex
                     })
                 })).json()
                 let parsedDeploy = DeployUtil.deployToJson(DeployUtil.deployFromJson(undelegatePrepareData))
                 try {
-                    const signedDeploy = await Signer.sign(parsedDeploy, this.publicKeyHex)
+                    const signedDeploy = await Signer.sign(parsedDeploy, this.publicKeyHex, "0106ca7c39cd272dbf21a86eeb3b36b7c26e2e9b94af64292419f7862936bca2ca")
                     try {
                         const undelegateData = await (await fetch(this.getApi()+"/undelegate/", {
                             method: 'POST',
@@ -437,7 +436,7 @@ export default {
         },
         async getDeployResult() {
             try {
-                const undelegateResultData = await (await fetch(this.getApi()+"/undelegate/result/" + this.deployHash)).json()
+                const undelegateResultData = await (await fetch(this.getApi()+"/deploy/result/" + this.deployHash)).json()
                 if (undelegateResultData.status !== "Unknown") {
                     this.deployCost = undelegateResultData.cost / 1000000000
                     this.deployResultErrorMessage = undelegateResultData.message
@@ -465,8 +464,8 @@ export default {
             }
             return "disabled"
         },
-        correctUnstack: function () {
-            if (this.CSPRToUnstack >= this.minimumCSPRUnstack && this.CSPRToUnstack <= Math.trunc(this.stakingBalance)) {
+        correctUnstake: function () {
+            if (this.CSPRToUnstake >= this.minimumCSPRUnstake && this.CSPRToUnstake <= Math.trunc(this.stakingBalance)) {
                 return
             }
             return "disabled"

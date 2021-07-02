@@ -2,7 +2,6 @@
   <v-container
     fluid
     fill-height
-    class="px-0"
   >
     <v-layout>
       <v-flex
@@ -11,7 +10,7 @@
         offset-sm3
       >
         <v-card
-          class="rounded-xl mt-9 secondary"
+          class="rounded-xl secondary"
         >
           <v-card-title class="align-center">
             <v-avatar
@@ -22,110 +21,32 @@
             </v-avatar>
             <v-card-title class="pl-4">Staking</v-card-title>
           </v-card-title>
+          <p class="text-body-1 pl-15 pr-10">
+              Here's your validator : <a
+              :href=validatorUrl
+            >{{ getValidator() }}
+              <v-icon x-small>mdi-open-in-new</v-icon>
+            </a><br />
+              <br />
+              Actually there's a commission rate of 5%. (Applies on the staking rewards only.)<br />
+              Exemple : if you receive 100 CSPR rewards from staking, CasperHolders will received 5 CSPR and you will
+              get 95 CSPR.
+            </p>
           <v-stepper
             v-model="delegationProcess"
             vertical
             class="rounded-xl secondary"
           >
             <v-stepper-step
-              :complete="delegationProcess > 1"
               step="1"
-            >
-              Your validator node
-              <small>Details about the validator you're going to delegate (stake).</small>
-            </v-stepper-step>
-
-            <v-stepper-content step="1">
-              <p class="text-body-1 py-5">
-                Here's your validator : <a
-                :href=validatorUrl
-              >{{ getValidator() }}
-                <v-icon x-small>mdi-open-in-new</v-icon>
-              </a><br />
-                <br />
-                Actually there's a commission rate of 5%. (Applies on the staking rewards only.)<br />
-                Exemple : if you receive 100 CSPR rewards from staking, CasperHolders will received 5 CSPR and you will
-                get 95 CSPR.
-              </p>
-              <v-btn
-                class="rounded-pill"
-                color="primary"
-                @click="delegationProcess = 2"
-              >
-                Continue & Accept
-              </v-btn>
-            </v-stepper-content>
-            <v-stepper-step
-              step="2"
-              :complete="delegationProcess > 2"
-            >
-              Verify account funds
-              <small>Verify your account funds</small>
-            </v-stepper-step>
-
-            <v-stepper-content
-              step="2"
-            >
-              <div>
-                <p class="text-subtitle-1">
-                  Connect to Casper Signer and verify your account funds.<br />
-                  <v-btn
-                    class="rounded-pill mt-3"
-                    @click="getBalance"
-                    :loading="loadingBalance"
-                  >
-                    Refresh
-                  </v-btn>
-                </p>
-                <p v-if="!signerConnected">
-                  Connect to Casper Signer first. Hit the refresh button to open the connection popup.<br />
-                  Once connected it refresh again to retrieved your current balance.
-                </p>
-
-                <p v-if="balance!=null">
-                  <span class="text-h6">Current Balance : {{ balance }} CSPR<br /></span>
-                  <span v-if="balance != null && balance < minimumCSPRNeeded">
-                    <v-icon color="red">mdi-alert-circle</v-icon>
-                    <b>You don't have enough funds. Please fund your account with at least {{
-                        minimumCSPRNeeded
-                      }} CSPR.</b><br />
-                    {{ delegationFee }} CSPR are needed to pay for the delegation fee. (Those fees are defined by the Casper
-                    Network)<br />
-                    You need to delegate at least {{ minimumCSPRStake }} CSPR<br />
-                  </span>
-                  <span v-if="balance != null && balance >= minimumCSPRNeeded">
-                  <v-icon color="green">mdi-checkbox-marked-circle</v-icon> Everything is good ! You will be able to stake {{
-                      maxStake
-                    }} CSPR maximum.
-                </span>
-                </p>
-              </div>
-              <v-btn
-                class="rounded-pill"
-                @click="balance=null; delegationProcess = 1"
-              >
-                Cancel
-              </v-btn>
-              <v-btn
-                class="rounded-pill ml-5"
-                color="primary"
-                @click="delegationProcess = 3"
-                :disabled="sufficientsFunds"
-              >
-                Continue
-              </v-btn>
-            </v-stepper-content>
-
-            <v-stepper-step
-              step="3"
-              :complete="delegationProcess > 3"
+              :complete="delegationProcess > 1"
             >
               Staking amount
               <small>Set the number of CSPR you want to stake</small>
             </v-stepper-step>
 
             <v-stepper-content
-              step="3"
+              step="1"
             >
               <div>
                 <v-text-field
@@ -143,6 +64,7 @@
                   @click:prepend="decrement"
                 ></v-text-field>
                 <p class="text-body-1">
+                  Current Balance : {{ balance }} CSPR <br />
                   Staking : {{ CSPRToStake }} CSPR<br />
                   Delegation fee : {{ delegationFee }} CSPR<br />
                   Total transaction : {{ CSPRToStake + delegationFee }} CSPR<br />
@@ -152,7 +74,16 @@
                   <v-icon color="red">mdi-alert-circle</v-icon>
                   <b>You must stake at least {{ minimumCSPRStake }} CSPR.</b><br />
                 </p>
-                <p v-if="CSPRToStake>maxStake">
+                <p v-if="!connected">
+                  <v-icon color="red" class="mr-2">mdi-alert-circle</v-icon>
+                  <b>Unlock and/or connect to Casper Signer first. <v-btn rounded class="ml-2" color="primary" @click="connectionRequest">Connect</v-btn></b><br />
+                </p>
+                <p v-if="connected && !sufficientsFunds">
+                  <v-icon color="red">mdi-alert-circle</v-icon>
+                  <b>You don't have enough funds. Please fund your accound with at least
+                    {{ minimumCSPRStake + delegationFee }} CSPR.</b><br />
+                </p>
+                <p v-if="balance > (minimumCSPRStake + delegationFee) && CSPRToStake>maxStake">
                   <v-icon color="red">mdi-alert-circle</v-icon>
                   <b>You can stake {{ maxStake }} CSPR maximum.</b><br />
                 </p>
@@ -162,15 +93,10 @@
                 </p>
               </div>
               <v-btn
-                class="rounded-pill"
-                @click="balance=null; delegationProcess = 2"
-              >
-                Cancel
-              </v-btn>
-              <v-btn
-                class="rounded-pill ml-5"
+                rounded
+                class=" ml-5"
                 color="primary"
-                @click="delegationProcess = 4"
+                @click="delegationProcess = 2"
                 :disabled="correctStake"
               >
                 Continue
@@ -178,15 +104,15 @@
             </v-stepper-content>
 
             <v-stepper-step
-              step="4"
-              :complete="delegationProcess > 4"
+              step="2"
+              :complete="delegationProcess > 2"
             >
               Review staking operation
               <small>Review the transaction</small>
             </v-stepper-step>
 
             <v-stepper-content
-              step="4"
+              step="2"
             >
               <div class="text-body-1">
                 <p>
@@ -205,13 +131,14 @@
                 </p>
               </div>
               <v-btn
-                class="rounded-pill"
-                @click="delegationProcess = 3"
+                rounded
+                @click="delegationProcess = 1"
               >
                 Cancel
               </v-btn>
               <v-btn
-                class="rounded-pill ml-5"
+                rounded
+                class=" ml-5"
                 color="primary"
                 @click="delegate"
                 :disabled="correctStake"
@@ -221,15 +148,15 @@
               </v-btn>
             </v-stepper-content>
             <v-stepper-step
-              step="5"
-              :complete="delegationProcess > 4"
+              step="3"
+              :complete="deployResult!=null && deployResult"
             >
               Staking Result
               <small>See the result of the staking operation</small>
             </v-stepper-step>
 
             <v-stepper-content
-              step="5"
+              step="3"
             >
               <div class="text-body-1">
                 <p v-if="deployHash==null && delegationError===false">
@@ -246,8 +173,9 @@
                   <span v-if="deployResult==null">
                   Waiting for the deploy result ...<br />
                   Re-trying every 30s.<br />
-                  Number of tries : {{ tries }}<br />
+                  Number of tries : {{ tries }}
                   <v-progress-circular
+                    class="ml-3"
                     indeterminate
                     color="blue"
                   ></v-progress-circular>
@@ -268,18 +196,18 @@
                 </p>
               </div>
               <v-btn
-                class="rounded-pill"
+                rounded
                 v-if="delegationError"
                 color="primary"
-                @click="balance = null; delegationProcess = 2"
+                @click="balance = null; delegationProcess = 1"
               >
                 Retry
               </v-btn>
               <v-btn
-                class="rounded-pill"
+                rounded
                 v-if="deployResult != null && !delegationError"
                 color="primary"
-                @click="balance = null; delegationProcess = 2"
+                @click="stakeMore"
               >
                 Stake more
               </v-btn>
@@ -292,15 +220,13 @@
 </template>
 
 <script>
-import {DeployUtil, Signer} from "casper-client-sdk";
+import {DeployUtil, Signer} from "casper-js-sdk";
 
 export default {
     name: "Delegate",
     data() {
         return {
-            signerConnected: false,
             dialog: false,
-            publicKeyHex: "",
             balance: null,
             loadingBalance: false,
             errorMessagesBalance: [],
@@ -320,36 +246,33 @@ export default {
         }
     },
     async mounted() {
-        this.signerConnected = await Signer.isConnected()
-        this.publicKeyHex = await Signer.getActivePublicKey()
         await this.getBalance()
+    },
+    watch: {
+        async publicKeyHex() {
+            await this.getBalance()
+        },
     },
     methods: {
         async getBalance() {
-            try {
-                if (this.signerConnected) {
-                    this.loadingBalance = true;
-                    this.publicKeyHex = await Signer.getActivePublicKey()
-                    this.errorBalance = false;
-                    this.errorMessagesBalance = [];
-                    this.balance = null;
-                    try {
-                        const balanceData = await (await fetch(this.getApi()+"/balance/" + this.publicKeyHex)).json()
-                        this.balance = balanceData.balance / 1000000000
-                        this.loadingBalance = false
-                    } catch (e) {
-                        console.log(e)
-                        this.errorMessagesBalance = ["Unknown. Please check your public key hex."]
-                        this.loadingBalance = false
-                    }
-                } else {
-                    Signer.sendConnectionRequest();
-                    this.balance = null;
+            if (this.$store.getters.signer.connected && this.publicKeyHex !== null) {
+                this.loadingBalance = true;
+                this.errorBalance = false;
+                this.errorMessagesBalance = [];
+                this.balance = null;
+                try {
+                    const balanceData = await (await fetch(this.getApi() + "/balance/" + this.publicKeyHex)).json()
+                    this.balance = balanceData.balance / 1000000000
+                    this.loadingBalance = false
+                } catch (e) {
+                    console.log(e)
+                    this.errorMessagesBalance = ["Unknown. Please check your public key hex."]
+                    this.loadingBalance = false
                 }
-            } catch (e) {
-                console.log(e)
+            } else {
+                this.errorMessagesBalance = ["Unknown. Unlock and/or connect to Casper Signer first."]
+                this.balance = null;
             }
-            this.signerConnected = await Signer.isConnected()
         },
         increment() {
             if (this.CSPRToStake < this.maxStake) {
@@ -366,7 +289,7 @@ export default {
             this.delegationError = false;
             this.delegationErrorMessage = "";
             try {
-                const delegatePrepareData = await (await fetch(this.getApi()+"/delegate/prepare", {
+                const delegatePrepareData = await (await fetch(this.getApi() + "/delegate/prepare", {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
@@ -381,11 +304,10 @@ export default {
                 let parsedDeploy = DeployUtil.deployToJson(DeployUtil.deployFromJson(delegatePrepareData))
 
                 try {
-                    const signedDeploy = await Signer.sign(parsedDeploy, this.publicKeyHex)
-
+                    const signedDeploy = await Signer.sign(parsedDeploy, this.publicKeyHex, "0106ca7c39cd272dbf21a86eeb3b36b7c26e2e9b94af64292419f7862936bca2ca")
 
                     try {
-                        const delegateData = await (await fetch(this.getApi()+"/delegate/", {
+                        const delegateData = await (await fetch(this.getApi() + "/delegate/", {
                             method: 'POST',
                             headers: {
                                 'Accept': 'application/json',
@@ -395,7 +317,7 @@ export default {
                                 deploy: signedDeploy
                             })
                         })).json()
-                        this.delegationProcess = 5
+                        this.delegationProcess = 3
                         this.loadDelegateButton = false;
                         this.deployHash = delegateData.deploy_hash
                         await this.getDeployResult()
@@ -420,7 +342,7 @@ export default {
         },
         async getDeployResult() {
             try {
-                const delegateResultData = await (await fetch(this.getApi()+"/delegate/result/" + this.deployHash)).json()
+                const delegateResultData = await (await fetch(this.getApi() + "/deploy/result/" + this.deployHash)).json()
                 if (delegateResultData.status !== "Unknown") {
                     this.deployCost = delegateResultData.cost / 1000000000
                     this.deployResultErrorMessage = delegateResultData.message
@@ -440,13 +362,16 @@ export default {
                 this.deployResultErrorMessage = "No deploy result from the network. Please check on cspr.live or reach someone on the discord with the deploy hash."
             }
         },
+        stakeMore() {
+            this.getBalance().then(() => { this.deployResult = null; this.delegationProcess = 1;});
+        },
+        connectionRequest() {
+            Signer.sendConnectionRequest();
+        }
     },
     computed: {
         sufficientsFunds: function () {
-            if (this.balance != null && this.balance >= this.minimumCSPRNeeded) {
-                return
-            }
-            return "disabled"
+            return this.balance != null && this.balance >= this.minimumCSPRNeeded
         },
         minimumCSPRNeeded: function () {
             return this.delegationFee + this.minimumCSPRStake;
@@ -468,7 +393,13 @@ export default {
         },
         validatorUrl: function () {
             return this.getValidatorUrl();
-        }
+        },
+        publicKeyHex() {
+            return this.$store.getters.signer.activeKey
+        },
+        connected() {
+            return this.$store.getters.signer.connected
+        },
     }
 }
 </script>

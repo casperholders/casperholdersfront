@@ -32,8 +32,8 @@ const routes = [
     component: Delegate
   },
   {
-    path: '/unstack',
-    name: 'Unstack',
+    path: '/unstake',
+    name: 'Unstake',
     component: Undelegate
   },
   {

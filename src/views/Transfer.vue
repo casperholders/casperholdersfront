@@ -1,7 +1,7 @@
 <template>
   <v-container
     fill-height
-    class="flex-column px-0"
+    class="flex-column"
   >
 
     <v-card
@@ -12,7 +12,7 @@
         class="align-center"
       >
         <v-avatar
-          class=""
+
           color="primary"
           size="52"
         >
@@ -124,7 +124,20 @@
             Balance : {{ balance }} CSPR<br />
             Remaining funds after transfer : {{ remainingBalance }} CSPR
           </p>
+          <p v-if="errorBalance">
+            <v-icon color="red">mdi-alert-circle</v-icon>
+            {{ errorMessagesBalance[0] }}
+            <v-btn
+              v-if="!this.$store.getters.signer.connected || this.publicKeyHex === null"
+              rounded
+              class="ml-2"
+              color="primary"
+              @click="connectionRequest"
+            >Connect
+            </v-btn>
+          </p>
         </v-card-text>
+
         <v-card-actions class="pa-4">
           <v-dialog
             v-model="confirmDialog"
@@ -140,7 +153,7 @@
                 large
                 class="rounded-xl"
                 :loading="transactionOnGoing"
-                :disabled="isTransactionOnGoing"
+                :disabled="isTransactionOnGoing || errorBalance"
               >
                 <v-icon left>
                   mdi-send
@@ -242,7 +255,7 @@
 </template>
 
 <script>
-import {DeployUtil, PublicKey, Signer} from "casper-client-sdk";
+import {CLPublicKey, DeployUtil, Signer} from "casper-js-sdk";
 
 export default {
     name: 'Transfer',
@@ -253,7 +266,7 @@ export default {
                 a => a.length >= 2 || 'Address is too short',
                 a => {
                     try {
-                        PublicKey.fromHex(a)
+                        CLPublicKey.fromHex(a)
                         return true;
                     } catch (e) {
                         return e.toString();
@@ -273,7 +286,6 @@ export default {
             confirmDialog: false,
             loadingSignAndDeploy: false,
             amount: 3,
-            publicKeyHex: null,
             loadingBalance: false,
             errorBalance: false,
             errorMessagesBalance: [],
@@ -295,32 +307,7 @@ export default {
         }
     },
     async mounted() {
-        try{
-            this.signerConnected = await Signer.isConnected();
-            if (this.signerConnected) {
-                this.loadingBalance = true;
-                this.publicKeyHex = await Signer.getActivePublicKey();
-                this.errorBalance = false;
-                this.errorMessagesBalance = [];
-                this.balance = null;
-                try {
-                    const balanceData = await(await fetch(this.getApi()+"/balance/" + this.publicKeyHex)).json()
-                    console.log(this.maxCSPRTransfer)
-                    this.balance = balanceData.balance / 1000000000
-                    console.log(this.maxCSPRTransfer)
-                    this.loadingBalance = false
-                }catch (e) {
-                    console.log(e)
-                    this.errorMessagesBalance = ["Unknown. Please check your public key hex."]
-                    this.loadingBalance = false
-                }
-            } else {
-                Signer.sendConnectionRequest();
-                this.balance = null;
-            }
-        }catch (e) {
-            console.log(e)
-        }
+        await this.getBalance()
     },
     computed: {
         isTransactionOnGoing: function () {
@@ -344,11 +331,33 @@ export default {
                 return this.getCsprLiveUrl() + "deploy/" + this.deployHash
             }
             return ""
+        },
+        publicKeyHex() {
+            return this.$store.getters.signer.activeKey
+        },
+    },
+    watch: {
+        async publicKeyHex() {
+            await this.getBalance()
+        },
+        balance() {
+            if (this.$store.getters.signer.connected && this.publicKeyHex !== null) {
+                if (this.balance == null || this.balance <= 3) {
+                    this.errorBalance = true;
+                    this.errorMessagesBalance = ["Insufficient funds. You must have more than 3 CSPR on your wallet."]
+                } else {
+                    this.errorBalance = false;
+                    this.errorMessagesBalance = []
+                }
+            } else {
+                this.errorBalance = true;
+                this.errorMessagesBalance = ["Unknown. Unlock and/or connect to Casper Signer first."]
+            }
         }
     },
     methods: {
         openPopup(on, event) {
-            if(this.$refs.form.validate()){
+            if (this.$refs.form.validate()) {
                 on.click(event);
                 this.transactionOnGoing = true;
             }
@@ -363,6 +372,28 @@ export default {
                 this.amount = parseInt(this.amount) - 1
             }
         },
+        async getBalance() {
+            if (this.$store.getters.signer.connected && this.publicKeyHex !== null) {
+                this.loadingBalance = true;
+                this.errorBalance = false;
+                this.errorMessagesBalance = [];
+                this.balance = null;
+                try {
+                    const balanceData = await (await fetch(this.getApi() + "/balance/" + this.publicKeyHex)).json()
+                    console.log(this.maxCSPRTransfer)
+                    this.balance = balanceData.balance / 1000000000
+                    console.log(this.maxCSPRTransfer)
+                    this.loadingBalance = false
+                } catch (e) {
+                    console.log(e)
+                    this.errorMessagesBalance = ["Unknown. Please check your public key hex."]
+                    this.loadingBalance = false
+                }
+            } else {
+                this.errorMessagesBalance = ["Unknown. Unlock and/or connect to Casper Signer first."]
+                this.balance = null;
+            }
+        },
         async sendDeploy() {
             this.transactionOnGoing = true;
             this.signed = false;
@@ -372,11 +403,10 @@ export default {
             this.loadingSignAndDeploy = true;
             const networkName = "casper-test";
             const paymentAmount = 10000;
-            console.log(this.publicKeyHex);
-            const from = PublicKey.fromHex(this.publicKeyHex);
+            const from = CLPublicKey.fromHex(this.publicKeyHex);
             console.log(from);
             console.log(this.address);
-            const to = PublicKey.fromHex(this.address);
+            const to = CLPublicKey.fromHex(this.address);
             console.log(to);
             let deployParams = new DeployUtil.DeployParams(
                 from,
@@ -399,7 +429,7 @@ export default {
                 this.deployHash = null
                 DeployUtil.validateDeploy(DeployUtil.deployFromJson(deploySinged))
                 try {
-                    let transferData = await (await fetch(this.getApi()+"/transfer/", {
+                    let transferData = await (await fetch(this.getApi() + "/transfer/", {
                         method: 'POST',
                         headers: {
                             'Accept': 'application/json',
@@ -429,7 +459,7 @@ export default {
         },
         async getDeployResult() {
             try {
-                let resultData = await (await fetch(this.getApi()+"/transfer/result/" + this.deployHash)).json();
+                let resultData = await (await fetch(this.getApi() + "/deploy/result/" + this.deployHash)).json();
                 if (resultData.status !== "Unknown") {
                     this.deployCost = resultData.cost / 1000000000
                     this.deployResultErrorMessage = resultData.message
@@ -452,6 +482,9 @@ export default {
                 this.deployResultErrorMessage = "No deploy result from the network. Please check on cspr.live or reach someone on the discord with the deploy hash."
             }
         },
+        connectionRequest() {
+            Signer.sendConnectionRequest();
+        }
     }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <v-container
     fill-height
-    class="flex-column px-0"
+    class="flex-column"
   >
     <v-card
       class="align-center rounded-xl secondary"
@@ -21,6 +21,7 @@
           fill-height
           align-center
           justify-center
+          :column="$vuetify.breakpoint.mobile"
         >
           <v-progress-circular
             v-if="!loaded"
@@ -28,23 +29,21 @@
             color="blue"
           ></v-progress-circular>
           <donut-chart
-            v-if="loaded"
-            :chartdata="datacollection"
+            style="max-width: 100%"
+            :chart-data="datacollection"
           ></donut-chart>
-          <div v-if="loaded">
+          <div
+            v-if="loaded"
+            :class="{'mt-2': $vuetify.breakpoint.mobile, 'mt-0': !$vuetify.breakpoint.mobile}"
+          >
                 <span
                   v-bind:key="label"
                   v-for="(label, i) in datacollection.labels"
                   class="ml-5"
                 ><v-icon
                   :color="datacollection.datasets[0].backgroundColor[i]"
-                >mdi-square</v-icon>{{
-                    label
-                  }} {{
-                    datacollection.datasets[0].data[i]
-                  }} CSPR ({{
-                    csprPercentage(i)
-                  }}%)<br /></span>
+                >mdi-square</v-icon>
+                  {{label}} <span class="cspr">{{datacollection.datasets[0].data[i]}} CSPR</span> ({{csprPercentage(i)}}%)<br /></span>
           </div>
         </v-layout>
       </v-card-text>
@@ -62,7 +61,7 @@
               rounded
               color="white"
             >
-              <v-list-item href="#">
+              <v-list-item to="/transfer">
                 <v-list-item-icon>
                   <v-icon>
                     mdi-send
@@ -73,7 +72,7 @@
                     Transfer
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    Transfer funds to another account
+                    Transfer funds
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
@@ -90,7 +89,7 @@
               rounded
               color="white"
             >
-              <v-list-item href="#">
+              <v-list-item to="stake">
                 <v-list-item-icon>
                   <v-icon>
                     mdi-safe
@@ -118,7 +117,7 @@
               rounded
               color="white"
             >
-              <v-list-item href="#">
+              <v-list-item to="unstake">
                 <v-list-item-icon>
                   <v-icon>
                     mdi-wallet
@@ -126,10 +125,10 @@
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title>
-                    Unstack
+                    Unstake
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    Unstack your tokens
+                    Unstake your tokens
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
@@ -142,8 +141,8 @@
 </template>
 
 <script>
-import DonutChart from "@/components/DonutChart";
-import {Signer} from "casper-client-sdk";
+
+import DonutChart from "@/components/chart/DonutChart";
 
 export default {
     name: 'Balance',
@@ -154,68 +153,96 @@ export default {
             labels: ['Loading'],
             datasets: [
                 {
-                    label: 'Data One',
                     backgroundColor: ['#00126b', '#af023f', '#ff473e'],
                     data: [0],
                     borderWidth: 0,
                 }
             ]
-        }
+        },
     }),
     computed: {
         csprPercentage() {
             let total = this.datacollection.datasets[0].data.reduce((a, b) => parseFloat(a) + parseFloat(b), 0);
-            if(total === 0){
+            if (total === 0) {
                 total = 1
             }
             return (index) => {
                 const value = parseFloat(this.datacollection.datasets[0].data[index]);
                 return Number(value / total * 100).toFixed(2)
             }
+        },
+        activeKey() {
+            return this.$store.getters.signer.activeKey
+        },
+    },
+    watch: {
+        async activeKey() {
+            await this.getCurrentBalance()
         }
     },
     async mounted() {
-        try {
-            if(!await Signer.isConnected()){
-                throw new Error("Casper Signer is not connected")
-            }
-            const publicKeyHex = await Signer.getActivePublicKey()
-            try {
-                let balanceData = await (await fetch(this.getApi()+"/balance/" + publicKeyHex)).json()
-                if(balanceData.balance === undefined){
-                    throw new Error("Can't retrieve balance. Please check your public key")
-                }
-                this.datacollection.labels = ['Available']
-                this.datacollection.datasets[0].data = [Number(balanceData.balance / 1000000000).toFixed(2)]
-                try {
-                    let stakeData = await (await fetch(this.getApi()+"/balance/stake/" + publicKeyHex)).json()
-                    let stake = Number(stakeData.balance / 1000000000).toFixed(2)
-                    this.datacollection.datasets[0].data.push(stake)
-                    if (stakeData.error !== undefined && stakeData.error !== "") {
-                        this.datacollection.labels.push(stakeData.error)
-                    } else {
-                        this.datacollection.labels.push("Staked")
-                    }
-                    if (this.datacollection.datasets[0].data[0] === "0.00" && this.datacollection.datasets[0].data[1] === "0.00") {
-                        this.datacollection.datasets[0].data = ["0", "0", "1"]
-                    }
-                }catch (e) {
-                    console.log(e)
-                    this.datacollection.datasets[0].data.push("0");
-                    this.datacollection.labels.push("Unable to retrieve staked balance.")
-                }
-            } catch (e) {
-                console.log(e);
-                this.datacollection.datasets[0].data = ["0", "0", "1"]
-                this.datacollection.labels = ["Unable to retrieve current balance."]
-            }
-        } catch (e) {
-            Signer.sendConnectionRequest();
-            console.log(e);
-            this.datacollection.labels = ["Please connect to Casper Signer first then it refresh."];
-            this.datacollection.datasets[0].data = ["0", "0", "1"];
-        }
+        await this.getCurrentBalance();
         this.loaded = true;
+    },
+    methods: {
+        async getCurrentBalance(){
+            let baseDatacollection = {
+                labels: ['Loading'],
+                datasets: [
+                    {
+                        backgroundColor: ['#00126b', '#af023f', '#ff473e'],
+                        data: [0,0,1],
+                        borderWidth: 0,
+                    }
+                ]
+            }
+
+            if(this.$store.getters.signer.activeKey !== null) {
+                let balanceData = null
+
+                try {
+                     balanceData = await (await fetch(this.getApi() + "/balance/" + this.$store.getters.signer.activeKey)).json()
+                } catch (e) {
+                    baseDatacollection.datasets[0].data = ["0", "0", "1"]
+                    baseDatacollection.labels = ["Can't retrieve balance. Please check your public key"]
+                    this.datacollection = baseDatacollection
+                    return
+                }
+
+                if (balanceData.balance === undefined) {
+                    baseDatacollection.datasets[0].data = ["0", "0", "1"]
+                    baseDatacollection.labels = ["Can't retrieve balance. Please check your public key"]
+                    this.datacollection = baseDatacollection
+                    return
+                }
+
+                baseDatacollection.labels = ['Available']
+                baseDatacollection.datasets[0].data = [Number(balanceData.balance / 1000000000).toFixed(2)]
+                try {
+                    let stakeData = await (await fetch(this.getApi() + "/balance/stake/" + this.$store.getters.signer.activeKey)).json()
+                    let stake = Number(stakeData.balance / 1000000000).toFixed(2)
+                    baseDatacollection.datasets[0].data.push(stake)
+                    if (stakeData.error !== undefined && stakeData.error !== "") {
+                        baseDatacollection.labels.push(stakeData.error)
+                    } else {
+                        baseDatacollection.labels.push("Staked")
+                    }
+                    if (baseDatacollection.datasets[0].data[0] === "0.00" && baseDatacollection.datasets[0].data[1] === "0.00") {
+                        baseDatacollection.datasets[0].data = ["0", "0", "1"]
+                    }
+                    this.datacollection = baseDatacollection
+                } catch (e) {
+                    console.log(e)
+                    baseDatacollection.datasets[0].data.push("0");
+                    baseDatacollection.labels.push("Unable to retrieve staked balance.")
+                    this.datacollection = baseDatacollection
+                }
+            } else {
+                baseDatacollection.datasets[0].data = ["0", "0", "1"]
+                baseDatacollection.labels = ["Unable to retrieve current balance. Unlock and/or connect to Casper Signer first."]
+                this.datacollection = baseDatacollection
+            }
+        }
     }
 }
 </script>

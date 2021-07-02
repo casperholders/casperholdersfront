@@ -1,7 +1,7 @@
 <template>
   <v-container
     fill-height
-    class="px-0 flex-column justify-center"
+    class="flex-column justify-center"
   >
     <v-card class="align-center rounded-xl secondary">
       <v-card-title class="align-center">
@@ -39,7 +39,5 @@
 <script>
 export default {
     name: 'FAQ',
-
-    data: () => ({})
 }
 </script>
