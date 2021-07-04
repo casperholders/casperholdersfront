@@ -7,7 +7,6 @@ Vue.use(Vuex)
 const debug = process.env.NODE_ENV !== 'production'
 
 const state = () => ({
-    drawer: false,
     signer: {
         connected: false,
         lock: false,
@@ -16,20 +15,10 @@ const state = () => ({
     }
 })
 
-
 const getters = {
-    drawer: (state) => {
-        return state.drawer;
-    },
-    signer: (state) => {
-        return state.signer
-    }
 }
 
 const mutations = {
-    setDrawer (state, { drawer }) {
-        state.drawer = drawer;
-    },
     setSigner(state, {connected, activeKey, version}) {
         state.signer.connected = connected;
         state.signer.activeKey = activeKey;
@@ -43,12 +32,6 @@ const mutations = {
 }
 
 const actions = {
-    toggleDrawer (context) {
-        context.commit('setDrawer', {drawer: !this.state.drawer});
-    },
-    setDrawer (context, drawer) {
-        context.commit('setDrawer', {drawer: drawer});
-    },
     async updateSignerStatus (context) {
         let connected = false;
         let activeKey = "";

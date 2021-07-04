@@ -1,25 +1,25 @@
 <template>
   <v-navigation-drawer
-    app
-    bottom
-    v-if="$vuetify.breakpoint.mobile"
-    color="secondary"
-    v-model="drawer"
-    height="100%"
+      app
+      bottom
+      v-if="$vuetify.breakpoint.mobile"
+      color="secondary"
+      v-model="drawer"
+      height="100%"
   >
     <div
-      v-bind:key="name"
-      v-for="(items, name) in links"
+        v-bind:key="name"
+        v-for="(items, name) in links"
     >
       <v-subheader>{{ name }}</v-subheader>
       <v-list
-        dense
+          dense
       >
         <v-list-item
-          v-for="item in items"
-          :key="item.title"
-          :to="item.route"
-          link
+            v-for="item in items"
+            :key="item.title"
+            :to="item.route"
+            link
         >
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
@@ -38,9 +38,9 @@
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-list-item-avatar
-                :color="signer.connected ? 'green' : 'red'"
-                v-bind="attrs"
-                v-on="on"
+                  :color="signer.connected ? 'green' : 'red'"
+                  v-bind="attrs"
+                  v-on="on"
               >
                 <v-icon>{{ signer.connected ? "mdi-check-bold" : "mdi-close-thick" }}</v-icon>
               </v-list-item-avatar>
@@ -71,27 +71,23 @@
 import {mapState} from "vuex";
 
 export default {
-    name: "NavigationDrawer",
-    props: ['links'],
-    data: () => ({
-        network: "",
-    }),
-    computed: {
-        ...mapState([
-            "signer",
-        ]),
-        drawer: {
-            get() {
-                return this.$store.getters.drawer
-            },
-            set(v) {
-                this.$store.dispatch('setDrawer', v)
-            }
-        },
-    },
-    mounted() {
-        this.network = process.env.VUE_APP_NETWORK
-    }
+  name: "NavigationDrawer",
+  props: ['links'],
+  data: () => ({
+    network: "",
+    drawer: false,
+  }),
+  computed: {
+    ...mapState([
+      "signer",
+    ]),
+  },
+  mounted() {
+    this.network = process.env.VUE_APP_NETWORK
+    this.$root.$on('toggleDrawer', () => {
+      this.drawer = !this.drawer
+    })
+  }
 }
 </script>
 

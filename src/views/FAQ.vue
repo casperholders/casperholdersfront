@@ -1,9 +1,9 @@
 <template>
   <v-container
     fill-height
-    class="flex-column justify-center"
+    class="flex-column justify-center container__small"
   >
-    <v-card class="align-center rounded-xl secondary">
+    <v-card class="align-center rounded-xl secondary" width="100%">
       <v-card-title class="align-center">
         <v-avatar
           color="primary"

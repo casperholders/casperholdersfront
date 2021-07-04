@@ -2,6 +2,7 @@
   <v-container
     fluid
     fill-height
+    class="container__small"
   >
     <v-layout>
       <v-flex
