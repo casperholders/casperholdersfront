@@ -1,57 +1,57 @@
 <template>
   <v-dialog
-      v-model="confirmDialog"
-      persistent
-      max-width="500"
+    v-model="confirmDialog"
+    persistent
+    max-width="500"
   >
     <template v-slot:activator="{ on, attrs }">
       <v-btn
-          color="primary"
-          dark
-          v-bind="attrs"
-          @click="openPopup(on,$event)"
-          large
-          class="rounded-xl"
-          :loading="transactionOnGoing"
-          :disabled="isTransactionOnGoing || errorBalance"
+        color="primary"
+        dark
+        v-bind="attrs"
+        @click="openPopup(on,$event)"
+        large
+        class="rounded-xl"
+        :loading="operationOnGoing"
+        :disabled="disabledOperation"
       >
         <v-icon left>
-          mdi-send
+          {{ icon }}
         </v-icon>
-        Send Transaction
+        {{ title }}
       </v-btn>
     </template>
     <v-card
-        class="rounded-xl primary"
+      class="rounded-xl primary"
     >
       <v-card-title class="text-h5">
-        Transfer Confirmation
+        Confirmation
       </v-card-title>
       <v-card-subtitle>
-        Please confirm the following information before signing and sending the transfer.
+        Please confirm the following information before signing and sending the operation.
       </v-card-subtitle>
       <v-card-text class="text-body-1">
-        Amount : {{ amount }} CSPR<br/>
-        Transfer fee : {{ transferFee }} CSPR<br/>
-        Remaining funds after transfer : {{ remainingBalance }} CSPR<br/>
+        Amount : {{ amount }} CSPR<br />
+        Fee : {{ fee }} CSPR<br />
+        Remaining funds after operation : {{ remainingBalance }} CSPR<br />
       </v-card-text>
-      <v-card-text v-if="signError">
+      <v-card-text v-if="errorDeploy">
         <v-icon color="red">mdi-alert-circle</v-icon>
-        Oops... A problem as occured. Please retry to sign or check the transfer values.
+        Oops... A problem as occured. {{ errorDeployMessage }}
       </v-card-text>
       <v-card-actions class="pa-5">
         <v-btn
-            color="secondary"
-            class="rounded-xl"
-            @click="transactionOnGoing = false; confirmDialog = false"
+          color="secondary"
+          class="rounded-xl"
+          @click="closePopup"
         >
           Disagree
         </v-btn>
         <v-btn
-            color="quaternary"
-            class="rounded-xl ml-5"
-            @click="sendDeploy"
-            :loading="loadingSignAndDeploy"
+          color="quaternary"
+          class="rounded-xl ml-5"
+          @click="sendDeploy"
+          :loading="loadingSignAndDeploy"
         >
           Agree & Sign
         </v-btn>
@@ -62,31 +62,81 @@
 
 <script>
 export default {
-  name: "OperationDialog",
-  props: ['transactionOnGoing', 'sendDeploy'],
-  data() {
-    return {
-      loadingSignAndDeploy: false,
-      confirmDialog: false,
+    name: "OperationDialog",
+    props: {
+        icon: {
+            required: true,
+            type: String,
+            default: ""
+        },
+        title: {
+            required: true,
+            type: String,
+            default: ""
+        },
+        operationOnGoing: {
+            required: true,
+            type: Boolean,
+            default: false
+        },
+        sendDeploy: {
+            required: true,
+            type: Function
+        },
+        openPopup: {
+            required: true,
+            type: Function
+        },
+        loadingSignAndDeploy: {
+            required: true,
+            type: Boolean,
+            default: false
+        },
+        errorDeploy: {
+            required: true,
+            type: Boolean,
+            default: false
+        },
+        errorDeployMessage: {
+            required: true,
+            type: String,
+            default: ""
+        },
+        amount: {
+            required: true,
+            type: [Number, String],
+            default: 0
+        },
+        fee: {
+            required: true,
+            type: Number,
+            default: 0
+        },
+        remainingBalance: {
+            required: true,
+            type: Number,
+            default: 0
+        },
+        disabledOperation: {
+            required: true,
+            type: Boolean,
+            default: false
+        },
+    },
+    data() {
+        return {
+            confirmDialog: false,
+        }
+    },
+    mounted() {
+        this.$root.$on('closeOperationDialog', () => this.confirmDialog = false)
+    },
+    methods: {
+        closePopup() {
+            this.$emit("operationCanceled")
+            this.confirmDialog = false
+        }
     }
-  },
-  computed: {
-    isTransactionOnGoing() {
-      if (!this.transactionOnGoing) {
-        return
-      }
-      return "disabled"
-    },
-  },
-  methods: {
-    openPopup(on, event) {
-      //TODO check if possible from child component and still necessary since the form use lazy-validation
-      //if (this.$refs.form.validate()) {
-        on.click(event);
-        this.$emit('openPopup');
-      //}
-    },
-  }
 }
 </script>
 

@@ -1,12 +1,13 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '@/views/Home.vue'
-import Delegate from "@/views/Delegate";
-import Undelegate from "@/views/Undelegate";
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import Home from '@/views/Home.vue';
 import Balance from "@/views/Balance";
-import Transfer from "@/views/Transfer";
 import FAQ from "@/views/FAQ";
 import Contact from "@/views/Contact";
+import TransferNew from "@/views/TransferNew";
+import DelegateNew from "@/views/DelegateNew";
+import UndelegateNew from "@/views/UndelegateNew";
+import AddBid from "@/views/AddBid";
 
 Vue.use(VueRouter)
 
@@ -24,17 +25,22 @@ const routes = [
   {
     path: '/transfer',
     name: 'Transfer',
-    component: Transfer
+    component: TransferNew
   },
   {
     path: '/stake',
     name: 'Stake',
-    component: Delegate
+    component: DelegateNew
   },
   {
     path: '/unstake',
     name: 'Unstake',
-    component: Undelegate
+    component: UndelegateNew
+  },
+  {
+    path: '/addbid',
+    name: 'Add Bid',
+    component: AddBid
   },
   {
     path: '/faq',

@@ -1,47 +1,8 @@
 <template>
   <v-container
-      fill-height
-      class="flex-column container__small"
+    fill-height
+    class="flex-column container__small"
   >
-    <operation icon="mdi-send" title="Transfer">
-      <v-text-field
-          color="white"
-          v-model="address"
-          :value="address"
-          label="Send to address"
-          :rules="addressRules"
-          required
-          prepend-icon="mdi-account"
-      ></v-text-field>
-      <v-text-field
-          color="white"
-          :value="transferID"
-          label="Transfer ID"
-          :rules="transferIDRules"
-          required
-          prepend-icon="mdi-music-accidental-sharp"
-          hint="Set to 0 if not known"
-      />
-      <Amount :value="amount" @input="amount = $event" :fee="transferFee" :minimum-c-s-p-r="minimumCSPRTransfer"
-              :balance="balance"/>
-      <p>
-        Transfer Fee : {{ transferFee }} CSPR<br/>
-        Balance : {{ balance }} CSPR<br/>
-        Remaining funds after transfer : {{ remainingBalance }} CSPR<br/>
-        <template v-if="errorBalance">
-          <v-icon color="red">mdi-alert-circle</v-icon>
-          {{ errorMessagesBalance[0] }}
-          <v-btn
-              v-if="!this.signer.connected || this.signer.activeKey === null"
-              rounded
-              class="ml-2"
-              color="primary"
-              @click="connectionRequest"
-          >Connect
-          </v-btn>
-        </template>
-      </p>
-    </operation>
     <v-card
         width="100%"
         class="align-center rounded-xl secondary"
@@ -175,11 +136,10 @@ import {CLPublicKey, DeployUtil, Signer} from "casper-js-sdk";
 import Amount from "@/components/operations/Amount";
 import OperationResult from "@/components/operations/OperationResult";
 import {mapState} from "vuex";
-import Operation from "@/components/operations/Operation";
 
 export default {
   name: 'Transfer',
-  components: {Operation, OperationResult, Amount},
+  components: {OperationResult, Amount},
   data() {
     return {
       addressRules: [

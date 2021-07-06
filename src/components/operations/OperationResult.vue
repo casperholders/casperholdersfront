@@ -1,35 +1,36 @@
 <template>
   <v-card
       class="align-center rounded-xl secondary mt-5"
-      min-width="50vw"
+      width="100%"
   >
     <v-card-title>
-      {{ operationTitle }} result
+      Operation result
     </v-card-title>
     <v-card-text
         class="text-body-1"
     >
-      Here's your deploy hash : <a :href="deployHashUrl">{{ deployHash }}
+      Here's your deploy hash : <a :href="deployHashUrl" target="_blank">{{ deployHash }}
       <v-icon x-small>mdi-open-in-new</v-icon>
     </a><br/>
       <span v-if="deployResult==null">
                   Waiting for the deploy result ...<br/>
                   Re-trying every 30s.<br/>
-                  Number of tries : {{ tries }}<br/>
+                  Number of tries : {{ tries }}
                   <v-progress-circular
                       indeterminate
-                      color="blue"
+                      color="white"
+                      class="ml-3"
                   ></v-progress-circular>
                 </span>
-      <span v-if="deployResult!=null">
-                  Status of the {{ operationLowerCase }} operation :<br/>
+      <span v-if="deployResult!==null">
+                  Status of the operation :<br/>
                 </span>
-      <span v-if="deployResult!=null && deployResult">
-                  <v-icon color="green">mdi-checkbox-marked-circle</v-icon> Congrats ! You've {{ operationConjugated }} : {{ amount }} CSPR with {{
+      <span v-if="deployResult!==null && deployResult">
+                  <v-icon color="green">mdi-checkbox-marked-circle</v-icon> Congrats ! The operation succeeded with this amount : {{ amount }} CSPR and {{
           deployCost
-        }} CSPR transaction fee.
+        }} CSPR operation fee.
                 </span>
-      <span v-if="deployResult!=null && !deployResult">
+      <span v-if="deployResult!==null && !deployResult">
                   <v-icon color="red">mdi-alert-circle</v-icon> Oops... A problem as occured. Check the error message here (or on the cspr.live website) :<br/>
                   {{ deployResultErrorMessage }}.<br/>
                   Operation fee total cost : {{ deployCost }} CSPR.
@@ -41,7 +42,18 @@
 <script>
 export default {
   name: "OperationResult",
-  props: ['deployHash', 'amount'],
+  props: {
+      deployHash: {
+          required: true,
+          type: String,
+          default: ""
+      },
+      amount: {
+          required: true,
+          type: Number,
+          default: 0
+      }
+  },
   data() {
     return {
       deployResult: null,
@@ -52,20 +64,11 @@ export default {
   },
   computed: {
     deployHashUrl() {
-      if (this.deployHash != null) {
+      if (this.deployHash !== "") {
         return this.getCsprLiveUrl() + "deploy/" + this.deployHash
       }
       return ""
     },
-    operationTitle() {
-      return "Transfer"
-    },
-    operationConjugated() {
-      return "transferred"
-    },
-    operationLowerCase() {
-      return this.operationTitle.toLowerCase()
-    }
   },
   async mounted() {
     this.deployResult = null;

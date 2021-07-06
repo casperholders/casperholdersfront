@@ -82,7 +82,7 @@ export default {
                 {title: 'Unstake', icon: 'mdi-lock-open', route: 'unstake'},
             ],
             Validators: [
-                {title: 'Add Bid (WIP)', icon: 'mdi-gavel'},
+                {title: 'Add Bid', icon: 'mdi-gavel', route: 'addbid'},
                 {title: 'Withdraw Bid (WIP)', icon: 'mdi-connection'},
             ],
             Developers: [

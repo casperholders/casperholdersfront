@@ -56,7 +56,7 @@
           >
             <v-icon>mdi-thought-bubble-outline</v-icon>
           </v-avatar>
-            Future features
+          Future features
         </v-card-title>
         <v-card-text class="text-body-1">
           <v-icon
@@ -64,7 +64,7 @@
             left
           >mdi-account
           </v-icon>
-          Interactive tutorial & UI Improvements<br />
+          Operation history<br />
           <v-icon
             color="quaternary"
             left
