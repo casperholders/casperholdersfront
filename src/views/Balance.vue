@@ -4,9 +4,8 @@
     fill-height
   >
     <v-card
-      color="secondary"
-      class="rounded-xl"
       width="100%"
+      class="align-center rounded-xl secondary"
     >
       <v-card-title class="align-center">
         <v-avatar
@@ -146,10 +145,9 @@
 </template>
 
 <script>
-
     import DonutChart from "@/components/chart/DonutChart";
     import { mapState } from "vuex";
-    import { Balance } from "../services/balance";
+    import { Balance } from "@/services/balance";
 
     export default {
         name: "Balance",
@@ -198,23 +196,18 @@
             },
             async fetchBalances() {
                 const newChartData = this.createLoadingChartData();
-
                 try {
                     const balance = await Balance.fetchBalance();
-
                     newChartData.labels = ["Available"];
                     newChartData.datasets[0].data = [balance, 0, 0];
                 } catch (error) {
                     newChartData.labels = [error.message];
-
                     this.chartData = newChartData;
-
                     return;
                 }
 
                 try {
                     const stakedBalance = await Balance.fetchStakeBalance();
-
                     newChartData.labels.push("Stacked");
                     newChartData.datasets[0].data[1] = stakedBalance;
                 } catch (error) {

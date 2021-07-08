@@ -1,15 +1,11 @@
 <template>
   <operation
-    icon="mdi-send"
+    icon="mdi-safe"
     title="Stake"
     submit-title="Stake"
     :send-deploy="sendDeploy"
     :loading-sign-and-deploy="loadingSignAndDeploy"
-    :error-deploy="errorDeploy"
-    :error-deploy-message="errorDeployMessage"
-    :signed="signed"
     :deploy-hash="deployHash"
-    :error-balance="errorBalance"
     :amount="amount"
     :fee="delegationFee"
     :remaining-balance="remainingBalance"
@@ -45,19 +41,20 @@
       </template>
       <br />
       Remaining funds after staking : {{ remainingBalance }} CSPR<br />
-      <template v-if="errorBalance">
-        <v-icon color="red">mdi-alert-circle</v-icon>
-        {{ errorMessagesBalance[0] }}
-        <v-btn
-          v-if="!this.signer.connected || this.signer.activeKey === null"
-          rounded
-          class="ml-2"
-          color="primary"
-          @click="connectionRequest"
-        >Connect
-        </v-btn>
-      </template>
     </p>
+    <v-alert prominent dense class="mt-5" type="error" v-if="errorBalance">
+      <v-row align="center">
+        <v-col class="grow">
+          {{ errorBalance.message }}
+        </v-col>
+        <v-col class="shrink">
+          <v-btn v-if="isInstanceOfNoActiveKeyError" color="primary" @click="connectionRequest">Retry</v-btn>
+        </v-col>
+      </v-row>
+    </v-alert>
+    <v-alert dense class="mt-5" type="error" v-if="errorDeploy">
+      {{ errorDeploy.message }}
+    </v-alert>
   </operation>
 </template>
 
@@ -66,7 +63,10 @@ import Operation from "@/components/operations/Operation";
 import Amount from "@/components/operations/Amount";
 import {Signer} from "casper-js-sdk";
 import {mapState} from "vuex";
-import {Backend} from "@/services/backend";
+import {Balance} from "@/services/balance";
+import {InsufficientFunds} from "@/services/errors/insufficientFunds";
+import {NoActiveKeyError} from "@/services/errors/noActiveKeyError";
+import {Staking} from "@/services/staking";
 
 export default {
     name: "DelegateNew",
@@ -76,14 +76,11 @@ export default {
             minimumCSPRStake: 1,
             delegationFee: 3,
             amount: 1,
-            errorBalance: false,
-            errorMessagesBalance: [],
+            errorBalance: null,
             balance: 0,
             loadingSignAndDeploy: false,
-            errorDeploy: false,
-            errorDeployMessage: "",
+            errorDeploy: null,
             deployHash: "",
-            signed: false,
             loadingBalance: false,
         }
     },
@@ -101,6 +98,9 @@ export default {
         minimumFundsNeeded() {
             return this.minimumCSPRStake + this.delegationFee;
         },
+        isInstanceOfNoActiveKeyError(){
+            return this.errorBalance instanceof NoActiveKeyError
+        }
     },
     watch: {
         async 'signer.activeKey'() {
@@ -109,41 +109,35 @@ export default {
     },
     async mounted() {
         await this.getBalance();
+        this.$root.$on("operationOnGoing", () => this.errorDeploy = null)
     },
     methods: {
         async getBalance() {
             this.loadingBalance = true;
-            this.errorBalance = false;
-            this.errorMessagesBalance = [];
+            this.errorBalance = null;
             this.balance = 0;
             try {
-                this.balance = await Backend.getBalance();
-                this.loadingBalance = false;
+                this.balance = await Balance.fetchBalance();
                 if (this.balance <= this.minimumFundsNeeded) {
-                    this.errorBalance = true;
-                    this.errorMessagesBalance = ["Insufficient funds. You must have more than " + this.minimumFundsNeeded + " CSPR on your wallet."]
+                    throw new InsufficientFunds(this.minimumFundsNeeded)
                 }
             } catch (e) {
-                this.loadingBalance = false;
-                this.errorMessagesBalance = [e]
-                this.errorBalance = true;
+                this.errorBalance = e;
             }
+            this.loadingBalance = false;
         },
         async sendDeploy() {
-            this.signed = false;
-            this.errorDeploy = false;
-            this.errorDeployMessage = "";
+            this.deployHash = "";
+            this.errorDeploy = null;
             this.loadingSignAndDeploy = true;
             try {
-                this.deployHash = await Backend.sendDelegate(this.amount)
-                this.loadingSignAndDeploy = false;
-                this.$root.$emit('closeOperationDialog');
-                this.signed = true;
+                this.deployHash = await Staking.sendDelegate(this.amount);
             } catch (e) {
-                this.errorDeploy = true;
-                this.loadingSignAndDeploy = false;
-                this.errorDeployMessage = e;
+                this.errorDeploy = e;
+                this.$root.$emit('operationFinished');
             }
+            this.loadingSignAndDeploy = false;
+            this.$root.$emit('closeOperationDialog');
         },
         connectionRequest() {
             Signer.sendConnectionRequest();

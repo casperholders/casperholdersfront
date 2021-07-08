@@ -14,6 +14,7 @@
     "casper-js-sdk": "^2.0.0",
     "chart.js": "2",
     "core-js": "^3.6.5",
+    "v-snackbars": "^3.2.4",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.1",
     "vue-router": "^3.2.0",

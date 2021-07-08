@@ -9,7 +9,7 @@
           color="primary"
           size="52"
         >
-          <v-icon>mdi-wallet</v-icon>
+          <v-icon>mdi-help</v-icon>
         </v-avatar>
         <v-card-title class="pl-4" style="word-break: break-word">Frequently Asked Questions</v-card-title>
       </v-card-title>

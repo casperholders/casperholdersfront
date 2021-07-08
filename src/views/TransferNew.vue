@@ -1,71 +1,70 @@
 <template>
-  <operation
-    icon="mdi-send"
-    title="Transfer"
-    submit-title="Send Transaction"
-    :send-deploy="sendDeploy"
-    :loading-sign-and-deploy="loadingSignAndDeploy"
-    :error-deploy="errorDeploy"
-    :error-deploy-message="errorDeployMessage"
-    :signed="signed"
-    :deploy-hash="deployHash"
-    :error-balance="errorBalance"
-    :amount="amount"
-    :fee="transferFee"
-    :remaining-balance="remainingBalance"
-  >
-    <v-text-field
-      color="white"
-      v-model="address"
-      :value="address"
-      label="Send to address"
-      :rules="addressRules"
-      required
-      prepend-icon="mdi-account"
-    ></v-text-field>
-    <v-text-field
-      color="white"
-      :value="transferID"
-      label="Transfer ID"
-      :rules="transferIDRules"
-      required
-      prepend-icon="mdi-music-accidental-sharp"
-      hint="Set to 0 if not known"
-    />
-    <Amount
-      :value="amount"
-      @input="amount = $event"
+  <div>
+    <operation
+      icon="mdi-send"
+      title="Transfer"
+      submit-title="Send Transaction"
+      :send-deploy="sendDeploy"
+      :loading-sign-and-deploy="loadingSignAndDeploy"
+      :deploy-hash="deployHash"
+      :amount="amount"
       :fee="transferFee"
-      :min="minimumCSPRTransfer"
-      :balance="balance"
-    />
-    <p>
-      Transfer Fee : {{ transferFee }} CSPR<br />
-      Balance : {{ balance }} CSPR
-      <template v-if="loadingBalance">
-        Loading balance ...
-        <v-progress-circular
-          indeterminate
-          color="white"
-          class="ml-3"
-        ></v-progress-circular>
-      </template>
-      <br />
-      Remaining funds after transfer : {{ remainingBalance }} CSPR<br />
-      <template v-if="errorBalance">
-        <v-icon color="red">mdi-alert-circle</v-icon>
-        {{ errorMessagesBalance[0] }}
-        <v-btn
-          v-if="!this.signer.connected || this.signer.activeKey === null"
-          rounded
-          class="ml-2"
-          color="primary"
-          @click="connectionRequest"
-        >Connect
-        </v-btn>
-      </template>
-    </p>
-  </operation>
+      :remaining-balance="remainingBalance"
+    >
+      <v-text-field
+        color="white"
+        v-model="address"
+        :value="address"
+        label="Send to address"
+        :rules="addressRules"
+        required
+        prepend-icon="mdi-account"
+      ></v-text-field>
+      <v-text-field
+        color="white"
+        :value="transferID"
+        label="Transfer ID"
+        :rules="transferIDRules"
+        required
+        prepend-icon="mdi-music-accidental-sharp"
+        hint="Set to 0 if not known"
+      />
+      <Amount
+        :value="amount"
+        @input="amount = $event"
+        :fee="transferFee"
+        :min="minimumCSPRTransfer"
+        :balance="balance"
+      />
+      <p>
+        Transfer Fee : {{ transferFee }} CSPR<br />
+        Balance : {{ balance }} CSPR
+        <template v-if="loadingBalance">
+          Loading balance ...
+          <v-progress-circular
+            indeterminate
+            color="white"
+            class="ml-3"
+          ></v-progress-circular>
+        </template>
+        <br />
+        Remaining funds after transfer : {{ remainingBalance }} CSPR<br />
+      </p>
+      <v-alert prominent dense class="mt-5" type="error" v-if="errorBalance">
+        <v-row align="center">
+          <v-col class="grow">
+            {{ errorBalance.message }}
+          </v-col>
+          <v-col class="shrink">
+            <v-btn v-if="isInstanceOfNoActiveKeyError" color="primary" @click="connectionRequest">Retry</v-btn>
+          </v-col>
+        </v-row>
+      </v-alert>
+      <v-alert dense class="mt-5" type="error" v-if="errorDeploy">
+        {{ errorDeploy.message }}
+      </v-alert>
+    </operation>
+  </div>
 </template>
 
 <script>
@@ -73,7 +72,10 @@ import Operation from "@/components/operations/Operation";
 import Amount from "@/components/operations/Amount";
 import {CLPublicKey, Signer} from "casper-js-sdk";
 import {mapState} from "vuex";
-import {Backend} from "@/services/backend";
+import {Balance} from "@/services/balance";
+import {InsufficientFunds} from "@/services/errors/insufficientFunds";
+import {NoActiveKeyError} from "@/services/errors/noActiveKeyError";
+import {Transfer} from "@/services/transfer";
 
 export default {
     name: "TransferNew",
@@ -101,14 +103,11 @@ export default {
             minimumCSPRTransfer: 2.5,
             transferFee: 10000 / 1000000000,
             amount: 2.5,
-            errorBalance: false,
-            errorMessagesBalance: [],
+            errorBalance: null,
             balance: 0,
             loadingSignAndDeploy: false,
-            errorDeploy: false,
-            errorDeployMessage: "",
+            errorDeploy: null,
             deployHash: "",
-            signed: false,
             loadingBalance: false,
         }
     },
@@ -123,46 +122,46 @@ export default {
         minimumFundsNeeded() {
             return this.minimumCSPRTransfer + this.transferFee;
         },
+        isInstanceOfNoActiveKeyError(){
+            return this.errorBalance instanceof NoActiveKeyError
+        }
     },
     watch: {
         async 'signer.activeKey'() {
             await this.getBalance()
         }
     },
+    async mounted() {
+        await this.getBalance();
+        this.$root.$on("operationOnGoing", () => this.errorDeploy = null)
+    },
     methods: {
         async getBalance() {
             this.loadingBalance = true;
-            this.errorBalance = false;
-            this.errorMessagesBalance = [];
+            this.errorBalance = null;
             this.balance = 0;
             try {
-                this.balance = await Backend.getBalance();
-                this.loadingBalance = false;
+                this.balance = await Balance.fetchBalance();
                 if (this.balance <= this.minimumFundsNeeded) {
-                    this.errorBalance = true;
-                    this.errorMessagesBalance = ["Insufficient funds. You must have more than " + this.minimumFundsNeeded + " CSPR on your wallet."]
+                    throw new InsufficientFunds(this.minimumFundsNeeded)
                 }
             } catch (e) {
-                this.loadingBalance = false;
-                this.errorMessagesBalance = [e]
-                this.errorBalance = true;
+                this.errorBalance = e;
             }
+            this.loadingBalance = false;
         },
         async sendDeploy() {
-            this.signed = false;
-            this.errorDeploy = false;
-            this.errorDeployMessage = "";
+            this.deployHash = "";
+            this.errorDeploy = null;
             this.loadingSignAndDeploy = true;
             try {
-                this.deployHash = await Backend.sendTransfer(this.address, this.amount, this.transferID);
-                this.loadingSignAndDeploy = false;
-                this.$root.$emit('closeOperationDialog');
-                this.signed = true;
+                this.deployHash = await Transfer.sendTransfer(this.address, this.amount, this.transferID);
             } catch (e) {
-                this.errorDeploy = true;
-                this.loadingSignAndDeploy = false;
-                this.errorDeployMessage = e;
+                this.errorDeploy = e;
+                this.$root.$emit('operationFinished');
             }
+            this.loadingSignAndDeploy = false;
+            this.$root.$emit('closeOperationDialog');
         },
         connectionRequest() {
             Signer.sendConnectionRequest();

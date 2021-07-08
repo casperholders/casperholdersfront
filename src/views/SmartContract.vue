@@ -1,36 +1,54 @@
 <template>
   <operation
-    icon="mdi-lock-open"
-    title="Unstake"
-    submit-title="Unstake"
+    icon="mdi-file-document-edit"
+    title="Send smart contract"
+    submit-title="Deploy"
     :send-deploy="sendDeploy"
     :loading-sign-and-deploy="loadingSignAndDeploy"
     :deploy-hash="deployHash"
-    :amount="amount"
-    :fee="undelegateFee"
+    :amount="amount*contracts.length"
+    :fee="0"
     :remaining-balance="remainingBalance"
   >
-    <p class="text-body-1 mb-10"><!-- TODO Do a proper margin -->
-      Here's your validator : <a
-        :href=validatorUrl
-      >{{ getValidator() }}
-        <v-icon x-small>mdi-open-in-new</v-icon>
-      </a><br />
-      <br />
-      Actually there's a commission rate of 5%. (Applies on the staking rewards only.)<br />
-      Exemple : if you receive 100 CSPR rewards from staking, CasperHolders will received 5 CSPR and you will
-      get 95 CSPR.
-    </p>
+    <v-file-input
+      v-model="contracts"
+      counter
+      color="white"
+      label="Smart Contracts"
+      multiple
+      placeholder="Select your contracts"
+      prepend-icon="mdi-paperclip"
+      outlined
+      accept=".wasm"
+      :show-size="1000"
+    >
+      <template v-slot:selection="{ index, text }">
+        <v-chip
+          v-if="index < 2"
+          dark
+          label
+          small
+        >
+          {{ text }}
+        </v-chip>
+
+        <span
+          v-else-if="index === 2"
+          class="text-overline grey--text text--darken-3 mx-2"
+        >
+        +{{ contracts.length - 2 }} File(s)
+      </span>
+      </template>
+    </v-file-input>
     <Amount
       :value="amount"
       @input="amount = $event"
       :fee="Number(0)"
-      :min="minimumCSPRUnstake"
-      :balance="stakingBalance"
+      :min="minPayment"
+      :balance="balance/(contracts.length>0?contracts.length:1)"
     />
     <p>
-      Undelegation fee : {{ undelegateFee }} CSPR<br />
-      Staking balance : {{ stakingBalance }} CSPR<br />
+      Payment amount for each smart contracts : {{ amount }} CSPR<br />
       Balance : {{ balance }} CSPR
       <template v-if="loadingBalance">
         Loading balance ...
@@ -41,7 +59,8 @@
         ></v-progress-circular>
       </template>
       <br />
-      Balance after unstake : {{ balance - undelegateFee + amount }} CSPR<br />
+      Total cost : {{ amount * contracts.length }} CSPR<br />
+      Remaining funds after operation : {{ remainingBalance }} CSPR<br />
     </p>
     <v-alert prominent dense class="mt-5" type="error" v-if="errorBalance">
       <v-row align="center">
@@ -67,19 +86,18 @@ import {mapState} from "vuex";
 import {Balance} from "@/services/balance";
 import {InsufficientFunds} from "@/services/errors/insufficientFunds";
 import {NoActiveKeyError} from "@/services/errors/noActiveKeyError";
-import {Staking} from "@/services/staking";
+import {SmartContract} from "@/services/smartContract";
 
 export default {
     name: "DelegateNew",
     components: {Amount, Operation},
     data() {
         return {
-            minimumCSPRUnstake: 1,
-            undelegateFee: 1,
+            minPayment: 1,
+            contracts: [],
             amount: 1,
-            errorBalance: null,
             balance: 0,
-            stakingBalance: 0,
+            errorBalance: null,
             loadingSignAndDeploy: false,
             errorDeploy: null,
             deployHash: "",
@@ -91,14 +109,11 @@ export default {
             "signer",
         ]),
         remainingBalance() {
-            let result = this.balance - this.undelegateFee + this.amount
+            let result = this.balance - (this.amount * this.contracts.length)
             return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0
         },
         validatorUrl() {
-            return this.getValidatorUrl();
-        },
-        minimumFundsNeeded() {
-            return this.undelegateFee;
+            return this.getCsprLiveUrl() + "validator/" + this.signer.activeKey;
         },
         isInstanceOfNoActiveKeyError(){
             return this.errorBalance instanceof NoActiveKeyError
@@ -118,12 +133,10 @@ export default {
             this.loadingBalance = true;
             this.errorBalance = null;
             this.balance = 0;
-            this.stakingBalance = 0;
             try {
                 this.balance = await Balance.fetchBalance();
-                this.stakingBalance = await Balance.fetchStakeBalance();
-                if (this.balance <= this.minimumFundsNeeded) {
-                    throw new InsufficientFunds(this.minimumFundsNeeded)
+                if (this.balance <= this.minPayment) {
+                    throw new InsufficientFunds(this.minPayment)
                 }
             } catch (e) {
                 this.errorBalance = e;
@@ -135,7 +148,7 @@ export default {
             this.errorDeploy = null;
             this.loadingSignAndDeploy = true;
             try {
-                this.deployHash = await Staking.sendUndelegate(this.amount);
+                this.deployHash = await SmartContract.deploy(this.contracts, this.amount);
             } catch (e) {
                 this.errorDeploy = e;
                 this.$root.$emit('operationFinished');
@@ -145,7 +158,7 @@ export default {
         },
         connectionRequest() {
             Signer.sendConnectionRequest();
-        }
+        },
     }
 }
 </script>

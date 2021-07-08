@@ -11,13 +11,13 @@
         class="align-center"
       >
         <v-avatar
-
           color="primary"
           size="52"
+          class="mr-4"
         >
           <v-icon>{{ icon }}</v-icon>
         </v-avatar>
-        <v-card-title class="pl-4">{{ title }}</v-card-title>
+        {{ title }}
       </v-card-title>
       <v-form
         ref="form"
@@ -35,19 +35,16 @@
             :send-deploy="sendDeploy"
             :openPopup="openPopup"
             :loading-sign-and-deploy="loadingSignAndDeploy"
-            :error-deploy="errorDeploy"
-            :error-deploy-message="errorDeployMessage"
             :amount="amount"
             :fee="fee"
             :remaining-balance="remainingBalance"
-            :disabled-operation="disabledOperation"
             @operationCanceled="operationOnGoing = false"
           />
         </v-card-actions>
       </v-form>
     </v-card>
     <OperationResult
-      v-if="signed"
+      v-if="deployHash !== ''"
       :deploy-hash="deployHash"
       :amount="amount"
       @finishedOperation="operationOnGoing = false"
@@ -87,30 +84,10 @@ export default {
             type: Boolean,
             default: false
         },
-        errorDeploy: {
-            required: true,
-            type: Boolean,
-            default: false
-        },
-        errorDeployMessage: {
-            required: true,
-            type: String,
-            default: ""
-        },
-        signed: {
-            required: true,
-            type: Boolean,
-            default: false
-        },
         deployHash: {
             required: true,
             type: String,
             default: ""
-        },
-        errorBalance: {
-            required: true,
-            type: Boolean,
-            default: false
         },
         amount: {
             required: true,
@@ -131,16 +108,17 @@ export default {
             operationOnGoing: false,
         }
     },
-    computed: {
-        disabledOperation() {
-            return this.errorBalance || this.operationOnGoing;
-        }
+    mounted() {
+        this.$root.$on('operationFinished', () => {
+            this.operationOnGoing = false;
+        })
     },
     methods: {
         openPopup(on, event) {
             if (this.$refs.form.validate()) {
                 on.click(event);
                 this.operationOnGoing = true
+                this.$root.$emit("operationOnGoing");
             }
         },
     }

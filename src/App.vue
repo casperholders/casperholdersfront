@@ -37,6 +37,7 @@
       <v-container fluid>
         <router-view></router-view>
       </v-container>
+      <VSnackbars :objects.sync="alerts" />
     </v-main>
     <v-footer color="secondary">
       <v-container>
@@ -56,10 +57,11 @@
 
 import AppBar from "@/components/layout/AppBar";
 import NavigationDrawer from "@/components/layout/NavigationDrawer";
+import VSnackbars from "v-snackbars";
 
 export default {
     name: 'App',
-    components: {AppBar, NavigationDrawer},
+    components: {AppBar, NavigationDrawer, VSnackbars},
     mounted() {
         this.$nextTick(() => {
             this.$store.dispatch("updateSignerStatus");
@@ -83,10 +85,10 @@ export default {
             ],
             Validators: [
                 {title: 'Add Bid', icon: 'mdi-gavel', route: 'addbid'},
-                {title: 'Withdraw Bid (WIP)', icon: 'mdi-connection'},
+                {title: 'Withdraw Bid', icon: 'mdi-connection', route: 'withdrawbid'},
             ],
             Developers: [
-                {title: 'Send smart contract (WIP)', icon: 'mdi-file-document-edit'},
+                {title: 'Send smart contract', icon: 'mdi-file-document-edit', route: 'smartcontract'},
             ],
             Others: [
                 {title: 'FAQ', icon: 'mdi-help', route: 'faq'},
@@ -94,6 +96,16 @@ export default {
             ],
         }
     }),
+    computed: {
+        alerts:{
+            get() {
+                return this.$store.state.alerts;
+            },
+            set(val) {
+                this.$store.dispatch("updateAlerts", val)
+            }
+        }
+    }
 };
 </script>
 

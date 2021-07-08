@@ -1,37 +1,37 @@
 <template>
   <operation
-    icon="mdi-lock-open"
-    title="Unstake"
-    submit-title="Unstake"
+    icon="mdi-connection"
+    title="Withdraw bid"
+    submit-title="Withdraw bid"
     :send-deploy="sendDeploy"
     :loading-sign-and-deploy="loadingSignAndDeploy"
     :deploy-hash="deployHash"
     :amount="amount"
-    :fee="undelegateFee"
+    :fee="bidFee"
     :remaining-balance="remainingBalance"
   >
     <p class="text-body-1 mb-10"><!-- TODO Do a proper margin -->
       Here's your validator : <a
         :href=validatorUrl
-      >{{ getValidator() }}
+      >{{ signer.activeKey }}
         <v-icon x-small>mdi-open-in-new</v-icon>
       </a><br />
       <br />
-      Actually there's a commission rate of 5%. (Applies on the staking rewards only.)<br />
-      Exemple : if you receive 100 CSPR rewards from staking, CasperHolders will received 5 CSPR and you will
-      get 95 CSPR.
+      Actually there's a commission rate of {{commission}}%. (Applies on the staking rewards only.)<br />
+      Exemple : if your delegators receive 100 CSPR rewards from staking, you will received {{commission}} CSPR and they will
+      get {{ 100-commission }} CSPR.
     </p>
     <Amount
       :value="amount"
       @input="amount = $event"
-      :fee="Number(0)"
-      :min="minimumCSPRUnstake"
-      :balance="stakingBalance"
+      :fee="bidFee"
+      :min="minBid"
+      :balance="balance"
     />
     <p>
-      Undelegation fee : {{ undelegateFee }} CSPR<br />
-      Staking balance : {{ stakingBalance }} CSPR<br />
-      Balance : {{ balance }} CSPR
+      Withdraw bid operation fee : {{ bidFee }} CSPR<br />
+      Balance : {{ balance }} CSPR<br />
+      Validator bid : {{ validatorBalance }} CSPR
       <template v-if="loadingBalance">
         Loading balance ...
         <v-progress-circular
@@ -41,7 +41,7 @@
         ></v-progress-circular>
       </template>
       <br />
-      Balance after unstake : {{ balance - undelegateFee + amount }} CSPR<br />
+      Remaining funds after operation : {{ remainingBalance }} CSPR<br />
     </p>
     <v-alert prominent dense class="mt-5" type="error" v-if="errorBalance">
       <v-row align="center">
@@ -67,19 +67,20 @@ import {mapState} from "vuex";
 import {Balance} from "@/services/balance";
 import {InsufficientFunds} from "@/services/errors/insufficientFunds";
 import {NoActiveKeyError} from "@/services/errors/noActiveKeyError";
-import {Staking} from "@/services/staking";
+import {Bid} from "@/services/bid";
 
 export default {
     name: "DelegateNew",
     components: {Amount, Operation},
     data() {
         return {
-            minimumCSPRUnstake: 1,
-            undelegateFee: 1,
+            minBid: 1,
+            bidFee: 3,
             amount: 1,
-            errorBalance: null,
             balance: 0,
-            stakingBalance: 0,
+            validatorBalance: 0,
+            commission: 0,
+            errorBalance: null,
             loadingSignAndDeploy: false,
             errorDeploy: null,
             deployHash: "",
@@ -91,14 +92,14 @@ export default {
             "signer",
         ]),
         remainingBalance() {
-            let result = this.balance - this.undelegateFee + this.amount
+            let result = this.balance + this.amount - this.bidFee
             return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0
         },
         validatorUrl() {
-            return this.getValidatorUrl();
+            return this.getCsprLiveUrl() + "validator/" + this.signer.activeKey;
         },
         minimumFundsNeeded() {
-            return this.undelegateFee;
+            return this.bidFee;
         },
         isInstanceOfNoActiveKeyError(){
             return this.errorBalance instanceof NoActiveKeyError
@@ -118,10 +119,13 @@ export default {
             this.loadingBalance = true;
             this.errorBalance = null;
             this.balance = 0;
-            this.stakingBalance = 0;
+            this.validatorBalance = 0;
+            this.commission = 0;
             try {
                 this.balance = await Balance.fetchBalance();
-                this.stakingBalance = await Balance.fetchStakeBalance();
+                const validatorInfos = await Balance.fetchValidatorBalance();
+                this.validatorBalance = validatorInfos.balance;
+                this.commission = validatorInfos.commission;
                 if (this.balance <= this.minimumFundsNeeded) {
                     throw new InsufficientFunds(this.minimumFundsNeeded)
                 }
@@ -135,7 +139,7 @@ export default {
             this.errorDeploy = null;
             this.loadingSignAndDeploy = true;
             try {
-                this.deployHash = await Staking.sendUndelegate(this.amount);
+                this.deployHash = await Bid.sendWithdrawBid(this.amount);
             } catch (e) {
                 this.errorDeploy = e;
                 this.$root.$emit('operationFinished');
@@ -145,7 +149,7 @@ export default {
         },
         connectionRequest() {
             Signer.sendConnectionRequest();
-        }
+        },
     }
 }
 </script>

@@ -16,30 +16,19 @@
           Next features
         </v-card-title>
         <v-card-text class="text-body-1">
+
           <v-icon
             color="tertiary"
             left
-          >mdi-gavel
+          >mdi-account
           </v-icon>
-          Add bid<br />
+          Operation history<br />
           <v-icon
             color="tertiary"
             left
-          >mdi-connection
+          >mdi-currency-usd
           </v-icon>
-          Withdraw bid<br />
-          <v-icon
-            color="tertiary"
-            left
-          >mdi-laptop
-          </v-icon>
-          Desktop Wallet<br />
-          <v-icon
-            color="tertiary"
-            left
-          >mdi-file-document-edit
-          </v-icon>
-          Smart contract deploy
+          Staking rewards Overview
         </v-card-text>
       </v-card>
     </v-col>
@@ -62,21 +51,9 @@
           <v-icon
             color="quaternary"
             left
-          >mdi-account
+          >mdi-laptop
           </v-icon>
-          Operation history<br />
-          <v-icon
-            color="quaternary"
-            left
-          >mdi-currency-usd
-          </v-icon>
-          Staking rewards Overview<br />
-          <v-icon
-            color="quaternary"
-            left
-          >mdi-chart-line
-          </v-icon>
-          Proper platform metrics<br />
+          Desktop Wallet & Mobile Wallet<br />
           <v-icon
             color="quaternary"
             left

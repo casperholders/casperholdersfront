@@ -100,6 +100,7 @@ export default {
                 a => /[0-9]+/.test(a) || 'Amount must be a number',
                 a => a >= this.min || `Amount must be at least ${this.min}`,
                 a => a <= this.max || `Amount must equal or bellow ${this.max}`,
+                a => a <= this.balance - this.fee || `Not enough funds`,
             ],
         }
     },

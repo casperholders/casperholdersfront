@@ -17,7 +17,7 @@ export class Api {
         return Api.fetch(endpoint, init);
     }
 
-    static async post(endpoint, data, init = {}) {
+    static post(endpoint, data, init = {}) {
         return Api.fetch(endpoint, {
             method: "POST",
             body: JSON.stringify(data),

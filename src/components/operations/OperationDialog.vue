@@ -13,7 +13,7 @@
         large
         class="rounded-xl"
         :loading="operationOnGoing"
-        :disabled="disabledOperation"
+        :disabled="operationOnGoing"
       >
         <v-icon left>
           {{ icon }}
@@ -34,10 +34,6 @@
         Amount : {{ amount }} CSPR<br />
         Fee : {{ fee }} CSPR<br />
         Remaining funds after operation : {{ remainingBalance }} CSPR<br />
-      </v-card-text>
-      <v-card-text v-if="errorDeploy">
-        <v-icon color="red">mdi-alert-circle</v-icon>
-        Oops... A problem as occured. {{ errorDeployMessage }}
       </v-card-text>
       <v-card-actions class="pa-5">
         <v-btn
@@ -92,16 +88,6 @@ export default {
             type: Boolean,
             default: false
         },
-        errorDeploy: {
-            required: true,
-            type: Boolean,
-            default: false
-        },
-        errorDeployMessage: {
-            required: true,
-            type: String,
-            default: ""
-        },
         amount: {
             required: true,
             type: [Number, String],
@@ -117,11 +103,6 @@ export default {
             type: Number,
             default: 0
         },
-        disabledOperation: {
-            required: true,
-            type: Boolean,
-            default: false
-        },
     },
     data() {
         return {
@@ -129,7 +110,9 @@ export default {
         }
     },
     mounted() {
-        this.$root.$on('closeOperationDialog', () => this.confirmDialog = false)
+        this.$root.$on('closeOperationDialog', () => {
+            this.confirmDialog = false;
+        })
     },
     methods: {
         closePopup() {
