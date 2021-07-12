@@ -147,7 +147,6 @@
 <script>
     import DonutChart from "@/components/chart/DonutChart";
     import { mapState } from "vuex";
-    import { Balance } from "@/services/balance";
 
     export default {
         name: "Balance",
@@ -197,7 +196,7 @@
             async fetchBalances() {
                 const newChartData = this.createLoadingChartData();
                 try {
-                    const balance = await Balance.fetchBalance();
+                    const balance = await this.getBalanceService().fetchBalance();
                     newChartData.labels = ["Available"];
                     newChartData.datasets[0].data = [balance, 0, 0];
                 } catch (error) {
@@ -207,7 +206,7 @@
                 }
 
                 try {
-                    const stakedBalance = await Balance.fetchStakeBalance();
+                    const stakedBalance = await this.getBalanceService().fetchStakeBalance();
                     newChartData.labels.push("Stacked");
                     newChartData.datasets[0].data[1] = stakedBalance;
                 } catch (error) {

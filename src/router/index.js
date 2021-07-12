@@ -4,9 +4,9 @@ import Home from '@/views/Home.vue';
 import Balance from "@/views/Balance";
 import FAQ from "@/views/FAQ";
 import Contact from "@/views/Contact";
-import TransferNew from "@/views/TransferNew";
-import DelegateNew from "@/views/DelegateNew";
-import UndelegateNew from "@/views/UndelegateNew";
+import Transfer from "@/views/Transfer";
+import Delegate from "@/views/Delegate";
+import Undelegate from "@/views/Undelegate";
 import AddBid from "@/views/AddBid";
 import WithdrawBid from "@/views/WithdrawBid";
 import SmartContract from "@/views/SmartContract";
@@ -27,17 +27,17 @@ const routes = [
   {
     path: '/transfer',
     name: 'Transfer',
-    component: TransferNew
+    component: Transfer
   },
   {
     path: '/stake',
     name: 'Stake',
-    component: DelegateNew
+    component: Delegate
   },
   {
     path: '/unstake',
     name: 'Unstake',
-    component: UndelegateNew
+    component: Undelegate
   },
   {
     path: '/addbid',

@@ -28,6 +28,13 @@
       :min="minBid"
       :balance="balance"
     />
+    <v-slider
+      v-model="commission"
+      label="Commission rate"
+      color="white"
+      thumb-color="quaternary"
+      thumb-label="always"
+    ></v-slider>
     <p>
       Add bid operation fee : {{ bidFee }} CSPR<br />
       Balance : {{ balance }} CSPR<br />
@@ -64,10 +71,8 @@ import Operation from "@/components/operations/Operation";
 import Amount from "@/components/operations/Amount";
 import {Signer} from "casper-js-sdk";
 import {mapState} from "vuex";
-import {Balance} from "@/services/balance";
 import {InsufficientFunds} from "@/services/errors/insufficientFunds";
 import {NoActiveKeyError} from "@/services/errors/noActiveKeyError";
-import {Bid} from "@/services/bid";
 
 export default {
     name: "DelegateNew",
@@ -122,8 +127,8 @@ export default {
             this.validatorBalance = 0;
             this.commission = 0;
             try {
-                this.balance = await Balance.fetchBalance();
-                const validatorInfos = await Balance.fetchValidatorBalance();
+                this.balance = await this.getBalanceService().fetchBalance();
+                const validatorInfos = await this.getBalanceService().fetchValidatorBalance();
                 this.validatorBalance = validatorInfos.balance;
                 this.commission = validatorInfos.commission;
                 if (this.balance <= this.minimumFundsNeeded) {
@@ -139,7 +144,7 @@ export default {
             this.errorDeploy = null;
             this.loadingSignAndDeploy = true;
             try {
-                this.deployHash = await Bid.sendAddBid(this.amount);
+                this.deployHash = await this.getAuctionManager().sendAddBid(this.amount, this.commission);
             } catch (e) {
                 this.errorDeploy = e;
                 this.$root.$emit('operationFinished');

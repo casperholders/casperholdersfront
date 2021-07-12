@@ -11,7 +11,7 @@
     "prod": "serve -s dist -l 8080"
   },
   "dependencies": {
-    "casper-js-sdk": "^2.0.0",
+    "casper-js-sdk": "^2.0.1",
     "chart.js": "2",
     "core-js": "^3.6.5",
     "v-snackbars": "^3.2.4",
