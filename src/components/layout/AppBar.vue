@@ -15,7 +15,7 @@
         style="cursor: pointer"
         @click="$router.push('/')"
       >
-        Casper Holders
+        Casper Holders {{ $getNetwork !== "casper" ? "TestNet" : "" }}
       </v-toolbar-title>
 
 

@@ -58,7 +58,7 @@
         <v-list-item>
           <v-list-item-content class="px-2">
             <v-list-item-title>Casper Network</v-list-item-title>
-            <v-list-item-subtitle>{{ network === "casper" ? "MainNet" : "TestNet" }}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ $getNetwork === "casper" ? "MainNet" : "TestNet" }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -74,7 +74,6 @@ export default {
   name: "NavigationDrawer",
   props: ['links'],
   data: () => ({
-    network: "",
     drawer: false,
   }),
   computed: {
@@ -83,7 +82,6 @@ export default {
     ]),
   },
   mounted() {
-    this.network = process.env.VUE_APP_NETWORK
     this.$root.$on('toggleDrawer', () => {
       this.drawer = !this.drawer
     })
