@@ -28,7 +28,7 @@
         <v-icon x-small>mdi-open-in-new</v-icon>
       </a>
       <br />
-      <span v-if="deployResult.status === 'Unknown'">
+      <span v-if="deployResult.status === UNKNOWN">
         Waiting for the deploy result ...<br />
         Re-trying every 30s.<br />
         Number of tries : {{ tries }}
@@ -38,14 +38,14 @@
           indeterminate
         ></v-progress-circular>
       </span>
-      <span v-if="deployResult.status !== 'Unknown'">
+      <span v-if="deployResult.status !== UNKNOWN">
                   Status of the operation :<br />
                 </span>
-      <span v-if="deployResult.status !== 'Unknown' && deployResult.status">
+      <span v-if="deployResult.status === OK">
         <v-icon color="green">mdi-checkbox-marked-circle</v-icon>
         Congrats ! The operation succeeded with this amount : {{ deployResult.amount }} CSPR and {{ deployResult.cost }} CSPR operation fee.
       </span>
-      <span v-if="deployResult.status !== 'Unknown' && !deployResult.status">
+      <span v-if="deployResult.status === KO">
         <v-icon color="red">mdi-alert-circle</v-icon>
         Oops... A problem as occured. Check the error message here (or on the cspr.live website) :<br />
         {{ deployResult.message }}.<br />
@@ -57,6 +57,7 @@
 
 <script>
 import {mapGetters} from "vuex";
+import {STATUS_UNKNOWN, STATUS_OK, STATUS_KO} from "@/services/results/deployResult";
 
 export default {
     name: "OperationResult",
@@ -72,6 +73,9 @@ export default {
             deployResult: null,
             deployHashUrl: "",
             tries: 0,
+            UNKNOWN: STATUS_UNKNOWN,
+            OK: STATUS_OK,
+            KO: STATUS_KO,
         }
     },
     computed: {
@@ -86,13 +90,13 @@ export default {
     },
     methods: {
         async getDeployResult() {
-            if (this.deployResult.status !== "Unknown") {
+            if (this.deployResult.status !== STATUS_UNKNOWN) {
                 return
             }
 
             try {
                 const updatedDeployResult = await this.$getDeployManager().getDeployResult(this.deployResult);
-                if (updatedDeployResult.status !== "Unknown") {
+                if (updatedDeployResult.status !== STATUS_UNKNOWN) {
                     this.deployResult = updatedDeployResult
                     await this.$store.dispatch("updateDeployResult", updatedDeployResult)
                 }
@@ -100,7 +104,7 @@ export default {
                 console.log(e)
             }
 
-            if (this.deployResult.status === "Unknown" && this.tries < 30) {
+            if (this.deployResult.status === STATUS_UNKNOWN && this.tries < 30) {
                 this.tries = this.tries + 1
                 setTimeout(() => {
                     this.getDeployResult();

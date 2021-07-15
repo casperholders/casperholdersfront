@@ -1,6 +1,6 @@
 export const STATUS_UNKNOWN = "Unknown";
-export const STATUS_OK = true;
-export const STATUS_KO = false;
+export const STATUS_OK = "Success";
+export const STATUS_KO = "Failure";
 
 export class DeployResult {
     hash;
@@ -13,7 +13,7 @@ export class DeployResult {
     constructor(hash, name) {
         this.hash = hash;
         this.cost = 0;
-        this.status = "Unknown";
+        this.status = STATUS_UNKNOWN;
         this.message = "";
         this.amount = 0;
         this.name = name;

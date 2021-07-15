@@ -164,6 +164,7 @@
 <script>
 import {mapState} from "vuex";
 import {Signer} from "casper-js-sdk";
+import {STATUS_UNKNOWN} from "@/services/results/deployResult";
 
 export default {
     name: "AppBar",
@@ -183,7 +184,7 @@ export default {
             if (!this.signer.connected || this.signer.activeKey === null) {
                 return "tertiary"
             }
-            if (this.operations.filter(operation => operation.status === "Unknown").length > 0) {
+            if (this.operations.filter(operation => operation.status === STATUS_UNKNOWN).length > 0) {
                 return "primary"
             }
             if (this.operations.filter(operation => operation.status === false).length > 0) {
@@ -195,8 +196,8 @@ export default {
             if (!this.signer.connected || this.signer.activeKey === null) {
                 return
             }
-            if (this.operations.filter(operation => operation.status === "Unknown").length > 0) {
-                return this.operations.filter(operation => operation.status === "Unknown").length
+            if (this.operations.filter(operation => operation.status === STATUS_UNKNOWN).length > 0) {
+                return this.operations.filter(operation => operation.status === STATUS_UNKNOWN).length
             }
             if (this.operations.filter(operation => operation.status === false).length > 0) {
                 return this.operations.filter(operation => operation.status === false).length
@@ -218,13 +219,13 @@ export default {
             this.isWindowTop = document.documentElement.scrollTop === 0
         },
         operationIcon(operation) {
-            if (operation.status === "Unknown") {
+            if (operation.status === STATUS_UNKNOWN) {
                 return "mdi-help-circle"
             }
             return operation.status ? "mdi-checkbox-marked-circle" : "mdi-alert-circle"
         },
         operationIconColor(operation) {
-            if (operation.status === "Unknown") {
+            if (operation.status === STATUS_UNKNOWN) {
                 return "white"
             }
             return operation.status ? "green" : "tertiary"

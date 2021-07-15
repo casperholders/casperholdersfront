@@ -1,4 +1,5 @@
 import {CurrencyUtils} from "@/services/helpers/currencyUtils";
+import {STATUS_KO, STATUS_OK} from "@/services/results/deployResult";
 
 export class DeployManager {
     #client;
@@ -38,15 +39,15 @@ export class DeployManager {
         if (deploy.session.getArgByName("amount")) {
             deployResult.amount = CurrencyUtils.convertMotesToCasper(deploy.session.getArgByName("amount").value().toString())
         }
-        if ("Success" in execResult) {
-            deployResult.cost = CurrencyUtils.convertMotesToCasper(execResult.Success.cost)
-            deployResult.status = true
+        if (STATUS_OK in execResult) {
+            deployResult.cost = CurrencyUtils.convertMotesToCasper(execResult[STATUS_OK].cost)
+            deployResult.status = STATUS_OK
             return deployResult
         }
-        if ("Failure" in execResult) {
-            deployResult.cost = CurrencyUtils.convertMotesToCasper(execResult.Failure.cost)
-            deployResult.status = false
-            deployResult.message = execResult.Failure.error_message
+        if (STATUS_KO in execResult) {
+            deployResult.cost = CurrencyUtils.convertMotesToCasper(execResult[STATUS_KO].cost)
+            deployResult.status = STATUS_KO
+            deployResult.message = execResult[STATUS_KO].error_message
         }
         return deployResult;
     }
