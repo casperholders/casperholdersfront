@@ -18,7 +18,7 @@
           </v-card-title>
         </v-card-title>
         <v-card-text class="text-body-1 text-center">
-          See your current wallet balance, repartition of staked tokens and your staked rewards.
+          See your current wallet balance, distribution of staked tokens and your staked rewards.
         </v-card-text>
         <v-spacer></v-spacer>
         <v-card-actions class="justify-center">
@@ -210,7 +210,7 @@
           </v-card-title>
         </v-card-title>
         <v-card-text class="text-body-1 text-center">
-          Deploy one or multiple smart contract on the Casper Blockchain !
+          Deploy smart contracts on the Casper blockchain !
         </v-card-text>
         <v-spacer></v-spacer>
         <v-card-actions class="justify-center">
