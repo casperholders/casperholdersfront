@@ -10,4 +10,4 @@ spec:
   selector:
     app: testnet-casperholders-app
 status:
-  loadBalancer: {}
+  loadBalancer: { }

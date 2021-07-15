@@ -22,6 +22,6 @@ spec:
           image: killianh/casperholders:testnet-front
           imagePullPolicy: Always
           ports:
-          - containerPort: 80
-          resources: {}
+            - containerPort: 80
+          resources: { }
       restartPolicy: Always
