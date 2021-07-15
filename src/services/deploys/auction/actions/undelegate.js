@@ -3,6 +3,7 @@ import {CurrencyUtils} from "@/services/helpers/currencyUtils";
 import {AuctionDeployParameters} from "@/services/deploys/auction/AuctionDeployParameters";
 import {UndelegateResult} from "@/services/results/undelegateResult";
 
+const entrypoint = 'undelegate'
 const fee = 410000000
 
 export class Undelegate extends AuctionDeployParameters {
@@ -13,7 +14,7 @@ export class Undelegate extends AuctionDeployParameters {
             validator: CLPublicKey.fromHex(validator),
             amount: new CLU512(CurrencyUtils.convertCasperToMotes(amount))
         })
-        super(activeKey, network, hash, 'undelegate', args, fee);
+        super(activeKey, network, hash, entrypoint, args, fee);
     }
 
     get deployResult() {
