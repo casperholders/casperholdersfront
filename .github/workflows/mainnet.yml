@@ -24,7 +24,7 @@ jobs:
       - name: script
         run: |
           yarn lint
-          yarn build --mode testnet
+          yarn build --mode mainnet
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
