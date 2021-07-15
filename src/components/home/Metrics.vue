@@ -21,16 +21,16 @@
         </v-card-title>
         <v-sheet color="transparent">
           <v-sparkline
-            :value="value1"
-            :gradient="gradient"
-            :smooth="radius || false"
-            :padding="padding"
-            :line-width="width"
-            :stroke-linecap="lineCap"
-            :gradient-direction="gradientDirection"
-            :fill="fill"
-            :type="type"
             :auto-line-width="autoLineWidth"
+            :fill="fill"
+            :gradient="gradient"
+            :gradient-direction="gradientDirection"
+            :line-width="width"
+            :padding="padding"
+            :smooth="radius || false"
+            :stroke-linecap="lineCap"
+            :type="type"
+            :value="value1"
             auto-draw
           ></v-sparkline>
         </v-sheet>
@@ -57,16 +57,16 @@
         </v-card-title>
         <v-sheet color="transparent">
           <v-sparkline
-            :value="value2"
-            :gradient="gradient"
-            :smooth="radius || false"
-            :padding="padding"
-            :line-width="width"
-            :stroke-linecap="lineCap"
-            :gradient-direction="gradientDirection"
-            :fill="fill"
-            :type="type"
             :auto-line-width="autoLineWidth"
+            :fill="fill"
+            :gradient="gradient"
+            :gradient-direction="gradientDirection"
+            :line-width="width"
+            :padding="padding"
+            :smooth="radius || false"
+            :stroke-linecap="lineCap"
+            :type="type"
+            :value="value2"
             auto-draw
           ></v-sparkline>
         </v-sheet>
@@ -94,16 +94,16 @@
 
         <v-sheet color="transparent">
           <v-sparkline
-            :value="value3"
-            :gradient="gradient"
-            :smooth="radius || false"
-            :padding="padding"
-            :line-width="width"
-            :stroke-linecap="lineCap"
-            :gradient-direction="gradientDirection"
-            :fill="fill"
-            :type="type"
             :auto-line-width="autoLineWidth"
+            :fill="fill"
+            :gradient="gradient"
+            :gradient-direction="gradientDirection"
+            :line-width="width"
+            :padding="padding"
+            :smooth="radius || false"
+            :stroke-linecap="lineCap"
+            :type="type"
+            :value="value3"
             auto-draw
           ></v-sparkline>
         </v-sheet>

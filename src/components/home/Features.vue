@@ -23,8 +23,8 @@
         <v-spacer></v-spacer>
         <v-card-actions class="justify-center">
           <v-btn
-            rounded
             color="primary"
+            rounded
             to="balance"
           >
             Check your balance
@@ -55,8 +55,8 @@
         <v-spacer></v-spacer>
         <v-card-actions class="justify-center">
           <v-btn
-            rounded
             color="primary"
+            rounded
             to="transfer"
           >
             Transfer funds
@@ -87,8 +87,8 @@
         <v-spacer></v-spacer>
         <v-card-actions class="justify-center">
           <v-btn
-            rounded
             color="primary"
+            rounded
             to="stake"
           >
             Stake now
@@ -119,8 +119,8 @@
         <v-spacer></v-spacer>
         <v-card-actions class="justify-center">
           <v-btn
-            rounded
             color="primary"
+            rounded
             to="unstake"
           >
             Unstake now
@@ -151,8 +151,8 @@
         <v-spacer></v-spacer>
         <v-card-actions class="justify-center">
           <v-btn
-            rounded
             color="primary"
+            rounded
             to="unstake"
           >
             Add bid
@@ -183,8 +183,8 @@
         <v-spacer></v-spacer>
         <v-card-actions class="justify-center">
           <v-btn
-            rounded
             color="primary"
+            rounded
             to="unstake"
           >
             Withdraw now
@@ -215,8 +215,8 @@
         <v-spacer></v-spacer>
         <v-card-actions class="justify-center">
           <v-btn
-            rounded
             color="primary"
+            rounded
             to="smartcontract"
           >
             Deploy Now

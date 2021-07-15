@@ -1,19 +1,19 @@
 <template>
   <v-dialog
     v-model="confirmDialog"
-    persistent
     max-width="500"
+    persistent
   >
     <template v-slot:activator="{ on, attrs }">
       <v-btn
+        v-bind="attrs"
+        :disabled="operationOnGoing"
+        :loading="operationOnGoing"
+        class="rounded-xl"
         color="primary"
         dark
-        v-bind="attrs"
-        @click="openPopup(on,$event)"
         large
-        class="rounded-xl"
-        :loading="operationOnGoing"
-        :disabled="operationOnGoing"
+        @click="openPopup(on,$event)"
       >
         <v-icon left>
           {{ icon }}
@@ -37,17 +37,17 @@
       </v-card-text>
       <v-card-actions class="pa-5">
         <v-btn
-          color="secondary"
           class="rounded-xl"
+          color="secondary"
           @click="closePopup"
         >
           Disagree
         </v-btn>
         <v-btn
-          color="quaternary"
-          class="rounded-xl ml-5"
-          @click="sendDeploy"
           :loading="loadingSignAndDeploy"
+          class="rounded-xl ml-5"
+          color="quaternary"
+          @click="sendDeploy"
         >
           Agree & Sign
         </v-btn>

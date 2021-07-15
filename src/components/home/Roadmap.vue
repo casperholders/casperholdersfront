@@ -7,9 +7,9 @@
       <v-card class="fill-height rounded-xl secondary">
         <v-card-title>
           <v-avatar
+            class="mr-4"
             color="primary"
             size="52"
-            class="mr-4"
           >
             <v-icon>mdi-numeric-positive-1</v-icon>
           </v-avatar>
@@ -39,9 +39,9 @@
       <v-card class="fill-height rounded-xl secondary">
         <v-card-title>
           <v-avatar
+            class="mr-4"
             color="primary"
             size="52"
-            class="mr-4"
           >
             <v-icon>mdi-thought-bubble-outline</v-icon>
           </v-avatar>

@@ -1,14 +1,14 @@
 <template>
   <v-app-bar
-    app
-    elevate-on-scroll
-    :class="{'appbar__top': isWindowTop}"
-    class="appbar"
     v-scroll="onScroll"
+    :class="{'appbar__top': isWindowTop}"
+    app
+    class="appbar"
+    elevate-on-scroll
   >
     <v-container
-      class="d-flex container__small align-center"
       :fluid="$vuetify.breakpoint.mobile"
+      class="d-flex container__small align-center"
     >
       <v-toolbar-title
         class="mr-auto"
@@ -20,22 +20,22 @@
 
 
       <div
+        v-for="(items, name) in links"
         v-show="!$vuetify.breakpoint.mobile"
         v-bind:key="name"
-        v-for="(items, name) in links"
       >
         <v-menu offset-y>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              text
-              :ripple="false"
               v-bind="attrs"
               v-on="on"
+              :ripple="false"
+              text
             >
               {{ name }}
               <v-icon
-                right
                 dark
+                right
               >
                 mdi-chevron-down
               </v-icon>
@@ -63,30 +63,30 @@
         </v-menu>
       </div>
       <v-menu
-        offset-y
         left
+        offset-y
       >
         <template v-slot:activator="{ on, attrs }">
 
           <v-badge
-            :value="badgeContent"
-            :content="badgeContent"
             :color="badgeColor"
+            :content="badgeContent"
             :icon="badgeIcon"
+            :value="badgeContent"
             offset-x="5"
             offset-y="5"
           >
             <v-btn
-              icon
-              small
-              :ripple="false"
               v-bind="attrs"
               v-on="on"
               :disabled="disabledNotifications"
+              :ripple="false"
+              icon
+              small
             >
               <v-icon
-                small
                 dark
+                small
               >
                 mdi-bell
               </v-icon>
@@ -117,7 +117,10 @@
             </v-list-item-action>
           </v-list-item>
           <template v-for="(operation, index) in operations">
-            <v-divider :key="'app_bar_divider'+operation.hash" v-if="index > 0 || (!signer.connected || signer.activeKey === null)"></v-divider>
+            <v-divider
+              v-if="index > 0 || (!signer.connected || signer.activeKey === null)"
+              :key="'app_bar_divider'+operation.hash"
+            ></v-divider>
             <v-list-item :key="'app_bar'+operation.hash">
               <v-list-item-icon>
                 <v-icon :color="operationIconColor(operation)">{{ operationIcon(operation) }}</v-icon>
@@ -128,19 +131,19 @@
               </v-list-item-content>
               <v-list-item-action-text>
                 <v-btn
-                  fab
-                  x-small
-                  color="secondary"
                   :href="getOperationUrl(operation)"
-                  target="_blank"
                   class="mr-3"
+                  color="secondary"
+                  fab
+                  target="_blank"
+                  x-small
                 >
                   <v-icon x-small>mdi-open-in-new</v-icon>
                 </v-btn>
                 <v-btn
+                  color="tertiary"
                   fab
                   x-small
-                  color="tertiary"
                   @click="removeDeployResult(operation)"
                 >
                   <v-icon x-small>mdi-close</v-icon>

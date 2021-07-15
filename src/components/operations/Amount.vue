@@ -1,30 +1,30 @@
 <template>
   <p>
     <v-text-field
-      color="white"
       v-model.number="amount"
-      :value="amount"
-      type="number"
-      :min="min"
-      :max="max"
-      label="Number of CSPR"
-      :rules="amountRules"
-      required
-      append-outer-icon="mdi-plus"
-      @click:append-outer="increment"
-      prepend-icon="mdi-minus"
-      @click:prepend="decrement"
       :hint="`Minimum CSPR needed : ${min} CSPR`"
+      :max="max"
+      :min="min"
+      :rules="amountRules"
+      :value="amount"
+      append-outer-icon="mdi-plus"
+      color="white"
+      label="Number of CSPR"
       persistent-hint
+      prepend-icon="mdi-minus"
+      required
+      type="number"
+      @click:append-outer="increment"
+      @click:prepend="decrement"
     />
     <v-row class="pb-5">
       <v-col cols="3">
         <v-btn
-          small
-          outlined
-          color="white"
-          width="100%"
           class="rounded-xl"
+          color="white"
+          outlined
+          small
+          width="100%"
           @click="amount=min"
         >
           Min
@@ -32,33 +32,33 @@
       </v-col>
       <v-col cols="3">
         <v-btn
-          small
-          outlined
-          color="white"
-          width="100%"
           class="rounded-xl"
+          color="white"
+          outlined
+          small
+          width="100%"
           @click="amount=Math.trunc(balance*0.25)"
         >25%
         </v-btn>
       </v-col>
       <v-col cols="3">
         <v-btn
-          small
-          outlined
-          color="white"
-          width="100%"
           class="rounded-xl"
+          color="white"
+          outlined
+          small
+          width="100%"
           @click="amount=Math.trunc(balance*0.5)"
         >50%
         </v-btn>
       </v-col>
       <v-col cols="3">
         <v-btn
-          small
-          outlined
-          color="white"
-          width="100%"
           class="rounded-xl"
+          color="white"
+          outlined
+          small
+          width="100%"
           @click="amount=max"
         >
           Max
@@ -123,7 +123,7 @@ export default {
     methods: {
         increment() {
             if (this.amount < this.max) {
-                if(this.amount+1 < this.max) {
+                if (this.amount + 1 < this.max) {
                     this.amount = this.amount + 1
                 } else {
                     this.amount = this.max
@@ -132,7 +132,7 @@ export default {
         },
         decrement() {
             if (this.amount > this.min) {
-                if(this.amount-1 > this.min){
+                if (this.amount - 1 > this.min) {
                     this.amount = this.amount - 1
                 } else {
                     this.amount = this.min

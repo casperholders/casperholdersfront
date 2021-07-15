@@ -1,19 +1,19 @@
 <template>
   <v-container
-    fill-height
     class="flex-column container__small"
+    fill-height
   >
     <v-card
-      width="100%"
       class="align-center rounded-xl secondary"
+      width="100%"
     >
       <v-card-title
         class="align-center"
       >
         <v-avatar
+          class="mr-4"
           color="primary"
           size="52"
-          class="mr-4"
         >
           <v-icon>{{ icon }}</v-icon>
         </v-avatar>
@@ -29,15 +29,15 @@
 
         <v-card-actions class="pa-4">
           <OperationDialog
-            :icon="icon"
-            :title="submitTitle"
-            :operation-on-going="operationOnGoing"
-            :send-deploy="sendDeploy"
-            :openPopup="openPopup"
-            :loading-sign-and-deploy="loadingSignAndDeploy"
             :amount="amount"
             :fee="fee"
+            :icon="icon"
+            :loading-sign-and-deploy="loadingSignAndDeploy"
+            :openPopup="openPopup"
+            :operation-on-going="operationOnGoing"
             :remaining-balance="remainingBalance"
+            :send-deploy="sendDeploy"
+            :title="submitTitle"
             @operationCanceled="operationOnGoing = false"
           />
         </v-card-actions>
@@ -113,7 +113,7 @@ export default {
     },
     computed: {
         filteredOperations() {
-            return this.$store.getters.filterOperations(this.type).map(object => ({ ...object}));
+            return this.$store.getters.filterOperations(this.type).map(object => ({...object}));
         }
     },
     methods: {

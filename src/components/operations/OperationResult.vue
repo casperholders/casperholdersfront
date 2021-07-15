@@ -33,9 +33,9 @@
         Re-trying every 30s.<br />
         Number of tries : {{ tries }}
         <v-progress-circular
-          indeterminate
-          color="white"
           class="ml-3"
+          color="white"
+          indeterminate
         ></v-progress-circular>
       </span>
       <span v-if="deployResult.status !== 'Unknown'">
