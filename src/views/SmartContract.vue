@@ -5,10 +5,10 @@
     :loading-sign-and-deploy="loadingSignAndDeploy"
     :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"
+    :type="type"
     icon="mdi-file-document-edit"
     submit-title="Deploy"
     title="Send smart contract"
-    :type="type"
   >
     <v-file-input
       v-model="contract"
@@ -127,15 +127,15 @@ export default {
         async 'signer.activeKey'() {
             await this.getBalance()
         },
-        contract(){
+        contract() {
             let reader = new FileReader();
 
             reader.onload = (evt) => {
-                this.buffer=evt.target.result;
+                this.buffer = evt.target.result;
             };
 
             reader.onerror = function (evt) {
-                console.error("An error ocurred reading the file",evt);
+                console.error("An error ocurred reading the file", evt);
             };
 
             reader.readAsArrayBuffer(this.contract, "UTF-8");

@@ -5,10 +5,10 @@
     :loading-sign-and-deploy="loadingSignAndDeploy"
     :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"
+    :type="type"
     icon="mdi-connection"
     submit-title="Withdraw bid"
     title="Withdraw bid"
-    :type="type"
   >
     <p class="text-body-1 mb-10"><!-- TODO Do a proper margin -->
       Here's your validator : <a

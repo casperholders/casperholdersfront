@@ -5,9 +5,9 @@
     <v-main>
       <div id="wave">
         <svg
+          version="1.1"
           viewBox="0 0 900 1000"
           xmlns="http://www.w3.org/2000/svg"
-          version="1.1"
         >
           <linearGradient id="gradient">
             <stop
@@ -41,19 +41,27 @@
     <v-footer color="secondary">
       <div class="mx-auto">
         <p class="mb-0 text-center">
-          <a href="/" class="text-decoration-none">
+          <a
+            class="text-decoration-none"
+            href="/"
+          >
             <strong>
               CasperHolders
             </strong>
           </a>
           /
-          <a href="https://www.devxdao.com/" target="_blank" class="text-decoration-none">
+          <a
+            class="text-decoration-none"
+            href="https://www.devxdao.com/"
+            target="_blank"
+          >
             <strong>
               Made with the help of DEVxDAO &#128150;
             </strong>
           </a>
         </p>
-        <p class="mb-0 text-center text-caption">Hosted by OVH - 2 rue Kellermann - 59100 Roubaix - France - 1077 (+33 9 72 10 10 07)</p>
+        <p class="mb-0 text-center text-caption">Hosted by OVH - 2 rue Kellermann - 59100 Roubaix - France - 1077 (+33 9
+          72 10 10 07)</p>
       </div>
     </v-footer>
   </v-app>

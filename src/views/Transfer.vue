@@ -6,10 +6,10 @@
       :loading-sign-and-deploy="loadingSignAndDeploy"
       :remaining-balance="remainingBalance"
       :send-deploy="sendDeploy"
+      :type="type"
       icon="mdi-send"
       submit-title="Send Transaction"
       title="Transfer"
-      :type="type"
     >
       <v-text-field
         v-model="address"

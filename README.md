@@ -1,4 +1,3 @@
-# CasperHolders
 ## The first third party UI to interact with the Casper Blockchain.
 
 ### CasperHolders is not affiliated with CasperNetwork / CasperAssociation.This is a project from a community member.
@@ -23,32 +22,42 @@ This project contains the sources files for the CasperHolders website.
 # How to build
 
 ## Local dev
+
 ```bash
 yarn install
 yarn serve
 ```
 
 ## Production build for TestNet
+
 Will use the .env.testnet file
+
 ```bash
 yarn build-testnet
 ```
 
 ## Production build for MainNet
+
 Will use the .env.testnet file
+
 ```bash
 yarn build-mainnet
 ```
 
 ## Docker build
+
 Use the correct value for the mode argument to build either for testnet or mainnet .env file
+
 ```bash
 docker build --build-arg mode=(testnet|mainnet) . 
 ```
 
 ## Kubernetes deployment
+
 Use the correct folder for either testnet or mainnet config.
+
 ### Warning: The current kubernetes files are specific to my kubenertes architecture. It's basically an example how to use CasperHolders on Kubernetes.
+
 ```bash
 kubectl apply -f kubernetes/(testnet|mainnet)/
 ```
