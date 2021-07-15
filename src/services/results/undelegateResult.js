@@ -1,6 +1,6 @@
 import {DeployResult} from "@/services/results/deployResult";
 
-export class UndelegateResult extends DeployResult{
+export class UndelegateResult extends DeployResult {
     constructor(hash) {
         super(hash, UndelegateResult.getName())
     }

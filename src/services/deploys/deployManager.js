@@ -35,7 +35,7 @@ export class DeployManager {
         if (execResult.length > 0) {
             execResult = execResult[0].result;
         }
-        if(deploy.session.getArgByName("amount")){
+        if (deploy.session.getArgByName("amount")) {
             deployResult.amount = CurrencyUtils.convertMotesToCasper(deploy.session.getArgByName("amount").value().toString())
         }
         if ("Success" in execResult) {

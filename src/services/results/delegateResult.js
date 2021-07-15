@@ -1,6 +1,6 @@
 import {DeployResult} from "@/services/results/deployResult";
 
-export class DelegateResult extends DeployResult{
+export class DelegateResult extends DeployResult {
     constructor(hash) {
         super(hash, DelegateResult.getName())
     }

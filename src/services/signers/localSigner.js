@@ -9,7 +9,7 @@ export class LocalSigner extends AbstractSigner {
      * @param options {Object}
      * @returns {Promise<String>}
      */
-    static async sign(deploy, options = {}){
+    static async sign(deploy, options = {}) {
         try {
             return await DeployUtil.signDeploy(deploy, options.key)
         } catch (e) {

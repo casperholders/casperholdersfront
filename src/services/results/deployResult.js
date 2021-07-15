@@ -2,7 +2,7 @@ export const STATUS_UNKNOWN = "Unknown";
 export const STATUS_OK = true;
 export const STATUS_KO = false;
 
-export class DeployResult{
+export class DeployResult {
     hash;
     cost;
     status;

@@ -14,62 +14,62 @@ import SmartContract from "@/views/SmartContract";
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
-  {
-    path: '/balance',
-    name: 'Balance',
-    component: Balance
-  },
-  {
-    path: '/transfer',
-    name: 'Transfer',
-    component: Transfer
-  },
-  {
-    path: '/stake',
-    name: 'Stake',
-    component: Delegate
-  },
-  {
-    path: '/unstake',
-    name: 'Unstake',
-    component: Undelegate
-  },
-  {
-    path: '/addbid',
-    name: 'Add Bid',
-    component: AddBid
-  },
-  {
-    path: '/withdrawbid',
-    name: 'Withdraw Bid',
-    component: WithdrawBid
-  },
-  {
-    path: '/smartcontract',
-    name: 'Send smart contract',
-    component: SmartContract
-  },
-  {
-    path: '/faq',
-    name: 'FAQ',
-    component: FAQ
-  },
-  {
-    path: '/contact',
-    name: 'contact',
-    component: Contact
-  }
+    {
+        path: '/',
+        name: 'Home',
+        component: Home
+    },
+    {
+        path: '/balance',
+        name: 'Balance',
+        component: Balance
+    },
+    {
+        path: '/transfer',
+        name: 'Transfer',
+        component: Transfer
+    },
+    {
+        path: '/stake',
+        name: 'Stake',
+        component: Delegate
+    },
+    {
+        path: '/unstake',
+        name: 'Unstake',
+        component: Undelegate
+    },
+    {
+        path: '/addbid',
+        name: 'Add Bid',
+        component: AddBid
+    },
+    {
+        path: '/withdrawbid',
+        name: 'Withdraw Bid',
+        component: WithdrawBid
+    },
+    {
+        path: '/smartcontract',
+        name: 'Send smart contract',
+        component: SmartContract
+    },
+    {
+        path: '/faq',
+        name: 'FAQ',
+        component: FAQ
+    },
+    {
+        path: '/contact',
+        name: 'contact',
+        component: Contact
+    }
 ]
 
 const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes
+    mode: 'history',
+    base: process.env.BASE_URL,
+    routes
 })
 
 export default router
