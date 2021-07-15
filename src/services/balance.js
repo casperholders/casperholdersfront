@@ -1,10 +1,7 @@
 import {NoStakeBalanceError} from "./errors/noStakeBalanceError";
 import {CLPublicKey} from "casper-js-sdk";
 import {NoValidatorBalanceError} from "@/services/errors/noValidatorBalanceError";
-
-function convertMotesToCasper(motesAmount) {
-    return motesAmount / 1000000000;
-}
+import {CurrencyUtils} from "@/services/helpers/currencyUtils";
 
 export class Balance {
 
@@ -25,7 +22,7 @@ export class Balance {
     }
 
     async fetchBalance() {
-        return convertMotesToCasper(
+        return CurrencyUtils.convertMotesToCasper(
             (await this.#client.casperClient.balanceOfByPublicKey(CLPublicKey.fromHex(this.#keyManager.activeKey))).toString()
         );
     }
@@ -40,7 +37,7 @@ export class Balance {
             return delegator.public_key === this.#keyManager.activeKey
         })
         if (stakingBalance.length > 0) {
-            return convertMotesToCasper(stakingBalance[0].staked_amount)
+            return CurrencyUtils.convertMotesToCasper(stakingBalance[0].staked_amount)
         }
         throw new NoStakeBalanceError();
     }
@@ -52,7 +49,7 @@ export class Balance {
         })[0]
         if (validator) {
             return {
-                balance: convertMotesToCasper(validator.bid.staked_amount),
+                balance: CurrencyUtils.convertMotesToCasper(validator.bid.staked_amount),
                 commission: validator.bid.delegation_rate,
             }
         }

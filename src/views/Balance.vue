@@ -4,14 +4,14 @@
     fill-height
   >
     <v-card
-      width="100%"
       class="align-center rounded-xl secondary"
+      width="100%"
     >
       <v-card-title class="align-center">
         <v-avatar
+          class="mr-4"
           color="primary"
           size="52"
-          class="mr-4"
         >
           <v-icon>mdi-wallet</v-icon>
         </v-avatar>
@@ -20,8 +20,8 @@
       <v-card-text class="text-body-1">
         <v-layout
           :column="$vuetify.breakpoint.mobile"
-          fill-height
           align-center
+          fill-height
           justify-start
         >
           <donut-chart
@@ -59,11 +59,11 @@
             md="4"
           >
             <v-sheet
-              style="background-color: transparent!important;"
-              outlined
-              large
-              rounded
               color="white"
+              large
+              outlined
+              rounded
+              style="background-color: transparent!important;"
             >
               <v-list-item to="/transfer">
                 <v-list-item-icon>
@@ -87,11 +87,11 @@
             md="4"
           >
             <v-sheet
-              style="background-color: transparent!important;"
-              outlined
-              large
-              rounded
               color="white"
+              large
+              outlined
+              rounded
+              style="background-color: transparent!important;"
             >
               <v-list-item to="stake">
                 <v-list-item-icon>
@@ -115,11 +115,11 @@
             md="4"
           >
             <v-sheet
-              style="background-color: transparent!important;"
-              outlined
-              large
-              rounded
               color="white"
+              large
+              outlined
+              rounded
+              style="background-color: transparent!important;"
             >
               <v-list-item to="unstake">
                 <v-list-item-icon>
@@ -145,76 +145,76 @@
 </template>
 
 <script>
-    import DonutChart from "@/components/chart/DonutChart";
-    import { mapState } from "vuex";
+import DonutChart from "@/components/chart/DonutChart";
+import {mapState} from "vuex";
 
-    export default {
-        name: "Balance",
-        components: { DonutChart },
-        data() {
-            return {
-                chartData: this.createLoadingChartData(),
+export default {
+    name: "Balance",
+    components: {DonutChart},
+    data() {
+        return {
+            chartData: this.createLoadingChartData(),
+        };
+    },
+    computed: {
+        ...mapState(["signer"]),
+        csprPercentage() {
+            let total = this.chartData.datasets[0].data.reduce((a, b) => a + b, 0);
+            if (total === 0) {
+                total = 1;
+            }
+
+            return (index) => {
+                const value = this.chartData.datasets[0].data[index];
+                return Number(value / total * 100).toFixed(2);
             };
         },
-        computed: {
-            ...mapState(["signer"]),
-            csprPercentage() {
-                let total = this.chartData.datasets[0].data.reduce((a, b) => a + b, 0);
-                if (total === 0) {
-                    total = 1;
-                }
-
-                return (index) => {
-                    const value = this.chartData.datasets[0].data[index];
-                    return Number(value / total * 100).toFixed(2);
-                };
+    },
+    watch: {
+        "signer.activeKey": {
+            async handler() {
+                await this.fetchBalances();
             },
+            immediate: true,
         },
-        watch: {
-            "signer.activeKey": {
-                async handler() {
-                    await this.fetchBalances();
-                },
-                immediate: true,
-            },
-        },
-        methods: {
-            createLoadingChartData() {
-                const { primary, tertiary, quaternary } = this.$vuetify.theme.currentTheme;
+    },
+    methods: {
+        createLoadingChartData() {
+            const {primary, tertiary, quaternary} = this.$vuetify.theme.currentTheme;
 
-                return {
-                    labels: ["Loading"],
-                    datasets: [
-                        {
-                            backgroundColor: [primary, quaternary, tertiary],
-                            data: [0, 0, 1],
-                            borderWidth: 0,
-                        },
-                    ],
-                };
-            },
-            async fetchBalances() {
-                const newChartData = this.createLoadingChartData();
-                try {
-                    const balance = await this.getBalanceService().fetchBalance();
-                    newChartData.labels = ["Available"];
-                    newChartData.datasets[0].data = [balance, 0, 0];
-                } catch (error) {
-                    newChartData.labels = [error.message];
-                    this.chartData = newChartData;
-                    return;
-                }
-
-                try {
-                    const stakedBalance = await this.getBalanceService().fetchStakeBalance();
-                    newChartData.labels.push("Stacked");
-                    newChartData.datasets[0].data[1] = stakedBalance;
-                } catch (error) {
-                    newChartData.labels.push(error.message);
-                } finally {
-                    this.chartData = newChartData;
-                }
-            },
+            return {
+                labels: ["Loading"],
+                datasets: [
+                    {
+                        backgroundColor: [primary, quaternary, tertiary],
+                        data: [0, 0, 1],
+                        borderWidth: 0,
+                    },
+                ],
+            };
         },
-    };
+        async fetchBalances() {
+            const newChartData = this.createLoadingChartData();
+            try {
+                const balance = await this.$getBalanceService().fetchBalance();
+                newChartData.labels = ["Available"];
+                newChartData.datasets[0].data = [balance, 0, 0];
+            } catch (error) {
+                newChartData.labels = [error.message];
+                this.chartData = newChartData;
+                return;
+            }
+
+            try {
+                const stakedBalance = await this.$getBalanceService().fetchStakeBalance();
+                newChartData.labels.push("Stacked");
+                newChartData.datasets[0].data[1] = stakedBalance;
+            } catch (error) {
+                console.log(error)
+            } finally {
+                this.chartData = newChartData;
+            }
+        },
+    },
+};
 </script>

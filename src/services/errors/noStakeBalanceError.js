@@ -1,7 +1,7 @@
-import { ExtendableError } from "./extendableError";
+import {ExtendableError} from "@/services/errors/extendableError";
 
 export class NoStakeBalanceError extends ExtendableError {
     constructor() {
-        super("Cannot found stake balance.");
+        super("No staking funds.");
     }
 }

@@ -1,32 +1,21 @@
 import {DeployUtil, Signer} from "casper-js-sdk";
 import {SignError} from "@/services/errors/signError";
-import {AbstractSigner} from "@/services/abstractSigner";
-import {CasperKeyManager} from "@/services/casperKeyManager";
+import {AbstractSigner} from "@/services/signers/abstractSigner";
 
 /**
  * @typedef {DeployUtil.Deploy} Deploy
  */
 
 export class CasperSigner extends AbstractSigner {
-    #to
-
-    constructor(to) {
-        super();
-        this.#to = to;
-    }
-
-    set to(to){
-        this.#to = to;
-    }
-
     /**
      *
      * @param deploy {Deploy}
+     * @param options {Object}
      * @returns {Promise<Deploy>}
      */
-    async sign(deploy){
+    static async sign(deploy, options = {}){
         try {
-            const signedJsonDeploy = await Signer.sign(deploy, CasperKeyManager.activeKey, this.#to);
+            const signedJsonDeploy = await Signer.sign(DeployUtil.deployToJson(deploy), options.activeKey, options.to);
             const signedDeploy = await DeployUtil.deployFromJson(signedJsonDeploy);
             if(signedDeploy.ok){
                 return signedDeploy.val;

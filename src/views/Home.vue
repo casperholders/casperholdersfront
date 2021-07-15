@@ -1,7 +1,7 @@
 <template>
   <v-container
-    fill-height
     class="container__small"
+    fill-height
   >
     <div
       class="mx-auto text-h3 mt-12 mb-6 text-center text--white pb-4"
@@ -21,17 +21,17 @@
     <Roadmap />
     <Metrics />
     <v-btn
-      large
-      color="tertiary"
-      rounded
       class="mb-3 mt-10 mx-auto"
+      color="tertiary"
       href="https://github.com/KillianH/casperholdersfront"
+      large
+      rounded
       target="_blank"
     >
       <v-icon
-        left
-        large
         class="mr-3"
+        large
+        left
       >mdi-github
       </v-icon>
       Technical information

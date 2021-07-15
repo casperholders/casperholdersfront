@@ -1,40 +1,40 @@
 <template>
   <div>
     <operation
-      icon="mdi-send"
-      title="Transfer"
-      submit-title="Send Transaction"
-      :send-deploy="sendDeploy"
-      :loading-sign-and-deploy="loadingSignAndDeploy"
-      :deploy-hash="deployHash"
       :amount="amount"
       :fee="transferFee"
+      :loading-sign-and-deploy="loadingSignAndDeploy"
       :remaining-balance="remainingBalance"
+      :send-deploy="sendDeploy"
+      icon="mdi-send"
+      submit-title="Send Transaction"
+      title="Transfer"
+      :type="type"
     >
       <v-text-field
-        color="white"
         v-model="address"
-        :value="address"
-        label="Send to address"
         :rules="addressRules"
-        required
+        :value="address"
+        color="white"
+        label="Send to address"
         prepend-icon="mdi-account"
+        required
       ></v-text-field>
       <v-text-field
-        color="white"
-        :value="transferID"
-        label="Transfer ID"
         :rules="transferIDRules"
-        required
-        prepend-icon="mdi-music-accidental-sharp"
+        :value="transferID"
+        color="white"
         hint="Set to 0 if not known"
+        label="Transfer ID"
+        prepend-icon="mdi-music-accidental-sharp"
+        required
       />
       <Amount
-        :value="amount"
-        @input="amount = $event"
+        :balance="balance"
         :fee="transferFee"
         :min="minimumCSPRTransfer"
-        :balance="balance"
+        :value="amount"
+        @input="amount = $event"
       />
       <p>
         Transfer Fee : {{ transferFee }} CSPR<br />
@@ -42,25 +42,43 @@
         <template v-if="loadingBalance">
           Loading balance ...
           <v-progress-circular
-            indeterminate
-            color="white"
             class="ml-3"
+            color="white"
+            indeterminate
           ></v-progress-circular>
         </template>
         <br />
         Remaining funds after transfer : {{ remainingBalance }} CSPR<br />
       </p>
-      <v-alert prominent dense class="mt-5" type="error" v-if="errorBalance">
+      <v-alert
+        v-if="errorBalance"
+        class="mt-5"
+        dense
+        prominent
+        type="error"
+      >
         <v-row align="center">
           <v-col class="grow">
             {{ errorBalance.message }}
           </v-col>
           <v-col class="shrink">
-            <v-btn v-if="isInstanceOfNoActiveKeyError" color="primary" @click="connectionRequest">Retry</v-btn>
+            <v-btn
+              v-if="isInstanceOfNoActiveKeyError"
+              color="primary"
+              @click="connectionRequest"
+            >
+              <v-icon left>mdi-account-circle</v-icon>
+              Connect
+            </v-btn>
           </v-col>
         </v-row>
       </v-alert>
-      <v-alert dense class="mt-5" type="error" v-if="errorDeploy">
+      <v-alert
+        v-if="errorDeploy"
+        class="mt-5"
+        dense
+        type="error"
+      >
         {{ errorDeploy.message }}
       </v-alert>
     </operation>
@@ -74,6 +92,8 @@ import {CLPublicKey, Signer} from "casper-js-sdk";
 import {mapState} from "vuex";
 import {InsufficientFunds} from "@/services/errors/insufficientFunds";
 import {NoActiveKeyError} from "@/services/errors/noActiveKeyError";
+import {TransferResult} from "@/services/results/transferResult";
+import {TransferDeployParameters} from "@/services/deploys/transfer/TransferDeployParameters";
 
 export default {
     name: "TransferNew",
@@ -105,8 +125,8 @@ export default {
             balance: 0,
             loadingSignAndDeploy: false,
             errorDeploy: null,
-            deployHash: "",
             loadingBalance: false,
+            type: TransferResult.getName(),
         }
     },
     computed: {
@@ -120,7 +140,7 @@ export default {
         minimumFundsNeeded() {
             return this.minimumCSPRTransfer + this.transferFee;
         },
-        isInstanceOfNoActiveKeyError(){
+        isInstanceOfNoActiveKeyError() {
             return this.errorBalance instanceof NoActiveKeyError
         }
     },
@@ -139,7 +159,7 @@ export default {
             this.errorBalance = null;
             this.balance = 0;
             try {
-                this.balance = await this.getBalanceService().fetchBalance();
+                this.balance = await this.$getBalanceService().fetchBalance();
                 if (this.balance <= this.minimumFundsNeeded) {
                     throw new InsufficientFunds(this.minimumFundsNeeded)
                 }
@@ -149,18 +169,24 @@ export default {
             this.loadingBalance = false;
         },
         async sendDeploy() {
-            this.deployHash = "";
             this.errorDeploy = null;
             this.loadingSignAndDeploy = true;
             try {
-                this.deployHash = await this.getTransferManager().sendTransfer(this.amount, this.address, this.transferID);
+                const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
+                    new TransferDeployParameters(this.signer.activeKey, this.$getNetwork(), this.amount, this.address, this.transferID),
+                    this.$getSigner(),
+                    {
+                        activeKey: this.signer.activeKey,
+                        to: this.address
+                    }
+                );
+                await this.$store.dispatch("addDeployResult", deployResult)
             } catch (e) {
-                console.log(e)
                 this.errorDeploy = e;
-                this.$root.$emit('operationFinished');
             }
             this.loadingSignAndDeploy = false;
             this.$root.$emit('closeOperationDialog');
+            this.$root.$emit('operationFinished');
         },
         connectionRequest() {
             Signer.sendConnectionRequest();

@@ -1,4 +1,4 @@
-import { ExtendableError } from "./extendableError";
+import {ExtendableError} from "@/services/errors/extendableError";
 
 export class InsufficientFunds extends ExtendableError {
     constructor(min) {

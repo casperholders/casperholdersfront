@@ -13,67 +13,42 @@ const state = () => ({
         activeKey: null,
         version: "",
     },
-    alerts: []
+    operations: []
 })
 
 const getters = {
+    filterOperations: (state) => (operationName) => {
+        return state.operations.filter(operation => operation.name === operationName)
+    },
+    getOperation: (state) => (hash) => {
+        return state.operations.filter(operation => operation.hash === hash)[0]
+    },
 }
 
 const mutations = {
-    setSigner(state, {connected, activeKey, version}) {
+    updateSigner(state, {connected, activeKey}) {
         state.signer.connected = connected;
         state.signer.activeKey = activeKey;
+    },
+    updateSignerLock(state, {lock}) {
+        state.signer.lock = lock
+    },
+    updateSignerVersion(state, {version}) {
         state.signer.version = version;
     },
-    updateSigner (state, {connected, lock, activeKey}) {
-        state.signer.connected = connected;
-        state.signer.activeKey = activeKey;
-        state.signer.lock = lock;
+    addDeployResult(state, {deployResult}) {
+        state.operations.push(deployResult)
     },
-    alertSigner (state) {
-        const alertSigner = state.alerts.findIndex((alert) => alert.message === "Signer not connected")
-
-        if (state.signer.connected && state.signer.activeKey != null){
-            state.alerts.push({
-                message: "Signer connected",
-                bottom: true,
-                right: true,
-                color: 'green',
-                transition: 'fade-transition',
-                timeout: 1000,
-            })
-            if(alertSigner > -1) {
-                state.alerts.splice(alertSigner, 1);
-            }
-        }
-        if ((!state.signer.connected || state.signer.activeKey == null) && alertSigner === -1){
-            state.alerts.push({
-                message: "Signer not connected",
-                bottom: true,
-                right: true,
-                color: 'red',
-                transition: 'fade-transition',
-                timeout: -1,
-            })
-        }
+    removeDeployResult(state, {deployResult}) {
+        state.operations.splice(state.operations.findIndex(operation => operation.hash === deployResult.hash), 1);
     },
-    alert (state, {message, color, timeout}) {
-        state.alerts.push({
-            message: message,
-            bottom: true,
-            right: true,
-            color: color,
-            transition: 'fade-transition',
-            timeout: timeout,
-        })
-    },
-    updateAlerts(state, {alerts}){
-        state.alerts = alerts
+    updateDeployResult(state, {deployResult}) {
+        state.operations.splice(state.operations.findIndex(operation => operation.hash === deployResult.hash), 1, deployResult);
     }
 }
 
 const actions = {
-    async updateSignerStatus (context) {
+    async initSignerStatus(context) {
         let connected = false;
         let activeKey = "";
         let version = "";
@@ -84,7 +59,7 @@ const actions = {
             } catch (e) {
                 console.log("Unable to retrieve Signer active key")
             }
-        }catch (e) {
+        } catch (e) {
             console.log("Unable to retrieve Signer connexion status")
         }
         try {
@@ -92,18 +67,21 @@ const actions = {
         } catch (e) {
             console.log("Unable to retrieve Signer version")
         }
-        context.commit('setSigner', {connected: connected, activeKey: activeKey, version: version});
-        context.commit('alertSigner');
+        context.commit('updateSigner', {connected: connected, activeKey: activeKey});
+        context.commit('updateSignerVersion', {version: version});
     },
-    connectedSignerEvent(context, detail) {
-        context.commit('updateSigner', {connected: detail.isConnected, lock: !detail.isUnlocked, activeKey: detail.activeKey});
-        context.commit('alertSigner');
+    updateFromSignerEvent(context, detail) {
+        context.commit('updateSigner', {connected: detail.isConnected, activeKey: detail.activeKey});
+        context.commit('updateSignerLock', {lock: !detail.isUnlocked});
     },
-    alert(context, detail){
-        context.commit('alert', {message: detail.message, color: detail.color, timeout: detail.timeout});
+    addDeployResult(context, deployResult) {
+        context.commit('addDeployResult', {deployResult: deployResult})
     },
-    updateAlerts(context, detail){
-        context.commit("updateAlerts", {alerts: detail})
+    removeDeployResult(context, deployResult) {
+        context.commit('removeDeployResult', {deployResult: deployResult})
+    },
+    updateDeployResult(context, deployResult) {
+        context.commit('updateDeployResult', {deployResult: deployResult})
     }
 }
 

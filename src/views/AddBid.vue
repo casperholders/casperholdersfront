@@ -1,14 +1,14 @@
 <template>
   <operation
-    icon="mdi-gavel"
-    title="Add bid"
-    submit-title="Add bid"
-    :send-deploy="sendDeploy"
-    :loading-sign-and-deploy="loadingSignAndDeploy"
-    :deploy-hash="deployHash"
     :amount="amount"
     :fee="bidFee"
+    :loading-sign-and-deploy="loadingSignAndDeploy"
     :remaining-balance="remainingBalance"
+    :send-deploy="sendDeploy"
+    icon="mdi-gavel"
+    submit-title="Add bid"
+    title="Add bid"
+    :type="type"
   >
     <p class="text-body-1 mb-10"><!-- TODO Do a proper margin -->
       Here's your validator : <a
@@ -17,21 +17,22 @@
         <v-icon x-small>mdi-open-in-new</v-icon>
       </a><br />
       <br />
-      Actually there's a commission rate of {{commission}}%. (Applies on the staking rewards only.)<br />
-      Exemple : if your delegators receive 100 CSPR rewards from staking, you will received {{commission}} CSPR and they will
-      get {{ 100-commission }} CSPR.
+      Actually there's a commission rate of {{ commission }}%. (Applies on the staking rewards only.)<br />
+      Example : if your delegators receive 100 CSPR rewards from staking, you will received {{ commission }} CSPR and
+      they will
+      get {{ 100 - commission }} CSPR.
     </p>
     <Amount
-      :value="amount"
-      @input="amount = $event"
+      :balance="balance"
       :fee="bidFee"
       :min="minBid"
-      :balance="balance"
+      :value="amount"
+      @input="amount = $event"
     />
     <v-slider
       v-model="commission"
-      label="Commission rate"
       color="white"
+      label="Commission rate"
       thumb-color="quaternary"
       thumb-label="always"
     ></v-slider>
@@ -42,25 +43,43 @@
       <template v-if="loadingBalance">
         Loading balance ...
         <v-progress-circular
-          indeterminate
-          color="white"
           class="ml-3"
+          color="white"
+          indeterminate
         ></v-progress-circular>
       </template>
       <br />
       Remaining funds after operation : {{ remainingBalance }} CSPR<br />
     </p>
-    <v-alert prominent dense class="mt-5" type="error" v-if="errorBalance">
+    <v-alert
+      v-if="errorBalance"
+      class="mt-5"
+      dense
+      prominent
+      type="error"
+    >
       <v-row align="center">
         <v-col class="grow">
           {{ errorBalance.message }}
         </v-col>
         <v-col class="shrink">
-          <v-btn v-if="isInstanceOfNoActiveKeyError" color="primary" @click="connectionRequest">Retry</v-btn>
+          <v-btn
+            v-if="isInstanceOfNoActiveKeyError"
+            color="primary"
+            @click="connectionRequest"
+          >
+            <v-icon left>mdi-account-circle</v-icon>
+            Connect
+          </v-btn>
         </v-col>
       </v-row>
     </v-alert>
-    <v-alert dense class="mt-5" type="error" v-if="errorDeploy">
+    <v-alert
+      v-if="errorDeploy"
+      class="mt-5"
+      dense
+      type="error"
+    >
       {{ errorDeploy.message }}
     </v-alert>
   </operation>
@@ -73,6 +92,8 @@ import {Signer} from "casper-js-sdk";
 import {mapState} from "vuex";
 import {InsufficientFunds} from "@/services/errors/insufficientFunds";
 import {NoActiveKeyError} from "@/services/errors/noActiveKeyError";
+import {AddBid} from "@/services/deploys/auction/actions/addBid";
+import {AddBidResult} from "@/services/results/addBidResult";
 
 export default {
     name: "DelegateNew",
@@ -88,8 +109,8 @@ export default {
             errorBalance: null,
             loadingSignAndDeploy: false,
             errorDeploy: null,
-            deployHash: "",
             loadingBalance: false,
+            type: AddBidResult.getName()
         }
     },
     computed: {
@@ -101,12 +122,12 @@ export default {
             return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0
         },
         validatorUrl() {
-            return this.getCsprLiveUrl() + "validator/" + this.signer.activeKey;
+            return this.$getCsprLiveUrl() + "validator/" + this.signer.activeKey;
         },
         minimumFundsNeeded() {
             return this.minBid + this.bidFee;
         },
-        isInstanceOfNoActiveKeyError(){
+        isInstanceOfNoActiveKeyError() {
             return this.errorBalance instanceof NoActiveKeyError
         }
     },
@@ -127,8 +148,8 @@ export default {
             this.validatorBalance = 0;
             this.commission = 0;
             try {
-                this.balance = await this.getBalanceService().fetchBalance();
-                const validatorInfos = await this.getBalanceService().fetchValidatorBalance();
+                this.balance = await this.$getBalanceService().fetchBalance();
+                const validatorInfos = await this.$getBalanceService().fetchValidatorBalance();
                 this.validatorBalance = validatorInfos.balance;
                 this.commission = validatorInfos.commission;
                 if (this.balance <= this.minimumFundsNeeded) {
@@ -140,17 +161,24 @@ export default {
             this.loadingBalance = false;
         },
         async sendDeploy() {
-            this.deployHash = "";
             this.errorDeploy = null;
             this.loadingSignAndDeploy = true;
             try {
-                this.deployHash = await this.getAuctionManager().sendAddBid(this.amount, this.commission);
+                const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
+                    new AddBid(this.amount, this.signer.activeKey, this.commission, this.$getNetwork(), this.$getAuctionHash()),
+                    this.$getSigner(),
+                    {
+                        activeKey: this.signer.activeKey,
+                        to: this.signer.activeKey
+                    }
+                );
+                await this.$store.dispatch("addDeployResult", deployResult)
             } catch (e) {
                 this.errorDeploy = e;
-                this.$root.$emit('operationFinished');
             }
             this.loadingSignAndDeploy = false;
             this.$root.$emit('closeOperationDialog');
+            this.$root.$emit('operationFinished');
         },
         connectionRequest() {
             Signer.sendConnectionRequest();

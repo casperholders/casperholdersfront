@@ -37,18 +37,24 @@
       <v-container fluid>
         <router-view></router-view>
       </v-container>
-      <VSnackbars :objects.sync="alerts" />
     </v-main>
     <v-footer color="secondary">
-      <v-container>
+      <div class="mx-auto">
         <p class="mb-0 text-center">
-          <strong>
-            CasperHolders is not affiliated with CasperNetwork / CasperAssociation.
-            <br />
-            This is a project from a community member.
-          </strong>
+          <a href="/" class="text-decoration-none">
+            <strong>
+              CasperHolders
+            </strong>
+          </a>
+          /
+          <a href="https://www.devxdao.com/" target="_blank" class="text-decoration-none">
+            <strong>
+              Made with the help of DEVxDAO &#128150;
+            </strong>
+          </a>
         </p>
-      </v-container>
+        <p class="mb-0 text-center text-caption">Hosted by OVH - 2 rue Kellermann - 59100 Roubaix - France - 1077 (+33 9 72 10 10 07)</p>
+      </div>
     </v-footer>
   </v-app>
 </template>
@@ -57,20 +63,19 @@
 
 import AppBar from "@/components/layout/AppBar";
 import NavigationDrawer from "@/components/layout/NavigationDrawer";
-import VSnackbars from "v-snackbars";
 
 export default {
     name: 'App',
-    components: {AppBar, NavigationDrawer, VSnackbars},
+    components: {AppBar, NavigationDrawer},
     mounted() {
         this.$nextTick(() => {
-            this.$store.dispatch("updateSignerStatus");
-            window.addEventListener("signer:connected", (msg) => this.$store.dispatch("connectedSignerEvent", msg.detail));
-            window.addEventListener("signer:disconnected", (msg) => this.$store.dispatch("connectedSignerEvent", msg.detail));
-            window.addEventListener("signer:tabUpdated", (msg) => this.$store.dispatch("connectedSignerEvent", msg.detail));
-            window.addEventListener("signer:activeKeyChanged", (msg) => this.$store.dispatch("connectedSignerEvent", msg.detail));
-            window.addEventListener("signer:locked", (msg) => this.$store.dispatch("connectedSignerEvent", msg.detail));
-            window.addEventListener("signer:unlocked", (msg) => this.$store.dispatch("connectedSignerEvent", msg.detail));
+            this.$store.dispatch("initSignerStatus");
+            window.addEventListener("signer:connected", (msg) => this.$store.dispatch("updateFromSignerEvent", msg.detail));
+            window.addEventListener("signer:disconnected", (msg) => this.$store.dispatch("updateFromSignerEvent", msg.detail));
+            window.addEventListener("signer:tabUpdated", (msg) => this.$store.dispatch("updateFromSignerEvent", msg.detail));
+            window.addEventListener("signer:activeKeyChanged", (msg) => this.$store.dispatch("updateFromSignerEvent", msg.detail));
+            window.addEventListener("signer:locked", (msg) => this.$store.dispatch("updateFromSignerEvent", msg.detail));
+            window.addEventListener("signer:unlocked", (msg) => this.$store.dispatch("updateFromSignerEvent", msg.detail));
         })
     },
     data: () => ({
@@ -95,17 +100,7 @@ export default {
                 {title: 'Contact', icon: 'mdi-mail', route: 'contact'},
             ],
         }
-    }),
-    computed: {
-        alerts:{
-            get() {
-                return this.$store.state.alerts;
-            },
-            set(val) {
-                this.$store.dispatch("updateAlerts", val)
-            }
-        }
-    }
+    })
 };
 </script>
 

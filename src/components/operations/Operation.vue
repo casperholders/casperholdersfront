@@ -44,10 +44,9 @@
       </v-form>
     </v-card>
     <OperationResult
-      v-if="deployHash !== ''"
-      :deploy-hash="deployHash"
-      :amount="amount"
-      @finishedOperation="operationOnGoing = false"
+      v-for="operation in filteredOperations"
+      :key="operation.hash"
+      :deploy-hash="operation.hash"
     />
   </v-container>
 </template>
@@ -70,6 +69,10 @@ export default {
             type: String,
             default: ""
         },
+        type: {
+            required: true,
+            type: String
+        },
         submitTitle: {
             required: true,
             type: String,
@@ -83,11 +86,6 @@ export default {
             required: true,
             type: Boolean,
             default: false
-        },
-        deployHash: {
-            required: true,
-            type: String,
-            default: ""
         },
         amount: {
             required: true,
@@ -112,6 +110,11 @@ export default {
         this.$root.$on('operationFinished', () => {
             this.operationOnGoing = false;
         })
+    },
+    computed: {
+        filteredOperations() {
+            return this.$store.getters.filterOperations(this.type).map(object => ({ ...object}));
+        }
     },
     methods: {
         openPopup(on, event) {
