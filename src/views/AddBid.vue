@@ -10,7 +10,7 @@
     submit-title="Add bid"
     title="Add bid"
   >
-    <p class="text-body-1 mb-10"><!-- TODO Do a proper margin -->
+    <p class="text-body-1">
       Here's your validator : <a
         :href=validatorUrl
       >{{ signer.activeKey }}
@@ -23,6 +23,7 @@
       get {{ 100 - commission }} CSPR.
     </p>
     <Amount
+      class="mb-14"
       :balance="balance"
       :fee="bidFee"
       :min="minBid"
@@ -32,6 +33,8 @@
     <v-slider
       v-model="commission"
       color="white"
+      track-color="white"
+      track-fill-color="white"
       label="Commission rate"
       thumb-color="quaternary"
       thumb-label="always"

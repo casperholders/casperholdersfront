@@ -1,5 +1,5 @@
 <template>
-  <p>
+  <div>
     <v-text-field
       v-model.number="amount"
       :hint="`Minimum CSPR needed : ${min} CSPR`"
@@ -17,7 +17,7 @@
       @click:append-outer="increment"
       @click:prepend="decrement"
     />
-    <v-row class="pb-5">
+    <v-row class="pt-2">
       <v-col cols="3">
         <v-btn
           class="rounded-xl"
@@ -65,7 +65,7 @@
         </v-btn>
       </v-col>
     </v-row>
-  </p>
+  </div>
 </template>
 
 <script>

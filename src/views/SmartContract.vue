@@ -26,6 +26,7 @@
       </template>
     </v-file-input>
     <Amount
+      class="mb-4"
       :balance="balance"
       :fee="Number(0)"
       :min="minPayment"

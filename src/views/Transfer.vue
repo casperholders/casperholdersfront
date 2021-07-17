@@ -30,6 +30,7 @@
         required
       />
       <Amount
+        class="mb-4"
         :balance="balance"
         :fee="transferFee"
         :min="minimumCSPRTransfer"

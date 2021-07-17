@@ -10,7 +10,7 @@
     submit-title="Stake"
     title="Stake"
   >
-    <p class="text-body-1 mb-10"><!-- TODO Do a proper margin -->
+    <p class="text-body-1">
       Here's your validator : <a
         :href=validatorUrl
       >{{ $getValidator() }}
@@ -22,6 +22,7 @@
       get 95 CSPR.
     </p>
     <Amount
+      class="mb-4"
       :balance="balance"
       :fee="delegationFee"
       :min="minimumCSPRStake"

@@ -10,7 +10,7 @@
     submit-title="Withdraw bid"
     title="Withdraw bid"
   >
-    <p class="text-body-1 mb-10"><!-- TODO Do a proper margin -->
+    <p class="text-body-1">
       Here's your validator : <a
         :href=validatorUrl
       >{{ signer.activeKey }}
@@ -23,6 +23,7 @@
       get {{ 100 - commission }} CSPR.
     </p>
     <Amount
+      class="mb-4"
       :balance="balance"
       :fee="bidFee"
       :min="minBid"
