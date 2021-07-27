@@ -1,8 +1,5 @@
-import {CasperSigner} from "@/services/signers/casperSigner";
-import {DeployManager} from "@/services/deploys/deployManager";
+import {Balance, CasperSigner, ClientCasper, DeployManager} from "casperholderslib";
 import {VuexKeyManager} from "@/services/keys/vuexKeyManager";
-import {Balance} from "@/services/balance";
-import {ClientCasper} from "@/services/clients/clientCasper";
 
 const AUCTION_MANAGER_HASH = process.env.VUE_APP_AUCTION_MANAGER_HASH;
 const NETWORK = process.env.VUE_APP_NETWORK;

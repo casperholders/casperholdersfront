@@ -30,11 +30,11 @@
         required
       />
       <Amount
-        class="mb-4"
         :balance="balance"
         :fee="transferFee"
         :min="minimumCSPRTransfer"
         :value="amount"
+        class="mb-4"
         @input="amount = $event"
       />
       <p>
@@ -91,10 +91,7 @@ import Operation from "@/components/operations/Operation";
 import Amount from "@/components/operations/Amount";
 import {CLPublicKey, Signer} from "casper-js-sdk";
 import {mapState} from "vuex";
-import {InsufficientFunds} from "@/services/errors/insufficientFunds";
-import {NoActiveKeyError} from "@/services/errors/noActiveKeyError";
-import {TransferResult} from "@/services/results/transferResult";
-import {TransferDeployParameters} from "@/services/deploys/transfer/TransferDeployParameters";
+import {InsufficientFunds, NoActiveKeyError, TransferDeployParameters, TransferResult} from "casperholderslib";
 
 export default {
     name: "TransferNew",

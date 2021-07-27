@@ -57,7 +57,7 @@
 
 <script>
 import {mapGetters} from "vuex";
-import {STATUS_UNKNOWN, STATUS_OK, STATUS_KO} from "@/services/results/deployResult";
+import {STATUS_KO, STATUS_OK, STATUS_UNKNOWN} from "casperholderslib";
 
 export default {
     name: "OperationResult",

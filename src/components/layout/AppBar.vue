@@ -164,7 +164,7 @@
 <script>
 import {mapState} from "vuex";
 import {Signer} from "casper-js-sdk";
-import {STATUS_UNKNOWN} from "@/services/results/deployResult";
+import {STATUS_UNKNOWN} from "casperholderslib";
 
 export default {
     name: "AppBar",
