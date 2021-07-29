@@ -1,4 +1,4 @@
-import {Balance, CasperSigner, ClientCasper, DeployManager} from "casperholderslib";
+import {Balance, CasperSigner, ClientCasper, DeployManager} from "@casperholders/core";
 import {VuexKeyManager} from "@/services/keys/vuexKeyManager";
 
 const AUCTION_MANAGER_HASH = process.env.VUE_APP_AUCTION_MANAGER_HASH;
@@ -31,6 +31,12 @@ export default {
         }
         Vue.prototype.$getNetwork = function () {
             return NETWORK;
+        }
+        Vue.prototype.$getHumanReadableNetwork = function () {
+            if (NETWORK === "casper") {
+                return "MainNet";
+            }
+            return "TestNet";
         }
         Vue.prototype.$getBalanceService = function () {
             return balance;

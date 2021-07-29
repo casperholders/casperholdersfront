@@ -1,4 +1,4 @@
-import {AbstractKeyManager, NoActiveKeyError} from "casperholderslib";
+import {AbstractKeyManager, NoActiveKeyError} from "@casperholders/core";
 import store from "@/store";
 
 /**

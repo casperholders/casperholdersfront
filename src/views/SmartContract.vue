@@ -92,7 +92,7 @@ import {
     NoActiveKeyError,
     SmartContractDeployParameters,
     SmartContractResult
-} from "casperholderslib";
+} from "@casperholders/core";
 
 export default {
     name: "SmartContract",

@@ -91,7 +91,7 @@ import Operation from "@/components/operations/Operation";
 import Amount from "@/components/operations/Amount";
 import {CLPublicKey, Signer} from "casper-js-sdk";
 import {mapState} from "vuex";
-import {InsufficientFunds, NoActiveKeyError, TransferDeployParameters, TransferResult} from "casperholderslib";
+import {InsufficientFunds, NoActiveKeyError, TransferDeployParameters, TransferResult} from "@casperholders/core";
 
 export default {
     name: "TransferNew",

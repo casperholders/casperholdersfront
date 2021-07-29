@@ -15,7 +15,7 @@
         style="cursor: pointer"
         @click="$router.push('/')"
       >
-        Casper Holders {{ $getNetwork !== "casper" ? "TestNet" : "" }}
+        Casper Holders {{ $getNetwork !== "casper" ? $getHumanReadableNetwork() : "" }}
       </v-toolbar-title>
 
 
@@ -164,7 +164,7 @@
 <script>
 import {mapState} from "vuex";
 import {Signer} from "casper-js-sdk";
-import {STATUS_UNKNOWN} from "casperholderslib";
+import {STATUS_UNKNOWN} from "@casperholders/core";
 
 export default {
     name: "AppBar",

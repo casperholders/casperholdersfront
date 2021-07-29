@@ -82,7 +82,7 @@ import Operation from "@/components/operations/Operation";
 import Amount from "@/components/operations/Amount";
 import {Signer} from "casper-js-sdk";
 import {mapState} from "vuex";
-import {Delegate, DelegateResult, InsufficientFunds, NoActiveKeyError} from "casperholderslib";
+import {Delegate, DelegateResult, InsufficientFunds, NoActiveKeyError} from "@casperholders/core";
 
 export default {
     name: "DelegateNew",
