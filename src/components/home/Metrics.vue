@@ -4,117 +4,65 @@
       cols="12"
       md="4"
     >
-      <v-card
-        class="rounded-xl mx-auto"
-        color="secondary"
-      >
-        <v-card-title class="align-center">
-          <v-avatar
-            color="primary"
-            size="52"
-          >
-            <v-icon>mdi-heart-pulse</v-icon>
-          </v-avatar>
-          <v-card-title class="pl-4">
-            Transfer Operations
-          </v-card-title>
-        </v-card-title>
-        <v-sheet color="transparent">
-          <v-sparkline
-            :auto-line-width="autoLineWidth"
-            :fill="fill"
-            :gradient="gradient"
-            :gradient-direction="gradientDirection"
-            :line-width="width"
-            :padding="padding"
-            :smooth="radius || false"
-            :stroke-linecap="lineCap"
-            :type="type"
-            :value="value1"
-            auto-draw
-          ></v-sparkline>
-        </v-sheet>
-      </v-card>
+      <Metric
+        name="Transfer"
+        :value="transfer"
+      />
     </v-col>
     <v-col
       cols="12"
       md="4"
     >
-      <v-card
-        class="rounded-xl mx-auto"
-        color="secondary"
-      >
-        <v-card-title class="align-center">
-          <v-avatar
-            color="primary"
-            size="52"
-          >
-            <v-icon>mdi-heart-pulse</v-icon>
-          </v-avatar>
-          <v-card-title class="pl-4">
-            Staking Operations
-          </v-card-title>
-        </v-card-title>
-        <v-sheet color="transparent">
-          <v-sparkline
-            :auto-line-width="autoLineWidth"
-            :fill="fill"
-            :gradient="gradient"
-            :gradient-direction="gradientDirection"
-            :line-width="width"
-            :padding="padding"
-            :smooth="radius || false"
-            :stroke-linecap="lineCap"
-            :type="type"
-            :value="value2"
-            auto-draw
-          ></v-sparkline>
-        </v-sheet>
-      </v-card>
+      <Metric
+        name="Staking"
+        :value="staking"
+      />
     </v-col>
     <v-col
       cols="12"
       md="4"
     >
-      <v-card
-        class="rounded-xl mx-auto"
-        color="secondary"
-      >
-        <v-card-title class="align-center">
-          <v-avatar
-            color="primary"
-            size="52"
-          >
-            <v-icon>mdi-heart-pulse</v-icon>
-          </v-avatar>
-          <v-card-title class="pl-4">
-            Unstake Operations
-          </v-card-title>
-        </v-card-title>
-
-        <v-sheet color="transparent">
-          <v-sparkline
-            :auto-line-width="autoLineWidth"
-            :fill="fill"
-            :gradient="gradient"
-            :gradient-direction="gradientDirection"
-            :line-width="width"
-            :padding="padding"
-            :smooth="radius || false"
-            :stroke-linecap="lineCap"
-            :type="type"
-            :value="value3"
-            auto-draw
-          ></v-sparkline>
-        </v-sheet>
-      </v-card>
+      <Metric
+        name="Unstake"
+        :value="unstake"
+      />
+    </v-col>
+    <v-col
+      cols="12"
+      md="4"
+    >
+      <Metric
+        name="Add bid"
+        :value="addBid"
+      />
+    </v-col>
+    <v-col
+      cols="12"
+      md="4"
+    >
+      <Metric
+        name="Withdraw bid"
+        :value="withdrawBid"
+      />
+    </v-col>
+    <v-col
+      cols="12"
+      md="4"
+    >
+      <Metric
+        name="Smart-contract"
+        :value="smartContract"
+      />
     </v-col>
   </v-row>
 </template>
 
 <script>
+import Metric from "@/components/home/Metric";
+
 export default {
     name: "Metrics",
+    components: {Metric},
     data() {
         return {
             width: 2,
@@ -126,14 +74,52 @@ export default {
             fill: false,
             type: 'trend',
             autoLineWidth: false,
-            value1: this.value(),
-            value2: this.value(),
-            value3: this.value(),
+            transfer: [0, 0],
+            staking: [0, 0],
+            unstake: [0, 0],
+            addBid: [0, 0],
+            withdrawBid: [0, 0],
+            smartContract: [0, 0],
         }
     },
+    async mounted() {
+        await this.value()
+    },
     methods: {
-        value() {
-            return Array.from({length: 40}, () => Math.floor(Math.random() * 40));
+        async value() {
+            let values = (await (await fetch(this.$getApi()+"/operations/metrics")).json()).data.result
+            if (values.length > 0) {
+
+                if (this.$getNetwork().toLowerCase() === "testnet") {
+                    values.filter(value => value.metric.namespace.contains("testnet"))
+                }
+
+                values.forEach(value => {
+                    const metric = value.values.map(function increment(number) {
+                        number.shift()
+                        number[0] = parseInt(number[0])
+                        return number;
+                    });
+                    if (value.metric.type === "transfer") {
+                        this.transfer = metric.flat().length > 0 ? metric.flat() : [0]
+                    }
+                    if (value.metric.type === "delegate") {
+                        this.staking = metric.flat().length > 0 ? metric.flat() : [0]
+                    }
+                    if (value.metric.type === "undelegate") {
+                        this.unstake = metric.flat().length > 0 ? metric.flat() : [0]
+                    }
+                    if (value.metric.type === "add_bid") {
+                        this.addBid = metric.flat().length > 0 ? metric.flat() : [0]
+                    }
+                    if (value.metric.type === "withdraw_bid") {
+                        this.withdrawBid = metric.flat().length > 0 ? metric.flat() : [0]
+                    }
+                    if (value.metric.type === "smart_contract") {
+                        this.smartContract = metric.flat().length > 0 ? metric.flat() : [0]
+                    }
+                })
+            }
         }
     }
 }
