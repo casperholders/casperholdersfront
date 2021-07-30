@@ -99,6 +99,8 @@ export default {
                 if (updatedDeployResult.status !== STATUS_UNKNOWN) {
                     this.deployResult = updatedDeployResult
                     await this.$store.dispatch("updateDeployResult", updatedDeployResult)
+                    const sendMetricUrl = this.$getApi()+'/deploy/result/'+this.deployResult.hash;
+                    await fetch(sendMetricUrl)
                 }
             } catch (e) {
                 console.log(e)

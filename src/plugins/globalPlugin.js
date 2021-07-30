@@ -4,7 +4,8 @@ import {VuexKeyManager} from "@/services/keys/vuexKeyManager";
 const AUCTION_MANAGER_HASH = process.env.VUE_APP_AUCTION_MANAGER_HASH;
 const NETWORK = process.env.VUE_APP_NETWORK;
 const VALIDATOR = process.env.VUE_APP_VALIDATOR;
-const RPC = process.env.VUE_APP_RPC
+const RPC = process.env.VUE_APP_RPC;
+const API = process.env.VUE_APP_API;
 
 const client = new ClientCasper(RPC)
 const deployManager = new DeployManager(client);
@@ -31,6 +32,9 @@ export default {
         }
         Vue.prototype.$getNetwork = function () {
             return NETWORK;
+        }
+        Vue.prototype.$getApi = function () {
+            return API;
         }
         Vue.prototype.$getHumanReadableNetwork = function () {
             if (NETWORK === "casper") {
