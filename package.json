@@ -6,8 +6,8 @@
     "serve": "vue-cli-service serve",
     "testnet": "vue-cli-service serve --mode testnet",
     "build-testnet": "vue-cli-service build --mode testnet",
-    "mainnet": "vue-cli-service serve --mode testnet",
-    "build-mainnet": "vue-cli-service build --mode testnet",
+    "mainnet": "vue-cli-service serve --mode mainnet",
+    "build-mainnet": "vue-cli-service build --mode mainnet",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "prod": "serve -s dist -l 8080"

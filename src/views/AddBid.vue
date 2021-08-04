@@ -13,6 +13,7 @@
     <p class="text-body-1">
       Here's your validator : <a
       :href=validatorUrl
+      target="_blank"
     >{{ signer.activeKey }}
       <v-icon x-small>mdi-open-in-new</v-icon>
     </a><br />
