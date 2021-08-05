@@ -23,7 +23,7 @@
     <v-btn
       class="mb-3 mt-10 mx-auto"
       color="tertiary"
-      href="https://github.com/KillianH/casperholdersfront"
+      href="https://github.com/casperholders/casperholdersfront"
       large
       rounded
       target="_blank"

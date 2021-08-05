@@ -77,11 +77,11 @@ The connection to a Casper node is done directly with a nginx reverse proxy.
 The nginx reverse proxy configuration **is not open source** as this simple to do for any sysadmin and is part of the *commercial** part of the website.
 
 ## CasperHolders Core
-Contains almost all the CasperHolders logic. [Link]()
+Contains almost all the CasperHolders logic. [Link](https://github.com/casperholders/casperholderscore)
 
 ## CasperHolders API
 
-[Link]()
+[Link](https://github.com/casperholders/casperholdersapi)
 
 Only contains 3 endpoints to generate and consume prometheus metrics from operations that are done on the CasperHolders Website.
 
