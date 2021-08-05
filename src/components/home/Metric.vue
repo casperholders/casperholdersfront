@@ -15,7 +15,7 @@
       </v-card-title>
     </v-card-title>
     <p class="text-center" style="width: 100%">
-      {{value.reduce((a, b) => a + b, 0)}} Operations in the last hour
+      {{ (value.reduce((a, b) => a + b, 0) / value.length).toFixed(2) || 0}} Operations on average in the last 24h
     </p>
     <v-sheet color="transparent">
       <v-sparkline
