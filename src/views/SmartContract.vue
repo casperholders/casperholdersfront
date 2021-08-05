@@ -87,12 +87,10 @@ import Operation from "@/components/operations/Operation";
 import Amount from "@/components/operations/Amount";
 import {Signer} from "casper-js-sdk";
 import {mapState} from "vuex";
-import {
-    InsufficientFunds,
-    NoActiveKeyError,
-    SmartContractDeployParameters,
-    SmartContractResult
-} from "@casperholders/core";
+import {SmartContractResult} from "@casperholders/core/dist/services/results/smartContractResult";
+import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiveKeyError";
+import {InsufficientFunds} from "@casperholders/core/dist/services/errors/insufficientFunds";
+import {SmartContractDeployParameters} from "@casperholders/core/dist/services/deploys/smartContract/smartContractDeployParameters";
 
 export default {
     name: "SmartContract",

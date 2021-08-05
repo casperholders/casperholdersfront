@@ -84,7 +84,10 @@ import Operation from "@/components/operations/Operation";
 import Amount from "@/components/operations/Amount";
 import {Signer} from "casper-js-sdk";
 import {mapState} from "vuex";
-import {InsufficientFunds, NoActiveKeyError, Undelegate, UndelegateResult} from "@casperholders/core";
+import {UndelegateResult} from "@casperholders/core/dist/services/results/undelegateResult";
+import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiveKeyError";
+import {InsufficientFunds} from "@casperholders/core/dist/services/errors/insufficientFunds";
+import {Undelegate} from "@casperholders/core/dist/services/deploys/auction/actions/undelegate";
 
 export default {
     name: "DelegateNew",
@@ -92,7 +95,7 @@ export default {
     data() {
         return {
             minimumCSPRUnstake: 1,
-            undelegateFee: 1,
+            undelegateFee: 0.5,
             amount: 1,
             errorBalance: null,
             balance: 0,

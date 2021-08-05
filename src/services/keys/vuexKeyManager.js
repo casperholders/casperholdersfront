@@ -1,5 +1,6 @@
-import {AbstractKeyManager, NoActiveKeyError} from "@casperholders/core";
 import store from "@/store";
+import {AbstractKeyManager} from "@casperholders/core/dist/services/keys/abstractKeyManager";
+import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiveKeyError";
 
 /**
  * VuexKeyManager class

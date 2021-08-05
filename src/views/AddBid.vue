@@ -94,7 +94,10 @@ import Operation from "@/components/operations/Operation";
 import Amount from "@/components/operations/Amount";
 import {Signer} from "casper-js-sdk";
 import {mapState} from "vuex";
-import {AddBid, AddBidResult, InsufficientFunds, NoActiveKeyError} from "@casperholders/core";
+import {AddBidResult} from "@casperholders/core/dist/services/results/addBidResult";
+import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiveKeyError";
+import {InsufficientFunds} from "@casperholders/core/dist/services/errors/insufficientFunds";
+import {AddBid} from "@casperholders/core/dist/services/deploys/auction/actions/addBid";
 
 export default {
     name: "DelegateNew",
@@ -102,7 +105,7 @@ export default {
     data() {
         return {
             minBid: 1,
-            bidFee: 3,
+            bidFee: 2.8,
             amount: 1,
             balance: 0,
             validatorBalance: 0,

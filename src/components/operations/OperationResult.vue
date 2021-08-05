@@ -57,7 +57,7 @@
       </span>
       <span v-if="deployResult.status === KO">
         <v-icon color="red">mdi-alert-circle</v-icon>
-        Oops... A problem as occured. Check the error message here (or on the cspr.live website) :<br />
+        Oops... A problem as occurred. Check the error message here (or on the cspr.live website) :<br />
         {{ deployResult.message }}.<br />
         Operation fee total cost : {{ deployResult.cost }} CSPR.
       </span>
@@ -67,7 +67,7 @@
 
 <script>
 import {mapGetters} from "vuex";
-import {STATUS_KO, STATUS_OK, STATUS_UNKNOWN} from "@casperholders/core";
+import {STATUS_KO, STATUS_OK, STATUS_UNKNOWN} from "@casperholders/core/dist/services/results/deployResult";
 import {DeployWatcher} from "casper-js-sdk";
 
 const deployWatcher = new DeployWatcher(process.env.VUE_APP_RPC + "/events/");
@@ -103,6 +103,7 @@ export default {
             deployWatcher.start();
         }
         setTimeout(async () => {
+            await this.getDeployResult()
             if (this.deployResult.status === STATUS_UNKNOWN) {
                 deployWatcher.stop();
                 this.deployResult.status = STATUS_KO

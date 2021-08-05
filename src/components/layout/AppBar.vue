@@ -164,7 +164,7 @@
 <script>
 import {mapState} from "vuex";
 import {Signer} from "casper-js-sdk";
-import {STATUS_UNKNOWN} from "@casperholders/core";
+import {STATUS_OK, STATUS_UNKNOWN} from "@casperholders/core/dist/services/results/deployResult";
 
 export default {
     name: "AppBar",
@@ -222,13 +222,13 @@ export default {
             if (operation.status === STATUS_UNKNOWN) {
                 return "mdi-help-circle"
             }
-            return operation.status ? "mdi-checkbox-marked-circle" : "mdi-alert-circle"
+            return operation.status === STATUS_OK ? "mdi-checkbox-marked-circle" : "mdi-alert-circle"
         },
         operationIconColor(operation) {
             if (operation.status === STATUS_UNKNOWN) {
                 return "white"
             }
-            return operation.status ? "green" : "tertiary"
+            return operation.status === STATUS_OK ? "green" : "tertiary"
         },
         getOperationUrl(operation) {
             return this.$getCsprLiveUrl() + 'deploy/' + operation.hash
