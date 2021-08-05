@@ -27,8 +27,12 @@ const getters = {
 
 const mutations = {
     updateSigner(state, {connected, activeKey}) {
-        state.signer.connected = connected;
-        state.signer.activeKey = activeKey;
+        if(connected){
+            state.signer.connected = connected;
+        }
+        if(activeKey){
+            state.signer.activeKey = activeKey;
+        }
     },
     updateSignerLock(state, {lock}) {
         state.signer.lock = lock

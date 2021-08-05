@@ -207,7 +207,7 @@ export default {
 
             try {
                 const stakedBalance = await this.$getBalanceService().fetchStakeBalance();
-                newChartData.labels.push("Stacked");
+                newChartData.labels.push("Staked");
                 newChartData.datasets[0].data[1] = stakedBalance;
             } catch (error) {
                 console.log(error)

@@ -97,13 +97,13 @@
           color="primary"
           style="border-bottom: 5px solid #ff473e !important;"
         >
-          <v-list-item v-if="!signer.connected || signer.activeKey === null">
+          <v-list-item v-if="!signer.connected || signer.lock || signer.activeKey === null">
             <v-list-item-icon>
               <v-icon color="tertiary">mdi-lock</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>Casper Signer disconnected</v-list-item-title>
-              <v-list-item-subtitle>Please unlock or re-connect</v-list-item-subtitle>
+              <v-list-item-title>Casper Signer {{ signer.lock ? "locked" : "disconnected" }}</v-list-item-title>
+              <v-list-item-subtitle>Please {{ signer.lock ? "unlock" : "re-connect" }}</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
               <v-btn
@@ -112,13 +112,13 @@
                 @click="connectionRequest"
               >
                 <v-icon left>mdi-account-circle</v-icon>
-                Connect
+                {{ signer.lock ? "Unlock" : "Connect" }}
               </v-btn>
             </v-list-item-action>
           </v-list-item>
           <template v-for="(operation, index) in operations">
             <v-divider
-              v-if="index > 0 || (!signer.connected || signer.activeKey === null)"
+              v-if="index > 0 || (!signer.connected || signer.lock || signer.activeKey === null)"
               :key="'app_bar_divider'+operation.hash"
             ></v-divider>
             <v-list-item :key="'app_bar'+operation.hash">
@@ -175,13 +175,13 @@ export default {
     computed: {
         ...mapState(["operations", "signer"]),
         disabledNotifications() {
-            if (this.operations.length > 0 || (!this.signer.connected || this.signer.activeKey === null)) {
+            if (this.operations.length > 0 || (!this.signer.connected || this.signer.lock || this.signer.activeKey === null)) {
                 return
             }
             return "disabled"
         },
         badgeColor() {
-            if (!this.signer.connected || this.signer.activeKey === null) {
+            if (!this.signer.connected || this.signer.lock || this.signer.activeKey === null) {
                 return "tertiary"
             }
             if (this.operations.filter(operation => operation.status === STATUS_UNKNOWN).length > 0) {
@@ -193,7 +193,7 @@ export default {
             return "green"
         },
         badgeContent() {
-            if (!this.signer.connected || this.signer.activeKey === null) {
+            if (!this.signer.connected || this.signer.lock || this.signer.activeKey === null) {
                 return
             }
             if (this.operations.filter(operation => operation.status === STATUS_UNKNOWN).length > 0) {
@@ -205,7 +205,7 @@ export default {
             return this.operations.length
         },
         badgeIcon() {
-            if (this.signer.connected && this.signer.activeKey) {
+            if (this.signer.connected && !this.signer.lock && this.signer.activeKey) {
                 return
             }
             return "mdi-lock"
