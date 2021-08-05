@@ -30,3 +30,35 @@ spec:
       services:
         - name: casperholders-service
           port: 80
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: casperholders-www-tls
+spec:
+  entryPoints:
+    - secure
+  routes:
+    - match: Host(`www.casperholders.io`)
+      kind: Rule
+      services:
+        - name: casperholders-service
+          port: 80
+  tls:
+    secretName: casperholders-cert
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: casperholders-www-http
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`www.casperholders.io`)
+      middlewares:
+        - name: https-only
+      kind: Rule
+      services:
+        - name: casperholders-service
+          port: 80

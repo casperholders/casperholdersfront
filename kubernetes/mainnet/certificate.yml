@@ -9,3 +9,4 @@ spec:
   commonName: casperholders.io
   dnsNames:
     - casperholders.io
+    - www.casperholders.io
