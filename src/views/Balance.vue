@@ -1,50 +1,53 @@
 <template>
   <v-container
+    class="container__small"
     fill-height
-    class="flex-column px-0"
   >
     <v-card
       class="align-center rounded-xl secondary"
-      min-width="50vw"
+      width="100%"
     >
       <v-card-title class="align-center">
         <v-avatar
+          class="mr-4"
           color="primary"
           size="52"
         >
           <v-icon>mdi-wallet</v-icon>
         </v-avatar>
-        <v-card-title class="pl-4">Balance</v-card-title>
+        Balance
       </v-card-title>
       <v-card-text class="text-body-1">
         <v-layout
-          fill-height
+          :column="$vuetify.breakpoint.mobile"
           align-center
-          justify-center
+          fill-height
+          justify-start
         >
-          <v-progress-circular
-            v-if="!loaded"
-            indeterminate
-            color="blue"
-          ></v-progress-circular>
           <donut-chart
-            v-if="loaded"
-            :chartdata="datacollection"
-          ></donut-chart>
-          <div v-if="loaded">
-                <span
-                  v-bind:key="label"
-                  v-for="(label, i) in datacollection.labels"
-                  class="ml-5"
-                ><v-icon
-                  :color="datacollection.datasets[0].backgroundColor[i]"
-                >mdi-square</v-icon>{{
-                    label
-                  }} {{
-                    datacollection.datasets[0].data[i]
-                  }} CSPR ({{
-                    csprPercentage(i)
-                  }}%)<br /></span>
+            :chart-data="chartData"
+            style="max-width: 100%"
+          />
+
+          <div class="mt-3 mt-lg-0 ml-0 ml-lg-3">
+            <v-layout
+              v-for="(label, i) in chartData.labels"
+              :key="label"
+              :class="{ 'mt-2': i === 1 }"
+            >
+              <v-avatar
+                :color="chartData.datasets[0].backgroundColor[i]"
+                class="mr-2"
+                size="24"
+              />
+              {{ label }}
+              &nbsp;
+              <span class="cspr">
+                {{ chartData.datasets[0].data[i].toFixed(2) }} CSPR
+              </span>
+              &nbsp;
+              ({{ csprPercentage(i) }}%)
+            </v-layout>
           </div>
         </v-layout>
       </v-card-text>
@@ -56,13 +59,13 @@
             md="4"
           >
             <v-sheet
-              style="background-color: transparent!important;"
-              outlined
-              large
-              rounded
               color="white"
+              large
+              outlined
+              rounded
+              style="background-color: transparent!important;"
             >
-              <v-list-item href="#">
+              <v-list-item to="/transfer">
                 <v-list-item-icon>
                   <v-icon>
                     mdi-send
@@ -73,7 +76,7 @@
                     Transfer
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    Transfer funds to another account
+                    Transfer funds
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
@@ -84,13 +87,13 @@
             md="4"
           >
             <v-sheet
-              style="background-color: transparent!important;"
-              outlined
-              large
-              rounded
               color="white"
+              large
+              outlined
+              rounded
+              style="background-color: transparent!important;"
             >
-              <v-list-item href="#">
+              <v-list-item to="stake">
                 <v-list-item-icon>
                   <v-icon>
                     mdi-safe
@@ -112,13 +115,13 @@
             md="4"
           >
             <v-sheet
-              style="background-color: transparent!important;"
-              outlined
-              large
-              rounded
               color="white"
+              large
+              outlined
+              rounded
+              style="background-color: transparent!important;"
             >
-              <v-list-item href="#">
+              <v-list-item to="unstake">
                 <v-list-item-icon>
                   <v-icon>
                     mdi-wallet
@@ -126,10 +129,10 @@
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title>
-                    Unstack
+                    Unstake
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    Unstack your tokens
+                    Unstake your tokens
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
@@ -142,80 +145,76 @@
 </template>
 
 <script>
-import DonutChart from "@/components/DonutChart";
-import {Signer} from "casper-client-sdk";
+import DonutChart from "@/components/chart/DonutChart";
+import {mapState} from "vuex";
 
 export default {
-    name: 'Balance',
+    name: "Balance",
     components: {DonutChart},
-    data: () => ({
-        loaded: false,
-        datacollection: {
-            labels: ['Loading'],
-            datasets: [
-                {
-                    label: 'Data One',
-                    backgroundColor: ['#00126b', '#af023f', '#ff473e'],
-                    data: [0],
-                    borderWidth: 0,
-                }
-            ]
-        }
-    }),
-    computed: {
-        csprPercentage() {
-            let total = this.datacollection.datasets[0].data.reduce((a, b) => parseFloat(a) + parseFloat(b), 0);
-            if(total === 0){
-                total = 1
-            }
-            return (index) => {
-                const value = parseFloat(this.datacollection.datasets[0].data[index]);
-                return Number(value / total * 100).toFixed(2)
-            }
-        }
+    data() {
+        return {
+            chartData: this.createLoadingChartData(),
+        };
     },
-    async mounted() {
-        try {
-            if(!await Signer.isConnected()){
-                throw new Error("Casper Signer is not connected")
+    computed: {
+        ...mapState(["signer"]),
+        csprPercentage() {
+            let total = this.chartData.datasets[0].data.reduce((a, b) => a + b, 0);
+            if (total === 0) {
+                total = 1;
             }
-            const publicKeyHex = await Signer.getActivePublicKey()
+
+            return (index) => {
+                const value = this.chartData.datasets[0].data[index];
+                return Number(value / total * 100).toFixed(2);
+            };
+        },
+    },
+    watch: {
+        "signer.activeKey": {
+            async handler() {
+                await this.fetchBalances();
+            },
+            immediate: true,
+        },
+    },
+    methods: {
+        createLoadingChartData() {
+            const {primary, tertiary, quaternary} = this.$vuetify.theme.currentTheme;
+
+            return {
+                labels: ["Loading"],
+                datasets: [
+                    {
+                        backgroundColor: [primary, quaternary, tertiary],
+                        data: [0, 0, 1],
+                        borderWidth: 0,
+                    },
+                ],
+            };
+        },
+        async fetchBalances() {
+            const newChartData = this.createLoadingChartData();
             try {
-                let balanceData = await (await fetch("http://localhost:3000/balance/" + publicKeyHex)).json()
-                if(balanceData.balance === undefined){
-                    throw new Error("Can't retrieve balance. Please check your public key")
-                }
-                this.datacollection.labels = ['Available']
-                this.datacollection.datasets[0].data = [Number(balanceData.balance / 1000000000).toFixed(2)]
-                try {
-                    let stakeData = await (await fetch("http://localhost:3000/balance/stake/" + publicKeyHex)).json()
-                    let stake = Number(stakeData.balance / 1000000000).toFixed(2)
-                    this.datacollection.datasets[0].data.push(stake)
-                    if (stakeData.error !== undefined && stakeData.error !== "") {
-                        this.datacollection.labels.push(stakeData.error)
-                    } else {
-                        this.datacollection.labels.push("Staked")
-                    }
-                    if (this.datacollection.datasets[0].data[0] === "0.00" && this.datacollection.datasets[0].data[1] === "0.00") {
-                        this.datacollection.datasets[0].data = ["0", "0", "1"]
-                    }
-                }catch (e) {
-                    console.log(e)
-                    this.datacollection.datasets[0].data.push("0");
-                    this.datacollection.labels.push("Unable to retrieve staked balance.")
-                }
-            } catch (e) {
-                console.log(e);
-                this.datacollection.datasets[0].data = ["0", "0", "1"]
-                this.datacollection.labels = ["Unable to retrieve current balance."]
+                const balance = await this.$getBalanceService().fetchBalance();
+                newChartData.labels = ["Available"];
+                newChartData.datasets[0].data = [balance, 0, 0];
+            } catch (error) {
+                newChartData.labels = [error.message];
+                this.chartData = newChartData;
+                return;
             }
-        } catch (e) {
-            Signer.sendConnectionRequest();
-            console.log(e);
-            this.datacollection.labels = ["Please connect to Casper Signer first then it refresh."];
-            this.datacollection.datasets[0].data = ["0", "0", "1"];
-        }
-        this.loaded = true;
-    }
-}
+
+            try {
+                const stakedBalance = await this.$getBalanceService().fetchStakeBalance();
+                newChartData.labels.push("Stacked");
+                newChartData.datasets[0].data[1] = stakedBalance;
+            } catch (error) {
+                console.log(error)
+            } finally {
+                this.chartData = newChartData;
+            }
+        },
+    },
+};
 </script>

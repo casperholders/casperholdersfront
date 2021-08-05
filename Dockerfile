@@ -1,9 +1,10 @@
 FROM node:latest as build-stage
+ARG mode
 WORKDIR /app
 COPY package*.json ./
 RUN yarn install
 COPY ./ .
-RUN yarn build
+RUN yarn build-${mode}
 
 FROM nginx as production-stage
 RUN mkdir /app

@@ -1,9 +1,12 @@
 <template>
   <v-container
+    class="flex-column justify-center container__small"
     fill-height
-    class="px-0 flex-column justify-center"
   >
-    <v-card class="align-center rounded-xl secondary">
+    <v-card
+      class="align-center rounded-xl secondary"
+      width="100%"
+    >
       <v-card-title class="align-center">
         <v-avatar
           color="primary"
@@ -14,10 +17,16 @@
         <v-card-title class="pl-4">Contact</v-card-title>
       </v-card-title>
       <v-card-text class="text-body-1">
-        <h2>Discord</h2><br />
+        <h2>Discord</h2>
         <p>
-          Join the official Discord community server from Casper Network ! Ping me @killian :)<br /><br />
-          My ID : killian#7405<br />
+          Join the official Discord community server from Casper Network ! Ping me @killian :)
+        </p>
+        <h2>Telegram</h2>
+        <p>
+          Join the official Casper Telegram Channel from Casper Network ! Ping me @KillianH :)
+        </p>
+        <p>
+          Or join the official DEVxDAO Telegram Channel ! Ping me @KillianH :)
         </p>
       </v-card-text>
 
@@ -25,11 +34,47 @@
         <v-btn
           color="primary"
           href="https://discord.com/invite/Q38s3Vh"
-          target="_blank"
           rel="noopener"
           rounded
+          target="_blank"
         >
+          <v-icon
+            dark
+            left
+          >
+            mdi-discord
+          </v-icon>
           Join the discord
+        </v-btn>
+        <v-btn
+          color="primary"
+          href="https://t.me/casperofficialann"
+          rel="noopener"
+          rounded
+          target="_blank"
+        >
+          <v-icon
+            dark
+            left
+          >
+            mdi-send
+          </v-icon>
+          Join the Casper Telegram
+        </v-btn>
+        <v-btn
+          color="primary"
+          href="https://t.me/devxdao"
+          rel="noopener"
+          rounded
+          target="_blank"
+        >
+          <v-icon
+            dark
+            left
+          >
+            mdi-send
+          </v-icon>
+          Join the DEVxDAO Telegram
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -39,7 +84,5 @@
 <script>
 export default {
     name: 'FAQ',
-
-    data: () => ({})
 }
 </script>

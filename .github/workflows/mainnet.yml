@@ -1,9 +1,7 @@
-name: CICD
+name: mainnet
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
   workflow_dispatch:
@@ -12,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+
       - uses: actions/checkout@v2
 
       - name: Setup Node.js environment
@@ -26,7 +24,7 @@ jobs:
       - name: script
         run: |
           yarn lint
-          yarn build
+          yarn build --mode mainnet
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -41,26 +39,20 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
-        id: docker_build_php
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: killianh/casperholders:api
+          build-args: mode=mainnet
+          tags: killianh/casperholders:front
 
-      - uses: azure/k8s-set-context@v1
+      - name: Production - Update deployment
+        uses: steebchen/kubectl@v2.0.0
         with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.KUBE_CONFIG }}
-        id: setcontext
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: apply -k kubernetes/mainnet/
 
-      - uses: Azure/k8s-deploy@v1.4
+      - name: Production - Restart deployment
+        uses: steebchen/kubectl@v2.0.0
         with:
-          namespace: 'api-testnet-casperholders'
-          manifests: |
-            kubernetes/mainnet/https.yml
-            kubernetes/mainnet/issuer.yml
-            kubernetes/mainnet/config.yml
-            kubernetes/mainnet/deployment.yml
-            kubernetes/mainnet/service.yml
-            kubernetes/mainnet/ingress.yml
-            kubernetes/mainnet/certificate.yml
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: rollout restart deployment/casperholders-app --namespace=casperholders
