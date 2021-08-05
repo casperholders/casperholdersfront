@@ -68,9 +68,7 @@
 <script>
 import {mapGetters} from "vuex";
 import {STATUS_KO, STATUS_OK, STATUS_UNKNOWN} from "@casperholders/core/dist/services/results/deployResult";
-import {DeployWatcher} from "casper-js-sdk";
 
-const deployWatcher = new DeployWatcher(process.env.VUE_APP_RPC + "/events/");
 export default {
     name: "OperationResult",
     props: {
@@ -87,6 +85,7 @@ export default {
             UNKNOWN: STATUS_UNKNOWN,
             OK: STATUS_OK,
             KO: STATUS_KO,
+            eventWatcher: new EventSource(process.env.VUE_APP_RPC + "/events/")
         }
     },
     computed: {
@@ -96,24 +95,25 @@ export default {
         this.deployResult = Object.assign({}, this.getOperation(this.deployHash))
         this.deployHashUrl = this.$getCsprLiveUrl() + "deploy/" + this.deployResult.hash
         if (this.deployResult.status === STATUS_UNKNOWN) {
-            deployWatcher.subscribe([{
-                deployHash: this.deployHash,
-                eventHandlerFn: async () => await this.getDeployResult()
-            }]);
-            deployWatcher.start();
+            this.eventWatcher.onmessage =  (event) => {
+                const data = JSON.parse(event.data)
+                if ("DeployProcessed" in data && data.DeployProcessed.deploy_hash === this.deployHash) {
+                    this.getDeployResult().then( () => this.eventWatcher.close())
+                }
+            }
         }
         setTimeout(async () => {
+            this.eventWatcher.close()
             await this.getDeployResult()
             if (this.deployResult.status === STATUS_UNKNOWN) {
-                deployWatcher.stop();
                 this.deployResult.status = STATUS_KO
                 this.deployResult.message = "No deploy result from the network. Please check on cspr.live or reach someone on the discord with the deploy hash."
                 await this.$store.dispatch("updateDeployResult", this.deployResult)
             }
         }, 600000);
     },
-    destroyed() {
-        deployWatcher.stop()
+    beforeDestroy() {
+        this.eventWatcher.close()
     },
     methods: {
         async getDeployResult() {
@@ -124,7 +124,6 @@ export default {
             try {
                 const updatedDeployResult = await this.$getDeployManager().getDeployResult(this.deployResult);
                 if (updatedDeployResult.status !== STATUS_UNKNOWN) {
-                    deployWatcher.stop();
                     this.deployResult = updatedDeployResult
                     await this.$store.dispatch("updateDeployResult", updatedDeployResult)
                     await fetch(this.$getApi() + '/deploy/result/' + this.deployResult.hash)
@@ -135,7 +134,7 @@ export default {
         },
         removeDeployResult() {
             this.$store.dispatch("removeDeployResult", this.deployResult);
-            deployWatcher.stop();
+            this.eventWatcher.close();
         }
     }
 }
