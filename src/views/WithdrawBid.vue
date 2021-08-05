@@ -12,10 +12,11 @@
   >
     <p class="text-body-1">
       Here's your validator : <a
-        :href=validatorUrl
-      >{{ signer.activeKey }}
-        <v-icon x-small>mdi-open-in-new</v-icon>
-      </a><br />
+      :href=validatorUrl
+      target="_blank"
+    >{{ signer.activeKey }}
+      <v-icon x-small>mdi-open-in-new</v-icon>
+    </a><br />
       <br />
       Actually there's a commission rate of {{ commission }}%. (Applies on the staking rewards only.)<br />
       Example : if your delegators receive 100 CSPR rewards from staking, you will received {{ commission }} CSPR and
@@ -23,11 +24,11 @@
       get {{ 100 - commission }} CSPR.
     </p>
     <Amount
-      class="mb-4"
       :balance="balance"
       :fee="bidFee"
       :min="minBid"
       :value="amount"
+      class="mb-4"
       @input="amount = $event"
     />
     <p>
@@ -84,10 +85,10 @@ import Operation from "@/components/operations/Operation";
 import Amount from "@/components/operations/Amount";
 import {Signer} from "casper-js-sdk";
 import {mapState} from "vuex";
-import {InsufficientFunds} from "@/services/errors/insufficientFunds";
-import {NoActiveKeyError} from "@/services/errors/noActiveKeyError";
-import {WithdrawBid} from "@/services/deploys/auction/actions/withdrawBid";
-import {WithdrawBidResult} from "@/services/results/withdrawBidResult";
+import {WithdrawBidResult} from "@casperholders/core/dist/services/results/withdrawBidResult";
+import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiveKeyError";
+import {InsufficientFunds} from "@casperholders/core/dist/services/errors/insufficientFunds";
+import {WithdrawBid} from "@casperholders/core/dist/services/deploys/auction/actions/withdrawBid";
 
 export default {
     name: "DelegateNew",

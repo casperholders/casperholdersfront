@@ -26,11 +26,11 @@
       </template>
     </v-file-input>
     <Amount
-      class="mb-4"
       :balance="balance"
       :fee="Number(0)"
       :min="minPayment"
       :value="amount"
+      class="mb-4"
       @input="amount = $event"
     />
     <p>
@@ -87,10 +87,10 @@ import Operation from "@/components/operations/Operation";
 import Amount from "@/components/operations/Amount";
 import {Signer} from "casper-js-sdk";
 import {mapState} from "vuex";
-import {InsufficientFunds} from "@/services/errors/insufficientFunds";
-import {NoActiveKeyError} from "@/services/errors/noActiveKeyError";
-import {SmartContractResult} from "@/services/results/smartContractResult";
-import {SmartContractDeployParameters} from "@/services/deploys/smartContract/smartContractDeployParameters";
+import {SmartContractResult} from "@casperholders/core/dist/services/results/smartContractResult";
+import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiveKeyError";
+import {InsufficientFunds} from "@casperholders/core/dist/services/errors/insufficientFunds";
+import {SmartContractDeployParameters} from "@casperholders/core/dist/services/deploys/smartContract/smartContractDeployParameters";
 
 export default {
     name: "SmartContract",

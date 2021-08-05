@@ -36,6 +36,21 @@
       </v-icon>
       Technical information
     </v-btn>
+    <v-btn
+      class="mb-3 mt-10 mx-auto"
+      color="secondary"
+      :href="swapCasperHoldersUrl"
+      large
+      rounded
+    >
+      <v-icon
+        class="mr-3"
+        large
+        left
+      >mdi-swap-horizontal-bold
+      </v-icon>
+      Switch to {{ swapNetworkName }}
+    </v-btn>
   </v-container>
 </template>
 
@@ -48,5 +63,13 @@ import Features from "@/components/home/Features";
 export default {
     name: 'Home',
     components: {Metrics, Roadmap, Features},
+    computed: {
+        swapNetworkName() {
+            return this.$getNetwork() === "casper" ? "TestNet" : "MainNet"
+        },
+        swapCasperHoldersUrl() {
+            return this.$getNetwork() === "casper" ? "https://testnet.casperholders.io" : "https://casperholders.io"
+        }
+    }
 }
 </script>

@@ -1,25 +1,26 @@
 {
   "name": "casperholdersfront",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "testnet": "vue-cli-service serve --mode testnet",
     "build-testnet": "vue-cli-service build --mode testnet",
-    "mainnet": "vue-cli-service serve --mode testnet",
-    "build-mainnet": "vue-cli-service build --mode testnet",
+    "mainnet": "vue-cli-service serve --mode mainnet",
+    "build-mainnet": "vue-cli-service build --mode mainnet",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "prod": "serve -s dist -l 8080"
   },
   "dependencies": {
-    "casper-js-sdk": "^2.0.1",
+    "@casperholders/core": "^1.0.2",
+    "casper-js-sdk": "^2.4.0",
     "chart.js": "2",
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.1",
     "vue-router": "^3.2.0",
-    "vuetify": "^2.5.1",
+    "vuetify": "^2.5.7",
     "vuex": "^3.6.2"
   },
   "devDependencies": {

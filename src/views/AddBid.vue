@@ -12,10 +12,11 @@
   >
     <p class="text-body-1">
       Here's your validator : <a
-        :href=validatorUrl
-      >{{ signer.activeKey }}
-        <v-icon x-small>mdi-open-in-new</v-icon>
-      </a><br />
+      :href=validatorUrl
+      target="_blank"
+    >{{ signer.activeKey }}
+      <v-icon x-small>mdi-open-in-new</v-icon>
+    </a><br />
       <br />
       Actually there's a commission rate of {{ commission }}%. (Applies on the staking rewards only.)<br />
       Example : if your delegators receive 100 CSPR rewards from staking, you will received {{ commission }} CSPR and
@@ -23,21 +24,21 @@
       get {{ 100 - commission }} CSPR.
     </p>
     <Amount
-      class="mb-14"
       :balance="balance"
       :fee="bidFee"
       :min="minBid"
       :value="amount"
+      class="mb-14"
       @input="amount = $event"
     />
     <v-slider
       v-model="commission"
       color="white"
-      track-color="white"
-      track-fill-color="white"
       label="Commission rate"
       thumb-color="quaternary"
       thumb-label="always"
+      track-color="white"
+      track-fill-color="white"
     ></v-slider>
     <p>
       Add bid operation fee : {{ bidFee }} CSPR<br />
@@ -93,10 +94,10 @@ import Operation from "@/components/operations/Operation";
 import Amount from "@/components/operations/Amount";
 import {Signer} from "casper-js-sdk";
 import {mapState} from "vuex";
-import {InsufficientFunds} from "@/services/errors/insufficientFunds";
-import {NoActiveKeyError} from "@/services/errors/noActiveKeyError";
-import {AddBid} from "@/services/deploys/auction/actions/addBid";
-import {AddBidResult} from "@/services/results/addBidResult";
+import {AddBidResult} from "@casperholders/core/dist/services/results/addBidResult";
+import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiveKeyError";
+import {InsufficientFunds} from "@casperholders/core/dist/services/errors/insufficientFunds";
+import {AddBid} from "@casperholders/core/dist/services/deploys/auction/actions/addBid";
 
 export default {
     name: "DelegateNew",
@@ -104,7 +105,7 @@ export default {
     data() {
         return {
             minBid: 1,
-            bidFee: 3,
+            bidFee: 2.8,
             amount: 1,
             balance: 0,
             validatorBalance: 0,

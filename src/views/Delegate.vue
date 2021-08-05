@@ -12,21 +12,22 @@
   >
     <p class="text-body-1">
       Here's your validator : <a
-        :href=validatorUrl
-      >{{ $getValidator() }}
-        <v-icon x-small>mdi-open-in-new</v-icon>
-      </a><br />
+      :href=validatorUrl
+      target="_blank"
+    >{{ $getValidator() }}
+      <v-icon x-small>mdi-open-in-new</v-icon>
+    </a><br />
       <br />
       Actually there's a commission rate of 5%. (Applies on the staking rewards only.)<br />
       Example : if you receive 100 CSPR rewards from staking, CasperHolders will received 5 CSPR and you will
       get 95 CSPR.
     </p>
     <Amount
-      class="mb-4"
       :balance="balance"
       :fee="delegationFee"
       :min="minimumCSPRStake"
       :value="amount"
+      class="mb-4"
       @input="amount = $event"
     />
     <p>
@@ -82,10 +83,10 @@ import Operation from "@/components/operations/Operation";
 import Amount from "@/components/operations/Amount";
 import {Signer} from "casper-js-sdk";
 import {mapState} from "vuex";
-import {InsufficientFunds} from "@/services/errors/insufficientFunds";
-import {NoActiveKeyError} from "@/services/errors/noActiveKeyError";
-import {DelegateResult} from "@/services/results/delegateResult";
-import {Delegate} from "@/services/deploys/auction/actions/delegate";
+import {DelegateResult} from "@casperholders/core/dist/services/results/delegateResult";
+import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiveKeyError";
+import {InsufficientFunds} from "@casperholders/core/dist/services/errors/insufficientFunds";
+import {Delegate} from "@casperholders/core/dist/services/deploys/auction/actions/delegate";
 
 export default {
     name: "DelegateNew",

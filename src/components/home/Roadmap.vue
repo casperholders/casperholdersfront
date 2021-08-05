@@ -57,9 +57,9 @@
           <v-icon
             color="quaternary"
             left
-          >mdi-brain
+          >mdi-lock
           </v-icon>
-          Smart staking
+          High security accounts settings
         </v-card-text>
       </v-card>
     </v-col>

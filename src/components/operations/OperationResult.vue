@@ -2,7 +2,17 @@
   <v-card
     class="align-center rounded-xl secondary mt-5"
     width="100%"
+    :loading="deployResult.status === UNKNOWN"
   >
+    <template slot="progress">
+      <v-progress-linear
+        color="white"
+        rounded
+        buffer-value="0"
+        stream
+        reverse
+      ></v-progress-linear>
+    </template>
     <v-card-title>
       Operation result
       <v-btn
@@ -29,14 +39,14 @@
       </a>
       <br />
       <span v-if="deployResult.status === UNKNOWN">
-        Waiting for the deploy result ...<br />
-        Re-trying every 30s.<br />
-        Number of tries : {{ tries }}
+        Waiting for the deploy result ...
         <v-progress-circular
           class="ml-3"
           color="white"
           indeterminate
-        ></v-progress-circular>
+        ></v-progress-circular> <br />
+        This can take a few minutes. <br />
+        You can always verify the status of the operations with the link above.
       </span>
       <span v-if="deployResult.status !== UNKNOWN">
                   Status of the operation :<br />
@@ -47,7 +57,7 @@
       </span>
       <span v-if="deployResult.status === KO">
         <v-icon color="red">mdi-alert-circle</v-icon>
-        Oops... A problem as occured. Check the error message here (or on the cspr.live website) :<br />
+        Oops... A problem as occurred. Check the error message here (or on the cspr.live website) :<br />
         {{ deployResult.message }}.<br />
         Operation fee total cost : {{ deployResult.cost }} CSPR.
       </span>
@@ -57,8 +67,10 @@
 
 <script>
 import {mapGetters} from "vuex";
-import {STATUS_UNKNOWN, STATUS_OK, STATUS_KO} from "@/services/results/deployResult";
+import {STATUS_KO, STATUS_OK, STATUS_UNKNOWN} from "@casperholders/core/dist/services/results/deployResult";
+import {DeployWatcher} from "casper-js-sdk";
 
+const deployWatcher = new DeployWatcher(process.env.VUE_APP_RPC + "/events/");
 export default {
     name: "OperationResult",
     props: {
@@ -72,7 +84,6 @@ export default {
         return {
             deployResult: null,
             deployHashUrl: "",
-            tries: 0,
             UNKNOWN: STATUS_UNKNOWN,
             OK: STATUS_OK,
             KO: STATUS_KO,
@@ -84,9 +95,25 @@ export default {
     created() {
         this.deployResult = Object.assign({}, this.getOperation(this.deployHash))
         this.deployHashUrl = this.$getCsprLiveUrl() + "deploy/" + this.deployResult.hash
+        if (this.deployResult.status === STATUS_UNKNOWN) {
+            deployWatcher.subscribe([{
+                deployHash: this.deployHash,
+                eventHandlerFn: async () => await this.getDeployResult()
+            }]);
+            deployWatcher.start();
+        }
+        setTimeout(async () => {
+            await this.getDeployResult()
+            if (this.deployResult.status === STATUS_UNKNOWN) {
+                deployWatcher.stop();
+                this.deployResult.status = STATUS_KO
+                this.deployResult.message = "No deploy result from the network. Please check on cspr.live or reach someone on the discord with the deploy hash."
+                await this.$store.dispatch("updateDeployResult", this.deployResult)
+            }
+        }, 600000);
     },
-    async mounted() {
-        await this.getDeployResult()
+    destroyed() {
+        deployWatcher.stop()
     },
     methods: {
         async getDeployResult() {
@@ -97,27 +124,18 @@ export default {
             try {
                 const updatedDeployResult = await this.$getDeployManager().getDeployResult(this.deployResult);
                 if (updatedDeployResult.status !== STATUS_UNKNOWN) {
+                    deployWatcher.stop();
                     this.deployResult = updatedDeployResult
                     await this.$store.dispatch("updateDeployResult", updatedDeployResult)
+                    await fetch(this.$getApi() + '/deploy/result/' + this.deployResult.hash)
                 }
             } catch (e) {
                 console.log(e)
             }
-
-            if (this.deployResult.status === STATUS_UNKNOWN && this.tries < 30) {
-                this.tries = this.tries + 1
-                setTimeout(() => {
-                    this.getDeployResult();
-                }, 30000);
-            }
-            if (this.tries >= 30) {
-                this.deployResult.status = false
-                this.deployResult.message = "No deploy result from the network. Please check on cspr.live or reach someone on the discord with the deploy hash."
-                await this.$store.dispatch("updateDeployResult", this.deployResult)
-            }
         },
         removeDeployResult() {
-            this.$store.dispatch("removeDeployResult", this.deployResult)
+            this.$store.dispatch("removeDeployResult", this.deployResult);
+            deployWatcher.stop();
         }
     }
 }

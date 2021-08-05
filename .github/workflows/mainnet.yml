@@ -45,19 +45,14 @@ jobs:
           build-args: mode=mainnet
           tags: killianh/casperholders:front
 
-      - uses: azure/k8s-set-context@v1
+      - name: Production - Update deployment
+        uses: steebchen/kubectl@v2.0.0
         with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.KUBE_CONFIG }}
-        id: setcontext
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: apply -k kubernetes/mainnet/
 
-      - uses: Azure/k8s-deploy@v1.4
+      - name: Production - Restart deployment
+        uses: steebchen/kubectl@v2.0.0
         with:
-          namespace: 'casperholders'
-          manifests: |
-            kubernetes/mainnet/https.yml
-            kubernetes/mainnet/issuer.yml
-            kubernetes/mainnet/deployment.yml
-            kubernetes/mainnet/service.yml
-            kubernetes/mainnet/ingress.yml
-            kubernetes/mainnet/certificate.yml
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: rollout restart deployment/casperholders-app --namespace=casperholders
