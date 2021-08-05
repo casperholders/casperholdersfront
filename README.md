@@ -62,3 +62,36 @@ Use the correct folder for either testnet or mainnet config.
 ```bash
 kubectl apply -f kubernetes/(testnet|mainnet)/
 ```
+
+# Architecture
+
+The CasperHolders application(s) contains actually 3 main parts :
+
+## CasperHolders Front
+Contains all the UI for the CasperHolders website (This repo)
+
+The website interact directly with a Casper Node that's why we don't need a proper api.
+
+The connection to a Casper node is done directly with a nginx reverse proxy.
+
+The nginx reverse proxy configuration **is not open source** as this simple to do for any sysadmin and is part of the *commercial** part of the website.
+
+## CasperHolders Core
+Contains almost all the CasperHolders logic. [Link]()
+
+## CasperHolders API
+
+[Link]()
+
+Only contains 3 endpoints to generate and consume prometheus metrics from operations that are done on the CasperHolders Website.
+
+This API is useless if you don't need / want metrics.
+
+It will not impact any feature (Except the metrics graph on the front page) on the website.
+
+You may get some errors in the javascript console by not providing the API url.
+
+Maybe in the future this API will contain more features however.
+    
+# Notes
+(* Every component hosted on casperholders.io is Open Source and every component hosted on casperholders.com is Closed Source)
