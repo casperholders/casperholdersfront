@@ -7,7 +7,7 @@ const VALIDATOR = process.env.VUE_APP_VALIDATOR;
 const RPC = process.env.VUE_APP_RPC;
 const API = process.env.VUE_APP_API;
 
-const client = new ClientCasper(RPC)
+const client = new ClientCasper(RPC);
 const deployManager = new DeployManager(client);
 const balance = new Balance(VuexKeyManager, client, VALIDATOR);
 const signer = CasperSigner;
