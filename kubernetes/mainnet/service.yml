@@ -10,4 +10,4 @@ spec:
   selector:
     app: casperholders-app
 status:
-  loadBalancer: {}
+  loadBalancer: { }

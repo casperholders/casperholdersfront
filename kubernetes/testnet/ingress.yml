@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - secure
   routes:
-    - match: Host(`testnet.casperholders.com`)
+    - match: Host(`testnet.casperholders.io`)
       kind: Rule
       services:
         - name: testnet-casperholders-service
@@ -23,7 +23,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`testnet.casperholders.com`)
+    - match: Host(`testnet.casperholders.io`)
       middlewares:
         - name: https-only
       kind: Rule

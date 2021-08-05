@@ -9,7 +9,7 @@ spec:
     privateKeySecretRef:
       name: letsencrypt-prod
     solvers:
-      - selector: {}
+      - selector: { }
         http01:
           ingress:
             class: traefik
