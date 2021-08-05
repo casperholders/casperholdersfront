@@ -44,8 +44,8 @@
           class="ml-3"
           color="white"
           indeterminate
-        ></v-progress-circular> <br/>
-        This can take a few minutes. <br/>
+        ></v-progress-circular> <br />
+        This can take a few minutes. <br />
         You can always verify the status of the operations with the link above.
       </span>
       <span v-if="deployResult.status !== UNKNOWN">
@@ -69,7 +69,8 @@
 import {mapGetters} from "vuex";
 import {STATUS_KO, STATUS_OK, STATUS_UNKNOWN} from "@casperholders/core";
 import {DeployWatcher} from "casper-js-sdk";
-const deployWatcher = new DeployWatcher(process.env.VUE_APP_RPC+"/events/");
+
+const deployWatcher = new DeployWatcher(process.env.VUE_APP_RPC + "/events/");
 export default {
     name: "OperationResult",
     props: {
@@ -94,16 +95,20 @@ export default {
     created() {
         this.deployResult = Object.assign({}, this.getOperation(this.deployHash))
         this.deployHashUrl = this.$getCsprLiveUrl() + "deploy/" + this.deployResult.hash
-        deployWatcher.subscribe([{
-            deployHash: this.deployHash,
-            eventHandlerFn: async () => await this.getDeployResult()
-        }]);
-        deployWatcher.start();
+        if (this.deployResult.status === STATUS_UNKNOWN) {
+            deployWatcher.subscribe([{
+                deployHash: this.deployHash,
+                eventHandlerFn: async () => await this.getDeployResult()
+            }]);
+            deployWatcher.start();
+        }
         setTimeout(async () => {
-            deployWatcher.stop();
-            this.deployResult.status = STATUS_KO
-            this.deployResult.message = "No deploy result from the network. Please check on cspr.live or reach someone on the discord with the deploy hash."
-            await this.$store.dispatch("updateDeployResult", this.deployResult)
+            if (this.deployResult.status === STATUS_UNKNOWN) {
+                deployWatcher.stop();
+                this.deployResult.status = STATUS_KO
+                this.deployResult.message = "No deploy result from the network. Please check on cspr.live or reach someone on the discord with the deploy hash."
+                await this.$store.dispatch("updateDeployResult", this.deployResult)
+            }
         }, 600000);
     },
     destroyed() {
@@ -118,9 +123,10 @@ export default {
             try {
                 const updatedDeployResult = await this.$getDeployManager().getDeployResult(this.deployResult);
                 if (updatedDeployResult.status !== STATUS_UNKNOWN) {
+                    deployWatcher.stop();
                     this.deployResult = updatedDeployResult
                     await this.$store.dispatch("updateDeployResult", updatedDeployResult)
-                    await fetch(this.$getApi()+'/deploy/result/'+this.deployResult.hash)
+                    await fetch(this.$getApi() + '/deploy/result/' + this.deployResult.hash)
                 }
             } catch (e) {
                 console.log(e)
