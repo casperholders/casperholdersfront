@@ -903,6 +903,13 @@
     "@babel/helper-validator-identifier" "^7.14.5"
     to-fast-properties "^2.0.0"
 
+"@casperholders/core@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@casperholders/core/-/core-1.0.0.tgz#cc52672620878bbd5d28400755d4ffc1d4343184"
+  integrity sha512-Wwo25J99p6FVnGd4F6yJU5vQxrei4VMTJvo1UG7Q0HSvl1kmJhUUVhbfGJlLjcbO7Gi2Kov0MnutXqzcVWNEpA==
+  dependencies:
+    casper-js-sdk "^2.4.0"
+
 "@ethersproject/bignumber@^5.0.8", "@ethersproject/bignumber@^5.4.0":
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/@ethersproject/bignumber/-/bignumber-5.4.0.tgz#be8dea298c0ec71208ee60f0b245be0761217ad9"
