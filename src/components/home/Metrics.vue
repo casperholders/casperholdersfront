@@ -89,15 +89,12 @@ export default {
         async value() {
             let values = (await (await fetch(this.$getApi()+"/operations/metrics")).json()).data.result
             if (values.length > 0) {
-                console.log(values)
                 if (this.$getNetwork().toLowerCase().includes("test")) {
-                    console.log("testnet")
                     values = values.filter(value => value.metric.namespace.includes("testnet"))
                 } else {
-                    console.log("mainnet")
                     values = values.filter(value => !value.metric.namespace.includes("testnet"))
                 }
-                console.log(values)
+
                 values.forEach(value => {
                     const metric = value.values.map(function increment(number) {
                         number.shift()
