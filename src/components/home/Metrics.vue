@@ -91,7 +91,9 @@ export default {
             if (values.length > 0) {
 
                 if (this.$getNetwork().toLowerCase() === "testnet") {
-                    values.filter(value => value.metric.namespace.contains("testnet"))
+                    values = values.filter(value => value.metric.namespace.includes("testnet"))
+                } else {
+                    values = values.filter(value => !value.metric.namespace.includes("testnet"))
                 }
 
                 values.forEach(value => {
