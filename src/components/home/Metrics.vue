@@ -90,7 +90,7 @@ export default {
             let values = (await (await fetch(this.$getApi()+"/operations/metrics")).json()).data.result
             if (values.length > 0) {
                 console.log(values)
-                if (this.$getNetwork().toLowerCase() === "testnet") {
+                if (this.$getNetwork().toLowerCase().includes("test")) {
                     console.log("testnet")
                     values = values.filter(value => value.metric.namespace.includes("testnet"))
                 } else {
