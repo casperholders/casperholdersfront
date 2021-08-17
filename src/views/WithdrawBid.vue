@@ -24,7 +24,7 @@
       get {{ 100 - commission }} CSPR.
     </p>
     <Amount
-      :balance="balance"
+      :balance="validatorBalance"
       :fee="bidFee"
       :min="minBid"
       :value="amount"
