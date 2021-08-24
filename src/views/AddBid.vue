@@ -105,7 +105,7 @@ export default {
     data() {
         return {
             minBid: 1,
-            bidFee: 2.8,
+            bidFee: 2.50001,
             amount: 1,
             balance: 0,
             validatorBalance: 0,
