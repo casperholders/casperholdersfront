@@ -94,7 +94,7 @@ export default {
     data() {
         return {
             minimumCSPRStake: 1,
-            delegationFee: 3,
+            delegationFee: 2.50001,
             amount: 1,
             errorBalance: null,
             balance: 0,
