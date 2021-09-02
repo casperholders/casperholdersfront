@@ -99,8 +99,8 @@ export default {
         return {
             minPayment: 1,
             contract: [],
-            amount: 1,
-            balance: 0,
+            amount: "1",
+            balance: "0",
             errorBalance: null,
             loadingSignAndDeploy: false,
             errorDeploy: null,
@@ -150,7 +150,7 @@ export default {
         async getBalance() {
             this.loadingBalance = true;
             this.errorBalance = null;
-            this.balance = 0;
+            this.balance = "0";
             try {
                 this.balance = await this.$getBalanceService().fetchBalance();
                 if (this.balance <= this.minPayment) {

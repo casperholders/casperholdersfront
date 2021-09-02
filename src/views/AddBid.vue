@@ -106,9 +106,9 @@ export default {
         return {
             minBid: 1,
             bidFee: 2.50001,
-            amount: 1,
-            balance: 0,
-            validatorBalance: 0,
+            amount: "1",
+            balance: "0",
+            validatorBalance: "0",
             commission: 0,
             errorBalance: null,
             loadingSignAndDeploy: false,
@@ -148,8 +148,8 @@ export default {
         async getBalance() {
             this.loadingBalance = true;
             this.errorBalance = null;
-            this.balance = 0;
-            this.validatorBalance = 0;
+            this.balance = "0";
+            this.validatorBalance = "0";
             this.commission = 0;
             try {
                 this.balance = await this.$getBalanceService().fetchBalance();

@@ -95,9 +95,9 @@ export default {
         return {
             minimumCSPRStake: 1,
             delegationFee: 2.50001,
-            amount: 1,
+            amount: "1",
             errorBalance: null,
-            balance: 0,
+            balance: "0",
             loadingSignAndDeploy: false,
             errorDeploy: null,
             loadingBalance: false,
@@ -135,7 +135,7 @@ export default {
         async getBalance() {
             this.loadingBalance = true;
             this.errorBalance = null;
-            this.balance = 0;
+            this.balance = "0";
             try {
                 this.balance = await this.$getBalanceService().fetchBalance();
                 if (this.balance <= this.minimumFundsNeeded) {

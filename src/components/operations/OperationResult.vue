@@ -85,7 +85,7 @@ export default {
             UNKNOWN: STATUS_UNKNOWN,
             OK: STATUS_OK,
             KO: STATUS_KO,
-            eventWatcher: new EventSource(process.env.VUE_APP_RPC + "/events/")
+            eventWatcher: new EventSource(process.env.VUE_APP_RPC + "/events/?start_from=0")
         }
     },
     computed: {

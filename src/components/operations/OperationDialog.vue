@@ -57,6 +57,7 @@
 </template>
 
 <script>
+
 export default {
     name: "OperationDialog",
     props: {
@@ -90,8 +91,8 @@ export default {
         },
         amount: {
             required: true,
-            type: [Number, String],
-            default: 0
+            type: String,
+            default: "0"
         },
         fee: {
             required: true,

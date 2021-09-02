@@ -120,10 +120,10 @@ export default {
             address: "",
             transferID: '0',
             minimumCSPRTransfer: 2.5,
-            transferFee: 10000 / 1000000000,
-            amount: 2.5,
+            transferFee: 0.00001,
+            amount: "2.5",
             errorBalance: null,
-            balance: 0,
+            balance: "0",
             loadingSignAndDeploy: false,
             errorDeploy: null,
             loadingBalance: false,
@@ -158,7 +158,7 @@ export default {
         async getBalance() {
             this.loadingBalance = true;
             this.errorBalance = null;
-            this.balance = 0;
+            this.balance = "0";
             try {
                 this.balance = await this.$getBalanceService().fetchBalance();
                 if (this.balance <= this.minimumFundsNeeded) {

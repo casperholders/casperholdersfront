@@ -7,13 +7,13 @@
       :min="min"
       :rules="amountRules"
       :value="amount"
+      maxlength="10"
       append-outer-icon="mdi-plus"
       color="white"
       label="Number of CSPR"
       persistent-hint
       prepend-icon="mdi-minus"
       required
-      type="number"
       @click:append-outer="increment"
       @click:prepend="decrement"
     />
@@ -69,13 +69,14 @@
 </template>
 
 <script>
+
 export default {
     name: "Amount",
     props: {
         value: {
             required: true,
-            type: [Number, String],
-            default: 0
+            type: String,
+            default: "0"
         },
         min: {
             required: true,
@@ -89,15 +90,15 @@ export default {
         },
         balance: {
             required: true,
-            type: Number,
-            default: 0
+            type: String,
+            default: "0"
         }
     },
     data() {
         return {
             amountRules: [
                 a => !!a || 'Amount is required',
-                a => /[0-9]+/.test(a) || 'Amount must be a number',
+                a => /[0-9]+\.?[0-9]*/.test(a) || 'Amount must be a number',
                 a => a >= this.min || `Amount must be at least ${this.min}`,
                 a => a <= this.max || `Amount must equal or bellow ${this.max}`,
                 a => a <= this.balance - this.fee || `Not enough funds`,
@@ -110,11 +111,8 @@ export default {
                 return this.value;
             },
             set(val) {
-                this.$emit('input', val);
+                this.$emit('input', val.toString());
             }
-        },
-        labelPercentage() {
-            return this.balance !== 0 ? Math.trunc(((this.amount + 1) / Math.trunc(this.balance)) * 100) + '%' : "0%"
         },
         max() {
             return this.balance - this.fee > 0 ? this.balance - this.fee : this.min

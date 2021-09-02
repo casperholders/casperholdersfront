@@ -43,7 +43,7 @@
               {{ label }}
               &nbsp;
               <span class="cspr">
-                {{ chartData.datasets[0].data[i].toFixed(2) }} CSPR
+                {{ chartData.datasets[0].data[i] }} CSPR
               </span>
               &nbsp;
               ({{ csprPercentage(i) }}%)

@@ -43,7 +43,7 @@
         ></v-progress-circular>
       </template>
       <br />
-      Balance after unstake : {{ balance - undelegateFee + amount }} CSPR<br />
+      Balance after unstake : {{ remainingBalance }} CSPR<br />
     </p>
     <v-alert
       v-if="errorBalance"
@@ -96,10 +96,10 @@ export default {
         return {
             minimumCSPRUnstake: 1,
             undelegateFee: 0.00001,
-            amount: 1,
+            amount: "1",
             errorBalance: null,
-            balance: 0,
-            stakingBalance: 0,
+            balance: "0",
+            stakingBalance: "0",
             loadingSignAndDeploy: false,
             errorDeploy: null,
             loadingBalance: false,
@@ -111,7 +111,7 @@ export default {
             "signer",
         ]),
         remainingBalance() {
-            let result = this.balance - this.undelegateFee + this.amount
+            let result = this.balance + this.amount - this.undelegateFee
             return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0
         },
         validatorUrl() {
@@ -137,8 +137,8 @@ export default {
         async getBalance() {
             this.loadingBalance = true;
             this.errorBalance = null;
-            this.balance = 0;
-            this.stakingBalance = 0;
+            this.balance = "0";
+            this.stakingBalance = "0";
             try {
                 this.balance = await this.$getBalanceService().fetchBalance();
                 this.stakingBalance = await this.$getBalanceService().fetchStakeBalance();
