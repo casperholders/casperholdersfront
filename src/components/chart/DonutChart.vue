@@ -3,6 +3,9 @@ import {Doughnut, mixins} from 'vue-chartjs'
 
 const {reactiveProp} = mixins
 
+/**
+ * Donut chart component from the vue-chartjs library
+ */
 export default {
     extends: Doughnut,
     mixins: [reactiveProp],

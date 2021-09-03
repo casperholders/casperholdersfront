@@ -63,6 +63,9 @@
 </template>
 
 <script>
+/**
+ * FAQ View
+ */
 export default {
     name: 'FAQ',
 }

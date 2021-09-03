@@ -88,8 +88,13 @@ import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiv
 import {InsufficientFunds} from "@casperholders/core/dist/services/errors/insufficientFunds";
 import {Delegate} from "@casperholders/core/dist/services/deploys/auction/actions/delegate";
 
+/**
+ * Delegate view
+ * Contains one fields
+ * - Amount to delegate to the node set in the .env file
+ */
 export default {
-    name: "DelegateNew",
+    name: "Delegate",
     components: {Amount, Operation},
     data() {
         return {
@@ -132,6 +137,9 @@ export default {
         this.$root.$on("operationOnGoing", () => this.errorDeploy = null)
     },
     methods: {
+        /**
+         * Get the user balance
+         */
         async getBalance() {
             this.loadingBalance = true;
             this.errorBalance = null;
@@ -146,6 +154,11 @@ export default {
             }
             this.loadingBalance = false;
         },
+        /**
+         * Method used by the OperationDialog component when the user confirm the operation.
+         * Use the prepareSignAndSendDeploy method from the core library
+         * Update the store with a deploy result containing the deployhash of the deploy sent
+         */
         async sendDeploy() {
             this.errorDeploy = null;
             this.loadingSignAndDeploy = true;

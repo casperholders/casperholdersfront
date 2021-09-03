@@ -36,6 +36,9 @@
 </template>
 
 <script>
+/**
+ * Single Metric component
+ */
 export default {
     name: "Metric",
     props: {

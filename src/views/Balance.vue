@@ -148,6 +148,10 @@
 import DonutChart from "@/components/chart/DonutChart";
 import {mapState} from "vuex";
 
+/**
+ * Balance view
+ * Display the current user balance and their staked tokens on the Casper Node configured in the env file
+ */
 export default {
     name: "Balance",
     components: {DonutChart},
@@ -158,6 +162,9 @@ export default {
     },
     computed: {
         ...mapState(["signer"]),
+        /**
+         * Calculate the percentage of staked tokens over the tokens available
+         */
         csprPercentage() {
             let total = this.chartData.datasets[0].data.reduce((a, b) => a + b, 0);
             if (total === 0) {
@@ -171,6 +178,9 @@ export default {
         },
     },
     watch: {
+        /**
+         * Watch the state of the active key. In case of an update, re-fetch the balance data
+         */
         "signer.activeKey": {
             async handler() {
                 await this.fetchBalances();
@@ -179,6 +189,9 @@ export default {
         },
     },
     methods: {
+      /**
+       * Init the donut chart while we fetch the data
+       */
         createLoadingChartData() {
             const {primary, tertiary, quaternary} = this.$vuetify.theme.currentTheme;
 
@@ -193,6 +206,9 @@ export default {
                 ],
             };
         },
+        /**
+         * Fetch the balances of the current user and update the Donut chart
+         */
         async fetchBalances() {
             const newChartData = this.createLoadingChartData();
             try {

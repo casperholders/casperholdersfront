@@ -59,7 +59,9 @@
 
 <script>
 import Metric from "@/components/home/Metric";
-
+/**
+ * Metric component displayed on the homepage, fetch the metrics from the api and parse them to be displayed in the sparklines
+ */
 export default {
     name: "Metrics",
     components: {Metric},

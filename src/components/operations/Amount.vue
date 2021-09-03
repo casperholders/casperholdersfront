@@ -69,25 +69,39 @@
 </template>
 
 <script>
-
+/**
+ * Generic amount component to allow the user to choose an "amount"
+ */
 export default {
     name: "Amount",
     props: {
+        /**
+         * Amount
+         */
         value: {
             required: true,
             type: String,
             default: "0"
         },
+        /**
+         * Min Amount
+         */
         min: {
             required: true,
             type: Number,
             default: 0
         },
+        /**
+         * Fee of the operation. Used to calculate the min / max of the amount
+         */
         fee: {
             required: true,
             type: Number,
             default: 0
         },
+        /**
+         * Balance of the user. Used to calculate the min / max of the amount
+         */
         balance: {
             required: true,
             type: String,
@@ -96,7 +110,10 @@ export default {
     },
     data() {
         return {
-            amountRules: [
+          /**
+           * Rules for the amount text field
+           */
+          amountRules: [
                 a => !!a || 'Amount is required',
                 a => /[0-9]+\.?[0-9]*/.test(a) || 'Amount must be a number',
                 a => a >= this.min || `Amount must be at least ${this.min}`,
@@ -106,7 +123,15 @@ export default {
         }
     },
     computed: {
-        amount: {
+      /**
+       * Trick to send the current amount to the parent component (View)
+       * Because the prop value contain the amount, this computed property return the value of this.value when called.
+       * When the amount property is set we emit an event and in the parent component (View) we bind this event to the prop value
+       * Example :
+       * :value="amount"
+       * @input="amount = $event"
+       */
+      amount: {
             get() {
                 return this.value;
             },
@@ -114,12 +139,19 @@ export default {
                 this.$emit('input', val.toString());
             }
         },
+        /**
+         * Computed property to calculate the maximum of the amount for the user.
+         * @returns {number|Number}
+         */
         max() {
             return this.balance - this.fee > 0 ? this.balance - this.fee : this.min
         },
     },
     methods: {
-        increment() {
+      /**
+       * Increment the amount with safeguards
+       */
+      increment() {
             if (this.amount < this.max) {
                 if (this.amount + 1 < this.max) {
                     this.amount = this.amount + 1
@@ -128,6 +160,9 @@ export default {
                 }
             }
         },
+        /**
+         * Increment the amount with safeguards
+         */
         decrement() {
             if (this.amount > this.min) {
                 if (this.amount - 1 > this.min) {

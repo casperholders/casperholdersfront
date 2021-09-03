@@ -99,8 +99,14 @@ import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiv
 import {InsufficientFunds} from "@casperholders/core/dist/services/errors/insufficientFunds";
 import {AddBid} from "@casperholders/core/dist/services/deploys/auction/actions/addBid";
 
+/**
+ * AddBid view
+ * Contains two fields
+ * - Amount to add to the bid of the validator
+ * - Slider to adjust the commission rate of the validator
+ */
 export default {
-    name: "DelegateNew",
+    name: "AddBid",
     components: {Amount, Operation},
     data() {
         return {
@@ -145,6 +151,9 @@ export default {
         this.$root.$on("operationOnGoing", () => this.errorDeploy = null)
     },
     methods: {
+        /**
+         * Get the user balance and the validator balance
+         */
         async getBalance() {
             this.loadingBalance = true;
             this.errorBalance = null;
@@ -164,6 +173,11 @@ export default {
             }
             this.loadingBalance = false;
         },
+        /**
+         * Method used by the OperationDialog component when the user confirm the operation.
+         * Use the prepareSignAndSendDeploy method from the core library
+         * Update the store with a deploy result containing the deployhash of the deploy sent
+         */
         async sendDeploy() {
             this.errorDeploy = null;
             this.loadingSignAndDeploy = true;

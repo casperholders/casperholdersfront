@@ -72,9 +72,18 @@
 import AppBar from "@/components/layout/AppBar";
 import NavigationDrawer from "@/components/layout/NavigationDrawer";
 
+/**
+ * App component
+ * That's the base component of the application
+ * It holds the router view / footer / appbar / navigation drawer and the background
+ * The router view display the current view
+ */
 export default {
     name: 'App',
     components: {AppBar, NavigationDrawer},
+    /**
+     * When the component is mounted we listen to the signer events and update the VueX store accordingly to the data received from the Casper Signer extension.
+     */
     mounted() {
         this.$nextTick(() => {
             this.$store.dispatch("initSignerStatus");
@@ -87,6 +96,9 @@ export default {
         })
     },
     data: () => ({
+        /**
+         * Links with their associated text & icons to be displayed in the appbar and navigation drawer
+         */
         links: {
             Account: [
                 {title: 'Balance', icon: 'mdi-wallet', route: 'balance'},

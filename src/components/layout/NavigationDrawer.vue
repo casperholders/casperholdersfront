@@ -70,6 +70,9 @@
 
 import {mapState} from "vuex";
 
+/**
+ * NavigationDrawer component
+ */
 export default {
     name: "NavigationDrawer",
     props: ['links'],

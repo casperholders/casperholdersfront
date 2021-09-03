@@ -5,7 +5,11 @@ import {Signer} from "casper-js-sdk";
 Vue.use(Vuex)
 
 const debug = process.env.NODE_ENV !== 'production'
-
+/**
+ * The vuex store contains :
+ * - The Casper Signer state
+ * - An array of DeployResult objects used to keep track of the different deploys done by the user on the website
+ */
 const state = () => ({
     signer: {
         connected: false,
@@ -52,6 +56,11 @@ const mutations = {
 }
 
 const actions = {
+    /**
+     * Get the initial signer state
+     * @param context
+     * @returns {Promise<void>}
+     */
     async initSignerStatus(context) {
         let connected = false;
         let activeKey = "";

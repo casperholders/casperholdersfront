@@ -82,6 +82,9 @@
 </template>
 
 <script>
+/**
+ * Contact view
+ */
 export default {
     name: 'FAQ',
 }

@@ -15,6 +15,9 @@ const deployManager = new DeployManager(client);
 const balance = new Balance(VuexKeyManager, client, VALIDATOR);
 const signer = CasperSigner;
 
+/**
+ * This plugin is used to expose different object / env value to the Vue instance
+ */
 export default {
 
     install(Vue) {

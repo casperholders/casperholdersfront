@@ -12,7 +12,9 @@ import WithdrawBid from "@/views/WithdrawBid";
 import SmartContract from "@/views/SmartContract";
 
 Vue.use(VueRouter)
-
+/**
+ * Vue Router with all the views and path associated
+ */
 const routes = [
     {
         path: '/',

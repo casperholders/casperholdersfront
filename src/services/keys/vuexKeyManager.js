@@ -9,7 +9,7 @@ import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiv
  */
 export class VuexKeyManager extends AbstractKeyManager {
     /**
-     * Retrieve the current active key
+     * Retrieve the current active key from the vuex store
      *
      * @return string - Return a public key hex
      */

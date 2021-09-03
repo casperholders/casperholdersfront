@@ -91,7 +91,12 @@ import {SmartContractResult} from "@casperholders/core/dist/services/results/sma
 import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiveKeyError";
 import {InsufficientFunds} from "@casperholders/core/dist/services/errors/insufficientFunds";
 import {SmartContractDeployParameters} from "@casperholders/core/dist/services/deploys/smartContract/smartContractDeployParameters";
-
+/**
+ * SmartContract view
+ * Contains two fields
+ * - Amount of fee to deploy the smartcontract
+ * - File input for the wasm smart contract
+ */
 export default {
     name: "SmartContract",
     components: {Amount, Operation},
@@ -128,6 +133,9 @@ export default {
         async 'signer.activeKey'() {
             await this.getBalance()
         },
+        /**
+         * Read the file selected by the user
+         */
         contract() {
             let reader = new FileReader();
 
@@ -147,6 +155,9 @@ export default {
         this.$root.$on("operationOnGoing", () => this.errorDeploy = null)
     },
     methods: {
+        /**
+         * Get the user balance
+         */
         async getBalance() {
             this.loadingBalance = true;
             this.errorBalance = null;
@@ -161,6 +172,11 @@ export default {
             }
             this.loadingBalance = false;
         },
+        /**
+         * Method used by the OperationDialog component when the user confirm the operation.
+         * Use the prepareSignAndSendDeploy method from the core library
+         * Update the store with a deploy result containing the deployhash of the deploy sent
+         */
         async sendDeploy() {
             this.errorDeploy = null;
             this.loadingSignAndDeploy = true;

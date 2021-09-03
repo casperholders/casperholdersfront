@@ -69,9 +69,15 @@
 import {mapGetters} from "vuex";
 import {STATUS_KO, STATUS_OK, STATUS_UNKNOWN} from "@casperholders/core/dist/services/results/deployResult";
 
+/**
+ * Generic component to display the result of a deploy
+ */
 export default {
     name: "OperationResult",
     props: {
+        /**
+         * DeployHash of a deployment
+         */
         deployHash: {
             required: true,
             type: String,
@@ -91,6 +97,13 @@ export default {
     computed: {
         ...mapGetters(['getOperation']),
     },
+    /**
+     * When the component is created we retrieve the corresponding DeployResult object in the VueX Store
+     * Then we set the cspr.live url
+     * If the deployResult has an unknown status we start an eventWatcher to read incoming Deploy from the blockchain
+     * If the eventWatcher find the corresponding deploy_hash in the event list we fetch the Deploy result from the blockchain and we close the eventStream
+     * If the eventStream doesn't receive the deploy hash in 10 min we close the eventStream and tell the user to check on cspr.live directly
+     */
     created() {
         this.deployResult = Object.assign({}, this.getOperation(this.deployHash))
         this.deployHashUrl = this.$getCsprLiveUrl() + "deploy/" + this.deployResult.hash
@@ -112,10 +125,12 @@ export default {
             }
         }, 600000);
     },
-    beforeDestroy() {
-        this.eventWatcher.close()
-    },
     methods: {
+        /**
+         * Get deploy result from the blockchain with the DeployManager from the core library
+         * If the returned deployResult object doesn't have an Unknown status we update the VueX store to update the Notification tray
+         * and we send a get request to the api to register the deploy in the metrics
+         */
         async getDeployResult() {
             if (this.deployResult.status !== STATUS_UNKNOWN) {
                 return
@@ -132,6 +147,9 @@ export default {
                 console.log(e)
             }
         },
+        /**
+         * Used when the user click on the cross on the component to remove the deployResult from the store and close the eventStream
+         */
         removeDeployResult() {
             this.$store.dispatch("removeDeployResult", this.deployResult);
             this.eventWatcher.close();

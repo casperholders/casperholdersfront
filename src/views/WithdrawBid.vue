@@ -89,9 +89,13 @@ import {WithdrawBidResult} from "@casperholders/core/dist/services/results/withd
 import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiveKeyError";
 import {InsufficientFunds} from "@casperholders/core/dist/services/errors/insufficientFunds";
 import {WithdrawBid} from "@casperholders/core/dist/services/deploys/auction/actions/withdrawBid";
-
+/**
+ * WithdrawBid view
+ * Contains one fields
+ * - Amount to withdraw to the bid of the validator
+ */
 export default {
-    name: "DelegateNew",
+    name: "WithdrawBid",
     components: {Amount, Operation},
     data() {
         return {
@@ -136,6 +140,9 @@ export default {
         this.$root.$on("operationOnGoing", () => this.errorDeploy = null)
     },
     methods: {
+        /**
+         * Get the user balance and the validator balance
+         */
         async getBalance() {
             this.loadingBalance = true;
             this.errorBalance = null;
@@ -155,6 +162,11 @@ export default {
             }
             this.loadingBalance = false;
         },
+        /**
+         * Method used by the OperationDialog component when the user confirm the operation.
+         * Use the prepareSignAndSendDeploy method from the core library
+         * Update the store with a deploy result containing the deployhash of the deploy sent
+         */
         async sendDeploy() {
             this.errorDeploy = null;
             this.loadingSignAndDeploy = true;

@@ -286,6 +286,11 @@ import Features from "@/components/home/Features";
 import {mapState} from "vuex";
 import {Signer} from "casper-js-sdk";
 
+/**
+ * Home view
+ * Holds a small tutorial to create an account on the Casper Signer extension
+ * & The Metrics / Roadmap / Features components
+ */
 export default {
     name: 'Home',
     components: {Metrics, Roadmap, Features},

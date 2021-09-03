@@ -67,6 +67,9 @@
 </template>
 
 <script>
+/**
+ * Roadmap component displayed on the homepage
+ */
 export default {
     name: "Roadmap"
 }

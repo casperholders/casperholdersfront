@@ -251,6 +251,9 @@
 </template>
 
 <script>
+/**
+ * Features component display on the homepage
+ */
 export default {
     name: "Features"
 }

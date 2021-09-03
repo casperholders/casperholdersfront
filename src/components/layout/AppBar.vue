@@ -166,6 +166,10 @@ import {mapState} from "vuex";
 import {Signer} from "casper-js-sdk";
 import {STATUS_OK, STATUS_UNKNOWN} from "@casperholders/core/dist/services/results/deployResult";
 
+/**
+ * AppBar Component. Only displayed on non mobile screen
+ * Contains a lot of utilities methods to display correctly some data or to update the notification tray with the VueX store data
+ */
 export default {
     name: "AppBar",
     props: ['links'],

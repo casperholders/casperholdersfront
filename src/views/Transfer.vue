@@ -96,8 +96,15 @@ import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiv
 import {InsufficientFunds} from "@casperholders/core/dist/services/errors/insufficientFunds";
 import {TransferDeployParameters} from "@casperholders/core/dist/services/deploys/transfer/TransferDeployParameters";
 
+/**
+ * Transfer view
+ * Contains three fields
+ * - Receiver Address
+ * - Transfer id
+ * - Amount to transfer
+ */
 export default {
-    name: "TransferNew",
+    name: "Transfer",
     components: {Amount, Operation},
     data() {
         return {
@@ -155,6 +162,9 @@ export default {
         this.$root.$on("operationOnGoing", () => this.errorDeploy = null)
     },
     methods: {
+        /**
+         * Get the user balance
+         */
         async getBalance() {
             this.loadingBalance = true;
             this.errorBalance = null;
@@ -169,6 +179,11 @@ export default {
             }
             this.loadingBalance = false;
         },
+        /**
+         * Method used by the OperationDialog component when the user confirm the operation.
+         * Use the prepareSignAndSendDeploy method from the core library
+         * Update the store with a deploy result containing the deployhash of the deploy sent
+         */
         async sendDeploy() {
             this.errorDeploy = null;
             this.loadingSignAndDeploy = true;
