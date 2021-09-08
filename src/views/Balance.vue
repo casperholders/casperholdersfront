@@ -29,7 +29,7 @@
             style="max-width: 100%"
           />
 
-          <div class="mt-3 mt-lg-0 ml-0 ml-lg-3">
+          <div class="mt-3 mt-lg-0 ml-0 ml-lg-3" id="labels">
             <v-layout
               v-for="(label, i) in chartData.labels"
               :key="label"
@@ -166,7 +166,7 @@ export default {
          * Calculate the percentage of staked tokens over the tokens available
          */
         csprPercentage() {
-            let total = this.chartData.datasets[0].data.reduce((a, b) => a + b, 0);
+            let total = this.chartData.datasets[0].data.reduce((a, b) => Number(a) + Number(b), 0);
             if (total === 0) {
                 total = 1;
             }

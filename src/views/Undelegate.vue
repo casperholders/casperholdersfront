@@ -170,10 +170,7 @@ export default {
                 const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
                     new Undelegate(this.amount, this.signer.activeKey, this.$getValidator(), this.$getNetwork(), this.$getAuctionHash()),
                     this.$getSigner(),
-                    {
-                        activeKey: this.signer.activeKey,
-                        to: this.$getValidator()
-                    }
+                    this.$getOptionsActiveKey()
                 );
                 await this.$store.dispatch("addDeployResult", deployResult)
             } catch (e) {

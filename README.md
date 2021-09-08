@@ -1,4 +1,5 @@
 # CasperHolders
+[![codecov](https://codecov.io/gh/casperholders/casperholdersfront/branch/main/graph/badge.svg?token=J111YFA2Q3)](https://codecov.io/gh/casperholders/casperholdersfront)
 ## The first third party UI to interact with the Casper Blockchain.
 
 ### CasperHolders is not affiliated with CasperNetwork / CasperAssociation.This is a project from a community member.
@@ -27,6 +28,29 @@ This project contains the sources files for the CasperHolders website.
 ```bash
 yarn install
 yarn serve
+```
+
+## Local tests
+
+### !! Important !!
+
+In order to run correctly the tests locally create a file name .env.local with the following content :
+
+```
+VUE_APP_FAKE_KEY="<TestnetPrivateKeyWithoutPem>"
+VUE_APP_FAKE_VALIDATOR_KEY="<TestnetValidatorPrivateKeyWithoutPem>"
+VUE_APP_E2E=true
+```
+
+The first env variable will enable you to test all users interactions (Transfer / Stake / Unstake)  
+The second env variable will enable you to test all validators operations (Add & Withdraw bid)  
+The third one will tell the app to run in E2E mode and will bypass the casper signer to use a local signer with the fake keys provided.  
+Check the globalPlugin.js to see how it works.  
+Only the positive path for sending smart contract is not tested. See issue #10
+
+### Run tests
+```bash
+yarn test:e2e
 ```
 
 ## Production build for TestNet

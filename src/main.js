@@ -4,6 +4,10 @@ import vuetify from './plugins/vuetify'
 import router from './router'
 import store from './store'
 
+if (window.Cypress) {
+    window.__store__ = store
+}
+
 Vue.config.productionTip = false
 
 new Vue({

@@ -12,6 +12,7 @@
       title="Transfer"
     >
       <v-text-field
+        id="address"
         v-model="address"
         :rules="addressRules"
         :value="address"
@@ -21,6 +22,7 @@
         required
       ></v-text-field>
       <v-text-field
+        id="transferID"
         :rules="transferIDRules"
         :value="transferID"
         color="white"
@@ -89,7 +91,7 @@
 <script>
 import Operation from "@/components/operations/Operation";
 import Amount from "@/components/operations/Amount";
-import {CLPublicKey, Signer} from "casper-js-sdk";
+import {CLPublicKey,  Signer} from "casper-js-sdk";
 import {mapState} from "vuex";
 import {TransferResult} from "@casperholders/core/dist/services/results/transferResult";
 import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiveKeyError";
@@ -191,13 +193,11 @@ export default {
                 const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
                     new TransferDeployParameters(this.signer.activeKey, this.$getNetwork(), this.amount, this.address, this.transferID),
                     this.$getSigner(),
-                    {
-                        activeKey: this.signer.activeKey,
-                        to: this.address
-                    }
+                    this.$getOptionsTo(this.address)
                 );
                 await this.$store.dispatch("addDeployResult", deployResult)
             } catch (e) {
+                console.log(e)
                 this.errorDeploy = e;
             }
             this.loadingSignAndDeploy = false;

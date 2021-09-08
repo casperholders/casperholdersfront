@@ -166,10 +166,7 @@ export default {
                 const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
                     new Delegate(this.amount, this.signer.activeKey, this.$getValidator(), this.$getNetwork(), this.$getAuctionHash()),
                     this.$getSigner(),
-                    {
-                        activeKey: this.signer.activeKey,
-                        to: this.$getValidator()
-                    }
+                    this.$getOptionsValidator()
                 );
                 await this.$store.dispatch("addDeployResult", deployResult)
             } catch (e) {
