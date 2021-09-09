@@ -6,6 +6,7 @@
   >
     <template v-slot:activator="{ on, attrs }">
       <v-btn
+        id="submitOperation"
         v-bind="attrs"
         :disabled="operationOnGoing"
         :loading="operationOnGoing"
@@ -44,6 +45,7 @@
           Disagree
         </v-btn>
         <v-btn
+          id="agreeAndSign"
           :loading="loadingSignAndDeploy"
           class="rounded-xl ml-5"
           color="quaternary"

@@ -4,16 +4,18 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "testnet": "vue-cli-service serve --mode testnet",
+    "build": "vue-cli-service build",
+    "test:e2e": "vue-cli-service test:e2e",
+    "lint": "vue-cli-service lint",
+    "build-mainnet": "vue-cli-service build --mode mainnet",
     "build-testnet": "vue-cli-service build --mode testnet",
     "mainnet": "vue-cli-service serve --mode mainnet",
-    "build-mainnet": "vue-cli-service build --mode mainnet",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "prod": "serve -s dist -l 8080"
+    "prod": "serve -s dist -l 8080",
+    "testnet": "vue-cli-service serve --mode testnet"
   },
   "dependencies": {
     "@casperholders/core": "^1.1.1",
+    "big.js": "^6.1.1",
     "casper-js-sdk": "^2.4.0",
     "chart.js": "2",
     "core-js": "^3.6.5",
@@ -24,11 +26,15 @@
     "vuex": "^3.6.2"
   },
   "devDependencies": {
+    "@cypress/code-coverage": "^3.9.10",
     "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-e2e-cypress": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
+    "babel-plugin-istanbul": "^6.0.0",
+    "cypress-file-upload": "^5.0.8",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "sass": "~1.32.6",

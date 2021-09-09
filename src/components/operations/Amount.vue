@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-text-field
+      id="amount"
       v-model.number="amount"
       :hint="`Minimum CSPR needed : ${min} CSPR`"
       :max="max"
@@ -20,6 +21,7 @@
     <v-row class="pt-2">
       <v-col cols="3">
         <v-btn
+          id="min"
           class="rounded-xl"
           color="white"
           outlined
@@ -54,6 +56,7 @@
       </v-col>
       <v-col cols="3">
         <v-btn
+          id="max"
           class="rounded-xl"
           color="white"
           outlined
@@ -68,10 +71,11 @@
   </div>
 </template>
 
-<script>
-/**
+<script>/**
  * Generic amount component to allow the user to choose an "amount"
  */
+import Big from "big.js";
+
 export default {
     name: "Amount",
     props: {
@@ -116,9 +120,9 @@ export default {
           amountRules: [
                 a => !!a || 'Amount is required',
                 a => /[0-9]+\.?[0-9]*/.test(a) || 'Amount must be a number',
-                a => a >= this.min || `Amount must be at least ${this.min}`,
-                a => a <= this.max || `Amount must equal or bellow ${this.max}`,
-                a => a <= this.balance - this.fee || `Not enough funds`,
+                a => this.mustBeAtLeast(a),
+                a => this.mustBeBellow(a),
+                a => this.enoughFunds(a),
             ],
         }
     },
@@ -141,22 +145,43 @@ export default {
         },
         /**
          * Computed property to calculate the maximum of the amount for the user.
-         * @returns {number|Number}
+         * @returns {string}
          */
         max() {
-            return this.balance - this.fee > 0 ? this.balance - this.fee : this.min
+            return Big(this.balance).minus(this.fee).gt(0) ? Big(this.balance).minus(this.fee).toString() : Big(this.min).toString()
         },
     },
     methods: {
+      mustBeAtLeast(val){
+        try {
+          return Big(val).gte(this.min) ? true : `Amount must be at least ${this.min}`
+        } catch (e) {
+          return `Amount must be a number`
+        }
+      },
+      mustBeBellow(val){
+        try {
+          return Big(val).lte(this.max) ? true : `Amount must equal or bellow ${this.max}`
+        } catch (e) {
+          return `Amount must be a number`
+        }
+      },
+      enoughFunds(val){
+        try {
+          return Big(val).lte(Big(this.balance).minus(this.fee)) ? true : `Not enough funds`
+        } catch (e) {
+          return `Amount must be a number`
+        }
+      },
       /**
        * Increment the amount with safeguards
        */
       increment() {
-            if (this.amount < this.max) {
-                if (this.amount + 1 < this.max) {
-                    this.amount = this.amount + 1
+            if (Big(this.amount).lt(this.max)) {
+                if (Big(this.amount).plus(1).lt(this.max)) {
+                    this.amount = Big(this.amount).plus(1).toString()
                 } else {
-                    this.amount = this.max
+                    this.amount = Big(this.max).toString()
                 }
             }
         },
@@ -164,11 +189,11 @@ export default {
          * Increment the amount with safeguards
          */
         decrement() {
-            if (this.amount > this.min) {
-                if (this.amount - 1 > this.min) {
-                    this.amount = this.amount - 1
+            if (Big(this.amount).gt(this.min)) {
+                if (Big(this.amount).minus(1).gt(this.min)) {
+                    this.amount = Big(this.amount).minus(1).toString()
                 } else {
-                    this.amount = this.min
+                    this.amount = Big(this.min).toString()
                 }
             }
         },

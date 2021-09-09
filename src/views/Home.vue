@@ -43,6 +43,7 @@
         <v-btn
           class="mb-8 mx-auto"
           color="secondary"
+          id="tutorial"
           large
           rounded
           v-bind="attrs"
@@ -196,6 +197,7 @@
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn
                           @click="copyPublicKey"
+                          id="copyToClipboard"
                           fab
                           x-small
                           icon

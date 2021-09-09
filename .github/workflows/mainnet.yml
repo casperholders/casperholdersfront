@@ -18,13 +18,23 @@ jobs:
         with:
           node-version: 14.17
 
-      - name: before_script
-        run: yarn install --non-interactive
-
-      - name: script
-        run: |
-          yarn lint
-          yarn build --mode mainnet
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          build: yarn build
+          start: yarn serve
+          wait-on: http://localhost:8080
+          browser: chrome
+        env:
+          VUE_APP_FAKE_KEY: ${{ secrets.VUE_APP_FAKE_KEY }}
+          VUE_APP_FAKE_VALIDATOR_KEY: ${{ secrets.VUE_APP_FAKE_VALIDATOR_KEY }}
+          VUE_APP_E2E: true
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: tests/e2e/screenshots
+      - uses: codecov/codecov-action@v2
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1

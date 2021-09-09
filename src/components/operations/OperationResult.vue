@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="align-center rounded-xl secondary mt-5"
+    class="align-center rounded-xl secondary mt-5 operationResult"
     width="100%"
     :loading="deployResult.status === UNKNOWN"
   >

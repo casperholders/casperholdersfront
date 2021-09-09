@@ -11,6 +11,7 @@
     title="Send smart contract"
   >
     <v-file-input
+      id="smartContractFile"
       v-model="contract"
       :show-size="1000"
       accept=".wasm"
@@ -184,10 +185,7 @@ export default {
                 const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
                     new SmartContractDeployParameters(this.signer.activeKey, this.$getNetwork(), this.buffer, this.amount),
                     this.$getSigner(),
-                    {
-                        activeKey: this.signer.activeKey,
-                        to: this.signer.activeKey
-                    }
+                    this.$getOptionsActiveKey()
                 );
                 await this.$store.dispatch("addDeployResult", deployResult)
             } catch (e) {
