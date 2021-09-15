@@ -66,30 +66,26 @@
         offset-y
       >
         <template #activator="{ on, attrs }">
-          <v-badge
-            :color="badgeColor"
-            :content="badgeContent"
-            :icon="badgeIcon"
-            :value="badgeContent"
-            offset-x="5"
-            offset-y="5"
+          <v-btn
+            v-bind="attrs"
+            :disabled="disabledNotifications"
+            :ripple="false"
+            icon
+            v-on="on"
           >
-            <v-btn
-              v-bind="attrs"
-              :disabled="disabledNotifications"
-              :ripple="false"
-              icon
-              small
-              v-on="on"
+            <v-badge
+              :color="badgeColor"
+              :content="badgeContent"
+              :value="badgeContent"
+              :icon="badgeIcon"
+              class="notification-badge"
+              overlap
             >
-              <v-icon
-                dark
-                small
-              >
+              <v-icon dark>
                 mdi-bell
               </v-icon>
-            </v-btn>
-          </v-badge>
+            </v-badge>
+          </v-btn>
         </template>
         <v-list
           color="primary"
@@ -279,5 +275,12 @@ export default {
 
     .appbar {
         background: linear-gradient(90deg, #00012A, #00126b, #ff473e)
+    }
+
+    .notification-badge ::v-deep .v-badge__badge .v-icon {
+        color: inherit;
+        font-size: 12px !important;
+        height: 12px !important;
+        width: 12px !important;
     }
 </style>
