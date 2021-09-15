@@ -1,5 +1,6 @@
 module.exports = {
-    transpileDependencies: [
-        'vuetify'
-    ]
-}
+  lintOnSave: false, // TODO Remove this.
+  transpileDependencies: [
+    'vuetify',
+  ],
+};

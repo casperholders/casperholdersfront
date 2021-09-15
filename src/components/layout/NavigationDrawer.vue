@@ -9,7 +9,7 @@
   >
     <div
       v-for="(items, name) in links"
-      v-bind:key="name"
+      :key="name"
     >
       <v-subheader>{{ name }}</v-subheader>
       <v-list
@@ -30,17 +30,17 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-      <v-divider></v-divider>
+      <v-divider />
     </div>
     <div>
       <v-list>
         <v-list-item>
           <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
+            <template #activator="{ on, attrs }">
               <v-list-item-avatar
                 v-bind="attrs"
-                v-on="on"
                 :color="signer.connected ? 'green' : 'red'"
+                v-on="on"
               >
                 <v-icon>{{ signer.connected ? "mdi-check-bold" : "mdi-close-thick" }}</v-icon>
               </v-list-item-avatar>
@@ -53,7 +53,7 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-      <v-divider></v-divider>
+      <v-divider />
       <v-list>
         <v-list-item>
           <v-list-item-content class="px-2">
@@ -68,28 +68,28 @@
 
 <script>
 
-import {mapState} from "vuex";
+import { mapState } from 'vuex';
 
 /**
  * NavigationDrawer component
  */
 export default {
-    name: "NavigationDrawer",
-    props: ['links'],
-    data: () => ({
-        drawer: false,
-    }),
-    computed: {
-        ...mapState([
-            "signer",
-        ])
-    },
-    mounted() {
-        this.$root.$on('toggleDrawer', () => {
-            this.drawer = !this.drawer
-        })
-    }
-}
+  name: 'NavigationDrawer',
+  props: ['links'],
+  data: () => ({
+    drawer: false,
+  }),
+  computed: {
+    ...mapState([
+      'signer',
+    ]),
+  },
+  mounted() {
+    this.$root.$on('toggleDrawer', () => {
+      this.drawer = !this.drawer;
+    });
+  },
+};
 </script>
 
 <style scoped>

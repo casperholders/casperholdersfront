@@ -29,7 +29,10 @@
             style="max-width: 100%"
           />
 
-          <div class="mt-3 mt-lg-0 ml-0 ml-lg-3" id="labels">
+          <div
+            id="labels"
+            class="mt-3 mt-lg-0 ml-0 ml-lg-3"
+          >
             <v-layout
               v-for="(label, i) in chartData.labels"
               :key="label"
@@ -145,92 +148,93 @@
 </template>
 
 <script>
-import DonutChart from "@/components/chart/DonutChart";
-import {mapState} from "vuex";
+import DonutChart from '@/components/chart/DonutChart';
+import { mapState } from 'vuex';
 
 /**
  * Balance view
- * Display the current user balance and their staked tokens on the Casper Node configured in the env file
+ * Display the current user balance and their staked tokens on the Casper Node
+ * configured in the env file
  */
 export default {
-    name: "Balance",
-    components: {DonutChart},
-    data() {
-        return {
-            chartData: this.createLoadingChartData(),
-        };
-    },
-    computed: {
-        ...mapState(["signer"]),
-        /**
-         * Calculate the percentage of staked tokens over the tokens available
-         */
-        csprPercentage() {
-            let total = this.chartData.datasets[0].data.reduce((a, b) => Number(a) + Number(b), 0);
-            if (total === 0) {
-                total = 1;
-            }
+  name: 'Balance',
+  components: { DonutChart },
+  data() {
+    return {
+      chartData: this.createLoadingChartData(),
+    };
+  },
+  computed: {
+    ...mapState(['signer']),
+    /**
+     * Calculate the percentage of staked tokens over the tokens available
+     */
+    csprPercentage() {
+      let total = this.chartData.datasets[0].data.reduce((a, b) => Number(a) + Number(b), 0);
+      if (total === 0) {
+        total = 1;
+      }
 
-            return (index) => {
-                const value = this.chartData.datasets[0].data[index];
-                return Number(value / total * 100).toFixed(2);
-            };
-        },
+      return (index) => {
+        const value = this.chartData.datasets[0].data[index];
+        return Number((value / total) * 100).toFixed(2);
+      };
     },
-    watch: {
-        /**
-         * Watch the state of the active key. In case of an update, re-fetch the balance data
-         */
-        "signer.activeKey": {
-            async handler() {
-                await this.fetchBalances();
-            },
-            immediate: true,
-        },
+  },
+  watch: {
+    /**
+     * Watch the state of the active key. In case of an update, re-fetch the balance data
+     */
+    'signer.activeKey': {
+      async handler() {
+        await this.fetchBalances();
+      },
+      immediate: true,
     },
-    methods: {
-      /**
-       * Init the donut chart while we fetch the data
-       */
-        createLoadingChartData() {
-            const {primary, tertiary, quaternary} = this.$vuetify.theme.currentTheme;
+  },
+  methods: {
+    /**
+     * Init the donut chart while we fetch the data
+     */
+    createLoadingChartData() {
+      const { primary, tertiary, quaternary } = this.$vuetify.theme.currentTheme;
 
-            return {
-                labels: ["Loading"],
-                datasets: [
-                    {
-                        backgroundColor: [primary, quaternary, tertiary],
-                        data: [0, 0, 1],
-                        borderWidth: 0,
-                    },
-                ],
-            };
-        },
-        /**
-         * Fetch the balances of the current user and update the Donut chart
-         */
-        async fetchBalances() {
-            const newChartData = this.createLoadingChartData();
-            try {
-                const balance = await this.$getBalanceService().fetchBalance();
-                newChartData.labels = ["Available"];
-                newChartData.datasets[0].data = [balance, 0, 0];
-            } catch (error) {
-                newChartData.labels = [error.message];
-                this.chartData = newChartData;
-                return;
-            }
-
-            try {
-                const stakedBalance = await this.$getBalanceService().fetchStakeBalance();
-                newChartData.labels.push("Staked");
-                newChartData.datasets[0].data[1] = stakedBalance;
-            } catch (error) {
-                console.log(error)
-            } finally {
-                this.chartData = newChartData;
-            }
-        },
+      return {
+        labels: ['Loading'],
+        datasets: [
+          {
+            backgroundColor: [primary, quaternary, tertiary],
+            data: [0, 0, 1],
+            borderWidth: 0,
+          },
+        ],
+      };
     },
+    /**
+     * Fetch the balances of the current user and update the Donut chart
+     */
+    async fetchBalances() {
+      const newChartData = this.createLoadingChartData();
+      try {
+        const balance = await this.$getBalanceService().fetchBalance();
+        newChartData.labels = ['Available'];
+        newChartData.datasets[0].data = [balance, 0, 0];
+      } catch (error) {
+        newChartData.labels = [error.message];
+        this.chartData = newChartData;
+        return;
+      }
+
+      try {
+        const stakedBalance = await this.$getBalanceService().fetchStakeBalance();
+        newChartData.labels.push('Staked');
+        newChartData.datasets[0].data[1] = stakedBalance;
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.chartData = newChartData;
+      }
+    },
+  },
 };
 </script>

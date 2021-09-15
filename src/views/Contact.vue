@@ -14,7 +14,9 @@
         >
           <v-icon>mdi-mail</v-icon>
         </v-avatar>
-        <v-card-title class="pl-4">Contact</v-card-title>
+        <v-card-title class="pl-4">
+          Contact
+        </v-card-title>
       </v-card-title>
       <v-card-text class="text-body-1">
         <h2>Discord</h2>
@@ -86,6 +88,6 @@
  * Contact view
  */
 export default {
-    name: 'FAQ',
-}
+  name: 'FAQ',
+};
 </script>

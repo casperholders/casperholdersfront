@@ -16,17 +16,18 @@
           Next features
         </v-card-title>
         <v-card-text class="text-body-1">
-
           <v-icon
             color="tertiary"
             left
-          >mdi-account
+          >
+            mdi-account
           </v-icon>
-          Operation history<br />
+          Operation history<br>
           <v-icon
             color="tertiary"
             left
-          >mdi-currency-usd
+          >
+            mdi-currency-usd
           </v-icon>
           Staking rewards Overview
         </v-card-text>
@@ -51,13 +52,15 @@
           <v-icon
             color="quaternary"
             left
-          >mdi-laptop
+          >
+            mdi-laptop
           </v-icon>
-          Desktop Wallet & Mobile Wallet<br />
+          Desktop Wallet & Mobile Wallet<br>
           <v-icon
             color="quaternary"
             left
-          >mdi-lock
+          >
+            mdi-lock
           </v-icon>
           High security accounts settings
         </v-card-text>
@@ -71,8 +74,8 @@
  * Roadmap component displayed on the homepage
  */
 export default {
-    name: "Roadmap"
-}
+  name: 'Roadmap',
+};
 </script>
 
 <style scoped>

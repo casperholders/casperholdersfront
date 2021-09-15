@@ -1,0 +1,29 @@
+<svg
+        version="1.1"
+        viewBox="0 0 900 1000"
+        xmlns="http://www.w3.org/2000/svg"
+>
+    <linearGradient id="gradient">
+        <stop
+                offset="0%"
+                stop-color="#00012a"
+                stop-opacity="0.75"
+        />
+        <stop
+                offset="50%"
+                stop-color="#00126b"
+                stop-opacity="0.75"
+        />
+        <stop
+                offset="100%"
+                stop-color="#ff473e"
+                stop-opacity="0.75"
+        />
+    </linearGradient>
+    <path
+            d="M0 226L37.5 243.2C75 260.3 150 294.7 225 307C300 319.3 375 309.7 450 288.3C525 267 600 234 675 231.7C750 229.3 825 257.7 862.5 271.8L900 286L900 0L862.5 0C825 0 750 0 675 0C600 0 525 0 450 0C375 0 300 0 225 0C150 0 75 0 37.5 0L0 0Z"
+            fill="url(#gradient)"
+            stroke-linecap="round"
+            stroke-linejoin="miter"
+    />
+</svg>
