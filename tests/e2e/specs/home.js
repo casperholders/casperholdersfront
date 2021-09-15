@@ -10,9 +10,9 @@ describe('Home', () => {
                 "activeKey": "01270a577d2d106c4d29402775f3dffcb9f04aad542579dd4d1cfad20572ebcb7c"
             }
         }
-        cy.window().should('have.property', '__store__')
+        const event = new CustomEvent('signer:connected', msg);
         cy.window().then( win => {
-            win.__store__.dispatch("updateFromSignerEvent", msg.detail)
+            win.dispatchEvent(event);
         })
         cy.get("#tutorial").click().get(".v-window__prev button").click().get("#publicKey").parent().should('be.visible').should('contain', msg.detail.activeKey)
         cy.get("#copyToClipboard").click()

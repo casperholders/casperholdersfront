@@ -8,10 +8,9 @@ describe('Delegate', () => {
             }
         }
         cy.visit("http://localhost:8080/stake")
-        // wait for the store to initialize
-        cy.window().should('have.property', '__store__')
+        const event = new CustomEvent('signer:connected', msg);
         cy.window().then( win => {
-            win.__store__.dispatch("updateFromSignerEvent", msg.detail)
+            win.dispatchEvent(event);
         })
         cy.wait(5000)
         cy.get("#submitOperation").click()
@@ -31,20 +30,16 @@ describe('Delegate', () => {
         cy.visit("http://localhost:8080/stake")
         cy.get(".v-alert").should('have.length', 1)
         cy.get(".v-alert").should('contain'," Not connected on Signer. ")
-        // wait for the store to initialize
-        cy.window().should('have.property', '__store__')
-
+        const event = new CustomEvent('signer:connected', msg);
         cy.window().then( win => {
-            win.__store__.dispatch("updateFromSignerEvent", msg.detail)
+            win.dispatchEvent(event);
         })
         cy.wait(5000)
         cy.get(".v-alert").should('have.length', 1)
         cy.get(".v-alert").should('contain'," Insufficient funds. You must have more than 3.50001 CSPR on your wallet. ")
-        cy.wait(1000).then(() => {
+        cy.wait(1000).window().then(win => {
             msg.detail.activeKey = "01270a577d2d106c4d29402775f3dffcb9f04aad542579dd4d1cfad20572ebcb7c"
-            cy.window().then( win => {
-                win.__store__.dispatch("updateFromSignerEvent", msg.detail)
-            })
+            win.dispatchEvent(event);
         })
         cy.get(".v-alert").should('have.length', 0)
         cy.get("#submitOperation").click()
