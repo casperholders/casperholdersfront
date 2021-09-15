@@ -8,10 +8,9 @@ describe('Add bid', () => {
             }
         }
         cy.visit("http://localhost:8080/addbid")
-        // wait for the store to initialize
-        cy.window().should('have.property', '__store__')
+        const event = new CustomEvent('signer:connected', msg);
         cy.window().then( win => {
-            win.__store__.dispatch("updateFromSignerEvent", msg.detail)
+            win.dispatchEvent(event);
         })
         cy.wait(5000)
         cy.get("#submitOperation").click()
@@ -28,23 +27,19 @@ describe('Add bid', () => {
                 "activeKey": "01270a577d2d106c4d29402775f3dffcb9f04aad542579dd4d1cfad20572ebcb7a"
             }
         }
+        const event = new CustomEvent('signer:connected', msg);
         cy.visit("http://localhost:8080/addbid")
         cy.get(".v-alert").should('have.length', 1)
         cy.get(".v-alert").should('contain'," Not connected on Signer. ")
-        // wait for the store to initialize
-        cy.window().should('have.property', '__store__')
-
         cy.window().then( win => {
-            win.__store__.dispatch("updateFromSignerEvent", msg.detail)
+            win.dispatchEvent(event);
         })
         cy.wait(5000)
         cy.get(".v-alert").should('have.length', 1)
         cy.get(".v-alert").should('contain'," Unable to retrieve your Validator balance. Make sure that you are correctly bonded to the network. ")
-        cy.wait(1000).then(() => {
+        cy.wait(1000).window().then(win => {
             msg.detail.activeKey = "0124bfdae2ed128fa5e4057bc398e4933329570e47240e57fc92f5611a6178eba5"
-            cy.window().then( win => {
-                win.__store__.dispatch("updateFromSignerEvent", msg.detail)
-            })
+            win.dispatchEvent(event);
         })
         cy.get(".v-alert").should('have.length', 0)
         cy.get("#submitOperation").click()
