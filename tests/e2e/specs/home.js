@@ -1,6 +1,6 @@
 describe('Home', () => {
-    it('It show testnet', () => {
-        cy.visit("http://localhost:8080/");
+  it('It show testnet', () => {
+    cy.visit('http://localhost:8080/');
 
         cy.get(".v-toolbar__title").should('contain'," Casper Holders TestNet ")
         const msg = {

@@ -11,16 +11,20 @@
     title="Stake"
   >
     <p class="text-body-1">
-      Here's your validator : <a
-      :href=validatorUrl
-      target="_blank"
-    >{{ $getValidator() }}
-      <v-icon x-small>mdi-open-in-new</v-icon>
-    </a><br />
-      <br />
-      Actually there's a commission rate of 1%. (Applies on the staking rewards only.)<br />
-      Example : if you receive 100 CSPR rewards from staking, CasperHolders will received 1 CSPR and you will
-      get 99 CSPR.
+      Here's your validator :
+      <a
+        :href="validatorUrl"
+        target="_blank"
+      >
+        {{ $getValidator() }}
+        <v-icon x-small>mdi-open-in-new</v-icon>
+      </a>
+      <br>
+      <br>
+      Actually there's a commission rate of 1%. (Applies on the staking rewards only.)
+      <br>
+      Example : if you receive 100 CSPR rewards from staking,
+      CasperHolders will received 1 CSPR and you will get 99 CSPR.
     </p>
     <Amount
       :balance="balance"
@@ -31,7 +35,7 @@
       @input="amount = $event"
     />
     <p>
-      Staking operation fee : {{ delegationFee }} CSPR<br />
+      Staking operation fee : {{ delegationFee }} CSPR<br>
       Balance : {{ balance }} CSPR
       <template v-if="loadingBalance">
         Loading balance ...
@@ -39,10 +43,10 @@
           class="ml-3"
           color="white"
           indeterminate
-        ></v-progress-circular>
+        />
       </template>
-      <br />
-      Remaining funds after staking : {{ remainingBalance }} CSPR<br />
+      <br>
+      Remaining funds after staking : {{ remainingBalance }} CSPR<br>
     </p>
     <v-alert
       v-if="errorBalance"
@@ -61,7 +65,9 @@
             color="primary"
             @click="connectionRequest"
           >
-            <v-icon left>mdi-account-circle</v-icon>
+            <v-icon left>
+              mdi-account-circle
+            </v-icon>
             Connect
           </v-btn>
         </v-col>
@@ -79,14 +85,14 @@
 </template>
 
 <script>
-import Operation from "@/components/operations/Operation";
-import Amount from "@/components/operations/Amount";
-import {Signer} from "casper-js-sdk";
-import {mapState} from "vuex";
-import {DelegateResult} from "@casperholders/core/dist/services/results/delegateResult";
-import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiveKeyError";
-import {InsufficientFunds} from "@casperholders/core/dist/services/errors/insufficientFunds";
-import {Delegate} from "@casperholders/core/dist/services/deploys/auction/actions/delegate";
+import Amount from '@/components/operations/Amount';
+import Operation from '@/components/operations/Operation';
+import { Delegate } from '@casperholders/core/dist/services/deploys/auction/actions/delegate';
+import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
+import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
+import { DelegateResult } from '@casperholders/core/dist/services/results/delegateResult';
+import { Signer } from 'casper-js-sdk';
+import { mapState } from 'vuex';
 
 /**
  * Delegate view
@@ -94,94 +100,100 @@ import {Delegate} from "@casperholders/core/dist/services/deploys/auction/action
  * - Amount to delegate to the node set in the .env file
  */
 export default {
-    name: "Delegate",
-    components: {Amount, Operation},
-    data() {
-        return {
-            minimumCSPRStake: 1,
-            delegationFee: 2.50001,
-            amount: "1",
-            errorBalance: null,
-            balance: "0",
-            loadingSignAndDeploy: false,
-            errorDeploy: null,
-            loadingBalance: false,
-            type: DelegateResult.getName(),
-        }
+  name: 'Delegate',
+  components: { Amount, Operation },
+  data() {
+    return {
+      minimumCSPRStake: 1,
+      delegationFee: 2.50001,
+      amount: '1',
+      errorBalance: null,
+      balance: '0',
+      loadingSignAndDeploy: false,
+      errorDeploy: null,
+      loadingBalance: false,
+      type: DelegateResult.getName(),
+    };
+  },
+  computed: {
+    ...mapState([
+      'signer',
+    ]),
+    remainingBalance() {
+      const result = this.balance - this.amount - this.delegationFee;
+      return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
     },
-    computed: {
-        ...mapState([
-            "signer",
-        ]),
-        remainingBalance() {
-            let result = this.balance - this.amount - this.delegationFee
-            return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0
-        },
-        validatorUrl() {
-            return this.$getValidatorUrl();
-        },
-        minimumFundsNeeded() {
-            return this.minimumCSPRStake + this.delegationFee;
-        },
-        isInstanceOfNoActiveKeyError() {
-            return this.errorBalance instanceof NoActiveKeyError
-        }
+    validatorUrl() {
+      return this.$getValidatorUrl();
     },
-    watch: {
-        async 'signer.activeKey'() {
-            await this.getBalance()
-        }
+    minimumFundsNeeded() {
+      return this.minimumCSPRStake + this.delegationFee;
     },
-    async mounted() {
-        await this.getBalance();
-        this.$root.$on("operationOnGoing", () => this.errorDeploy = null)
+    isInstanceOfNoActiveKeyError() {
+      return this.errorBalance instanceof NoActiveKeyError;
     },
-    methods: {
-        /**
-         * Get the user balance
-         */
-        async getBalance() {
-            this.loadingBalance = true;
-            this.errorBalance = null;
-            this.balance = "0";
-            try {
-                this.balance = await this.$getBalanceService().fetchBalance();
-                if (this.balance <= this.minimumFundsNeeded) {
-                    throw new InsufficientFunds(this.minimumFundsNeeded)
-                }
-            } catch (e) {
-                this.errorBalance = e;
-            }
-            this.loadingBalance = false;
-        },
-        /**
-         * Method used by the OperationDialog component when the user confirm the operation.
-         * Use the prepareSignAndSendDeploy method from the core library
-         * Update the store with a deploy result containing the deployhash of the deploy sent
-         */
-        async sendDeploy() {
-            this.errorDeploy = null;
-            this.loadingSignAndDeploy = true;
-            try {
-                const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
-                    new Delegate(this.amount, this.signer.activeKey, this.$getValidator(), this.$getNetwork(), this.$getAuctionHash()),
-                    this.$getSigner(),
-                    this.$getOptionsValidator()
-                );
-                await this.$store.dispatch("addDeployResult", deployResult)
-            } catch (e) {
-                console.log(e)
-                this.errorDeploy = e;
-            }
-            this.loadingSignAndDeploy = false;
-            this.$root.$emit('closeOperationDialog');
-            this.$root.$emit('operationFinished');
-        },
-        connectionRequest() {
-            Signer.sendConnectionRequest();
+  },
+  watch: {
+    'signer.activeKey': 'getBalance',
+  },
+  async mounted() {
+    await this.getBalance();
+    this.$root.$on('operationOnGoing', () => {
+      this.errorDeploy = null;
+    });
+  },
+  methods: {
+    /**
+     * Get the user balance
+     */
+    async getBalance() {
+      this.loadingBalance = true;
+      this.errorBalance = null;
+      this.balance = '0';
+      try {
+        this.balance = await this.$getBalanceService().fetchBalance();
+        if (this.balance <= this.minimumFundsNeeded) {
+          throw new InsufficientFunds(this.minimumFundsNeeded);
         }
-    }
-}
+      } catch (e) {
+        this.errorBalance = e;
+      }
+      this.loadingBalance = false;
+    },
+    /**
+     * Method used by the OperationDialog component when the user confirm the operation.
+     * Use the prepareSignAndSendDeploy method from the core library
+     * Update the store with a deploy result containing the deployhash of the deploy sent
+     */
+    async sendDeploy() {
+      this.errorDeploy = null;
+      this.loadingSignAndDeploy = true;
+      try {
+        const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
+          new Delegate(
+            this.amount,
+            this.signer.activeKey,
+            this.$getValidator(),
+            this.$getNetwork(),
+            this.$getAuctionHash(),
+          ),
+          this.$getSigner(),
+          this.$getOptionsValidator(),
+        );
+        await this.$store.dispatch('addDeployResult', deployResult);
+      } catch (e) {
+        console.log(e);
+        this.errorDeploy = e;
+      }
+      this.loadingSignAndDeploy = false;
+      this.$root.$emit('closeOperationDialog');
+      this.$root.$emit('operationFinished');
+    },
+    connectionRequest() {
+      Signer.sendConnectionRequest();
+    },
+  },
+};
 </script>
 
 <style scoped>

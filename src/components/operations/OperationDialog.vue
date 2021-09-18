@@ -4,7 +4,7 @@
     max-width="500"
     persistent
   >
-    <template v-slot:activator="{ on, attrs }">
+    <template #activator="{ on, attrs }">
       <v-btn
         id="submitOperation"
         v-bind="attrs"
@@ -32,9 +32,9 @@
         Please confirm the following information before signing and sending the operation.
       </v-card-subtitle>
       <v-card-text class="text-body-1">
-        Amount : {{ amount }} CSPR<br />
-        Fee : {{ fee }} CSPR<br />
-        Remaining funds after operation : {{ remainingBalance }} CSPR<br />
+        Amount : {{ amount }} CSPR<br>
+        Fee : {{ fee }} CSPR<br>
+        Remaining funds after operation : {{ remainingBalance }} CSPR<br>
       </v-card-text>
       <v-card-actions class="pa-5">
         <v-btn
@@ -63,99 +63,100 @@
  * Generic dialog to confirm the Operation before signing & sending it on the blockchain
  */
 export default {
-    name: "OperationDialog",
-    props: {
-        /**
-         * Icon of the dialog
-         */
-        icon: {
-            required: true,
-            type: String,
-            default: ""
-        },
-        /**
-         * Title of the dialog
-         */
-        title: {
-            required: true,
-            type: String,
-            default: ""
-        },
-        /**
-         * Disable / Enable the button to open the popup
-         */
-        operationOnGoing: {
-            required: true,
-            type: Boolean,
-            default: false
-        },
-        /**
-         * Function executed when the user confirm the operation
-         */
-        sendDeploy: {
-            required: true,
-            type: Function
-        },
-        /**
-         * Function executed when the user click on the button that open the popup. Extracted in the Operation component.
-         */
-        openPopup: {
-            required: true,
-            type: Function
-        },
-        /**
-         * Used to disable the confirm button of the popup when the user confirm the operation
-         */
-        loadingSignAndDeploy: {
-            required: true,
-            type: Boolean,
-            default: false
-        },
-        /**
-         * Amount to be displayed
-         */
-        amount: {
-            required: true,
-            type: String,
-            default: "0"
-        },
-        /**
-         * Amount to be displayed
-         */
-        fee: {
-            required: true,
-            type: Number,
-            default: 0
-        },
-        /**
-         * Remaining balance to be displayed
-         */
-        remainingBalance: {
-            required: true,
-            type: Number,
-            default: 0
-        },
+  name: 'OperationDialog',
+  props: {
+    /**
+     * Icon of the dialog
+     */
+    icon: {
+      required: true,
+      type: String,
+      default: '',
     },
-    data() {
-      /**
-       * Used to open or close the popup
-       */
-      return {
-            confirmDialog: false,
-        }
+    /**
+     * Title of the dialog
+     */
+    title: {
+      required: true,
+      type: String,
+      default: '',
     },
-    mounted() {
-        this.$root.$on('closeOperationDialog', () => {
-            this.confirmDialog = false;
-        })
+    /**
+     * Disable / Enable the button to open the popup
+     */
+    operationOnGoing: {
+      required: true,
+      type: Boolean,
+      default: false,
     },
-    methods: {
-        closePopup() {
-            this.$emit("operationCanceled")
-            this.confirmDialog = false
-        }
-    }
-}
+    /**
+     * Function executed when the user confirm the operation
+     */
+    sendDeploy: {
+      required: true,
+      type: Function,
+    },
+    /**
+     * Function executed when the user click on the button that open the popup.
+     * Extracted in the Operation component.
+     */
+    openPopup: {
+      required: true,
+      type: Function,
+    },
+    /**
+     * Used to disable the confirm button of the popup when the user confirm the operation
+     */
+    loadingSignAndDeploy: {
+      required: true,
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Amount to be displayed
+     */
+    amount: {
+      required: true,
+      type: String,
+      default: '0',
+    },
+    /**
+     * Amount to be displayed
+     */
+    fee: {
+      required: true,
+      type: Number,
+      default: 0,
+    },
+    /**
+     * Remaining balance to be displayed
+     */
+    remainingBalance: {
+      required: true,
+      type: Number,
+      default: 0,
+    },
+  },
+  data() {
+    /**
+     * Used to open or close the popup
+     */
+    return {
+      confirmDialog: false,
+    };
+  },
+  mounted() {
+    this.$root.$on('closeOperationDialog', () => {
+      this.confirmDialog = false;
+    });
+  },
+  methods: {
+    closePopup() {
+      this.$emit('operationCanceled');
+      this.confirmDialog = false;
+    },
+  },
+};
 </script>
 
 <style scoped>

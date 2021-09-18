@@ -20,7 +20,7 @@
         label="Send to address"
         prepend-icon="mdi-account"
         required
-      ></v-text-field>
+      />
       <v-text-field
         id="transferID"
         :rules="transferIDRules"
@@ -40,7 +40,7 @@
         @input="amount = $event"
       />
       <p>
-        Transfer Fee : {{ transferFee }} CSPR<br />
+        Transfer Fee : {{ transferFee }} CSPR<br>
         Balance : {{ balance }} CSPR
         <template v-if="loadingBalance">
           Loading balance ...
@@ -48,10 +48,10 @@
             class="ml-3"
             color="white"
             indeterminate
-          ></v-progress-circular>
+          />
         </template>
-        <br />
-        Remaining funds after transfer : {{ remainingBalance }} CSPR<br />
+        <br>
+        Remaining funds after transfer : {{ remainingBalance }} CSPR<br>
       </p>
       <v-alert
         v-if="errorBalance"
@@ -70,7 +70,9 @@
               color="primary"
               @click="connectionRequest"
             >
-              <v-icon left>mdi-account-circle</v-icon>
+              <v-icon left>
+                mdi-account-circle
+              </v-icon>
               Connect
             </v-btn>
           </v-col>
@@ -89,14 +91,14 @@
 </template>
 
 <script>
-import Operation from "@/components/operations/Operation";
-import Amount from "@/components/operations/Amount";
-import {CLPublicKey,  Signer} from "casper-js-sdk";
-import {mapState} from "vuex";
-import {TransferResult} from "@casperholders/core/dist/services/results/transferResult";
-import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiveKeyError";
-import {InsufficientFunds} from "@casperholders/core/dist/services/errors/insufficientFunds";
-import {TransferDeployParameters} from "@casperholders/core/dist/services/deploys/transfer/TransferDeployParameters";
+import Amount from '@/components/operations/Amount';
+import Operation from '@/components/operations/Operation';
+import { TransferDeployParameters } from '@casperholders/core/dist/services/deploys/transfer/TransferDeployParameters';
+import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
+import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
+import { TransferResult } from '@casperholders/core/dist/services/results/transferResult';
+import { CLPublicKey, Signer } from 'casper-js-sdk';
+import { mapState } from 'vuex';
 
 /**
  * Transfer view
@@ -106,109 +108,111 @@ import {TransferDeployParameters} from "@casperholders/core/dist/services/deploy
  * - Amount to transfer
  */
 export default {
-    name: "Transfer",
-    components: {Amount, Operation},
-    data() {
-        return {
-            addressRules: [
-                a => !!a || 'Address is required',
-                a => a.length >= 2 || 'Address is too short',
-                a => {
-                    try {
-                        CLPublicKey.fromHex(a)
-                        return true;
-                    } catch (e) {
-                        return e.toString();
-                    }
-                },
-            ],
-            transferIDRules: [
-                a => !!a || 'Transfer ID is required',
-                a => /^[0-9]+$/.test(a) || 'Transfer ID must be a number',
-            ],
-            address: "",
-            transferID: '0',
-            minimumCSPRTransfer: 2.5,
-            transferFee: 0.00001,
-            amount: "2.5",
-            errorBalance: null,
-            balance: "0",
-            loadingSignAndDeploy: false,
-            errorDeploy: null,
-            loadingBalance: false,
-            type: TransferResult.getName(),
-        }
-    },
-    computed: {
-        ...mapState([
-            "signer",
-        ]),
-        remainingBalance() {
-            let result = this.balance - this.amount - this.transferFee
-            return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0
+  name: 'Transfer',
+  components: { Amount, Operation },
+  data() {
+    return {
+      addressRules: [
+        (a) => !!a || 'Address is required',
+        (a) => a.length >= 2 || 'Address is too short',
+        (a) => {
+          try {
+            CLPublicKey.fromHex(a);
+            return true;
+          } catch (e) {
+            return e.toString();
+          }
         },
-        minimumFundsNeeded() {
-            return this.minimumCSPRTransfer + this.transferFee;
-        },
-        isInstanceOfNoActiveKeyError() {
-            return this.errorBalance instanceof NoActiveKeyError
-        }
+      ],
+      transferIDRules: [
+        (a) => !!a || 'Transfer ID is required',
+        (a) => /^[0-9]+$/.test(a) || 'Transfer ID must be a number',
+      ],
+      address: '',
+      transferID: '0',
+      minimumCSPRTransfer: 2.5,
+      transferFee: 0.00001,
+      amount: '2.5',
+      errorBalance: null,
+      balance: '0',
+      loadingSignAndDeploy: false,
+      errorDeploy: null,
+      loadingBalance: false,
+      type: TransferResult.getName(),
+    };
+  },
+  computed: {
+    ...mapState([
+      'signer',
+    ]),
+    remainingBalance() {
+      const result = this.balance - this.amount - this.transferFee;
+      return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
     },
-    watch: {
-        async 'signer.activeKey'() {
-            await this.getBalance()
-        }
+    minimumFundsNeeded() {
+      return this.minimumCSPRTransfer + this.transferFee;
     },
-    async mounted() {
-        await this.getBalance();
-        this.$root.$on("operationOnGoing", () => this.errorDeploy = null)
+    isInstanceOfNoActiveKeyError() {
+      return this.errorBalance instanceof NoActiveKeyError;
     },
-    methods: {
-        /**
-         * Get the user balance
-         */
-        async getBalance() {
-            this.loadingBalance = true;
-            this.errorBalance = null;
-            this.balance = "0";
-            try {
-                this.balance = await this.$getBalanceService().fetchBalance();
-                if (this.balance <= this.minimumFundsNeeded) {
-                    throw new InsufficientFunds(this.minimumFundsNeeded)
-                }
-            } catch (e) {
-                this.errorBalance = e;
-            }
-            this.loadingBalance = false;
-        },
-        /**
-         * Method used by the OperationDialog component when the user confirm the operation.
-         * Use the prepareSignAndSendDeploy method from the core library
-         * Update the store with a deploy result containing the deployhash of the deploy sent
-         */
-        async sendDeploy() {
-            this.errorDeploy = null;
-            this.loadingSignAndDeploy = true;
-            try {
-                const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
-                    new TransferDeployParameters(this.signer.activeKey, this.$getNetwork(), this.amount, this.address, this.transferID),
-                    this.$getSigner(),
-                    this.$getOptionsTo(this.address)
-                );
-                await this.$store.dispatch("addDeployResult", deployResult)
-            } catch (e) {
-                console.log(e)
-                this.errorDeploy = e;
-            }
-            this.loadingSignAndDeploy = false;
-            this.$root.$emit('closeOperationDialog');
-            this.$root.$emit('operationFinished');
-        },
-        connectionRequest() {
-            Signer.sendConnectionRequest();
+  },
+  watch: {
+    'signer.activeKey': 'getBalance',
+  },
+  async mounted() {
+    await this.getBalance();
+    this.$root.$on('operationOnGoing', () => {
+      this.errorDeploy = null;
+    });
+  },
+  methods: {
+    /**
+     * Get the user balance
+     */
+    async getBalance() {
+      this.loadingBalance = true;
+      this.errorBalance = null;
+      this.balance = '0';
+      try {
+        this.balance = await this.$getBalanceService().fetchBalance();
+        if (this.balance <= this.minimumFundsNeeded) {
+          throw new InsufficientFunds(this.minimumFundsNeeded);
         }
-    }
-}
+      } catch (e) {
+        this.errorBalance = e;
+      }
+      this.loadingBalance = false;
+    },
+    /**
+     * Method used by the OperationDialog component when the user confirm the operation.
+     * Use the prepareSignAndSendDeploy method from the core library
+     * Update the store with a deploy result containing the deployhash of the deploy sent
+     */
+    async sendDeploy() {
+      this.errorDeploy = null;
+      this.loadingSignAndDeploy = true;
+      try {
+        const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
+          new TransferDeployParameters(
+            this.signer.activeKey, this.$getNetwork(), this.amount, this.address, this.transferID,
+          ),
+          this.$getSigner(),
+          this.$getOptionsTo(this.address),
+        );
+        await this.$store.dispatch('addDeployResult', deployResult);
+      } catch (e) {
+        console.log(e);
+        this.errorDeploy = e;
+      }
+      this.loadingSignAndDeploy = false;
+      this.$root.$emit('closeOperationDialog');
+      this.$root.$emit('operationFinished');
+    },
+    connectionRequest() {
+      Signer.sendConnectionRequest();
+    },
+  },
+};
 </script>
 
 <style scoped>

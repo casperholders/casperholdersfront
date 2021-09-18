@@ -14,8 +14,12 @@
         {{ name }} Operations
       </v-card-title>
     </v-card-title>
-    <p class="text-center" style="width: 100%">
-      {{ (value.reduce((a, b) => a + b, 0) / value.length).toFixed(2) || 0}} Operations on average in the last 24h
+    <p
+      class="text-center"
+      style="width: 100%"
+    >
+      {{ (value.reduce((a, b) => a + b, 0) / value.length).toFixed(2) || 0 }}
+      Operations on average in the last 24h
     </p>
     <v-sheet color="transparent">
       <v-sparkline
@@ -30,7 +34,7 @@
         :type="type"
         :value="value"
         auto-draw
-      ></v-sparkline>
+      />
     </v-sheet>
   </v-card>
 </template>
@@ -40,39 +44,39 @@
  * Single Metric component
  */
 export default {
-    name: "Metric",
-    props: {
-        name: {
-            required: true,
-            type: String,
-            default: ""
-        },
-        value: {
-            required: true,
-            type: Array,
-            default: new Array(0,0)
-        },
+  name: 'Metric',
+  props: {
+    name: {
+      required: true,
+      type: String,
+      default: '',
     },
-    data() {
-        return {
-            width: 2,
-            radius: 10,
-            padding: 8,
-            lineCap: 'round',
-            gradient: ['#af023f', '#00126b'],
-            gradientDirection: 'top',
-            fill: false,
-            type: 'trend',
-            autoLineWidth: false,
-            transfer: [0, 0],
-            staking: [0, 0],
-            unstake: [0, 0],
-            addBid: [0, 0],
-            withdrawBid: [0, 0],
-            smartContract: [0, 0],
-        }
+    value: {
+      required: true,
+      type: Array,
+      default: () => [0, 0],
     },
-}
+  },
+  data() {
+    return {
+      width: 2,
+      radius: 10,
+      padding: 8,
+      lineCap: 'round',
+      gradient: ['#af023f', '#00126b'],
+      gradientDirection: 'top',
+      fill: false,
+      type: 'trend',
+      autoLineWidth: false,
+      transfer: [0, 0],
+      staking: [0, 0],
+      unstake: [0, 0],
+      addBid: [0, 0],
+      withdrawBid: [0, 0],
+      smartContract: [0, 0],
+    };
+  },
+};
 </script>
 
 <style scoped>

@@ -29,7 +29,7 @@ describe('Smart Contract', () => {
          * https://testnet.cspr.live/deploy/a23b408eae444a1665ea2f60730c1a1e94a911f46f601d6ac223c9f79b2821e2
          * If you compare the module byte content the end is different and I don't know why ...
          */
-        /*
+    /*
         cy.get("#submitOperation").click()
         cy.get("#agreeAndSign").parents(".v-dialog").should("be.visible")
         cy.get("#agreeAndSign").click().parents(".v-dialog").should("not.be.visible")
