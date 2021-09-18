@@ -183,7 +183,7 @@ export default {
   name: 'AppBar',
   props: {
     links: {
-      type: Array,
+      type: Object,
       required: true,
     },
   },

@@ -88,6 +88,6 @@
  * Contact view
  */
 export default {
-  name: 'FAQ',
+  name: 'Contact',
 };
 </script>

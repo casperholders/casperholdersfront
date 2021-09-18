@@ -77,7 +77,7 @@ export default {
   name: 'NavigationDrawer',
   props: {
     links: {
-      type: Array,
+      type: Object,
       required: true,
     },
   },
