@@ -75,7 +75,12 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'NavigationDrawer',
-  props: ['links'],
+  props: {
+    links: {
+      type: Array,
+      required: true,
+    },
+  },
   data: () => ({
     drawer: false,
   }),

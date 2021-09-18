@@ -119,6 +119,7 @@ export default {
      * Amount to be displayed in the OperationDialog
      */
     amount: {
+      type: String,
       required: true,
     },
     /**

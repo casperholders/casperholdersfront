@@ -181,7 +181,12 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'AppBar',
-  props: ['links'],
+  props: {
+    links: {
+      type: Array,
+      required: true,
+    },
+  },
   data: () => ({
     isWindowTop: true,
   }),
