@@ -25,7 +25,7 @@ describe('Transfer', () => {
     cy.get('#submitOperation').click();
     cy.get('#address').parents('.v-input__control').find('.v-messages__message').should('contain', 'Address is required');
     cy.get('#address').type('NotValidAddress').parents('.v-input__control').find('.v-messages__message')
-      .should('contain', 'Error: Unsupported type of public key');
+      .should('contain', 'Error: Invalid public key');
     cy.get('#amount').type('{selectall}{del}').parents('.v-input__control').find('.v-messages__message')
       .should('contain', 'Amount is required');
     cy.get('#amount').type('9999999').parents('.v-input__control').find('.v-messages__message')
