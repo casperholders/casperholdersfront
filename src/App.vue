@@ -1,9 +1,15 @@
 <template>
   <v-app>
-    <NavigationDrawer :links="links" />
+    <NavigationDrawer
+      :links="links"
+      @minified-change="onMinifiedChange"
+    />
     <AppBar :links="links" />
     <v-main>
-      <div id="wave">
+      <div
+        id="wave"
+        :style="wavesStyles"
+      >
         <img
           :src="wavesSvg"
           alt=""
@@ -60,6 +66,7 @@ export default {
   components: { AppBar, NavigationDrawer },
   data: () => ({
     wavesSvg,
+    minified: undefined,
     /**
      * Links with their associated text & icons to be displayed in the appbar and navigation drawer
      */
@@ -85,6 +92,11 @@ export default {
       ],
     },
   }),
+  computed: {
+    wavesStyles() {
+      return this.$vuetify.breakpoint.mobile ? {} : { left: this.minified ? '56px' : '256px' };
+    },
+  },
   /**
    * When the component is mounted we listen to the signer events and update
    * the VueX store accordingly to the data received from the Casper Signer extension.
@@ -99,6 +111,11 @@ export default {
       window.addEventListener('signer:locked', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
       window.addEventListener('signer:unlocked', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
     });
+  },
+  methods: {
+    onMinifiedChange(minified) {
+      this.minified = minified;
+    },
   },
 };
 </script>
@@ -148,7 +165,9 @@ export default {
     position: fixed;
     z-index: 0;
     height: 100%;
-    width: 100%;
+    left: 0;
+    right: 0;
+    transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1) left;
   }
 
   a {

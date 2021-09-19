@@ -10,7 +10,7 @@
       <navigation-drawer-list-item
         v-if="!$vuetify.breakpoint.mobile"
         :minified="minified"
-        :tooltip="`${minified ? 'Expand' : 'Minimize'} navigation`"
+        :tooltip="minified ? 'Expand' : 'Minimize'"
         @click="toggleMinified"
       >
         <v-list-item-icon>
@@ -140,16 +140,24 @@ export default {
       'signer',
     ]),
   },
+  watch: {
+    minified: 'onMinifiedChange',
+  },
   mounted() {
     this.$root.$on('toggleDrawer', () => {
       this.drawer = !this.drawer;
     });
+
+    this.onMinifiedChange();
   },
   methods: {
     toggleMinified() {
       this.$nextTick(() => {
         this.minified = !this.minified;
       });
+    },
+    onMinifiedChange() {
+      this.$emit('minified-change', this.minified);
     },
   },
 };
