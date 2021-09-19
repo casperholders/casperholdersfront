@@ -1,73 +1,120 @@
 <template>
   <v-navigation-drawer
-    v-if="$vuetify.breakpoint.mobile"
     v-model="drawer"
-    app
-    bottom
+    :mini-variant="minified && !$vuetify.breakpoint.mobile"
     color="secondary"
     height="100%"
+    app
   >
-    <div
-      v-for="(items, name) in links"
-      :key="name"
-    >
-      <v-subheader>{{ name }}</v-subheader>
-      <v-list
-        dense
+    <navigation-drawer-list>
+      <navigation-drawer-list-item
+        v-if="!$vuetify.breakpoint.mobile"
+        :minified="minified"
+        :tooltip="`${minified ? 'Expand' : 'Minimize'} navigation`"
+        @click="toggleMinified"
       >
-        <v-list-item
-          v-for="item in items"
-          :key="item.title"
+        <v-list-item-icon>
+          <v-icon v-text="minified ? 'mdi-chevron-right' : 'mdi-chevron-left'" />
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title v-text="minified ? 'Expand' : 'Minimize'" />
+        </v-list-item-content>
+      </navigation-drawer-list-item>
+      <navigation-drawer-list-item
+        :minified="minified"
+        tooltip="Home"
+        to="/"
+        link
+        exact
+      >
+        <v-list-item-icon>
+          <v-icon>mdi-home</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>Home</v-list-item-title>
+        </v-list-item-content>
+      </navigation-drawer-list-item>
+    </navigation-drawer-list>
+
+    <template v-for="(items, name) in links">
+      <v-divider
+        :key="`nav-group-${name}-divider`"
+        role="presentation"
+      />
+      <navigation-drawer-list-header
+        :key="`nav-group-${name}-header`"
+        :minified="minified"
+        v-text="name"
+      />
+      <navigation-drawer-list :key="`nav-group-${name}-items`">
+        <navigation-drawer-list-item
+          v-for="(item, index) in items"
+          :key="`nav-group-${name}-items-${index}`"
+          :minified="minified"
+          :tooltip="item.title"
           :to="item.route"
           link
+          exact
         >
           <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon v-text="item.icon" />
           </v-list-item-icon>
-
           <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title v-text="item.title" />
           </v-list-item-content>
-        </v-list-item>
-      </v-list>
-      <v-divider />
-    </div>
-    <div>
-      <v-list>
-        <v-list-item>
-          <v-tooltip bottom>
-            <template #activator="{ on, attrs }">
-              <v-list-item-avatar
-                v-bind="attrs"
-                :color="signer.connected ? 'green' : 'red'"
-                v-on="on"
-              >
-                <v-icon>{{ signer.connected ? "mdi-check-bold" : "mdi-close-thick" }}</v-icon>
-              </v-list-item-avatar>
-            </template>
-            <span>{{ signer.connected ? "Connected !" : "Disconnected !" }}</span>
-          </v-tooltip>
-          <v-list-item-content class="px-2">
-            <v-list-item-title>Casper Signer Status</v-list-item-title>
-            <v-list-item-subtitle>Version {{ signer.version }}</v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-      <v-divider />
-      <v-list>
-        <v-list-item>
-          <v-list-item-content class="px-2">
-            <v-list-item-title>Casper Network</v-list-item-title>
-            <v-list-item-subtitle>{{ $getHumanReadableNetwork() }}</v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </div>
+        </navigation-drawer-list-item>
+      </navigation-drawer-list>
+    </template>
+
+    <v-divider role="presentation" />
+    <navigation-drawer-list-header :minified="minified">
+      Statuses
+    </navigation-drawer-list-header>
+    <navigation-drawer-list>
+      <navigation-drawer-list-item
+        :minified="minified"
+        :tooltip="`Signer ${signer.connected ? 'connected' : 'disconnected'}!`"
+      >
+        <v-list-item-icon>
+          <v-avatar
+            :color="signer.connected ? 'green' : 'red'"
+            size="24"
+          >
+            <v-icon
+              size="16"
+              v-text="signer.connected ? 'mdi-puzzle-check' : 'mdi-puzzle-remove'"
+            />
+          </v-avatar>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>
+            Casper Signer Status
+          </v-list-item-title>
+          <v-list-item-subtitle v-text="`Version ${signer.version || 'unknown'}`" />
+        </v-list-item-content>
+      </navigation-drawer-list-item>
+      <navigation-drawer-list-item
+        :minified="minified"
+        :tooltip="`Connected to ${$getHumanReadableNetwork()}`"
+      >
+        <v-list-item-icon>
+          <v-icon>
+            mdi-lan
+          </v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>Casper Network</v-list-item-title>
+          <v-list-item-subtitle v-text="$getHumanReadableNetwork()" />
+        </v-list-item-content>
+      </navigation-drawer-list-item>
+    </navigation-drawer-list>
   </v-navigation-drawer>
 </template>
 
 <script>
-
+import NavigationDrawerList from '@/components/layout/NavigationDrawerList';
+import NavigationDrawerListHeader from '@/components/layout/NavigationDrawerListHeader';
+import NavigationDrawerListItem from '@/components/layout/NavigationDrawerListItem';
 import { mapState } from 'vuex';
 
 /**
@@ -75,15 +122,19 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'NavigationDrawer',
+  components: { NavigationDrawerListHeader, NavigationDrawerListItem, NavigationDrawerList },
   props: {
     links: {
       type: Object,
       required: true,
     },
   },
-  data: () => ({
-    drawer: false,
-  }),
+  data() {
+    return {
+      minified: false,
+      drawer: !this.$vuetify.breakpoint.mobile,
+    };
+  },
   computed: {
     ...mapState([
       'signer',
@@ -94,9 +145,18 @@ export default {
       this.drawer = !this.drawer;
     });
   },
+  methods: {
+    toggleMinified() {
+      this.$nextTick(() => {
+        this.minified = !this.minified;
+      });
+    },
+  },
 };
 </script>
 
 <style scoped>
-
+    ::v-deep .v-list-item__icon {
+        margin: auto 12px auto 0 !important;
+    }
 </style>

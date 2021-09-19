@@ -9,7 +9,7 @@
           alt=""
         >
       </div>
-      <v-container fluid>
+      <v-container class="app__wrapper container__small">
         <router-view />
       </v-container>
     </v-main>
@@ -137,10 +137,16 @@ export default {
       background-size: cover;
       will-change: transform;
     }
+
+    .app__wrapper {
+      position: relative;
+      z-index: 1;
+    }
   }
 
   #wave {
     position: fixed;
+    z-index: 0;
     height: 100%;
     width: 100%;
   }

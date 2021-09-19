@@ -1,8 +1,5 @@
 <template>
-  <v-container
-    class="flex-column container__small"
-    fill-height
-  >
+  <div>
     <v-card
       class="align-center rounded-xl secondary"
       width="100%"
@@ -48,7 +45,7 @@
       :key="operation.hash"
       :deploy-hash="operation.hash"
     />
-  </v-container>
+  </div>
 </template>
 
 <script>

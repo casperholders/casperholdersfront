@@ -2,14 +2,18 @@
   <v-app-bar
     v-scroll="onScroll"
     :class="{'appbar__top': isWindowTop}"
-    app
     class="appbar"
+    color="transparent"
+    app
     elevate-on-scroll
   >
-    <v-container
-      :fluid="$vuetify.breakpoint.mobile"
-      class="d-flex container__small align-center"
-    >
+    <v-container class="d-flex align-center container__small">
+      <v-app-bar-nav-icon
+        v-show="$vuetify.breakpoint.mobile"
+        class="mr-1"
+        @click.stop="toggleDrawer"
+      />
+
       <v-toolbar-title
         class="mr-auto"
         style="cursor: pointer"
@@ -18,49 +22,6 @@
         Casper Holders {{ $getNetwork() !== 'casper' ? $getHumanReadableNetwork() : '' }}
       </v-toolbar-title>
 
-      <div
-        v-for="(items, name) in links"
-        v-show="!$vuetify.breakpoint.mobile"
-        :key="name"
-      >
-        <v-menu offset-y>
-          <template #activator="{ on, attrs }">
-            <v-btn
-              v-bind="attrs"
-              :ripple="false"
-              text
-              v-on="on"
-            >
-              {{ name }}
-              <v-icon
-                dark
-                right
-              >
-                mdi-chevron-down
-              </v-icon>
-            </v-btn>
-          </template>
-          <v-list
-            color="primary"
-            style="border-bottom: 5px solid #ff473e !important;"
-          >
-            <v-list-item
-              v-for="item in items"
-              :key="item.title"
-              :to="item.route"
-              link
-            >
-              <v-list-item-icon>
-                <v-icon>{{ item.icon }}</v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </div>
       <v-menu
         left
         offset-y
@@ -162,10 +123,6 @@
         </v-list>
       </v-menu>
     </v-container>
-    <v-app-bar-nav-icon
-      v-show="$vuetify.breakpoint.mobile"
-      @click.stop="toggleDrawer"
-    />
   </v-app-bar>
 </template>
 

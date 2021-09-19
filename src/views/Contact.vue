@@ -1,8 +1,5 @@
 <template>
-  <v-container
-    class="flex-column justify-center container__small"
-    fill-height
-  >
+  <div>
     <v-card
       class="align-center rounded-xl secondary"
       width="100%"
@@ -80,7 +77,7 @@
         </v-btn>
       </v-card-actions>
     </v-card>
-  </v-container>
+  </div>
 </template>
 
 <script>
