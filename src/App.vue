@@ -9,11 +9,15 @@
           alt=""
         >
       </div>
-      <v-container fluid>
+      <v-container class="app__wrapper container__small">
         <router-view />
       </v-container>
     </v-main>
-    <v-footer color="secondary">
+    <v-footer
+      color="secondary"
+      inset
+      app
+    >
       <div class="mx-auto">
         <p class="mb-0 text-center">
           <a
@@ -119,30 +123,39 @@ export default {
   }
 
   .cspr {
-    font-family: 'EczarBold', 'RobotoCondensed', Helvetica, Arial, sans-serif;
+    font-family: "EczarBold", "RobotoCondensed", Helvetica, Arial, sans-serif;
   }
 
   #app {
-    font-family: 'RobotoCondensed', Helvetica, Arial, sans-serif;
+    font-family: "RobotoCondensed", Helvetica, Arial, sans-serif;
 
     &::before {
-      content: ' ';
+      content: " ";
       position: fixed;
       width: 100%;
       height: 100%;
       top: 0;
       left: 0;
       background-color: #00126b;
-      background-image: url('~@/assets/images/background.svg');
+      background-image: url("~@/assets/images/background.svg");
       background-size: cover;
       will-change: transform;
+    }
+
+    .app__wrapper {
+      position: relative;
+      z-index: 1;
     }
   }
 
   #wave {
     position: fixed;
+    z-index: 0;
     height: 100%;
-    width: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1) left;
   }
 
   a {
