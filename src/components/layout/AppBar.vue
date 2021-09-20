@@ -230,9 +230,7 @@ export default {
 
 <style scoped>
     .appbar__top {
-        background: linear-gradient(
-                90deg, rgba(0, 1, 42, 0.75), rgba(0, 18, 107, 0.75), rgba(255, 71, 62, 0.75)
-        ) !important;
+        background: transparent !important;
     }
 
     .appbar {

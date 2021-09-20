@@ -8,7 +8,6 @@
     <v-main>
       <div
         id="wave"
-        :style="wavesStyles"
       >
         <img
           :src="wavesSvg"
@@ -19,7 +18,7 @@
         <router-view />
       </v-container>
     </v-main>
-    <v-footer color="secondary">
+    <v-footer app color="secondary">
       <div class="mx-auto">
         <p class="mb-0 text-center">
           <a
@@ -167,6 +166,7 @@ export default {
     height: 100%;
     left: 0;
     right: 0;
+    top: 0;
     transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1) left;
   }
 
