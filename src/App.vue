@@ -1,14 +1,9 @@
 <template>
   <v-app>
-    <NavigationDrawer
-      :links="links"
-      @minified-change="onMinifiedChange"
-    />
+    <NavigationDrawer :links="links" />
     <AppBar :links="links" />
     <v-main>
-      <div
-        id="wave"
-      >
+      <div id="wave">
         <img
           :src="wavesSvg"
           alt=""
@@ -18,7 +13,11 @@
         <router-view />
       </v-container>
     </v-main>
-    <v-footer app color="secondary">
+    <v-footer
+      color="secondary"
+      inset
+      app
+    >
       <div class="mx-auto">
         <p class="mb-0 text-center">
           <a
@@ -65,7 +64,6 @@ export default {
   components: { AppBar, NavigationDrawer },
   data: () => ({
     wavesSvg,
-    minified: undefined,
     /**
      * Links with their associated text & icons to be displayed in the appbar and navigation drawer
      */
@@ -91,11 +89,6 @@ export default {
       ],
     },
   }),
-  computed: {
-    wavesStyles() {
-      return this.$vuetify.breakpoint.mobile ? {} : { left: this.minified ? '56px' : '256px' };
-    },
-  },
   /**
    * When the component is mounted we listen to the signer events and update
    * the VueX store accordingly to the data received from the Casper Signer extension.
@@ -110,11 +103,6 @@ export default {
       window.addEventListener('signer:locked', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
       window.addEventListener('signer:unlocked', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
     });
-  },
-  methods: {
-    onMinifiedChange(minified) {
-      this.minified = minified;
-    },
   },
 };
 </script>
@@ -135,21 +123,21 @@ export default {
   }
 
   .cspr {
-    font-family: 'EczarBold', 'RobotoCondensed', Helvetica, Arial, sans-serif;
+    font-family: "EczarBold", "RobotoCondensed", Helvetica, Arial, sans-serif;
   }
 
   #app {
-    font-family: 'RobotoCondensed', Helvetica, Arial, sans-serif;
+    font-family: "RobotoCondensed", Helvetica, Arial, sans-serif;
 
     &::before {
-      content: ' ';
+      content: " ";
       position: fixed;
       width: 100%;
       height: 100%;
       top: 0;
       left: 0;
       background-color: #00126b;
-      background-image: url('~@/assets/images/background.svg');
+      background-image: url("~@/assets/images/background.svg");
       background-size: cover;
       will-change: transform;
     }

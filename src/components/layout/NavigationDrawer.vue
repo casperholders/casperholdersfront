@@ -140,24 +140,16 @@ export default {
       'signer',
     ]),
   },
-  watch: {
-    minified: 'onMinifiedChange',
-  },
   mounted() {
     this.$root.$on('toggleDrawer', () => {
       this.drawer = !this.drawer;
     });
-
-    this.onMinifiedChange();
   },
   methods: {
     toggleMinified() {
       this.$nextTick(() => {
         this.minified = !this.minified;
       });
-    },
-    onMinifiedChange() {
-      this.$emit('minified-change', this.minified);
     },
   },
 };
