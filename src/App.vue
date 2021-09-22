@@ -170,4 +170,8 @@ export default {
   .container__small {
     max-width: 1200px !important;
   }
+
+  .white-bottom-border {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5)
+  }
 </style>

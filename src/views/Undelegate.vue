@@ -10,21 +10,11 @@
     submit-title="Unstake"
     title="Unstake"
   >
-    <p class="text-body-1">
-      Here's your validator :
-      <a
-        :href="validatorUrl"
-        target="_blank"
-      >
-        {{ $getValidator() }}
-        <v-icon x-small>mdi-open-in-new</v-icon>
-      </a>
-      <br>
-      <br>
-      Actually there's a commission rate of 1%. (Applies on the staking rewards only.)<br>
-      Example : if you receive 100 CSPR rewards from staking, CasperHolders will received
-      1 CSPR and you will get 99 CSPR.
-    </p>
+    <Validators
+      :value="validator"
+      :undelegate="true"
+      @input="validator = $event"
+    />
     <Amount
       :balance="stakingBalance"
       :fee="Number(0)"
@@ -33,21 +23,43 @@
       class="mb-4"
       @input="amount = $event"
     />
-    <p>
-      Undelegation fee : {{ undelegateFee }} CSPR<br>
-      Staking balance : {{ stakingBalance }} CSPR<br>
-      Balance : {{ balance }} CSPR
-      <template v-if="loadingBalance">
-        Loading balance ...
-        <v-progress-circular
-          class="ml-3"
-          color="white"
-          indeterminate
-        />
-      </template>
-      <br>
-      Balance after unstake : {{ remainingBalance }} CSPR<br>
-    </p>
+    <div class="mx-n1">
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Undelegation fee</v-col>
+        <v-col class="text-right cspr">{{ undelegateFee }} CSPR</v-col>
+      </v-row>
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Staking balance</v-col>
+        <v-col class="text-right cspr">{{ stakingBalance }} CSPR</v-col>
+      </v-row>
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Balance</v-col>
+        <v-col class="text-right cspr">
+          <template v-if="loadingBalance">
+            Loading balance ...
+            <v-progress-circular
+              class="ml-3"
+              color="white"
+              indeterminate
+              size="14"
+            />
+          </template>
+          <template v-else>
+            {{ balance }} CSPR
+          </template>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>Balance after unstake</v-col>
+        <v-col class="text-right cspr">{{ remainingBalance }} CSPR</v-col>
+      </v-row>
+    </div>
     <v-alert
       v-if="errorBalance"
       class="mt-5"
@@ -87,6 +99,7 @@
 <script>
 import Amount from '@/components/operations/Amount';
 import Operation from '@/components/operations/Operation';
+import Validators from '@/components/operations/Validators';
 import { Undelegate } from '@casperholders/core/dist/services/deploys/auction/actions/undelegate';
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
@@ -101,7 +114,7 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'Undelegate',
-  components: { Amount, Operation },
+  components: { Validators, Amount, Operation },
   data() {
     return {
       minimumCSPRUnstake: 1,
@@ -114,6 +127,7 @@ export default {
       errorDeploy: null,
       loadingBalance: false,
       type: UndelegateResult.getName(),
+      validator: '',
     };
   },
   computed: {
@@ -136,6 +150,7 @@ export default {
   },
   watch: {
     'signer.activeKey': 'getBalance',
+    validator: 'getBalance',
   },
   async mounted() {
     await this.getBalance();
@@ -154,11 +169,14 @@ export default {
       this.stakingBalance = '0';
       try {
         this.balance = await this.$getBalanceService().fetchBalance();
-        this.stakingBalance = await this.$getBalanceService().fetchStakeBalance();
+        if (this.validator) {
+          this.stakingBalance = await this.$getBalanceService().fetchStakeBalance(this.validator);
+        }
         if (this.balance <= this.minimumFundsNeeded) {
           throw new InsufficientFunds(this.minimumFundsNeeded);
         }
       } catch (e) {
+        console.log(e);
         this.errorBalance = e;
       }
       this.loadingBalance = false;
@@ -176,7 +194,7 @@ export default {
           new Undelegate(
             this.amount,
             this.signer.activeKey,
-            this.$getValidator(),
+            this.validator,
             this.$getNetwork(),
             this.$getAuctionHash(),
           ),
@@ -197,7 +215,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

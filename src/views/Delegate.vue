@@ -10,22 +10,11 @@
     submit-title="Stake"
     title="Stake"
   >
-    <p class="text-body-1">
-      Here's your validator :
-      <a
-        :href="validatorUrl"
-        target="_blank"
-      >
-        {{ $getValidator() }}
-        <v-icon x-small>mdi-open-in-new</v-icon>
-      </a>
-      <br>
-      <br>
-      Actually there's a commission rate of 1%. (Applies on the staking rewards only.)
-      <br>
-      Example : if you receive 100 CSPR rewards from staking,
-      CasperHolders will received 1 CSPR and you will get 99 CSPR.
-    </p>
+    <Validators
+      :value="validator"
+      :undelegate="false"
+      @input="validator = $event"
+    />
     <Amount
       :balance="balance"
       :fee="delegationFee"
@@ -34,20 +23,37 @@
       class="mb-4"
       @input="amount = $event"
     />
-    <p>
-      Staking operation fee : {{ delegationFee }} CSPR<br>
-      Balance : {{ balance }} CSPR
-      <template v-if="loadingBalance">
-        Loading balance ...
-        <v-progress-circular
-          class="ml-3"
-          color="white"
-          indeterminate
-        />
-      </template>
-      <br>
-      Remaining funds after staking : {{ remainingBalance }} CSPR<br>
-    </p>
+    <div class="mx-n1">
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Staking operation fee</v-col>
+        <v-col class="text-right cspr">{{ delegationFee }} CSPR</v-col>
+      </v-row>
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Balance</v-col>
+        <v-col class="text-right cspr">
+          <template v-if="loadingBalance">
+            Loading balance ...
+            <v-progress-circular
+              class="ml-3"
+              color="white"
+              indeterminate
+              size="14"
+            />
+          </template>
+          <template v-else>
+            {{ balance }} CSPR
+          </template>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>Remaining funds after staking</v-col>
+        <v-col class="text-right cspr">{{ remainingBalance }} CSPR</v-col>
+      </v-row>
+    </div>
     <v-alert
       v-if="errorBalance"
       class="mt-5"
@@ -87,6 +93,7 @@
 <script>
 import Amount from '@/components/operations/Amount';
 import Operation from '@/components/operations/Operation';
+import Validators from '@/components/operations/Validators';
 import { Delegate } from '@casperholders/core/dist/services/deploys/auction/actions/delegate';
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
@@ -101,7 +108,7 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'Delegate',
-  components: { Amount, Operation },
+  components: { Validators, Amount, Operation },
   data() {
     return {
       minimumCSPRStake: 1,
@@ -113,6 +120,7 @@ export default {
       errorDeploy: null,
       loadingBalance: false,
       type: DelegateResult.getName(),
+      validator: '',
     };
   },
   computed: {
@@ -173,7 +181,7 @@ export default {
           new Delegate(
             this.amount,
             this.signer.activeKey,
-            this.$getValidator(),
+            this.validator,
             this.$getNetwork(),
             this.$getAuctionHash(),
           ),

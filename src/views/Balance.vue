@@ -27,6 +27,7 @@
 
         <div
           id="labels"
+          style="width: 100%"
           class="mt-3 mt-lg-0 ml-0 ml-lg-3"
         >
           <v-layout
@@ -34,18 +35,29 @@
             :key="label"
             :class="{ 'mt-2': i === 1 }"
           >
-            <v-avatar
-              :color="chartData.datasets[0].backgroundColor[i]"
-              class="mr-2"
-              size="24"
-            />
-            {{ label }}
-            &nbsp;
-            <span class="cspr">
-              {{ chartData.datasets[0].data[i] }} CSPR
-            </span>
-            &nbsp;
-            ({{ csprPercentage(i) }}%)
+            <v-row>
+              <v-col>
+                <v-avatar
+                  :color="chartData.datasets[0].backgroundColor[i]"
+                  class="mr-2"
+                  size="24"
+                />
+                <v-tooltip right>
+                  <template v-slot:activator="{ on, attrs }">
+                    <span
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      {{ 30 >= label.length ? label : 'Validator ' + truncate(label) }}
+                    </span>
+                  </template>
+                  <span>{{ label }}</span>
+                </v-tooltip>
+              </v-col>
+              <v-col class="text-right cspr">
+                {{ chartData.datasets[0].data[i] }} CSPR ({{ csprPercentage(i) }}%)
+              </v-col>
+            </v-row>
           </v-layout>
         </div>
       </v-layout>
@@ -213,7 +225,7 @@ export default {
       try {
         const balance = await this.$getBalanceService().fetchBalance();
         newChartData.labels = ['Available'];
-        newChartData.datasets[0].data = [balance, 0, 0];
+        newChartData.datasets[0].data = [balance];
       } catch (error) {
         newChartData.labels = [error.message];
         this.chartData = newChartData;
@@ -221,14 +233,29 @@ export default {
       }
 
       try {
-        const stakedBalance = await this.$getBalanceService().fetchStakeBalance();
-        newChartData.labels.push('Staked');
-        newChartData.datasets[0].data[1] = stakedBalance;
+        const validators = await this.$getBalanceService().fetchAllStakeBalance();
+        validators.forEach((validator) => {
+          newChartData.labels.push(validator.validator);
+          newChartData.datasets[0].data.push(validator.stakedTokens);
+        });
       } catch (error) {
         console.log(error);
       } finally {
         this.chartData = newChartData;
       }
+    },
+    truncate(fullStr) {
+      const strLen = 15;
+      const separator = '...';
+
+      if (fullStr.length <= strLen) return fullStr;
+
+      const sepLen = separator.length;
+      const charsToShow = strLen - sepLen;
+      const frontChars = Math.ceil(charsToShow / 2);
+      const backChars = Math.floor(charsToShow / 2);
+
+      return fullStr.substr(0, frontChars) + separator + fullStr.substr(fullStr.length - backChars);
     },
   },
 };
