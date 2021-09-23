@@ -14,7 +14,7 @@
     "testnet": "vue-cli-service serve --mode testnet"
   },
   "dependencies": {
-    "@casperholders/core": "^1.3.0",
+    "@casperholders/core": "^1.5.1",
     "big.js": "^6.1.1",
     "casper-js-sdk": "^2.4.0",
     "chart.js": "2",

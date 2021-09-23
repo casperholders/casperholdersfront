@@ -1,3 +1,4 @@
+import AccountInfo from '@/views/AccountInfo';
 import AddBid from '@/views/AddBid';
 import Balance from '@/views/Balance';
 import Contact from '@/views/Contact';
@@ -30,6 +31,11 @@ const routes = [
     path: '/transfer',
     name: 'Transfer',
     component: Transfer,
+  },
+  {
+    path: '/account',
+    name: 'Account Info',
+    component: AccountInfo,
   },
   {
     path: '/stake',

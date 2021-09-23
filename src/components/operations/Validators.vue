@@ -54,12 +54,13 @@
 </template>
 
 <script>
-import { ClientCasper } from '@casperholders/core/dist/services/clients/clientCasper';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { NoStakeBalanceError } from '@casperholders/core/dist/services/errors/noStakeBalanceError';
 import { CurrencyUtils } from '@casperholders/core/dist/services/helpers/currencyUtils';
+import { Validators } from '@casperholders/core/dist/services/validators/validators';
 import Big from 'big.js';
 import { mapState } from 'vuex';
+import { ClientCasper } from '@casperholders/core/dist/services/clients/clientCasper';
 
 export default {
   name: 'Validators',
@@ -142,25 +143,41 @@ export default {
           return;
         }
       }
-      const validatorsInfo = (await new ClientCasper(process.env.VUE_APP_RPC)
-        .casperRPC.getValidatorsInfo()).auction_state.bids;
+      const validatorsInfo = (await this.$getClientCasper().casperRPC.getValidatorsInfo())
+        .auction_state
+        .bids;
       const validatorsData = [];
-      validatorsInfo.forEach((validatorInfo) => {
+      for (let i = 0; i < validatorsInfo.length; i++) {
+        const validatorInfo = validatorsInfo[i];
         const stakedAmount = CurrencyUtils.convertMotesToCasper(validatorInfo.bid.staked_amount);
         if (
           (this.undelegate
             && userStake.some((stake) => stake.validator === validatorInfo.public_key))
           || !this.undelegate
         ) {
+          let name = validatorInfo.public_key;
+
+          const validatorsService = new Validators(new ClientCasper(process.env.VUE_APP_RPC));
+          try {
+            // eslint-disable-next-line no-await-in-loop
+            name = (await validatorsService.getValidatorInfo(
+              name,
+              this.$getAccountInfoHash(), this.$getNetwork(),
+            )).owner.name;
+            console.log(`url set for ${name}`);
+          } catch (e) {
+            console.log(e);
+            console.log(`url not set for ${name}`);
+          }
           validatorsData.push({
-            name: validatorInfo.public_key,
+            name,
             publicKey: validatorInfo.public_key,
             group: validatorInfo.bid.inactive ? 'Inactive' : 'Active',
             delegation_rate: validatorInfo.bid.delegation_rate,
             staked_amount: new Big(stakedAmount).toFixed(2),
           });
         }
-      });
+      }
       if (validatorsData.filter((validator) => validator.group === 'Active').length > 0 || validatorsData.filter((validator) => validator.group === 'Inactive').length > 0) {
         if (validatorsData.filter((validator) => validator.group === 'Active').length > 0 && validatorsData.filter((validator) => validator.group === 'Inactive').length === 0) {
           this.validators = [

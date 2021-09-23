@@ -71,6 +71,7 @@ export default {
       Account: [
         { title: 'Balance', icon: 'mdi-wallet', route: 'balance' },
         { title: 'Transfer', icon: 'mdi-send', route: 'transfer' },
+        { title: 'Account info', icon: 'mdi-account', route: 'account' },
       ],
       Staking: [
         { title: 'Stake', icon: 'mdi-safe', route: 'stake' },
