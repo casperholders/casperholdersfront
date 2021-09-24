@@ -19,7 +19,7 @@
     </a><br />
       <br />
       Actually there's a commission rate of {{ commission }}%. (Applies on the staking rewards only.)<br />
-      Example : if your delegators receive 100 CSPR rewards from staking, you will received {{ commission }} CSPR and
+      Example : if your delegators receive 100 CSPR rewards from staking, you will receive {{ commission }} CSPR and
       they will
       get {{ 100 - commission }} CSPR.
     </p>
