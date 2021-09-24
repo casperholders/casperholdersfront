@@ -19,7 +19,7 @@
     </a><br />
       <br />
       Actually there's a commission rate of 1%. (Applies on the staking rewards only.)<br />
-      Example : if you receive 100 CSPR rewards from staking, CasperHolders will received 1 CSPR and you will
+      Example : if you receive 100 CSPR rewards from staking, CasperHolders will receive 1 CSPR and you will
       get 99 CSPR.
     </p>
     <Amount
