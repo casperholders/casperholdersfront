@@ -57,10 +57,8 @@
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { NoStakeBalanceError } from '@casperholders/core/dist/services/errors/noStakeBalanceError';
 import { CurrencyUtils } from '@casperholders/core/dist/services/helpers/currencyUtils';
-import { Validators } from '@casperholders/core/dist/services/validators/validators';
 import Big from 'big.js';
 import { mapState } from 'vuex';
-import { ClientCasper } from '@casperholders/core/dist/services/clients/clientCasper';
 
 export default {
   name: 'Validators',
@@ -143,61 +141,45 @@ export default {
           return;
         }
       }
-      const validatorsInfo = (await this.$getClientCasper().casperRPC.getValidatorsInfo())
-        .auction_state
-        .bids;
-      const validatorsData = [];
-      for (let i = 0; i < validatorsInfo.length; i++) {
-        const validatorInfo = validatorsInfo[i];
-        const stakedAmount = CurrencyUtils.convertMotesToCasper(validatorInfo.bid.staked_amount);
-        if (
-          (this.undelegate
-            && userStake.some((stake) => stake.validator === validatorInfo.public_key))
-          || !this.undelegate
-        ) {
-          let name = validatorInfo.public_key;
-
-          const validatorsService = new Validators(new ClientCasper(process.env.VUE_APP_RPC));
-          try {
-            // eslint-disable-next-line no-await-in-loop
-            name = (await validatorsService.getValidatorInfo(
-              name,
-              this.$getAccountInfoHash(), this.$getNetwork(),
-            )).owner.name;
-            console.log(`url set for ${name}`);
-          } catch (e) {
-            console.log(e);
-            console.log(`url not set for ${name}`);
+      let validatorsData = [];
+      try {
+        validatorsData = await (await fetch(`${this.$getApi()}/validators/accountinfos`)).json();
+        validatorsData = validatorsData.filter(
+          (validatorInfo) => userStake.some((stake) => stake.validator === validatorInfo.publicKey),
+        );
+        console.log(JSON.stringify(validatorsData, null, 2));
+      } catch (e) {
+        console.log(`ERROR ${e}`);
+        const validatorsInfo = (await this.$getClientCasper().casperRPC.getValidatorsInfo())
+          .auction_state
+          .bids;
+        for (let i = 0; i < validatorsInfo.length; i++) {
+          const validatorInfo = validatorsInfo[i];
+          const stakedAmount = CurrencyUtils.convertMotesToCasper(validatorInfo.bid.staked_amount);
+          if (
+            (this.undelegate
+              && userStake.some((stake) => stake.validator === validatorInfo.public_key))
+            || !this.undelegate
+          ) {
+            validatorsData.push({
+              name: validatorsInfo.public_key,
+              publicKey: validatorInfo.public_key,
+              group: validatorInfo.bid.inactive ? 'Inactive' : 'Active',
+              delegation_rate: validatorInfo.bid.delegation_rate,
+              staked_amount: new Big(stakedAmount).toFixed(2),
+            });
           }
-          validatorsData.push({
-            name,
-            publicKey: validatorInfo.public_key,
-            group: validatorInfo.bid.inactive ? 'Inactive' : 'Active',
-            delegation_rate: validatorInfo.bid.delegation_rate,
-            staked_amount: new Big(stakedAmount).toFixed(2),
-          });
         }
       }
+
       if (validatorsData.filter((validator) => validator.group === 'Active').length > 0 || validatorsData.filter((validator) => validator.group === 'Inactive').length > 0) {
-        if (validatorsData.filter((validator) => validator.group === 'Active').length > 0 && validatorsData.filter((validator) => validator.group === 'Inactive').length === 0) {
-          this.validators = [
-            { header: 'Active' },
-            ...validatorsData.filter((validator) => validator.group === 'Active'),
-          ];
-        } else if (validatorsData.filter((validator) => validator.group === 'Active').length === 0 && validatorsData.filter((validator) => validator.group === 'Inactive').length > 0) {
-          this.validators = [
-            { header: 'Inactive' },
-            ...validatorsData.filter((validator) => validator.group === 'Inactive'),
-          ];
-        } else {
-          this.validators = [
-            { header: 'Active' },
-            ...validatorsData.filter((validator) => validator.group === 'Active'),
-            { divider: true },
-            { header: 'Inactive' },
-            ...validatorsData.filter((validator) => validator.group === 'Inactive'),
-          ];
-        }
+        this.validators = [
+          { header: 'Active' },
+          ...validatorsData.filter((validator) => validator.group === 'Active'),
+          { divider: true },
+          { header: 'Inactive' },
+          ...validatorsData.filter((validator) => validator.group === 'Inactive'),
+        ];
       } else {
         this.validators = [
           { header: 'You don\'t stake on any validators' },

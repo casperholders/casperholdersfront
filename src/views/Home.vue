@@ -1,7 +1,14 @@
 <template>
   <div class="d-flex flex-column justify-center">
-    <div class="mx-auto text-h3 mt-12 mb-6 text-center text--white pb-4">
-      Welcome to Casper Holders
+    <div class="mx-auto">
+      <img
+        width="120px"
+        :src="logoSvg"
+        alt="Casper Holders Logo"
+      >
+    </div>
+    <div class="d-flex align-center mx-auto text-h3  mb-6 text-center text--white pb-4 ">
+      Casper Holders
     </div>
     <div class="mx-auto text-h5 text-center text--white pb-6">
       <p>
@@ -307,6 +314,7 @@ import Metrics from '@/components/home/Metrics';
 import Roadmap from '@/components/home/Roadmap';
 import { Signer } from 'casper-js-sdk';
 import { mapState } from 'vuex';
+import logoSvg from '@/assets/images/logo.svg';
 
 /**
  * Home view
@@ -317,6 +325,7 @@ export default {
   name: 'Home',
   components: { Metrics, Roadmap, Features },
   data: () => ({
+    logoSvg,
     carousel: 0,
     dialog: false,
     copied: false,

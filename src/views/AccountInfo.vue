@@ -12,9 +12,12 @@
   >
     <p class="text-body-1">
       Set url for the Account Info Smart Contract. See <a
-      href="https://github.com/make-software/casper-account-info-standard#how-does-it-work"
-      target="_blank"
-    >here</a> for more details.
+        href="https://github.com/make-software/casper-account-info-standard#how-does-it-work"
+        target="_blank"
+      >here</a> for more details.
+    </p>
+    <p>
+      First deploy cost 10 CSPR, updates cost 0.5 CSPR. This is automatically calculated.
     </p>
     <v-text-field
       id="url"
