@@ -7,7 +7,7 @@ import { LocalSigner } from '@casperholders/core/dist/services/signers/localSign
 import { Keys } from 'casper-js-sdk';
 
 const AUCTION_MANAGER_HASH = process.env.VUE_APP_AUCTION_MANAGER_HASH;
-const ACCOUNT_INFO_HASH = '2f36a35edcbaabe17aba805e3fae42699a2bb80c2e0c15189756fdc4895356f8';
+const ACCOUNT_INFO_HASH = process.env.VUE_APP_ACCOUNT_INFO_HASH;
 const NETWORK = process.env.VUE_APP_NETWORK;
 const VALIDATOR = process.env.VUE_APP_VALIDATOR;
 const RPC = process.env.VUE_APP_RPC;
