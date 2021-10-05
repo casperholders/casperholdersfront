@@ -27,5 +27,6 @@ describe('Delegate', () => {
       .should('contain', 'Amount must equal or bellow');
     cy.get('#amount').type('{selectall}{del}').parents('.v-input__control').find('.v-messages__message')
       .should('contain', 'Amount is required');
+    cy.get('#validator').parents('.v-input__control').find('.v-messages__message').should('contain', 'You need to select a validator');
   });
 });

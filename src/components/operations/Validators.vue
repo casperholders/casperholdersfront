@@ -1,5 +1,6 @@
 <template>
   <v-autocomplete
+    id="validator"
     v-model="validator"
     :items="validators"
     filled
@@ -9,6 +10,9 @@
     item-text="name"
     item-value="publicKey"
     item-color="white"
+    :rules="validatorRules"
+    required
+    persistent-hint
   >
     <template #selection="data">
       <v-chip
@@ -58,6 +62,7 @@ import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noAct
 import { NoStakeBalanceError } from '@casperholders/core/dist/services/errors/noStakeBalanceError';
 import { CurrencyUtils } from '@casperholders/core/dist/services/helpers/currencyUtils';
 import Big from 'big.js';
+import { CLPublicKey } from 'casper-js-sdk';
 import { mapState } from 'vuex';
 
 export default {
@@ -79,6 +84,20 @@ export default {
   },
   data() {
     return {
+      /**
+       * Rules for the amount text field
+       */
+      validatorRules: [
+        (a) => !!a || a !== '' || 'You need to select a validator',
+        (a) => {
+          try {
+            CLPublicKey.fromHex(a);
+            return true;
+          } catch (e) {
+            return e.toString();
+          }
+        },
+      ],
       validators: [
         { header: 'Active - Loading' },
         { divider: true },
@@ -162,7 +181,7 @@ export default {
             || !this.undelegate
           ) {
             validatorsData.push({
-              name: validatorsInfo.public_key,
+              name: validatorInfo.public_key,
               publicKey: validatorInfo.public_key,
               group: validatorInfo.bid.inactive ? 'Inactive' : 'Active',
               delegation_rate: validatorInfo.bid.delegation_rate,
