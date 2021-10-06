@@ -14,53 +14,56 @@
       Balance
     </v-card-title>
     <v-card-text class="text-body-1">
-      <v-layout
-        :column="$vuetify.breakpoint.mobile"
-        align-center
-        fill-height
-        justify-start
+      <v-fade-transition
+        leave-absolute
+        group
       >
-        <donut-chart
-          :chart-data="chartData"
-          style="max-width: 100%"
-        />
-
-        <div
-          id="labels"
-          style="width: 100%"
-          class="mt-3 mt-lg-0 ml-0 ml-lg-3"
+        <v-layout
+          v-if="loading"
+          key="loader"
+          align-center
+          justify-center
+          style="height: 400px"
         >
-          <v-layout
-            v-for="(label, i) in chartData.labels"
-            :key="label"
-            :class="{ 'mt-2': i === 1 }"
+          <v-progress-circular
+            color="primary"
+            size="128"
+            width="10"
+            indeterminate
+          />
+        </v-layout>
+        <v-layout
+          v-else-if="errored"
+          key="error"
+          align-center
+          justify-center
+          style="height: 400px"
+        >
+          <v-alert
+            type="error"
+            prominent
           >
-            <v-row>
-              <v-col>
-                <v-avatar
-                  :color="chartData.datasets[0].backgroundColor[i]"
-                  class="mr-2"
-                  size="24"
-                />
-                <v-tooltip right>
-                  <template v-slot:activator="{ on, attrs }">
-                    <span
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      {{ 30 >= label.length ? label : 'Validator ' + truncate(label) }}
-                    </span>
-                  </template>
-                  <span>{{ label }}</span>
-                </v-tooltip>
-              </v-col>
-              <v-col class="text-right cspr">
-                {{ chartData.datasets[0].data[i] }} CSPR ({{ csprPercentage(i) }}%)
-              </v-col>
-            </v-row>
-          </v-layout>
-        </div>
-      </v-layout>
+            Not connected on Signer.
+            <v-btn
+              color="secondary"
+              class="ml-2"
+              @click="onConnectionRequest"
+            >
+              <v-icon left>
+                mdi-account-circle
+              </v-icon>
+              {{ signer.lock ? 'Unlock' : 'Connect' }}
+            </v-btn>
+          </v-alert>
+        </v-layout>
+        <doughnut-chart
+          v-else
+          key="chart"
+          :chart-data="chartData"
+          :chart-options="chartOptions"
+          style="max-width: 100%;max-height: 400px;"
+        />
+      </v-fade-transition>
     </v-card-text>
     <v-divider />
     <v-card-actions class="pa-5">
@@ -155,7 +158,8 @@
 </template>
 
 <script>
-import DonutChart from '@/components/chart/DonutChart';
+import DoughnutChart from '@/components/chart/DoughnutChart';
+import { Signer } from 'casper-js-sdk';
 import { mapState } from 'vuex';
 
 /**
@@ -165,10 +169,12 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'Balance',
-  components: { DonutChart },
+  components: { DoughnutChart },
   data() {
     return {
-      chartData: this.createLoadingChartData(),
+      loading: true,
+      errored: false,
+      chartData: undefined,
     };
   },
   computed: {
@@ -187,6 +193,39 @@ export default {
         return Number((value / total) * 100).toFixed(2);
       };
     },
+    chartOptions() {
+      return {
+        cutout: '90%',
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            position: this.$vuetify.breakpoint.smAndDown ? 'bottom' : 'right',
+            labels: {
+              filter: (legendItem, { datasets }) => {
+                if (this.errored) {
+                  return true;
+                }
+
+                const rawValue = datasets[0].data[legendItem.index];
+                // eslint-disable-next-line no-param-reassign
+                legendItem.text = `${legendItem.text}: ${rawValue} CSPR (${this.csprPercentage(legendItem.index)}%)`;
+
+                return true;
+              },
+            },
+          },
+          tooltip: {
+            callbacks: {
+              title: ([{ label }]) => (this.errored ? undefined : label),
+              label: ({ label, raw, dataIndex }) => (
+                this.errored ? label : [`${raw} CSPR`, `${this.csprPercentage(dataIndex)}%`]
+              ),
+            },
+          },
+        },
+      };
+    },
   },
   watch: {
     /**
@@ -201,48 +240,39 @@ export default {
   },
   methods: {
     /**
-     * Init the donut chart while we fetch the data
-     */
-    createLoadingChartData() {
-      const { primary, tertiary, quaternary } = this.$vuetify.theme.currentTheme;
-
-      return {
-        labels: ['Loading'],
-        datasets: [
-          {
-            backgroundColor: [primary, quaternary, tertiary],
-            data: [0, 0, 1],
-            borderWidth: 0,
-          },
-        ],
-      };
-    },
-    /**
      * Fetch the balances of the current user and update the Donut chart
      */
     async fetchBalances() {
-      const newChartData = this.createLoadingChartData();
+      this.loading = true;
+      this.errored = false;
+      this.chartData = undefined;
+
+      const { primary, tertiary, quaternary } = this.$vuetify.theme.currentTheme;
+      const newChartData = {
+        datasets: [{ backgroundColor: [primary, quaternary, tertiary], borderWidth: 0 }],
+      };
       try {
         const balance = await this.$getBalanceService().fetchBalance();
         newChartData.labels = ['Available'];
         newChartData.datasets[0].data = [balance];
       } catch (error) {
-        newChartData.labels = [error.message];
-        this.chartData = newChartData;
+        this.errored = true;
+        this.loading = false;
         return;
       }
 
       try {
         const validators = await this.$getBalanceService().fetchAllStakeBalance();
         validators.forEach((validator) => {
-          newChartData.labels.push(validator.validator);
+          newChartData.labels.push(`Validator ${this.truncate(validator.validator)}`);
           newChartData.datasets[0].data.push(validator.stakedTokens);
         });
       } catch (error) {
         console.log(error);
-      } finally {
-        this.chartData = newChartData;
       }
+
+      this.chartData = newChartData;
+      this.loading = false;
     },
     truncate(fullStr) {
       const strLen = 15;
@@ -256,6 +286,9 @@ export default {
       const backChars = Math.floor(charsToShow / 2);
 
       return fullStr.substr(0, frontChars) + separator + fullStr.substr(fullStr.length - backChars);
+    },
+    onConnectionRequest() {
+      Signer.sendConnectionRequest();
     },
   },
 };
