@@ -15,6 +15,7 @@
     </v-card-title>
     <v-card-text class="text-body-1">
       <v-fade-transition
+        tag="div"
         leave-absolute
         group
       >
