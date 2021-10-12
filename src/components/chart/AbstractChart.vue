@@ -3,9 +3,10 @@
 </template>
 
 <script>
-import { Chart } from 'chart.js';
+import { Chart, Legend, Tooltip } from 'chart.js';
 
 Chart.defaults.font.family = 'Roboto, sans-serif';
+Chart.register(Legend, Tooltip);
 
 export default {
   name: 'AbstractChart',

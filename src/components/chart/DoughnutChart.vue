@@ -7,9 +7,9 @@
 
 <script>
 import AbstractChart from '@/components/chart/AbstractChart';
-import { ArcElement, Chart, DoughnutController, Legend, Tooltip } from 'chart.js';
+import { ArcElement, Chart, DoughnutController } from 'chart.js';
 
-Chart.register(ArcElement, DoughnutController, Legend, Tooltip);
+Chart.register(ArcElement, DoughnutController);
 
 /**
  * Donut chart component from the chart.js library
