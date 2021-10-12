@@ -11,9 +11,8 @@
     title="Stake"
   >
     <Validators
-      :value="validator"
+      v-model="validator"
       :undelegate="false"
-      @input="validator = $event"
     />
     <Amount
       :balance="balance"
@@ -120,7 +119,7 @@ export default {
       errorDeploy: null,
       loadingBalance: false,
       type: DelegateResult.getName(),
-      validator: '',
+      validator: undefined,
     };
   },
   computed: {
@@ -181,7 +180,7 @@ export default {
           new Delegate(
             this.amount,
             this.signer.activeKey,
-            this.validator,
+            this.validator.publicKey,
             this.$getNetwork(),
             this.$getAuctionHash(),
           ),

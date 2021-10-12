@@ -12,6 +12,7 @@
     item-color="white"
     :rules="validatorRules"
     required
+    return-object
     persistent-hint
   >
     <template #selection="data">
@@ -72,9 +73,8 @@ export default {
      * Validator
      */
     value: {
-      required: true,
-      type: String,
-      default: '',
+      type: Object,
+      default: undefined,
     },
     undelegate: {
       required: true,
@@ -88,10 +88,12 @@ export default {
        * Rules for the amount text field
        */
       validatorRules: [
-        (a) => !!a || a !== '' || 'You need to select a validator',
+        (a) => !!a || 'You need to select a validator',
         (a) => {
           try {
-            CLPublicKey.fromHex(a);
+            if (a) {
+              CLPublicKey.fromHex(a.publicKey);
+            }
             return true;
           } catch (e) {
             return e.toString();
@@ -124,7 +126,7 @@ export default {
         return this.value;
       },
       set(val) {
-        this.$emit('input', val.toString());
+        this.$emit('input', val);
       },
     },
   },
@@ -136,7 +138,7 @@ export default {
   },
   methods: {
     remove() {
-      this.validator = '';
+      this.validator = undefined;
     },
     async getValidators() {
       let userStake;
