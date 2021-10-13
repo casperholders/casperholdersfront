@@ -26,14 +26,14 @@
         sm="3"
         class="cspr text-sm-right"
       >
-        {{ cspr }} CSPR
+        {{ cspr }}
       </v-col>
       <v-col
         cols="6"
         sm="3"
         class="cspr text-right"
       >
-        $ {{ dollars }}
+        {{ dollars }}
       </v-col>
     </v-row>
     <v-fade-transition
@@ -75,6 +75,9 @@
 <script>
 import LineChart from '@/components/chart/LineChart';
 import Big from 'big.js';
+import toFormat from 'toformat';
+
+toFormat(Big);
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July',
@@ -96,16 +99,25 @@ export default {
   },
   data: () => ({
     loading: true,
+    casperUsdFactor: undefined,
     apy: undefined,
     validatorFee: undefined,
     actualApy: undefined,
   }),
   computed: {
-    bigAmount() {
-      return Big(this.amount);
-    },
     hasData() {
-      return this.amount && this.actualApy !== undefined;
+      return this.bigAmount && this.actualApy !== undefined;
+    },
+    bigAmount() {
+      if (!this.amount) {
+        return undefined;
+      }
+
+      try {
+        return Big(this.amount);
+      } catch (_) {
+        return undefined;
+      }
     },
     tableData() {
       return [
@@ -127,14 +139,19 @@ export default {
           .map((m) => `${m}, ${currentYear + 1}`),
       ];
 
-      const computeDataset = (label, apy, color) => ({
-        label,
-        data: months.map((m, i) => (
-          this.bigAmount.plus(this.bigAmount.times(apy).div(12).times(i)).toFixed(5)
-        )),
-        borderColor: color,
-        backgroundColor: color,
-      });
+      const computeDataset = (label, apy, color) => {
+        const rawData = months.map((_, i) => (
+          this.bigAmount.plus(this.bigAmount.times(apy).div(12).times(i))
+        ));
+
+        return {
+          label,
+          rawData,
+          data: rawData.map((v) => v.toString()),
+          borderColor: color,
+          backgroundColor: color,
+        };
+      };
 
       return {
         labels: months,
@@ -162,7 +179,7 @@ export default {
         plugins: {
           tooltip: {
             callbacks: {
-              label: ({ dataset, raw }) => `${dataset.label}: ${raw} CSPR`,
+              label: (t) => `${t.dataset.label}: ${this.formatCasper(t.dataset.rawData[t.dataIndex])}`,
             },
           },
         },
@@ -172,29 +189,44 @@ export default {
   watch: {
     validator: 'onValidatorChange',
   },
-  mounted() {
-    // TODO Calculate APY.
-    this.apy = 0.11400395388108088;
+  async mounted() {
+    this.casperUsdFactor = await this.getCasperUsdFactor();
+    this.apy = await this.getCasperApy();
 
     this.onValidatorChange(this.validator);
   },
   methods: {
-    formatPercentage(v) {
-      return v !== undefined ? `${(v * 100).toFixed(2)}%` : '- %';
+    formatCasper(value = undefined) {
+      return value !== undefined ? `${value.toFormat(5)} CSPR` : '- CSPR';
+    },
+    formatDollars(value = undefined) {
+      return value !== undefined ? `$ ${value.toFormat(2)}` : '$ -';
+    },
+    formatPercentage(value = undefined) {
+      return value !== undefined ? `${(value * 100).toFixed(2)}%` : '- %';
     },
     computeTableData(label, operation) {
       if (!this.hasData) {
-        return { label, cspr: '-', dollars: '-' };
+        return { label, cspr: this.formatCasper(), dollars: this.formatDollars() };
       }
 
       const cspr = operation(this.bigAmount, this.actualApy);
 
-      // TODO Convert CSPR to $.
       return {
         label,
-        cspr: cspr.toFixed(5),
-        dollars: cspr.toFixed(2),
+        cspr: this.formatCasper(cspr),
+        dollars: this.formatDollars(cspr.times(this.casperUsdFactor)),
       };
+    },
+    async getCasperUsdFactor() {
+      const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=casper-network&vs_currencies=usd');
+      const data = await response.json();
+
+      return data['casper-network'].usd;
+    },
+    async getCasperApy() {
+      // TODO Calculate APY.
+      return 0.11400395388108088;
     },
     onValidatorChange(validator) {
       this.loading = true;
