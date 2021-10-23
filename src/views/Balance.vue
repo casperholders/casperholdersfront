@@ -20,27 +20,21 @@
         group
       >
         <v-layout
-          v-if="loading"
+          v-if="loading || errored || csprTotal === 0"
           key="loader"
           align-center
           justify-center
           style="height: 400px"
         >
           <v-progress-circular
+            v-if="loading"
             color="primary"
             size="128"
             width="10"
             indeterminate
           />
-        </v-layout>
-        <v-layout
-          v-else-if="errored"
-          key="error"
-          align-center
-          justify-center
-          style="height: 400px"
-        >
           <v-alert
+            v-else-if="errored"
             type="error"
             prominent
           >
@@ -56,9 +50,17 @@
               {{ signer.lock ? 'Unlock' : 'Connect' }}
             </v-btn>
           </v-alert>
+          <div
+            v-else
+            id="balance-no-liquidity"
+            class="text-overline"
+          >
+            No liquidity available
+          </div>
         </v-layout>
         <doughnut-chart
           v-else
+          id="balance-chart"
           key="chart"
           :chart-data="chartData"
           :chart-options="chartOptions"
@@ -180,14 +182,14 @@ export default {
   },
   computed: {
     ...mapState(['signer']),
+    csprTotal() {
+      return this.chartData.datasets[0].data.reduce((a, b) => Number(a) + Number(b), 0);
+    },
     /**
      * Calculate the percentage of staked tokens over the tokens available
      */
     csprPercentage() {
-      let total = this.chartData.datasets[0].data.reduce((a, b) => Number(a) + Number(b), 0);
-      if (total === 0) {
-        total = 1;
-      }
+      const total = this.total === 0 ? 1 : this.total;
 
       return (index) => {
         const value = this.chartData.datasets[0].data[index];
