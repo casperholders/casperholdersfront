@@ -1,15 +1,33 @@
 <template>
   <div>
     <div class="d-flex align-center justify-end body-2 mb-3">
-      <span>
-        <strong>APY</strong>: {{ formatPercentage(apy) }}
-      </span>
-      <span class="ml-3">
+      <v-tooltip bottom>
+        <template #activator="{ attrs, on }">
+          <div
+            class="d-flex align-center"
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon
+              v-if="apyWorstCase"
+              small
+              left
+            >
+              mdi-alert
+            </v-icon>
+            <strong>APY</strong>: {{ formatPercentage(apy) }}
+          </div>
+        </template>
+        <span>
+          {{ apyWorstCase ? 'Worst case scenario' : 'Calculated from last era' }}
+        </span>
+      </v-tooltip>
+      <div class="ml-3">
         <strong>Validator fee</strong>: {{ formatPercentage(validatorFee) }}
-      </span>
-      <span class="ml-3">
+      </div>
+      <div class="ml-3">
         <strong>Final APY</strong>: {{ formatPercentage(actualApy) }}
-      </span>
+      </div>
     </div>
     <v-row
       v-for="({ label, cspr, dollars }, index) in tableData"
@@ -101,6 +119,7 @@ export default {
     loading: true,
     casperUsdFactor: undefined,
     apy: undefined,
+    apyWorstCase: false,
     validatorFee: undefined,
     actualApy: undefined,
   }),
@@ -156,9 +175,9 @@ export default {
       return {
         labels: months,
         datasets: [
-          computeDataset('20% APY', 0.20, this.$vuetify.theme.currentTheme.quinary),
+          computeDataset('20% APY (max)', 0.20, this.$vuetify.theme.currentTheme.quinary),
           computeDataset('Actual APY', this.actualApy, this.$vuetify.theme.currentTheme.tertiary),
-          computeDataset('8% APY', 0.08, this.$vuetify.theme.currentTheme.senary),
+          computeDataset('8% APY (max)', 0.08, this.$vuetify.theme.currentTheme.senary),
         ],
       };
     },
@@ -191,7 +210,12 @@ export default {
   },
   async mounted() {
     this.casperUsdFactor = await this.getCasperUsdFactor();
+
     this.apy = await this.getCasperApy();
+    if (this.apy === undefined) {
+      this.apy = 0.08;
+      this.apyWorstCase = true;
+    }
 
     this.onValidatorChange(this.validator);
   },
@@ -225,8 +249,12 @@ export default {
       return data['casper-network'].usd;
     },
     async getCasperApy() {
-      // TODO Calculate APY.
-      return 0.11400395388108088;
+      try {
+        const response = await fetch(`${this.$getApi()}/apy/current`);
+        return await response.json() / 100;
+      } catch (_) {
+        return undefined;
+      }
     },
     onValidatorChange(validator) {
       this.loading = true;
