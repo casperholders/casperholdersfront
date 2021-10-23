@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="d-flex align-center justify-end body-2 mb-3">
+  <div class="reward-calculator">
+    <div class="d-flex align-center justify-center flex-wrap body-2 mb-3">
       <v-tooltip bottom>
         <template #activator="{ attrs, on }">
           <div
@@ -22,10 +22,18 @@
           {{ apyWorstCase ? 'Worst case scenario' : 'Calculated from last era' }}
         </span>
       </v-tooltip>
-      <div class="ml-3">
+      <span
+        role="presentation"
+        class="mx-2"
+      >ꞏ</span>
+      <div>
         <strong>Validator fee</strong>: {{ formatPercentage(validatorFee) }}
       </div>
-      <div class="ml-3">
+      <span
+        role="presentation"
+        class="mx-2"
+      >ꞏ</span>
+      <div>
         <strong>Final APY</strong>: {{ formatPercentage(actualApy) }}
       </div>
     </div>
