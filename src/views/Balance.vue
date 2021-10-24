@@ -35,6 +35,7 @@
           />
           <v-alert
             v-else-if="errored"
+            id="balance-not-connected"
             type="error"
             prominent
           >
