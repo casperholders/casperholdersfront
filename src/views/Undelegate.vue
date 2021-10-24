@@ -11,9 +11,8 @@
     title="Unstake"
   >
     <Validators
-      :value="validator"
+      v-model="validator"
       :undelegate="true"
-      @input="validator = $event"
     />
     <Amount
       :balance="stakingBalance"
@@ -127,7 +126,7 @@ export default {
       errorDeploy: null,
       loadingBalance: false,
       type: UndelegateResult.getName(),
-      validator: '',
+      validator: undefined,
     };
   },
   computed: {
@@ -170,7 +169,8 @@ export default {
       try {
         this.balance = await this.$getBalanceService().fetchBalance();
         if (this.validator) {
-          this.stakingBalance = await this.$getBalanceService().fetchStakeBalance(this.validator);
+          this.stakingBalance = await this.$getBalanceService()
+            .fetchStakeBalance(this.validator.publicKey);
         }
         if (this.balance <= this.minimumFundsNeeded) {
           throw new InsufficientFunds(this.minimumFundsNeeded);
@@ -194,7 +194,7 @@ export default {
           new Undelegate(
             this.amount,
             this.signer.activeKey,
-            this.validator,
+            this.validator.publicKey,
             this.$getNetwork(),
             this.$getAuctionHash(),
           ),

@@ -11,9 +11,8 @@
     title="Stake"
   >
     <Validators
-      :value="validator"
+      v-model="validator"
       :undelegate="false"
-      @input="validator = $event"
     />
     <Amount
       :balance="balance"
@@ -49,9 +48,17 @@
           </template>
         </v-col>
       </v-row>
-      <v-row>
+      <v-row class="white-bottom-border">
         <v-col>Remaining funds after staking</v-col>
         <v-col class="text-right cspr">{{ remainingBalance }} CSPR</v-col>
+      </v-row>
+      <v-row>
+        <v-col class="py-0">
+          <reward-calculator-panel
+            :validator="validator"
+            :amount="amount"
+          />
+        </v-col>
       </v-row>
     </div>
     <v-alert
@@ -91,6 +98,7 @@
 </template>
 
 <script>
+import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
 import Amount from '@/components/operations/Amount';
 import Operation from '@/components/operations/Operation';
 import Validators from '@/components/operations/Validators';
@@ -108,7 +116,7 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'Delegate',
-  components: { Validators, Amount, Operation },
+  components: { RewardCalculatorPanel, Validators, Amount, Operation },
   data() {
     return {
       minimumCSPRStake: 1,
@@ -120,7 +128,7 @@ export default {
       errorDeploy: null,
       loadingBalance: false,
       type: DelegateResult.getName(),
-      validator: '',
+      validator: undefined,
     };
   },
   computed: {
@@ -181,7 +189,7 @@ export default {
           new Delegate(
             this.amount,
             this.signer.activeKey,
-            this.validator,
+            this.validator.publicKey,
             this.$getNetwork(),
             this.$getAuctionHash(),
           ),
@@ -204,6 +212,14 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style
+  lang="scss"
+  scoped
+>
+  ::v-deep .reward-calculator-panel {
+    .v-expansion-panel-header, .v-expansion-panel-content__wrap {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  }
 </style>
