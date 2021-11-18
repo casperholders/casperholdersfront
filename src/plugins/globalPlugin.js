@@ -48,7 +48,10 @@ export default {
       NETWORK === 'casper' ? 'https://cspr.live/' : 'https://testnet.cspr.live/'
     );
     Vue.prototype.$getValidator = () => process.env.VUE_APP_VALIDATOR;
-    Vue.prototype.$getValidatorUrl = () => `${this.$getCsprLiveUrl()}validator/${this.$getValidator()}`;
+    // eslint-disable-next-line
+    Vue.prototype.$getValidatorUrl = function () {
+      return `${this.$getCsprLiveUrl()}validator/${this.$getValidator()}`;
+    };
     Vue.prototype.$getAuctionHash = () => AUCTION_MANAGER_HASH;
     Vue.prototype.$getAccountInfoHash = () => ACCOUNT_INFO_HASH;
     Vue.prototype.$getClientCasper = () => client;
@@ -60,7 +63,8 @@ export default {
     Vue.prototype.$getBalanceService = () => balance;
     Vue.prototype.$getSigner = () => signer;
     Vue.prototype.$getDeployManager = () => deployManager;
-    Vue.prototype.$getOptionsActiveKey = () => {
+    // eslint-disable-next-line
+    Vue.prototype.$getOptionsActiveKey = function () {
       if (process.env.VUE_APP_E2E === 'true') {
         return {
           key,
@@ -71,7 +75,8 @@ export default {
         to: this.$store.state.signer.activeKey,
       };
     };
-    Vue.prototype.$getOptionsActiveKeyValidatorOperations = () => {
+    // eslint-disable-next-line
+    Vue.prototype.$getOptionsActiveKeyValidatorOperations = function () {
       if (process.env.VUE_APP_E2E === 'true') {
         return {
           key: validatorKey,
@@ -82,7 +87,8 @@ export default {
         to: this.$store.state.signer.activeKey,
       };
     };
-    Vue.prototype.$getOptionsValidator = () => {
+    // eslint-disable-next-line
+    Vue.prototype.$getOptionsValidator = function () {
       if (process.env.VUE_APP_E2E === 'true') {
         return {
           key,
@@ -93,7 +99,8 @@ export default {
         to: process.env.VUE_APP_VALIDATOR,
       };
     };
-    Vue.prototype.$getOptionsTo = (to) => {
+    // eslint-disable-next-line
+    Vue.prototype.$getOptionsTo = function (to) {
       if (process.env.VUE_APP_E2E === 'true') {
         return {
           key,

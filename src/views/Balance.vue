@@ -68,6 +68,10 @@
           style="max-width: 100%;max-height: 400px;"
         />
       </v-fade-transition>
+      <reward-calculator-panel
+        :validator="validator"
+        :amount="totalStaked"
+      />
     </v-card-text>
     <v-divider />
     <v-card-actions class="pa-5">
@@ -162,7 +166,9 @@
 </template>
 
 <script>
+import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
 import DoughnutChart from '@/components/chart/DoughnutChart';
+import Big from 'big.js';
 import { Signer } from 'casper-js-sdk';
 import { mapState } from 'vuex';
 
@@ -173,12 +179,14 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'Balance',
-  components: { DoughnutChart },
+  components: { RewardCalculatorPanel, DoughnutChart },
   data() {
     return {
       loading: true,
       errored: false,
       chartData: undefined,
+      validator: undefined,
+      totalStaked: Big(0),
     };
   },
   computed: {
@@ -267,10 +275,17 @@ export default {
 
       try {
         const validators = await this.$getBalanceService().fetchAllStakeBalance();
+        const fees = [];
         validators.forEach((validator) => {
           newChartData.labels.push(`Validator ${this.truncate(validator.validator)}`);
           newChartData.datasets[0].data.push(validator.stakedTokens);
+          this.totalStaked = this.totalStaked.plus(Big(validator.stakedTokens));
+          fees.push(validator.delegation_rate);
         });
+        const totalFees = fees.reduce((previous, current) => previous + current, 0);
+        this.validator = {
+          delegation_rate: totalFees / fees.length > 0 ? fees.length : 1,
+        };
       } catch (error) {
         console.log(error);
       }

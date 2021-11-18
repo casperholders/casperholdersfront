@@ -185,7 +185,7 @@ export default {
         datasets: [
           computeDataset('20% APY (max)', 0.20, this.$vuetify.theme.currentTheme.quinary),
           computeDataset('Actual APY', this.actualApy, this.$vuetify.theme.currentTheme.tertiary),
-          computeDataset('8% APY (max)', 0.08, this.$vuetify.theme.currentTheme.senary),
+          computeDataset('8% APY (min)', 0.08, this.$vuetify.theme.currentTheme.senary),
         ],
       };
     },
