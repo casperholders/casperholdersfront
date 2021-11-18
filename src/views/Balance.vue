@@ -190,7 +190,7 @@ export default {
      * Calculate the percentage of staked tokens over the tokens available
      */
     csprPercentage() {
-      const total = this.total === 0 ? 1 : this.total;
+      const total = this.csprTotal === 0 ? 1 : this.csprTotal;
 
       return (index) => {
         const value = this.chartData.datasets[0].data[index];
