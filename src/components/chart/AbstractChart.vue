@@ -80,13 +80,13 @@ export default {
     mountChart() {
       this.chart = new Chart(this.$refs.chartContainer, {
         type: this.chartType,
-        data: this.chartData,
-        options: this.mergedOptions,
+        data: JSON.parse(JSON.stringify(this.chartData)),
+        options: JSON.parse(JSON.stringify(this.mergedOptions)),
       });
     },
     updateChart() {
-      this.chart.data = this.chartData;
-      this.chart.options = this.mergedOptions;
+      this.chart.data = JSON.parse(JSON.stringify(this.chartData));
+      this.chart.options = JSON.parse(JSON.stringify(this.mergedOptions));
 
       this.chart.update('none');
     },
