@@ -166,8 +166,8 @@
 </template>
 
 <script>
-import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
 import DoughnutChart from '@/components/chart/DoughnutChart';
+import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
 import Big from 'big.js';
 import { Signer } from 'casper-js-sdk';
 import { mapState } from 'vuex';
@@ -260,9 +260,9 @@ export default {
       this.chartData = undefined;
       this.totalStaked = Big(0);
 
-      const { primary, tertiary, quaternary } = this.$vuetify.theme.currentTheme;
+      const { primary } = this.$vuetify.theme.currentTheme;
       const newChartData = {
-        datasets: [{ backgroundColor: [primary, quaternary, tertiary], borderWidth: 0 }],
+        datasets: [{ backgroundColor: [primary], borderWidth: 0 }],
       };
       try {
         const balance = await this.$getBalanceService().fetchBalance();
@@ -277,9 +277,10 @@ export default {
       try {
         const validators = await this.$getBalanceService().fetchAllStakeBalance();
         const fees = [];
-        validators.forEach((validator) => {
+        validators.forEach((validator, index) => {
           newChartData.labels.push(`Validator ${this.truncate(validator.validator)}`);
           newChartData.datasets[0].data.push(validator.stakedTokens);
+          newChartData.datasets[0].backgroundColor.push(this.getRandomColor(index));
           this.totalStaked = this.totalStaked.plus(Big(validator.stakedTokens));
           fees.push(validator.delegation_rate);
         });
@@ -293,6 +294,12 @@ export default {
 
       this.chartData = newChartData;
       this.loading = false;
+    },
+    getRandomColor(index) {
+      const { tertiary, quaternary, quinary, senary } = this.$vuetify.theme.currentTheme;
+      const availableColors = [tertiary, quaternary, quinary, senary];
+
+      return availableColors[index % availableColors.length];
     },
     truncate(fullStr) {
       const strLen = 15;
