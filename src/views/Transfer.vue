@@ -131,7 +131,7 @@ export default {
       address: '',
       transferID: '0',
       minimumCSPRTransfer: 2.5,
-      transferFee: 0.00001,
+      transferFee: 0.1,
       amount: '2.5',
       errorBalance: null,
       balance: '0',

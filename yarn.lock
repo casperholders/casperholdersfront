@@ -1053,10 +1053,10 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
-"@casperholders/core@^1.5.1":
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/@casperholders/core/-/core-1.5.1.tgz#e5374b7f53e2326e52b21482228fc07b234b56b5"
-  integrity sha512-WXgqOk/yygYDRzFlsUIjXodZGAnPe9WrTKNDgcxD0x3pj3jYwhQkOgnDHa+3umtlNYQ7PgH2snPsLLHsUFOn9w==
+"@casperholders/core@^1.6.3":
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/@casperholders/core/-/core-1.6.3.tgz#4efff0186f58aec46022311a0da3377e698bcea1"
+  integrity sha512-Eu1NqRo4/CiZW7gx6wGnOJL6f8sXcgsInmeM/+biKN/ssaRu8k2DmYazLLTEMGNXRmeC5B1rdTR5oeCQ3/s7qw==
   dependencies:
     big.js "^6.1.1"
     casper-js-sdk "^2.4.0"

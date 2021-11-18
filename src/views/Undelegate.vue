@@ -27,13 +27,17 @@
         class="white-bottom-border"
       >
         <v-col>Undelegation fee</v-col>
-        <v-col class="text-right cspr">{{ undelegateFee }} CSPR</v-col>
+        <v-col class="text-right cspr">
+          {{ undelegateFee }} CSPR
+        </v-col>
       </v-row>
       <v-row
         class="white-bottom-border"
       >
         <v-col>Staking balance</v-col>
-        <v-col class="text-right cspr">{{ stakingBalance }} CSPR</v-col>
+        <v-col class="text-right cspr">
+          {{ stakingBalance }} CSPR
+        </v-col>
       </v-row>
       <v-row
         class="white-bottom-border"
@@ -56,7 +60,9 @@
       </v-row>
       <v-row>
         <v-col>Balance after unstake</v-col>
-        <v-col class="text-right cspr">{{ remainingBalance }} CSPR</v-col>
+        <v-col class="text-right cspr">
+          {{ remainingBalance }} CSPR
+        </v-col>
       </v-row>
     </div>
     <v-alert

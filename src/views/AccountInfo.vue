@@ -11,7 +11,8 @@
     title="Account info"
   >
     <p class="text-body-1">
-      Set url for the Account Info Smart Contract. See <a
+      Set url for the Account Info Smart Contract. See
+      <a
         href="https://github.com/make-software/casper-account-info-standard#how-does-it-work"
         target="_blank"
       >here</a> for more details.
@@ -35,7 +36,9 @@
         class="white-bottom-border"
       >
         <v-col>Account info fee</v-col>
-        <v-col class="text-right cspr">{{ accountInfoFee }} CSPR</v-col>
+        <v-col class="text-right cspr">
+          {{ accountInfoFee }} CSPR
+        </v-col>
       </v-row>
       <v-row
         class="white-bottom-border"
@@ -58,7 +61,9 @@
       </v-row>
       <v-row>
         <v-col>Balance after operation</v-col>
-        <v-col class="text-right cspr">{{ remainingBalance }} CSPR</v-col>
+        <v-col class="text-right cspr">
+          {{ remainingBalance }} CSPR
+        </v-col>
       </v-row>
     </div>
     <v-alert

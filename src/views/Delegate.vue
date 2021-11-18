@@ -27,7 +27,9 @@
         class="white-bottom-border"
       >
         <v-col>Staking operation fee</v-col>
-        <v-col class="text-right cspr">{{ delegationFee }} CSPR</v-col>
+        <v-col class="text-right cspr">
+          {{ delegationFee }} CSPR
+        </v-col>
       </v-row>
       <v-row
         class="white-bottom-border"
@@ -50,7 +52,9 @@
       </v-row>
       <v-row class="white-bottom-border">
         <v-col>Remaining funds after staking</v-col>
-        <v-col class="text-right cspr">{{ remainingBalance }} CSPR</v-col>
+        <v-col class="text-right cspr">
+          {{ remainingBalance }} CSPR
+        </v-col>
       </v-row>
       <v-row>
         <v-col class="py-0">
