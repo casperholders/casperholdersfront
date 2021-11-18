@@ -41,11 +41,12 @@ export default {
       };
 
       return {
-        scales: {
-          x: { grid, ticks },
-          y: { grid, ticks },
-        },
         ...this.chartOptions,
+        scales: {
+          ...(this.chartOptions.scales || {}),
+          x: { grid, ticks, ...(this.chartOptions.scales?.x || {}) },
+          y: { grid, ticks, ...(this.chartOptions.scales?.y || {}) },
+        },
       };
     },
   },
