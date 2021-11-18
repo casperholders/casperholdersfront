@@ -4,6 +4,7 @@
 
 <script>
 import { Chart, Legend, Tooltip } from 'chart.js';
+import cloneDeep from 'lodash.clonedeep';
 
 Chart.defaults.font.family = 'Roboto, sans-serif';
 Chart.register(Legend, Tooltip);
@@ -80,13 +81,13 @@ export default {
     mountChart() {
       this.chart = new Chart(this.$refs.chartContainer, {
         type: this.chartType,
-        data: JSON.parse(JSON.stringify(this.chartData)),
-        options: JSON.parse(JSON.stringify(this.mergedOptions)),
+        data: cloneDeep(this.chartData),
+        options: cloneDeep(this.mergedOptions),
       });
     },
     updateChart() {
-      this.chart.data = JSON.parse(JSON.stringify(this.chartData));
-      this.chart.options = JSON.parse(JSON.stringify(this.mergedOptions));
+      this.chart.data = cloneDeep(this.chartData);
+      this.chart.options = cloneDeep(this.mergedOptions);
 
       this.chart.update('none');
     },
