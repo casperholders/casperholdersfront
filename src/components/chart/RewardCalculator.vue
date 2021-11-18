@@ -194,6 +194,9 @@ export default {
         responsive: true,
         maintainAspectRatio: false,
         interaction: { intersect: false, mode: 'index' },
+        scales: {
+          y: { beginAtZero: !this.hasData || this.bigAmount.eq(0) },
+        },
         elements: {
           point: {
             radius: 4,
