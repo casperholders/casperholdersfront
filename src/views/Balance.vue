@@ -70,7 +70,7 @@
       </v-fade-transition>
       <reward-calculator-panel
         :validator="validator"
-        :amount="totalStaked"
+        :amount="totalStaked.toString()"
       />
     </v-card-text>
     <v-divider />
@@ -258,6 +258,7 @@ export default {
       this.loading = true;
       this.errored = false;
       this.chartData = undefined;
+      this.totalStaked = Big(0);
 
       const { primary, tertiary, quaternary } = this.$vuetify.theme.currentTheme;
       const newChartData = {
