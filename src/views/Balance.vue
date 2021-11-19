@@ -72,6 +72,7 @@
         :validator="validator"
         :amount="totalStaked.toString()"
       />
+      <operations />
     </v-card-text>
     <v-divider />
     <v-card-actions class="pa-5">
@@ -167,6 +168,7 @@
 
 <script>
 import DoughnutChart from '@/components/chart/DoughnutChart';
+import Operations from '@/components/chart/Operations';
 import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
 import Big from 'big.js';
 import { Signer } from 'casper-js-sdk';
@@ -179,7 +181,7 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'Balance',
-  components: { RewardCalculatorPanel, DoughnutChart },
+  components: { Operations, RewardCalculatorPanel, DoughnutChart },
   data() {
     return {
       loading: true,

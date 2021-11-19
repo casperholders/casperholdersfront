@@ -12,6 +12,7 @@ const NETWORK = process.env.VUE_APP_NETWORK;
 const VALIDATOR = process.env.VUE_APP_VALIDATOR;
 const RPC = process.env.VUE_APP_RPC;
 const API = process.env.VUE_APP_API;
+const DATA_API = process.env.VUE_APP_DATA_API;
 
 const client = new ClientCasper(RPC);
 const deployManager = new DeployManager(client);
@@ -57,6 +58,7 @@ export default {
     Vue.prototype.$getClientCasper = () => client;
     Vue.prototype.$getNetwork = () => NETWORK;
     Vue.prototype.$getApi = () => API;
+    Vue.prototype.$getDataApi = () => DATA_API;
     Vue.prototype.$getHumanReadableNetwork = () => (
       NETWORK === 'casper' ? 'MainNet' : 'TestNet'
     );
