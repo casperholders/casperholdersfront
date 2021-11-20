@@ -97,6 +97,7 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.$store.dispatch('initSignerStatus');
+      window.addEventListener('signer:initialState', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
       window.addEventListener('signer:connected', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
       window.addEventListener('signer:disconnected', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
       window.addEventListener('signer:tabUpdated', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));

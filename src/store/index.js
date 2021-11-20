@@ -68,25 +68,12 @@ const actions = {
    * @returns {Promise<void>}
    */
   async initSignerStatus(context) {
-    let connected = false;
-    let activeKey = '';
     let version = '';
-    try {
-      connected = await Signer.isConnected();
-      try {
-        activeKey = await Signer.getActivePublicKey();
-      } catch (e) {
-        console.log('Unable to retrieve Signer active key');
-      }
-    } catch (e) {
-      console.log('Unable to retrieve Signer connexion status');
-    }
     try {
       version = await Signer.getVersion();
     } catch (e) {
       console.log('Unable to retrieve Signer version');
     }
-    context.commit('updateSigner', { connected, activeKey });
     context.commit('updateSignerVersion', { version });
   },
   updateFromSignerEvent(context, detail) {
