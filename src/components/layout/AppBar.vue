@@ -19,7 +19,7 @@
         style="cursor: pointer"
         @click="$router.push('/')"
       >
-        Casper Holders {{ $getNetwork() !== 'casper' ? $getHumanReadableNetwork() : '' }}
+        Casper Holders {{ titleNetwork }}
       </v-toolbar-title>
 
       <v-menu
@@ -127,6 +127,7 @@
 </template>
 
 <script>
+import { CSPR_LIVE_URL, HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
 import { STATUS_OK, STATUS_UNKNOWN } from '@casperholders/core/dist/services/results/deployResult';
 import { Signer } from 'casper-js-sdk';
 import { mapState } from 'vuex';
@@ -154,6 +155,9 @@ export default {
         && this.signer.connected
         && !this.signer.lock
         && this.signer.activeKey !== null;
+    },
+    titleNetwork() {
+      return NETWORK !== 'casper' ? HUMAN_READABLE_NETWORK : '';
     },
     badgeColor() {
       if (!this.signer.connected || this.signer.lock || this.signer.activeKey === null) {
@@ -213,7 +217,7 @@ export default {
       return operation.status === STATUS_OK ? 'green' : 'tertiary';
     },
     getOperationUrl(operation) {
-      return `${this.$getCsprLiveUrl()}deploy/${operation.hash}`;
+      return `${CSPR_LIVE_URL}deploy/${operation.hash}`;
     },
     truncateText(str) {
       return `${str.substring(0, 6)}...${str.substring(str.length - 6)}`;

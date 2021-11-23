@@ -93,12 +93,15 @@
 <script>
 import Amount from '@/components/operations/Amount';
 import Operation from '@/components/operations/Operation';
+import balanceService from '@/helpers/balanceService';
+import deployManager from '@/helpers/deployManager';
+import { NETWORK } from '@/helpers/env';
 import { TransferDeployParameters } from '@casperholders/core/dist/services/deploys/transfer/TransferDeployParameters';
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { TransferResult } from '@casperholders/core/dist/services/results/transferResult';
 import { CLPublicKey, Signer } from 'casper-js-sdk';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 /**
  * Transfer view
@@ -145,6 +148,10 @@ export default {
     ...mapState([
       'signer',
     ]),
+    ...mapGetters([
+      'signerObject',
+      'signerOptionsFactory',
+    ]),
     remainingBalance() {
       const result = this.balance - this.amount - this.transferFee;
       return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
@@ -174,7 +181,7 @@ export default {
       this.errorBalance = null;
       this.balance = '0';
       try {
-        this.balance = await this.$getBalanceService().fetchBalance();
+        this.balance = await balanceService.fetchBalance();
         if (this.balance <= this.minimumFundsNeeded) {
           throw new InsufficientFunds(this.minimumFundsNeeded);
         }
@@ -192,12 +199,12 @@ export default {
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
       try {
-        const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
+        const deployResult = await deployManager.prepareSignAndSendDeploy(
           new TransferDeployParameters(
-            this.signer.activeKey, this.$getNetwork(), this.amount, this.address, this.transferID,
+            this.signer.activeKey, NETWORK, this.amount, this.address, this.transferID,
           ),
-          this.$getSigner(),
-          this.$getOptionsTo(this.address),
+          this.signerObject,
+          this.signerOptionsFactory.getOptionsForTransfer(this.address),
         );
         await this.$store.dispatch('addDeployResult', deployResult);
       } catch (e) {

@@ -59,6 +59,7 @@
 
 <script>
 import Metric from '@/components/home/Metric';
+import { API, NETWORK } from '@/helpers/env';
 
 /**
  * Metric component displayed on the homepage, fetch the metrics from the
@@ -91,9 +92,9 @@ export default {
   },
   methods: {
     async value() {
-      let values = (await (await fetch(`${this.$getApi()}/operations/metrics`)).json()).data.result;
+      let values = (await (await fetch(`${API}/operations/metrics`)).json()).data.result;
       if (values.length > 0) {
-        if (this.$getNetwork().toLowerCase().includes('test')) {
+        if (NETWORK.toLowerCase().includes('test')) {
           values = values.filter((value) => value.metric.namespace.includes('testnet'));
         } else {
           values = values.filter((value) => !value.metric.namespace.includes('testnet'));

@@ -69,6 +69,8 @@
 </template>
 
 <script>
+import deployManager from '@/helpers/deployManager';
+import { API, CSPR_LIVE_URL } from '@/helpers/env';
 import {
   STATUS_KO,
   STATUS_OK,
@@ -117,11 +119,11 @@ export default {
    */
   created() {
     this.deployResult = { ...this.getOperation(this.deployHash) };
-    this.deployHashUrl = `${this.$getCsprLiveUrl()}deploy/${this.deployResult.hash}`;
+    this.deployHashUrl = `${CSPR_LIVE_URL}deploy/${this.deployResult.hash}`;
     if (this.deployResult.status === STATUS_UNKNOWN) {
       this.eventWatcher.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        if ('DeployProcessed' in data && data.DeployProcessed.deploy_hash === this.deployHash) {
+        if ('DeployProcessed' in data && data.DeployProcessed.deploy_hash.toLowerCase() === this.deployHash.toLowerCase()) {
           this.getDeployResult().then(() => this.eventWatcher.close());
         }
       };
@@ -149,12 +151,12 @@ export default {
       }
 
       try {
-        const updatedDeployResult = await this.$getDeployManager()
+        const updatedDeployResult = await deployManager
           .getDeployResult(this.deployResult);
         if (updatedDeployResult.status !== STATUS_UNKNOWN) {
           this.deployResult = updatedDeployResult;
           await this.$store.dispatch('updateDeployResult', updatedDeployResult);
-          await fetch(`${this.$getApi()}/deploy/result/${this.deployResult.hash}`);
+          await fetch(`${API}/deploy/result/${this.deployResult.hash}`);
         }
       } catch (e) {
         console.log(e);

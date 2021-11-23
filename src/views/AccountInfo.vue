@@ -104,13 +104,17 @@
 
 <script>
 import Operation from '@/components/operations/Operation';
+import balanceService from '@/helpers/balanceService';
+import clientCasper from '@/helpers/clientCasper';
+import deployManager from '@/helpers/deployManager';
+import { ACCOUNT_INFO_HASH, NETWORK } from '@/helpers/env';
 import { AccountInfo } from '@casperholders/core/dist/services/deploys/account-info/AccountInfo';
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { AccountInfoResult } from '@casperholders/core/dist/services/results/accountInfoResult';
 import { Validators } from '@casperholders/core/dist/services/validators/validators';
 import { Signer } from 'casper-js-sdk';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 /**
  * AccountInfo view
@@ -140,6 +144,10 @@ export default {
   computed: {
     ...mapState([
       'signer',
+    ]),
+    ...mapGetters([
+      'signerObject',
+      'signerOptionsFactory',
     ]),
     remainingBalance() {
       const result = this.balance - this.accountInfoFee;
@@ -174,17 +182,17 @@ export default {
      * Get the user balance and the validator balance
      */
     async getBalance() {
-      const validatorService = new Validators(this.$getClientCasper());
+      const validatorService = new Validators(clientCasper);
       this.accountInfoFee = await validatorService.isUrlSet(
         this.signer.activeKey,
-        this.$getAccountInfoHash(),
-        this.$getNetwork(),
+        ACCOUNT_INFO_HASH,
+        NETWORK,
       ) ? 0.5 : 10;
       this.loadingBalance = true;
       this.errorBalance = null;
       this.balance = '0';
       try {
-        this.balance = await this.$getBalanceService().fetchBalance();
+        this.balance = await balanceService.fetchBalance();
         if (this.balance <= this.minimumFundsNeeded) {
           throw new InsufficientFunds(this.minimumFundsNeeded);
         }
@@ -205,14 +213,14 @@ export default {
         const accountInfo = new AccountInfo(
           this.url,
           this.signer.activeKey,
-          this.$getNetwork(),
-          this.$getAccountInfoHash(),
+          NETWORK,
+          ACCOUNT_INFO_HASH,
         );
-        await accountInfo.init(this.$getClientCasper());
-        const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
+        await accountInfo.init(clientCasper);
+        const deployResult = await deployManager.prepareSignAndSendDeploy(
           accountInfo,
-          this.$getSigner(),
-          this.$getOptionsActiveKeyValidatorOperations(),
+          this.signerObject,
+          this.signerOptionsFactory.getOptionsForOperations(),
         );
         await this.$store.dispatch('addDeployResult', deployResult);
       } catch (e) {

@@ -170,6 +170,7 @@
 import DoughnutChart from '@/components/chart/DoughnutChart';
 import Operations from '@/components/chart/Operations';
 import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
+import balanceService from '@/helpers/balanceService';
 import Big from 'big.js';
 import { Signer } from 'casper-js-sdk';
 import { mapState } from 'vuex';
@@ -267,7 +268,7 @@ export default {
         datasets: [{ backgroundColor: [primary], borderWidth: 0 }],
       };
       try {
-        const balance = await this.$getBalanceService().fetchBalance();
+        const balance = await balanceService.fetchBalance();
         newChartData.labels = ['Available'];
         newChartData.datasets[0].data = [balance];
       } catch (error) {
@@ -277,7 +278,7 @@ export default {
       }
 
       try {
-        const validators = await this.$getBalanceService().fetchAllStakeBalance();
+        const validators = await balanceService.fetchAllStakeBalance();
         const fees = [];
         validators.forEach((validator, index) => {
           newChartData.labels.push(`Validator ${this.truncate(validator.validator)}`);

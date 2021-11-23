@@ -105,12 +105,15 @@
 import Amount from '@/components/operations/Amount';
 import Operation from '@/components/operations/Operation';
 import Validators from '@/components/operations/Validators';
+import balanceService from '@/helpers/balanceService';
+import deployManager from '@/helpers/deployManager';
+import { AUCTION_MANAGER_HASH, NETWORK } from '@/helpers/env';
 import { Undelegate } from '@casperholders/core/dist/services/deploys/auction/actions/undelegate';
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { UndelegateResult } from '@casperholders/core/dist/services/results/undelegateResult';
 import { Signer } from 'casper-js-sdk';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 /**
  * Undelegate view
@@ -139,12 +142,13 @@ export default {
     ...mapState([
       'signer',
     ]),
+    ...mapGetters([
+      'signerObject',
+      'signerOptionsFactory',
+    ]),
     remainingBalance() {
       const result = this.balance + this.amount - this.undelegateFee;
       return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
-    },
-    validatorUrl() {
-      return this.$getValidatorUrl();
     },
     minimumFundsNeeded() {
       return this.undelegateFee;
@@ -173,9 +177,9 @@ export default {
       this.balance = '0';
       this.stakingBalance = '0';
       try {
-        this.balance = await this.$getBalanceService().fetchBalance();
+        this.balance = await balanceService.fetchBalance();
         if (this.validator) {
-          this.stakingBalance = await this.$getBalanceService()
+          this.stakingBalance = await balanceService
             .fetchStakeBalance(this.validator.publicKey);
         }
         if (this.balance <= this.minimumFundsNeeded) {
@@ -196,16 +200,16 @@ export default {
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
       try {
-        const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
+        const deployResult = await deployManager.prepareSignAndSendDeploy(
           new Undelegate(
             this.amount,
             this.signer.activeKey,
             this.validator.publicKey,
-            this.$getNetwork(),
-            this.$getAuctionHash(),
+            NETWORK,
+            AUCTION_MANAGER_HASH,
           ),
-          this.$getSigner(),
-          this.$getOptionsActiveKey(),
+          this.signerObject,
+          this.signerOptionsFactory.getOptionsForOperations(),
         );
         await this.$store.dispatch('addDeployResult', deployResult);
       } catch (e) {

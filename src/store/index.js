@@ -1,10 +1,71 @@
-import { Signer } from 'casper-js-sdk';
+import { CasperSigner } from '@casperholders/core/dist/services/signers/casperSigner';
+import { LocalSigner } from '@casperholders/core/dist/services/signers/localSigner';
+import { Keys, Signer } from 'casper-js-sdk';
 import Vue from 'vue';
 import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
 const debug = process.env.NODE_ENV !== 'production';
+
+const CASPER_SIGNER = 'casperSigner';
+const LOCAL_SIGNER = 'localSigner';
+// const LEDGER_SIGNER = 'ledgerSigner';
+let randomKey;
+let validatorKey;
+
+function generateAsymmetricKey(fakeKey) {
+  const privateKey = Keys.Ed25519.parsePrivateKey(
+    Keys.Ed25519.readBase64WithPEM(fakeKey),
+  );
+  const publicKey = Keys.Ed25519.privateToPublicKey(privateKey);
+  return Keys.Ed25519.parseKeyPair(publicKey, privateKey);
+}
+
+/**
+ * If we run the app in End to End test mode we override the signer with
+ * a LocalSigner and set fake keys to be used in the options sent to the signer.
+ */
+if (process.env.VUE_APP_E2E === 'true') {
+  randomKey = generateAsymmetricKey(process.env.VUE_APP_FAKE_KEY);
+  validatorKey = generateAsymmetricKey(process.env.VUE_APP_FAKE_VALIDATOR_KEY);
+}
+
+const SIGNER_TYPES = {
+  [CASPER_SIGNER]: CasperSigner,
+  [LOCAL_SIGNER]: LocalSigner,
+  // [LEDGER_SIGNER]: LedgerSigner,
+};
+
+const SIGNER_OPTIONS_FACTORIES = {
+  [CASPER_SIGNER]: (state) => ({
+    getOptionsForTransfer: (to) => ({
+      activeKey: state.signer.activeKey,
+      to,
+    }),
+    getOptionsForOperations: () => ({
+      activeKey: state.signer.activeKey,
+      to: state.signer.activeKey,
+    }),
+    getOptionsForValidatorOperations: () => ({
+      activeKey: state.signer.activeKey,
+      to: state.signer.activeKey,
+    }),
+  }),
+  [LOCAL_SIGNER]: () => ({
+    getOptionsForTransfer: () => ({
+      key: randomKey,
+    }),
+    getOptionsForOperations: () => ({
+      key: randomKey,
+    }),
+    getOptionsForValidatorOperations: () => ({
+      key: validatorKey,
+    }),
+  }),
+  // [LEDGER_SIGNER]: undefined,
+};
+
 /**
  * The vuex store contains :
  * - The Casper Signer state
@@ -18,6 +79,7 @@ const initialState = () => ({
     activeKey: null,
     version: '',
   },
+  signerType: process.env.VUE_APP_E2E === 'true' ? LOCAL_SIGNER : CASPER_SIGNER,
   operations: [],
 });
 
@@ -25,7 +87,9 @@ const getters = {
   filterOperations: (state) => (operationName) => state.operations
     .filter((operation) => operation.name === operationName),
   getOperation: (state) => (hash) => state.operations
-    .filter((operation) => operation.hash === hash)[0],
+    .filter((operation) => operation.hash.toLowerCase() === hash.toLowerCase())[0],
+  signerObject: (state) => SIGNER_TYPES[state.signerType],
+  signerOptionsFactory: (state) => SIGNER_OPTIONS_FACTORIES[state.signerType](state),
 };
 
 const mutations = {
@@ -48,13 +112,17 @@ const mutations = {
   },
   removeDeployResult(state, { deployResult }) {
     state.operations.splice(
-      state.operations.findIndex((operation) => operation.hash === deployResult.hash),
+      state.operations.findIndex(
+        (operation) => operation.hash.toLowerCase() === deployResult.hash.toLowerCase(),
+      ),
       1,
     );
   },
   updateDeployResult(state, { deployResult }) {
     state.operations.splice(
-      state.operations.findIndex((operation) => operation.hash === deployResult.hash),
+      state.operations.findIndex(
+        (operation) => operation.hash.toLowerCase() === deployResult.hash.toLowerCase(),
+      ),
       1,
       deployResult,
     );

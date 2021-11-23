@@ -99,12 +99,15 @@
 <script>
 import Amount from '@/components/operations/Amount';
 import Operation from '@/components/operations/Operation';
+import balanceService from '@/helpers/balanceService';
+import deployManager from '@/helpers/deployManager';
+import { AUCTION_MANAGER_HASH, CSPR_LIVE_URL, NETWORK } from '@/helpers/env';
 import { AddBid } from '@casperholders/core/dist/services/deploys/auction/actions/addBid';
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { AddBidResult } from '@casperholders/core/dist/services/results/addBidResult';
 import { Signer } from 'casper-js-sdk';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 /**
  * AddBid view
@@ -134,12 +137,16 @@ export default {
     ...mapState([
       'signer',
     ]),
+    ...mapGetters([
+      'signerObject',
+      'signerOptionsFactory',
+    ]),
     remainingBalance() {
       const result = this.balance - this.amount - this.bidFee;
       return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
     },
     validatorUrl() {
-      return `${this.$getCsprLiveUrl()}validator/${this.signer.activeKey}`;
+      return `${CSPR_LIVE_URL}validator/${this.signer.activeKey}`;
     },
     minimumFundsNeeded() {
       return this.minBid + this.bidFee;
@@ -168,8 +175,8 @@ export default {
       this.validatorBalance = '0';
       this.commission = 0;
       try {
-        this.balance = await this.$getBalanceService().fetchBalance();
-        const validatorInfos = await this.$getBalanceService().fetchValidatorBalance();
+        this.balance = await balanceService.fetchBalance();
+        const validatorInfos = await balanceService.fetchValidatorBalance();
         this.validatorBalance = validatorInfos.balance;
         this.commission = validatorInfos.commission;
         if (this.balance <= this.minimumFundsNeeded) {
@@ -189,16 +196,16 @@ export default {
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
       try {
-        const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
+        const deployResult = await deployManager.prepareSignAndSendDeploy(
           new AddBid(
             this.amount,
             this.signer.activeKey,
             this.commission,
-            this.$getNetwork(),
-            this.$getAuctionHash(),
+            NETWORK,
+            AUCTION_MANAGER_HASH,
           ),
-          this.$getSigner(),
-          this.$getOptionsActiveKeyValidatorOperations(),
+          this.signerObject,
+          this.signerOptionsFactory.getOptionsForValidatorOperations(),
         );
         await this.$store.dispatch('addDeployResult', deployResult);
       } catch (e) {

@@ -312,6 +312,7 @@
 import Features from '@/components/home/Features';
 import Metrics from '@/components/home/Metrics';
 import Roadmap from '@/components/home/Roadmap';
+import { NETWORK } from '@/helpers/env';
 import { Signer } from 'casper-js-sdk';
 import { mapState } from 'vuex';
 import logoSvg from '@/assets/images/logo.svg';
@@ -336,10 +337,10 @@ export default {
       return this.signer.activeKey;
     },
     swapNetworkName() {
-      return this.$getNetwork() === 'casper' ? 'TestNet' : 'MainNet';
+      return NETWORK === 'casper' ? 'TestNet' : 'MainNet';
     },
     swapCasperHoldersUrl() {
-      return this.$getNetwork() === 'casper' ? 'https://testnet.casperholders.io' : 'https://casperholders.io';
+      return NETWORK === 'casper' ? 'https://testnet.casperholders.io' : 'https://casperholders.io';
     },
   },
   methods: {

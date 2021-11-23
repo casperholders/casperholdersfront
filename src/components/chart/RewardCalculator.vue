@@ -100,6 +100,7 @@
 
 <script>
 import LineChart from '@/components/chart/LineChart';
+import { API } from '@/helpers/env';
 import Big from 'big.js';
 import toFormat from 'toformat';
 
@@ -261,7 +262,7 @@ export default {
     },
     async getCasperApy() {
       try {
-        const response = await fetch(`${this.$getApi()}/apy/current`);
+        const response = await fetch(`${API}/apy/current`);
         return await response.json() / 100;
       } catch (_) {
         return undefined;

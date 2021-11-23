@@ -59,6 +59,9 @@
 </template>
 
 <script>
+import balanceService from '@/helpers/balanceService';
+import clientCasper from '@/helpers/clientCasper';
+import { API } from '@/helpers/env';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { NoStakeBalanceError } from '@casperholders/core/dist/services/errors/noStakeBalanceError';
 import { CurrencyUtils } from '@casperholders/core/dist/services/helpers/currencyUtils';
@@ -144,7 +147,7 @@ export default {
       let userStake;
       if (this.undelegate) {
         try {
-          userStake = await this.$getBalanceService().fetchAllStakeBalance();
+          userStake = await balanceService.fetchAllStakeBalance();
         } catch (e) {
           this.validators = [
             { header: `Oops an error occurred : ${e}` },
@@ -164,14 +167,14 @@ export default {
       }
       let validatorsData = [];
       try {
-        validatorsData = await (await fetch(`${this.$getApi()}/validators/accountinfos`)).json();
+        validatorsData = await (await fetch(`${API}/validators/accountinfos`)).json();
         validatorsData = validatorsData.filter(
-          (validatorInfo) => userStake.some((stake) => stake.validator === validatorInfo.publicKey),
+          (validatorInfo) => userStake.some(
+            (stake) => stake.validator.toLowerCase() === validatorInfo.publicKey.toLowerCase(),
+          ),
         );
-        console.log(JSON.stringify(validatorsData, null, 2));
       } catch (e) {
-        console.log(`ERROR ${e}`);
-        const validatorsInfo = (await this.$getClientCasper().casperRPC.getValidatorsInfo())
+        const validatorsInfo = (await clientCasper.casperRPC.getValidatorsInfo())
           .auction_state
           .bids;
         for (let i = 0; i < validatorsInfo.length; i++) {
@@ -179,7 +182,9 @@ export default {
           const stakedAmount = CurrencyUtils.convertMotesToCasper(validatorInfo.bid.staked_amount);
           if (
             (this.undelegate
-              && userStake.some((stake) => stake.validator === validatorInfo.public_key))
+              && userStake.some(
+                (stake) => stake.validator.toLowerCase() === validatorInfo.public_key.toLowerCase(),
+              ))
             || !this.undelegate
           ) {
             validatorsData.push({

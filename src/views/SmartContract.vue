@@ -88,12 +88,15 @@
 <script>
 import Amount from '@/components/operations/Amount';
 import Operation from '@/components/operations/Operation';
+import balanceService from '@/helpers/balanceService';
+import deployManager from '@/helpers/deployManager';
+import { CSPR_LIVE_URL, NETWORK } from '@/helpers/env';
 import { SmartContractDeployParameters } from '@casperholders/core/dist/services/deploys/smartContract/smartContractDeployParameters';
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { SmartContractResult } from '@casperholders/core/dist/services/results/smartContractResult';
 import { Signer } from 'casper-js-sdk';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 /**
  * SmartContract view
@@ -122,12 +125,16 @@ export default {
     ...mapState([
       'signer',
     ]),
+    ...mapGetters([
+      'signerObject',
+      'signerOptionsFactory',
+    ]),
     remainingBalance() {
       const result = this.balance - this.amount;
       return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
     },
     validatorUrl() {
-      return `${this.$getCsprLiveUrl()}validator/${this.signer.activeKey}`;
+      return `${CSPR_LIVE_URL}validator/${this.signer.activeKey}`;
     },
     isInstanceOfNoActiveKeyError() {
       return this.errorBalance instanceof NoActiveKeyError;
@@ -167,7 +174,7 @@ export default {
       this.errorBalance = null;
       this.balance = '0';
       try {
-        this.balance = await this.$getBalanceService().fetchBalance();
+        this.balance = await balanceService.fetchBalance();
         if (this.balance <= this.minPayment) {
           throw new InsufficientFunds(this.minPayment);
         }
@@ -185,12 +192,12 @@ export default {
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
       try {
-        const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
+        const deployResult = await deployManager.prepareSignAndSendDeploy(
           new SmartContractDeployParameters(
-            this.signer.activeKey, this.$getNetwork(), this.buffer, this.amount,
+            this.signer.activeKey, NETWORK, this.buffer, this.amount,
           ),
-          this.$getSigner(),
-          this.$getOptionsActiveKey(),
+          this.signerObject,
+          this.signerOptionsFactory.getOptionsForOperations(),
         );
         await this.$store.dispatch('addDeployResult', deployResult);
       } catch (e) {

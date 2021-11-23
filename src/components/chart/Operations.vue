@@ -105,6 +105,7 @@
 
 <script>
 
+import { DATA_API } from '@/helpers/env';
 import { CurrencyUtils } from '@casperholders/core/dist/services/helpers/currencyUtils';
 import { mapState } from 'vuex';
 
@@ -202,7 +203,7 @@ export default {
       if (this.typesSelected.length > 0) {
         where = `&type=in.("${this.typesSelected.join('","')}")`;
       }
-      const response = await fetch(`${this.$getDataApi()}/deploys?from=eq.${this.signer.activeKey}&limit=${limit}&offset=${offset}${order}${where}`, {
+      const response = await fetch(`${DATA_API}/deploys?from=eq.${this.signer.activeKey}&limit=${limit}&offset=${offset}${order}${where}`, {
         method: 'GET',
         headers: new Headers({
           'Range-Unit': 'items',

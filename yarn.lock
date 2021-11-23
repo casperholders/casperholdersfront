@@ -1053,13 +1053,13 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
-"@casperholders/core@^1.6.3":
-  version "1.6.3"
-  resolved "https://registry.yarnpkg.com/@casperholders/core/-/core-1.6.3.tgz#4efff0186f58aec46022311a0da3377e698bcea1"
-  integrity sha512-Eu1NqRo4/CiZW7gx6wGnOJL6f8sXcgsInmeM/+biKN/ssaRu8k2DmYazLLTEMGNXRmeC5B1rdTR5oeCQ3/s7qw==
+"@casperholders/core@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@casperholders/core/-/core-1.8.0.tgz#8c07f233fb54a67a8d5222329f1cdc6028074f97"
+  integrity sha512-xuGfoLemTtTyPmJESF05j3yOSSsEa5Sa40A6JX0ZQ2dBpdmOlulpUA9MTV0ETrP3flqOWQvEz8uZiJarQmMwkw==
   dependencies:
     big.js "^6.1.1"
-    casper-js-sdk "^2.4.0"
+    casper-js-sdk "^2.7.1"
     ethers "^5.4.6"
 
 "@cypress/browserify-preprocessor@3.0.1":
@@ -3556,10 +3556,10 @@ caseless@~0.12.0:
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
   integrity sha1-G2gcIf+EAzyCZUMJBolCDRhxUdw=
 
-casper-js-sdk@^2.4.0:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/casper-js-sdk/-/casper-js-sdk-2.5.1.tgz#09649fc513fa571cefbf8e29edc262e09edbd2d3"
-  integrity sha512-sgCSS0iOf2FURAlYU4rY/7AL4kkMh7beDt2TdbqQIuckt2G0vD0zPVWwpEQVJ+n1oPAkrhZD+CDYpCCosedj0A==
+casper-js-sdk@^2.7.1:
+  version "2.7.1"
+  resolved "https://registry.yarnpkg.com/casper-js-sdk/-/casper-js-sdk-2.7.1.tgz#6ed92fd75b23f20f7c4ea21dd430b29a028e8a81"
+  integrity sha512-vc9sXm4UEIjyMkxdsgy1QXiCW7uRg3+v6gSW2vhPk8shjtYdr/51Q+WrXy2cyqIc8a6/P/xiDGcLcOht+/AGIg==
   dependencies:
     "@ethersproject/bignumber" "^5.0.8"
     "@ethersproject/bytes" "^5.0.5"
