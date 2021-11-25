@@ -89,7 +89,7 @@ kubectl apply -f kubernetes/(testnet|mainnet)/
 
 # Architecture
 
-The CasperHolders application(s) contains actually 3 main parts :
+The CasperHolders application(s) contains actually 4 main parts :
 
 ## CasperHolders Front
 Contains all the UI for the CasperHolders website (This repo)
@@ -103,19 +103,28 @@ The nginx reverse proxy configuration **is not open source** as this simple to d
 ## CasperHolders Core
 Contains almost all the CasperHolders logic. [Link](https://github.com/casperholders/casperholderscore)
 
+## CasperData
+
+Parse the whole blockchain into a database.
+
+This is used to retrieve users operations and calculate the APY faster on the API. [Link](https://github.com/casperholders/casperdata)
+
 ## CasperHolders API
 
 [Link](https://github.com/casperholders/casperholdersapi)
 
-Only contains 3 endpoints to generate and consume prometheus metrics from operations that are done on the CasperHolders Website.
+Only contains 5 endpoints to generate and consume prometheus metrics from operations that are done on the CasperHolders Website
+and also retrieve validator metadata and the APY on the network.
 
 This API is useless if you don't need / want metrics.
+
+The frontend can work flawlessly without the API. 
 
 It will not impact any feature (Except the metrics graph on the front page) on the website.
 
 You may get some errors in the javascript console by not providing the API url.
 
-Maybe in the future this API will contain more features however.
+Maybe in the future this API will contain more features.
     
 # Notes
 (* Every component hosted on casperholders.io is Open Source and every component hosted on casperholders.com is Closed Source)
