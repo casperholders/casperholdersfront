@@ -9,7 +9,7 @@ describe('Undelegate', () => {
     };
     cy.visit('http://localhost:8080/unstake');
     cy.get('.v-alert').should('have.length', 1);
-    cy.get('.v-alert').should('contain', ' Not connected on Signer. ');
+    cy.get('.v-alert').should('contain', ' Not connected. ');
     const event = new CustomEvent('signer:connected', msg);
     cy.window().then((win) => {
       win.dispatchEvent(event);

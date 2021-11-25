@@ -1,4 +1,6 @@
+import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER } from '@/helpers/signers';
 import { CasperSigner } from '@casperholders/core/dist/services/signers/casperSigner';
+import { LedgerSigner } from '@casperholders/core/dist/services/signers/ledgerSigner';
 import { LocalSigner } from '@casperholders/core/dist/services/signers/localSigner';
 import { Keys, Signer } from 'casper-js-sdk';
 import Vue from 'vue';
@@ -8,9 +10,6 @@ Vue.use(Vuex);
 
 const debug = process.env.NODE_ENV !== 'production';
 
-const CASPER_SIGNER = 'casperSigner';
-const LOCAL_SIGNER = 'localSigner';
-// const LEDGER_SIGNER = 'ledgerSigner';
 let randomKey;
 let validatorKey;
 
@@ -21,6 +20,10 @@ function generateAsymmetricKey(fakeKey) {
   const publicKey = Keys.Ed25519.privateToPublicKey(privateKey);
   return Keys.Ed25519.parseKeyPair(publicKey, privateKey);
 }
+
+export const ledgerOptions = {
+  casperApp: undefined,
+};
 
 /**
  * If we run the app in End to End test mode we override the signer with
@@ -34,7 +37,7 @@ if (process.env.VUE_APP_E2E === 'true') {
 const SIGNER_TYPES = {
   [CASPER_SIGNER]: CasperSigner,
   [LOCAL_SIGNER]: LocalSigner,
-  // [LEDGER_SIGNER]: LedgerSigner,
+  [LEDGER_SIGNER]: LedgerSigner,
 };
 
 const SIGNER_OPTIONS_FACTORIES = {
@@ -50,6 +53,20 @@ const SIGNER_OPTIONS_FACTORIES = {
     getOptionsForValidatorOperations: () => ({
       activeKey: state.signer.activeKey,
       to: state.signer.activeKey,
+    }),
+  }),
+  [LEDGER_SIGNER]: (state) => ({
+    getOptionsForTransfer: () => ({
+      app: ledgerOptions.casperApp,
+      publicKey: state.signer.activeKey,
+    }),
+    getOptionsForOperations: () => ({
+      app: ledgerOptions.casperApp,
+      publicKey: state.signer.activeKey,
+    }),
+    getOptionsForValidatorOperations: () => ({
+      app: ledgerOptions.casperApp,
+      publicKey: state.signer.activeKey,
     }),
   }),
   [LOCAL_SIGNER]: () => ({
@@ -79,7 +96,7 @@ const initialState = () => ({
     activeKey: null,
     version: '',
   },
-  signerType: process.env.VUE_APP_E2E === 'true' ? LOCAL_SIGNER : CASPER_SIGNER,
+  signerType: '',
   operations: [],
 });
 
@@ -100,6 +117,13 @@ const mutations = {
     if (activeKey) {
       state.signer.activeKey = activeKey;
     }
+    state.signerType = CASPER_SIGNER;
+  },
+  updateLedger(state, { activeKey }) {
+    state.signer.activeKey = `02${activeKey}`;
+    state.signer.lock = false;
+    state.signer.connected = true;
+    state.signerType = LEDGER_SIGNER;
   },
   updateSignerLock(state, { lock }) {
     state.signer.lock = lock;
@@ -127,6 +151,12 @@ const mutations = {
       deployResult,
     );
   },
+  logout(state) {
+    state.signer.activeKey = null;
+    state.signer.lock = false;
+    state.signer.connected = false;
+    state.signerType = '';
+  },
 };
 
 const actions = {
@@ -145,8 +175,16 @@ const actions = {
     context.commit('updateSignerVersion', { version });
   },
   updateFromSignerEvent(context, detail) {
-    context.commit('updateSigner', { connected: detail.isConnected, activeKey: detail.activeKey });
-    context.commit('updateSignerLock', { lock: !detail.isUnlocked });
+    if (this.state.signerType === CASPER_SIGNER || this.state.signerType === '') {
+      context.commit('updateSigner', {
+        connected: detail.isConnected,
+        activeKey: detail.activeKey,
+      });
+      context.commit('updateSignerLock', { lock: !detail.isUnlocked });
+    }
+  },
+  updateFromLedgerEvent(context, activeKey) {
+    context.commit('updateLedger', { activeKey });
   },
   addDeployResult(context, deployResult) {
     context.commit('addDeployResult', { deployResult });
@@ -156,6 +194,9 @@ const actions = {
   },
   updateDeployResult(context, deployResult) {
     context.commit('updateDeployResult', { deployResult });
+  },
+  logout(context) {
+    context.commit('logout');
   },
 };
 

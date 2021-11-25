@@ -4,7 +4,7 @@ describe('Balance', () => {
     cy.wait(500);
     cy.get('#balance-not-connected')
       .should('be.visible')
-      .should('contain', 'Not connected on Signer.');
+      .should('contain', 'Not connected.');
     cy.get('#balance-no-liquidity')
       .should('not.exist');
     cy.get('#balance-chart')

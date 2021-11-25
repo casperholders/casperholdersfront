@@ -3,6 +3,7 @@
     <v-col
       cols="12"
       md="6"
+      offset-md="3"
     >
       <v-card class="fill-height rounded-xl secondary">
         <v-card-title>
@@ -20,49 +21,16 @@
             color="tertiary"
             left
           >
-            mdi-account
+            mdi-lock
           </v-icon>
-          Operation history<br>
+          High security accounts settings<br>
           <v-icon
             color="tertiary"
             left
           >
-            mdi-currency-usd
-          </v-icon>
-          Staking rewards Overview
-        </v-card-text>
-      </v-card>
-    </v-col>
-    <v-col
-      cols="12"
-      md="6"
-    >
-      <v-card class="fill-height rounded-xl secondary">
-        <v-card-title>
-          <v-avatar
-            class="mr-4"
-            color="primary"
-            size="52"
-          >
-            <v-icon>mdi-thought-bubble-outline</v-icon>
-          </v-avatar>
-          Future features
-        </v-card-title>
-        <v-card-text class="text-body-1">
-          <v-icon
-            color="quaternary"
-            left
-          >
             mdi-laptop
           </v-icon>
-          Desktop Wallet & Mobile Wallet<br>
-          <v-icon
-            color="quaternary"
-            left
-          >
-            mdi-lock
-          </v-icon>
-          High security accounts settings
+          Desktop Wallet & Mobile Wallet
         </v-card-text>
       </v-card>
     </v-col>

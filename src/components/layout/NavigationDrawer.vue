@@ -55,12 +55,17 @@
           :to="item.route"
           link
           exact
+          :disabled="item.disabled"
         >
           <v-list-item-icon>
             <v-icon v-text="item.icon" />
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title v-text="item.title" />
+            <v-list-item-subtitle
+              v-if="item.subtitle !== null"
+              v-text="item.subtitle"
+            />
           </v-list-item-content>
         </navigation-drawer-list-item>
       </navigation-drawer-list>
@@ -73,7 +78,7 @@
     <navigation-drawer-list>
       <navigation-drawer-list-item
         :minified="minified"
-        :tooltip="`Signer ${signer.connected ? 'connected' : 'disconnected'}!`"
+        :tooltip="`${signer.connected ? 'connected' : 'disconnected'}!`"
       >
         <v-list-item-icon>
           <v-avatar

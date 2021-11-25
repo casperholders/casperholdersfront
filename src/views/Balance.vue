@@ -39,7 +39,7 @@
             type="error"
             prominent
           >
-            Not connected on Signer.
+            Not connected.
             <v-btn
               color="secondary"
               class="ml-2"

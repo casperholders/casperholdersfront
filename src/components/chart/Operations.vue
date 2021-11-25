@@ -203,7 +203,7 @@ export default {
       if (this.typesSelected.length > 0) {
         where = `&type=in.("${this.typesSelected.join('","')}")`;
       }
-      const response = await fetch(`${DATA_API}/deploys?from=eq.${this.signer.activeKey}&limit=${limit}&offset=${offset}${order}${where}`, {
+      const response = await fetch(`${DATA_API}/deploys?from=ilike.${this.signer.activeKey}&limit=${limit}&offset=${offset}${order}${where}`, {
         method: 'GET',
         headers: new Headers({
           'Range-Unit': 'items',

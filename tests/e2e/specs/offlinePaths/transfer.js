@@ -9,7 +9,7 @@ describe('Transfer', () => {
     };
     cy.visit('http://localhost:8080/transfer');
     cy.get('.v-alert').should('have.length', 1);
-    cy.get('.v-alert').should('contain', ' Not connected on Signer. ');
+    cy.get('.v-alert').should('contain', ' Not connected. ');
     const event = new CustomEvent('signer:connected', msg);
     cy.window().then((win) => {
       win.dispatchEvent(event);

@@ -16,6 +16,7 @@
     <v-footer
       color="secondary"
       inset
+      absolute
       app
     >
       <div class="mx-auto">
@@ -52,6 +53,8 @@
 import wavesSvg from '@/assets/images/waves.svg';
 import AppBar from '@/components/layout/AppBar';
 import NavigationDrawer from '@/components/layout/NavigationDrawer';
+import { LEDGER_SIGNER } from '@/helpers/signers';
+import { mapState } from 'vuex';
 
 /**
  * App component
@@ -67,29 +70,76 @@ export default {
     /**
      * Links with their associated text & icons to be displayed in the appbar and navigation drawer
      */
-    links: {
-      Account: [
-        { title: 'Balance', icon: 'mdi-wallet', route: 'balance' },
-        { title: 'Transfer', icon: 'mdi-send', route: 'transfer' },
-        { title: 'Account info', icon: 'mdi-account', route: 'account' },
-      ],
-      Staking: [
-        { title: 'Stake', icon: 'mdi-safe', route: 'stake' },
-        { title: 'Unstake', icon: 'mdi-lock-open', route: 'unstake' },
-      ],
-      Validators: [
-        { title: 'Add Bid', icon: 'mdi-gavel', route: 'addbid' },
-        { title: 'Withdraw Bid', icon: 'mdi-connection', route: 'withdrawbid' },
-      ],
-      Developers: [
-        { title: 'Send smart contract', icon: 'mdi-file-document-edit', route: 'smartcontract' },
-      ],
-      Others: [
-        { title: 'FAQ', icon: 'mdi-help', route: 'faq' },
-        { title: 'Contact', icon: 'mdi-mail', route: 'contact' },
-      ],
-    },
   }),
+  computed: {
+    ...mapState(['signerType']),
+    links() {
+      return {
+        Account: [
+          {
+            title: 'Balance',
+            icon: 'mdi-wallet',
+            route: 'balance',
+            disabled: false,
+            subtitle: null,
+          },
+          {
+            title: 'Transfer',
+            icon: 'mdi-send',
+            route: 'transfer',
+            disabled: false,
+            subtitle: null,
+          },
+          {
+            title: 'Account info',
+            icon: 'mdi-account',
+            route: 'account',
+            disabled: this.signerType === LEDGER_SIGNER,
+            subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
+          },
+        ],
+        Staking: [
+          { title: 'Stake', icon: 'mdi-safe', route: 'stake', disabled: false, subtitle: null },
+          {
+            title: 'Unstake',
+            icon: 'mdi-lock-open',
+            route: 'unstake',
+            disabled: false,
+            subtitle: null,
+          },
+        ],
+        Validators: [
+          {
+            title: 'Add Bid',
+            icon: 'mdi-gavel',
+            route: 'addbid',
+            disabled: this.signerType === LEDGER_SIGNER,
+            subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
+          },
+          {
+            title: 'Withdraw Bid',
+            icon: 'mdi-connection',
+            route: 'withdrawbid',
+            disabled: this.signerType === LEDGER_SIGNER,
+            subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
+          },
+        ],
+        Developers: [
+          {
+            title: 'Send smart contract',
+            icon: 'mdi-file-document-edit',
+            route: 'smartcontract',
+            disabled: this.signerType === LEDGER_SIGNER,
+            subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
+          },
+        ],
+        Others: [
+          { title: 'FAQ', icon: 'mdi-help', route: 'faq', disabled: false, subtitle: null },
+          { title: 'Contact', icon: 'mdi-mail', route: 'contact', disabled: false, subtitle: null },
+        ],
+      };
+    },
+  },
   /**
    * When the component is mounted we listen to the signer events and update
    * the VueX store accordingly to the data received from the Casper Signer extension.
@@ -176,6 +226,7 @@ export default {
   .white-bottom-border {
     border-bottom: 1px solid rgba(255, 255, 255, 0.5)
   }
+
   .theme--dark.v-list-item.v-list-item--active {
     color: white !important;
   }
