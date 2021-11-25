@@ -91,12 +91,12 @@ const SIGNER_OPTIONS_FACTORIES = {
  */
 const initialState = () => ({
   signer: {
-    connected: false,
+    connected: process.env.VUE_APP_E2E === 'true',
     lock: false,
     activeKey: null,
     version: '',
   },
-  signerType: '',
+  signerType: process.env.VUE_APP_E2E === 'true' ? LOCAL_SIGNER : '',
   operations: [],
 });
 
@@ -117,7 +117,7 @@ const mutations = {
     if (activeKey) {
       state.signer.activeKey = activeKey;
     }
-    state.signerType = CASPER_SIGNER;
+    state.signerType = process.env.VUE_APP_E2E === 'true' ? LOCAL_SIGNER : CASPER_SIGNER;
   },
   updateLedger(state, { activeKey }) {
     state.signer.activeKey = `02${activeKey}`;
@@ -175,7 +175,7 @@ const actions = {
     context.commit('updateSignerVersion', { version });
   },
   updateFromSignerEvent(context, detail) {
-    if (this.state.signerType === CASPER_SIGNER || this.state.signerType === '') {
+    if (this.state.signerType === CASPER_SIGNER || this.state.signerType === LOCAL_SIGNER || this.state.signerType === '') {
       context.commit('updateSigner', {
         connected: detail.isConnected,
         activeKey: detail.activeKey,
