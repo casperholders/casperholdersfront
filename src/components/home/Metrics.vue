@@ -21,9 +21,9 @@
             <v-layout
               v-if="loading"
               key="no-chart"
-              style="height: 300px;"
-              justify-center
+              style="height: 500px;"
               align-center
+              justify-center
             >
               <v-progress-circular
                 v-if="loading"
@@ -34,12 +34,21 @@
               />
             </v-layout>
             <line-chart
-              v-else
+              v-else-if="chartData"
               key="chart"
               :chart-data="chartData"
               :chart-options="chartOptions"
               style="width: 100%;height: 500px;"
             />
+            <div
+              v-else
+              key="nodata"
+              id="balance-no-liquidity"
+              class="text-overline d-flex align-center justify-center"
+              style="height: 500px;"
+            >
+              No data available
+            </div>
           </v-fade-transition>
         </v-card-text>
       </v-card>
@@ -104,47 +113,48 @@ export default {
       return availableColors[index % availableColors.length];
     },
     async value() {
-      const values = await (await fetch(`${DATA_API}/full_stats`)).json();
-      if (values.length > 0) {
-        const dates = [...new Set(values.map((v) => v.day.replace('T00:00:00+00:00', '')))];
-        const types = [...new Set(values.map((v) => v.type))];
+      try {
+        const values = await (await fetch(`${DATA_API}/full_stats`)).json();
+        if (values.length > 0) {
+          const dates = [...new Set(values.map((v) => v.day.replace('T00:00:00+00:00', '')))];
+          const types = [...new Set(values.map((v) => v.type))];
 
-        const datasets = [];
+          const datasets = [];
 
-        const computeDataset = (label, color) => {
-          const rawData = values.filter((v) => v.type === label);
-          const data = [];
-          Object.keys(dates).forEach((date) => {
-            console.log(dates[date]);
-            console.log(rawData);
-            const currentDay = rawData.filter((v) => v.day.replace('T00:00:00+00:00', '') === dates[date]);
-            console.log(currentDay);
-            data.push(currentDay.length > 0 ? currentDay[0].count : 0);
-          });
+          const computeDataset = (label, color) => {
+            const rawData = values.filter((v) => v.type === label);
+            const data = [];
+            Object.keys(dates).forEach((date) => {
+              console.log(dates[date]);
+              console.log(rawData);
+              const currentDay = rawData.filter((v) => v.day.replace('T00:00:00+00:00', '') === dates[date]);
+              console.log(currentDay);
+              data.push(currentDay.length > 0 ? currentDay[0].count : 0);
+            });
 
-          return {
-            label,
-            rawData: data,
-            data,
-            borderColor: color,
-            backgroundColor: color,
+            return {
+              label,
+              rawData: data,
+              data,
+              borderColor: color,
+              backgroundColor: color,
+            };
           };
-        };
 
-        for (let i = 0; i < types.length; i++) {
-          datasets.push(computeDataset(types[i], this.getRandomColor(i)));
+          for (let i = 0; i < types.length; i++) {
+            datasets.push(computeDataset(types[i], this.getRandomColor(i)));
+          }
+          console.log(datasets);
+          console.log(dates);
+          return {
+            labels: dates,
+            datasets,
+          };
         }
-        console.log(datasets);
-        console.log(dates);
-        return {
-          labels: dates,
-          datasets,
-        };
+        return null;
+      } catch (e) {
+        return null;
       }
-      return {
-        labels: ['No data'],
-        datasets: [],
-      };
     },
   },
 };
