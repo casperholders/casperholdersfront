@@ -70,7 +70,7 @@
 
 <script>
 import deployManager from '@/helpers/deployManager';
-import { API, CSPR_LIVE_URL } from '@/helpers/env';
+import { CSPR_LIVE_URL } from '@/helpers/env';
 import {
   STATUS_KO,
   STATUS_OK,
@@ -156,7 +156,6 @@ export default {
         if (updatedDeployResult.status !== STATUS_UNKNOWN) {
           this.deployResult = updatedDeployResult;
           await this.$store.dispatch('updateDeployResult', updatedDeployResult);
-          await fetch(`${API}/deploy/result/${this.deployResult.hash}`);
         }
       } catch (e) {
         console.log(e);
