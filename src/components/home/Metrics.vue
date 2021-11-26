@@ -1,65 +1,55 @@
 <template>
   <v-row class="mt-10">
-    <v-col
-      cols="12"
-      md="4"
-    >
-      <Metric
-        name="Transfer"
-        :value="transfer"
-      />
-    </v-col>
-    <v-col
-      cols="12"
-      md="4"
-    >
-      <Metric
-        name="Staking"
-        :value="staking"
-      />
-    </v-col>
-    <v-col
-      cols="12"
-      md="4"
-    >
-      <Metric
-        name="Unstake"
-        :value="unstake"
-      />
-    </v-col>
-    <v-col
-      cols="12"
-      md="4"
-    >
-      <Metric
-        name="Add bid"
-        :value="addBid"
-      />
-    </v-col>
-    <v-col
-      cols="12"
-      md="4"
-    >
-      <Metric
-        name="Withdraw bid"
-        :value="withdrawBid"
-      />
-    </v-col>
-    <v-col
-      cols="12"
-      md="4"
-    >
-      <Metric
-        name="Smart-contract"
-        :value="smartContract"
-      />
+    <v-col cols="12">
+      <v-card class="fill-height rounded-xl secondary">
+        <v-card-title>
+          <v-avatar
+            class="mr-4"
+            color="primary"
+            size="52"
+          >
+            <v-icon>mdi-chart-areaspline</v-icon>
+          </v-avatar>
+          Metrics
+        </v-card-title>
+        <v-card-text>
+          <v-fade-transition
+            tag="div"
+            leave-absolute
+            group
+          >
+            <v-layout
+              v-if="loading"
+              key="no-chart"
+              style="height: 300px;"
+              justify-center
+              align-center
+            >
+              <v-progress-circular
+                v-if="loading"
+                color="primary"
+                size="128"
+                width="10"
+                indeterminate
+              />
+            </v-layout>
+            <line-chart
+              v-else
+              key="chart"
+              :chart-data="chartData"
+              :chart-options="chartOptions"
+              style="width: 100%;height: 500px;"
+            />
+          </v-fade-transition>
+        </v-card-text>
+      </v-card>
     </v-col>
   </v-row>
 </template>
 
 <script>
-import Metric from '@/components/home/Metric';
-import { API, NETWORK } from '@/helpers/env';
+import LineChart from '@/components/chart/LineChart';
+import { DATA_API } from '@/helpers/env';
 
 /**
  * Metric component displayed on the homepage, fetch the metrics from the
@@ -67,66 +57,94 @@ import { API, NETWORK } from '@/helpers/env';
  */
 export default {
   name: 'Metrics',
-  components: { Metric },
+  components: { LineChart },
   data() {
     return {
-      width: 2,
-      radius: 10,
-      padding: 8,
-      lineCap: 'round',
-      gradient: ['#af023f', '#00126b'],
-      gradientDirection: 'top',
-      fill: false,
-      type: 'trend',
-      autoLineWidth: false,
-      transfer: [0, 0],
-      staking: [0, 0],
-      unstake: [0, 0],
-      addBid: [0, 0],
-      withdrawBid: [0, 0],
-      smartContract: [0, 0],
+      loading: true,
+      chartData: {},
     };
   },
+  computed: {
+    chartOptions() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        scales: {
+          y: { beginAtZero: 0 },
+        },
+        elements: {
+          point: {
+            radius: 4,
+          },
+          line: {
+            tension: 0.1,
+            borderWidth: 2,
+          },
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: (t) => `${t.dataset.label}: ${t.dataset.rawData[t.dataIndex]}`,
+            },
+          },
+        },
+      };
+    },
+  },
   async mounted() {
-    await this.value();
+    this.chartData = await this.value();
+    this.loading = false;
   },
   methods: {
-    async value() {
-      let values = (await (await fetch(`${API}/operations/metrics`)).json()).data.result;
-      if (values.length > 0) {
-        if (NETWORK.toLowerCase().includes('test')) {
-          values = values.filter((value) => value.metric.namespace.includes('testnet'));
-        } else {
-          values = values.filter((value) => !value.metric.namespace.includes('testnet'));
-        }
+    getRandomColor(index) {
+      const { tertiary, quaternary, quinary, senary } = this.$vuetify.theme.currentTheme;
+      const availableColors = [tertiary, quaternary, quinary, senary];
 
-        values.forEach((value) => {
-          const metric = value.values.map((number) => {
-            number.shift();
-            // eslint-disable-next-line radix,no-param-reassign
-            number[0] = parseInt(number[0]);
-            return number;
+      return availableColors[index % availableColors.length];
+    },
+    async value() {
+      const values = await (await fetch(`${DATA_API}/full_stats`)).json();
+      if (values.length > 0) {
+        const dates = [...new Set(values.map((v) => v.day.replace('T00:00:00+00:00', '')))];
+        const types = [...new Set(values.map((v) => v.type))];
+
+        const datasets = [];
+
+        const computeDataset = (label, color) => {
+          const rawData = values.filter((v) => v.type === label);
+          const data = [];
+          Object.keys(dates).forEach((date) => {
+            console.log(dates[date]);
+            console.log(rawData);
+            const currentDay = rawData.filter((v) => v.day.replace('T00:00:00+00:00', '') === dates[date]);
+            console.log(currentDay);
+            data.push(currentDay.length > 0 ? currentDay[0].count : 0);
           });
-          if (value.metric.type === 'transfer') {
-            this.transfer = metric.flat().length > 0 ? metric.flat() : [0];
-          }
-          if (value.metric.type === 'delegate') {
-            this.staking = metric.flat().length > 0 ? metric.flat() : [0];
-          }
-          if (value.metric.type === 'undelegate') {
-            this.unstake = metric.flat().length > 0 ? metric.flat() : [0];
-          }
-          if (value.metric.type === 'add_bid') {
-            this.addBid = metric.flat().length > 0 ? metric.flat() : [0];
-          }
-          if (value.metric.type === 'withdraw_bid') {
-            this.withdrawBid = metric.flat().length > 0 ? metric.flat() : [0];
-          }
-          if (value.metric.type === 'smart_contract') {
-            this.smartContract = metric.flat().length > 0 ? metric.flat() : [0];
-          }
-        });
+
+          return {
+            label,
+            rawData: data,
+            data,
+            borderColor: color,
+            backgroundColor: color,
+          };
+        };
+
+        for (let i = 0; i < types.length; i++) {
+          datasets.push(computeDataset(types[i], this.getRandomColor(i)));
+        }
+        console.log(datasets);
+        console.log(dates);
+        return {
+          labels: dates,
+          datasets,
+        };
       }
+      return {
+        labels: ['No data'],
+        datasets: [],
+      };
     },
   },
 };
