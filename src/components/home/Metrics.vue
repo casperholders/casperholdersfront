@@ -42,8 +42,8 @@
             />
             <div
               v-else
-              key="nodata"
               id="balance-no-liquidity"
+              key="nodata"
               class="text-overline d-flex align-center justify-center"
               style="height: 500px;"
             >
@@ -112,6 +112,12 @@ export default {
 
       return availableColors[index % availableColors.length];
     },
+    humanReadableLabel(label) {
+      if (label === 'ERC20') {
+        return label;
+      }
+      return label.charAt(0).toUpperCase() + label.split(/(?=[A-Z])/).join(' ').slice(1);
+    },
     async value() {
       try {
         const values = await (await fetch(`${DATA_API}/full_stats`)).json();
@@ -125,15 +131,12 @@ export default {
             const rawData = values.filter((v) => v.type === label);
             const data = [];
             Object.keys(dates).forEach((date) => {
-              console.log(dates[date]);
-              console.log(rawData);
               const currentDay = rawData.filter((v) => v.day.replace('T00:00:00+00:00', '') === dates[date]);
-              console.log(currentDay);
               data.push(currentDay.length > 0 ? currentDay[0].count : 0);
             });
 
             return {
-              label,
+              label: this.humanReadableLabel(label),
               rawData: data,
               data,
               borderColor: color,
@@ -144,8 +147,21 @@ export default {
           for (let i = 0; i < types.length; i++) {
             datasets.push(computeDataset(types[i], this.getRandomColor(i)));
           }
-          console.log(datasets);
-          console.log(dates);
+
+          const dataTotal = [];
+          Object.keys(dates).forEach((date) => {
+            const currentDay = values.filter((v) => v.day.replace('T00:00:00+00:00', '') === dates[date]);
+            dataTotal.push(currentDay.reduce((a, b) => ({ count: a.count + b.count })).count);
+          });
+
+          const total = {
+            label: 'Total',
+            rawData: dataTotal,
+            data: dataTotal,
+            borderColor: 'white',
+            backgroundColor: 'white',
+          };
+          datasets.push(total);
           return {
             labels: dates,
             datasets,
