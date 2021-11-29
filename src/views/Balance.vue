@@ -43,7 +43,7 @@
             <v-btn
               color="secondary"
               class="ml-2"
-              @click="onConnectionRequest"
+              @click="connectionRequest"
             >
               <v-icon left>
                 mdi-account-circle
