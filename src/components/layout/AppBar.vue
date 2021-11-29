@@ -8,6 +8,7 @@
     elevate-on-scroll
   >
     <v-app-bar-nav-icon
+      id="toggleDrawer"
       v-show="$vuetify.breakpoint.mobile"
       @click.stop="toggleDrawer"
     />
@@ -27,6 +28,7 @@
     >
       <template #activator="{ on, attrs }">
         <v-btn
+          id="account"
           v-bind="attrs"
           icon
           v-on="on"
@@ -56,6 +58,7 @@
           </v-list-item-content>
           <v-list-item-action>
             <v-btn
+              id="logout"
               color="secondary"
               @click="logout"
             >

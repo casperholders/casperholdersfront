@@ -32,6 +32,9 @@ describe('Balance', () => {
       .and((chart) => {
         expect(chart.height()).to.be.equals(400);
       });
+
+    cy.get('.reward-calculator-panel-header').click();
+    cy.get('.reward-calculator').should('be.visible');
     cy.wait(60000).get('.operations').should('contain', '1-10 of');
 
     cy.wait(1000).window().then((win) => {
@@ -46,5 +49,6 @@ describe('Balance', () => {
       .should('contain', 'No liquidity available');
     cy.get('#balance-chart')
       .should('not.exist');
+
   });
 });

@@ -1,5 +1,6 @@
 <template>
   <v-navigation-drawer
+    id="drawer"
     v-model="drawer"
     :mini-variant="minified && !$vuetify.breakpoint.mobile"
     color="secondary"

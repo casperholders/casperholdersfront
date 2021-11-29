@@ -6,6 +6,7 @@
     <template #activator="{ on, attrs }">
       <template v-if="$vuetify.breakpoint.mobile">
         <v-btn
+          id="connect"
           fab
           small
           color="primary"
@@ -19,6 +20,7 @@
       </template>
       <template v-else>
         <v-btn
+          id="connect"
           rounded
           color="primary"
           v-bind="attrs"
@@ -35,7 +37,10 @@
       </template>
     </template>
 
-    <v-card width="100%">
+    <v-card
+      id="connectDialog"
+      width="100%"
+    >
       <v-card-title class="flex-nowrap">
         <v-icon left>
           mdi-wallet
@@ -69,7 +74,7 @@
               class="mb-4"
               @click="signerConnect"
             >
-              <v-card-text class="d-flex align-center">
+              <v-card-text id="connectCasperSigner" class="d-flex align-center">
                 <img
                   :src="casper"
                   width="32"
@@ -91,7 +96,7 @@
               link
               @click="ledgerConnect"
             >
-              <v-card-text class="d-flex align-center">
+              <v-card-text id="connectLedger" class="d-flex align-center">
                 <img
                   :src="ledger"
                   width="32"
@@ -135,6 +140,7 @@
             class="text-center"
           >
             <v-card
+              id="connected"
               outlined
               elevation="3"
             >
@@ -175,6 +181,7 @@
                 </v-icon>
                 <div class="mt-3">
                   <v-btn
+                    id="retryButton"
                     color="tertiary"
                     @click="timeout = false"
                   >
