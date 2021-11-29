@@ -123,7 +123,6 @@ import { SmartContractDeployParameters } from '@casperholders/core/dist/services
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { SmartContractResult } from '@casperholders/core/dist/services/results/smartContractResult';
-import { Signer } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -236,8 +235,8 @@ export default {
       this.$root.$emit('closeOperationDialog');
       this.$root.$emit('operationFinished');
     },
-    connectionRequest() {
-      Signer.sendConnectionRequest();
+    async connectionRequest() {
+      await this.$store.dispatch('openConnectDialog');
     },
   },
 };

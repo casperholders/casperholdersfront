@@ -113,7 +113,6 @@ import { Delegate } from '@casperholders/core/dist/services/deploys/auction/acti
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { DelegateResult } from '@casperholders/core/dist/services/results/delegateResult';
-import { Signer } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -213,8 +212,8 @@ export default {
       this.$root.$emit('closeOperationDialog');
       this.$root.$emit('operationFinished');
     },
-    connectionRequest() {
-      Signer.sendConnectionRequest();
+    async connectionRequest() {
+      await this.$store.dispatch('openConnectDialog');
     },
   },
 };

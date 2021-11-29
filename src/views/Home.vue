@@ -313,7 +313,6 @@ import Features from '@/components/home/Features';
 import Metrics from '@/components/home/Metrics';
 import Roadmap from '@/components/home/Roadmap';
 import { NETWORK } from '@/helpers/env';
-import { Signer } from 'casper-js-sdk';
 import { mapState } from 'vuex';
 import logoSvg from '@/assets/images/logo.svg';
 
@@ -344,8 +343,8 @@ export default {
     },
   },
   methods: {
-    connectionRequest() {
-      Signer.sendConnectionRequest();
+    async connectionRequest() {
+      await this.$store.dispatch('openConnectDialog');
     },
     copyPublicKey() {
       const publicKey = document.getElementById('publicKey');

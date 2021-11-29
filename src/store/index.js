@@ -98,6 +98,7 @@ const initialState = () => ({
   },
   signerType: process.env.VUE_APP_E2E === 'true' ? LOCAL_SIGNER : '',
   operations: [],
+  connectDialog: false,
 });
 
 const getters = {
@@ -157,6 +158,12 @@ const mutations = {
     state.signer.connected = false;
     state.signerType = '';
   },
+  openConnectDialog(state) {
+    state.connectDialog = true;
+  },
+  closeConnectDialog(state) {
+    state.connectDialog = false;
+  },
 };
 
 const actions = {
@@ -197,6 +204,12 @@ const actions = {
   },
   logout(context) {
     context.commit('logout');
+  },
+  openConnectDialog(context) {
+    context.commit('openConnectDialog');
+  },
+  closeConnectDialog(context) {
+    context.commit('closeConnectDialog');
   },
 };
 

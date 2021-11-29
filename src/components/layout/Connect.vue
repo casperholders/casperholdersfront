@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-    v-model="dialog"
+    v-model="connectDialog"
     width="500"
   >
     <template #activator="{ on, attrs }">
@@ -44,7 +44,7 @@
         <v-btn
           icon
           class="ml-auto"
-          @click="dialog=false"
+          @click="closeDialog"
         >
           <v-icon>
             mdi-close
@@ -210,7 +210,6 @@ import { mapState } from 'vuex';
 export default {
   name: 'Connect',
   data: () => ({
-    dialog: false,
     loading: false,
     connected: false,
     timeout: false,
@@ -219,6 +218,18 @@ export default {
   }),
   computed: {
     ...mapState(['signer']),
+    connectDialog: {
+      get() {
+        return this.$store.state.connectDialog;
+      },
+      async set(val) {
+        if (val) {
+          await this.$store.dispatch('openConnectDialog');
+        } else {
+          await this.$store.dispatch('closeConnectDialog');
+        }
+      },
+    },
   },
   watch: {
     'signer.activeKey': {
@@ -276,6 +287,9 @@ export default {
         this.timeout = true;
         this.loading = false;
       }
+    },
+    async closeDialog() {
+      await this.$store.dispatch('closeConnectDialog');
     },
   },
 };

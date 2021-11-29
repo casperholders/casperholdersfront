@@ -121,7 +121,7 @@ import { TransferDeployParameters } from '@casperholders/core/dist/services/depl
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { TransferResult } from '@casperholders/core/dist/services/results/transferResult';
-import { CLPublicKey, Signer } from 'casper-js-sdk';
+import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -236,8 +236,8 @@ export default {
       this.$root.$emit('closeOperationDialog');
       this.$root.$emit('operationFinished');
     },
-    connectionRequest() {
-      Signer.sendConnectionRequest();
+    async connectionRequest() {
+      await this.$store.dispatch('openConnectDialog');
     },
   },
 };

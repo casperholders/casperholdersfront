@@ -172,7 +172,6 @@ import Operations from '@/components/chart/Operations';
 import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
 import balanceService from '@/helpers/balanceService';
 import Big from 'big.js';
-import { Signer } from 'casper-js-sdk';
 import { mapState } from 'vuex';
 
 /**
@@ -317,8 +316,8 @@ export default {
 
       return fullStr.substr(0, frontChars) + separator + fullStr.substr(fullStr.length - backChars);
     },
-    onConnectionRequest() {
-      Signer.sendConnectionRequest();
+    async connectionRequest() {
+      await this.$store.dispatch('openConnectDialog');
     },
   },
 };

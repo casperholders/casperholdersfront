@@ -113,7 +113,6 @@ import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insu
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { AccountInfoResult } from '@casperholders/core/dist/services/results/accountInfoResult';
 import { Validators } from '@casperholders/core/dist/services/validators/validators';
-import { Signer } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -230,8 +229,8 @@ export default {
       this.$root.$emit('closeOperationDialog');
       this.$root.$emit('operationFinished');
     },
-    connectionRequest() {
-      Signer.sendConnectionRequest();
+    async connectionRequest() {
+      await this.$store.dispatch('openConnectDialog');
     },
   },
 };
