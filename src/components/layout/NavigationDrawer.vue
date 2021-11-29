@@ -1,5 +1,6 @@
 <template>
   <v-navigation-drawer
+    id="drawer"
     v-model="drawer"
     :mini-variant="minified && !$vuetify.breakpoint.mobile"
     color="secondary"
@@ -55,12 +56,17 @@
           :to="item.route"
           link
           exact
+          :disabled="item.disabled"
         >
           <v-list-item-icon>
             <v-icon v-text="item.icon" />
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title v-text="item.title" />
+            <v-list-item-subtitle
+              v-if="item.subtitle !== null"
+              v-text="item.subtitle"
+            />
           </v-list-item-content>
         </navigation-drawer-list-item>
       </navigation-drawer-list>
@@ -73,7 +79,7 @@
     <navigation-drawer-list>
       <navigation-drawer-list-item
         :minified="minified"
-        :tooltip="`Signer ${signer.connected ? 'connected' : 'disconnected'}!`"
+        :tooltip="`${signer.connected ? 'connected' : 'disconnected'}!`"
       >
         <v-list-item-icon>
           <v-avatar
@@ -95,7 +101,7 @@
       </navigation-drawer-list-item>
       <navigation-drawer-list-item
         :minified="minified"
-        :tooltip="`Connected to ${$getHumanReadableNetwork()}`"
+        :tooltip="`Connected to ${HUMAN_READABLE_NETWORK}`"
       >
         <v-list-item-icon>
           <v-icon>
@@ -104,7 +110,7 @@
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>Casper Network</v-list-item-title>
-          <v-list-item-subtitle v-text="$getHumanReadableNetwork()" />
+          <v-list-item-subtitle v-text="HUMAN_READABLE_NETWORK" />
         </v-list-item-content>
       </navigation-drawer-list-item>
     </navigation-drawer-list>
@@ -115,6 +121,7 @@
 import NavigationDrawerList from '@/components/layout/NavigationDrawerList';
 import NavigationDrawerListHeader from '@/components/layout/NavigationDrawerListHeader';
 import NavigationDrawerListItem from '@/components/layout/NavigationDrawerListItem';
+import { HUMAN_READABLE_NETWORK } from '@/helpers/env';
 import { mapState } from 'vuex';
 
 /**
@@ -133,6 +140,7 @@ export default {
     return {
       minified: false,
       drawer: !this.$vuetify.breakpoint.mobile,
+      HUMAN_READABLE_NETWORK,
     };
   },
   computed: {

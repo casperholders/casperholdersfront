@@ -39,20 +39,41 @@
         class="mb-4"
         @input="amount = $event"
       />
-      <p>
-        Transfer Fee : {{ transferFee }} CSPR<br>
-        Balance : {{ balance }} CSPR
-        <template v-if="loadingBalance">
-          Loading balance ...
-          <v-progress-circular
-            class="ml-3"
-            color="white"
-            indeterminate
-          />
-        </template>
-        <br>
-        Remaining funds after transfer : {{ remainingBalance }} CSPR<br>
-      </p>
+      <div class="mx-n1">
+        <v-row
+          class="white-bottom-border"
+        >
+          <v-col>Transfer Fee</v-col>
+          <v-col class="text-right cspr">
+            {{ transferFee }} CSPR
+          </v-col>
+        </v-row>
+        <v-row
+          class="white-bottom-border"
+        >
+          <v-col>Balance</v-col>
+          <v-col class="text-right cspr">
+            <template v-if="loadingBalance">
+              Loading balance ...
+              <v-progress-circular
+                class="ml-3"
+                color="white"
+                indeterminate
+                size="14"
+              />
+            </template>
+            <template v-else>
+              {{ balance }} CSPR
+            </template>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>Balance after operation</v-col>
+          <v-col class="text-right cspr">
+            {{ remainingBalance }} CSPR
+          </v-col>
+        </v-row>
+      </div>
       <v-alert
         v-if="errorBalance"
         class="mt-5"
@@ -93,12 +114,15 @@
 <script>
 import Amount from '@/components/operations/Amount';
 import Operation from '@/components/operations/Operation';
+import balanceService from '@/helpers/balanceService';
+import deployManager from '@/helpers/deployManager';
+import { NETWORK } from '@/helpers/env';
 import { TransferDeployParameters } from '@casperholders/core/dist/services/deploys/transfer/TransferDeployParameters';
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { TransferResult } from '@casperholders/core/dist/services/results/transferResult';
-import { CLPublicKey, Signer } from 'casper-js-sdk';
-import { mapState } from 'vuex';
+import { CLPublicKey } from 'casper-js-sdk';
+import { mapGetters, mapState } from 'vuex';
 
 /**
  * Transfer view
@@ -131,7 +155,7 @@ export default {
       address: '',
       transferID: '0',
       minimumCSPRTransfer: 2.5,
-      transferFee: 0.00001,
+      transferFee: 0.1,
       amount: '2.5',
       errorBalance: null,
       balance: '0',
@@ -144,6 +168,10 @@ export default {
   computed: {
     ...mapState([
       'signer',
+    ]),
+    ...mapGetters([
+      'signerObject',
+      'signerOptionsFactory',
     ]),
     remainingBalance() {
       const result = this.balance - this.amount - this.transferFee;
@@ -174,7 +202,7 @@ export default {
       this.errorBalance = null;
       this.balance = '0';
       try {
-        this.balance = await this.$getBalanceService().fetchBalance();
+        this.balance = await balanceService.fetchBalance();
         if (this.balance <= this.minimumFundsNeeded) {
           throw new InsufficientFunds(this.minimumFundsNeeded);
         }
@@ -192,12 +220,12 @@ export default {
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
       try {
-        const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
+        const deployResult = await deployManager.prepareSignAndSendDeploy(
           new TransferDeployParameters(
-            this.signer.activeKey, this.$getNetwork(), this.amount, this.address, this.transferID,
+            this.signer.activeKey, NETWORK, this.amount, this.address, this.transferID,
           ),
-          this.$getSigner(),
-          this.$getOptionsTo(this.address),
+          this.signerObject,
+          this.signerOptionsFactory.getOptionsForTransfer(this.address),
         );
         await this.$store.dispatch('addDeployResult', deployResult);
       } catch (e) {
@@ -208,8 +236,8 @@ export default {
       this.$root.$emit('closeOperationDialog');
       this.$root.$emit('operationFinished');
     },
-    connectionRequest() {
-      Signer.sendConnectionRequest();
+    async connectionRequest() {
+      await this.$store.dispatch('openConnectDialog');
     },
   },
 };

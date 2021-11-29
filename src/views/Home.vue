@@ -1,7 +1,14 @@
 <template>
   <div class="d-flex flex-column justify-center">
-    <div class="mx-auto text-h3 mt-12 mb-6 text-center text--white pb-4">
-      Welcome to Casper Holders
+    <div class="mx-auto">
+      <img
+        width="120px"
+        :src="logoSvg"
+        alt="Casper Holders Logo"
+      >
+    </div>
+    <div class="d-flex align-center mx-auto text-h3  mb-6 text-center text--white pb-4 ">
+      Casper Holders
     </div>
     <div class="mx-auto text-h5 text-center text--white pb-6">
       <p>
@@ -53,6 +60,7 @@
         </template>
 
         <v-card
+          id="tutorialDialog"
           class="rounded-xl primary"
         >
           <v-card-title class="text-h5">
@@ -250,6 +258,7 @@
 
           <v-card-actions>
             <v-btn
+              id="closeTutorial"
               color="quaternary"
               rounded
               @click="dialog = false"
@@ -305,8 +314,9 @@
 import Features from '@/components/home/Features';
 import Metrics from '@/components/home/Metrics';
 import Roadmap from '@/components/home/Roadmap';
-import { Signer } from 'casper-js-sdk';
+import { NETWORK } from '@/helpers/env';
 import { mapState } from 'vuex';
+import logoSvg from '@/assets/images/logo.svg';
 
 /**
  * Home view
@@ -317,6 +327,7 @@ export default {
   name: 'Home',
   components: { Metrics, Roadmap, Features },
   data: () => ({
+    logoSvg,
     carousel: 0,
     dialog: false,
     copied: false,
@@ -327,15 +338,15 @@ export default {
       return this.signer.activeKey;
     },
     swapNetworkName() {
-      return this.$getNetwork() === 'casper' ? 'TestNet' : 'MainNet';
+      return NETWORK === 'casper' ? 'TestNet' : 'MainNet';
     },
     swapCasperHoldersUrl() {
-      return this.$getNetwork() === 'casper' ? 'https://testnet.casperholders.io' : 'https://casperholders.io';
+      return NETWORK === 'casper' ? 'https://testnet.casperholders.io' : 'https://casperholders.io';
     },
   },
   methods: {
-    connectionRequest() {
-      Signer.sendConnectionRequest();
+    async connectionRequest() {
+      await this.$store.dispatch('openConnectDialog');
     },
     copyPublicKey() {
       const publicKey = document.getElementById('publicKey');

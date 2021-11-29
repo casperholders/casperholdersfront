@@ -34,21 +34,49 @@
       class="mb-4"
       @input="amount = $event"
     />
-    <p>
-      Payment amount the smart contract : {{ amount }} CSPR<br>
-      Balance : {{ balance }} CSPR
-      <template v-if="loadingBalance">
-        Loading balance ...
-        <v-progress-circular
-          class="ml-3"
-          color="white"
-          indeterminate
-        />
-      </template>
-      <br>
-      Total cost : {{ amount }} CSPR<br>
-      Remaining funds after operation : {{ remainingBalance }} CSPR<br>
-    </p>
+    <div class="mx-n1">
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Payment amount for the smart contract</v-col>
+        <v-col class="text-right cspr">
+          {{ amount }} CSPR
+        </v-col>
+      </v-row>
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Balance</v-col>
+        <v-col class="text-right cspr">
+          <template v-if="loadingBalance">
+            Loading balance ...
+            <v-progress-circular
+              class="ml-3"
+              color="white"
+              indeterminate
+              size="14"
+            />
+          </template>
+          <template v-else>
+            {{ balance }} CSPR
+          </template>
+        </v-col>
+      </v-row>
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Total cost</v-col>
+        <v-col class="text-right cspr">
+          {{ amount }} CSPR
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>Balance after operation</v-col>
+        <v-col class="text-right cspr">
+          {{ remainingBalance }} CSPR
+        </v-col>
+      </v-row>
+    </div>
     <v-alert
       v-if="errorBalance"
       class="mt-5"
@@ -88,12 +116,14 @@
 <script>
 import Amount from '@/components/operations/Amount';
 import Operation from '@/components/operations/Operation';
+import balanceService from '@/helpers/balanceService';
+import deployManager from '@/helpers/deployManager';
+import { NETWORK } from '@/helpers/env';
 import { SmartContractDeployParameters } from '@casperholders/core/dist/services/deploys/smartContract/smartContractDeployParameters';
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { SmartContractResult } from '@casperholders/core/dist/services/results/smartContractResult';
-import { Signer } from 'casper-js-sdk';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 /**
  * SmartContract view
@@ -122,12 +152,13 @@ export default {
     ...mapState([
       'signer',
     ]),
+    ...mapGetters([
+      'signerObject',
+      'signerOptionsFactory',
+    ]),
     remainingBalance() {
       const result = this.balance - this.amount;
       return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
-    },
-    validatorUrl() {
-      return `${this.$getCsprLiveUrl()}validator/${this.signer.activeKey}`;
     },
     isInstanceOfNoActiveKeyError() {
       return this.errorBalance instanceof NoActiveKeyError;
@@ -167,7 +198,7 @@ export default {
       this.errorBalance = null;
       this.balance = '0';
       try {
-        this.balance = await this.$getBalanceService().fetchBalance();
+        this.balance = await balanceService.fetchBalance();
         if (this.balance <= this.minPayment) {
           throw new InsufficientFunds(this.minPayment);
         }
@@ -185,12 +216,12 @@ export default {
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
       try {
-        const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
+        const deployResult = await deployManager.prepareSignAndSendDeploy(
           new SmartContractDeployParameters(
-            this.signer.activeKey, this.$getNetwork(), this.buffer, this.amount,
+            this.signer.activeKey, NETWORK, this.buffer, this.amount,
           ),
-          this.$getSigner(),
-          this.$getOptionsActiveKey(),
+          this.signerObject,
+          this.signerOptionsFactory.getOptionsForOperations(),
         );
         await this.$store.dispatch('addDeployResult', deployResult);
       } catch (e) {
@@ -201,8 +232,8 @@ export default {
       this.$root.$emit('closeOperationDialog');
       this.$root.$emit('operationFinished');
     },
-    connectionRequest() {
-      Signer.sendConnectionRequest();
+    async connectionRequest() {
+      await this.$store.dispatch('openConnectDialog');
     },
   },
 };

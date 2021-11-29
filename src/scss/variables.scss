@@ -1,0 +1,9 @@
+$material-dark: (
+        'cards': #00012a,
+        'toolbar': #00012a,
+        'table': (
+                'active': lighten(#00012a, 5%),
+                'hover': lighten(#00012a, 5%),
+                'group': lighten(#00012a, 5%)
+        ),
+);

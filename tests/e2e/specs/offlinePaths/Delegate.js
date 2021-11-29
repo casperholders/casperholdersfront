@@ -9,7 +9,7 @@ describe('Delegate', () => {
     };
     cy.visit('http://localhost:8080/stake');
     cy.get('.v-alert').should('have.length', 1);
-    cy.get('.v-alert').should('contain', ' Not connected on Signer. ');
+    cy.get('.v-alert').should('contain', ' Not connected. ');
     const event = new CustomEvent('signer:connected', msg);
     cy.window().then((win) => {
       win.dispatchEvent(event);
@@ -27,5 +27,6 @@ describe('Delegate', () => {
       .should('contain', 'Amount must equal or bellow');
     cy.get('#amount').type('{selectall}{del}').parents('.v-input__control').find('.v-messages__message')
       .should('contain', 'Amount is required');
+    cy.get('#validator').parents('.v-input__control').find('.v-messages__message').should('contain', 'You need to select a validator');
   });
 });

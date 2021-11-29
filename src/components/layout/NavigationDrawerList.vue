@@ -8,6 +8,9 @@
 </template>
 
 <script>
+/**
+ * NavigationDrawerList component
+ */
 export default {
   name: 'NavigationDrawerList',
 };

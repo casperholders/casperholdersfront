@@ -1,8 +1,6 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify/lib/framework';
-import globalPlugin from './globalPlugin';
 
-Vue.use(globalPlugin);
 Vue.use(Vuetify);
 
 export default new Vuetify({

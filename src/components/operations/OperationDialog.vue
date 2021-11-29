@@ -38,6 +38,7 @@
       </v-card-text>
       <v-card-actions class="pa-5">
         <v-btn
+          id="disagree"
           class="rounded-xl"
           color="secondary"
           @click="closePopup"
