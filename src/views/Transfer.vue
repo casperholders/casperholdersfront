@@ -39,20 +39,41 @@
         class="mb-4"
         @input="amount = $event"
       />
-      <p>
-        Transfer Fee : {{ transferFee }} CSPR<br>
-        Balance : {{ balance }} CSPR
-        <template v-if="loadingBalance">
-          Loading balance ...
-          <v-progress-circular
-            class="ml-3"
-            color="white"
-            indeterminate
-          />
-        </template>
-        <br>
-        Remaining funds after transfer : {{ remainingBalance }} CSPR<br>
-      </p>
+      <div class="mx-n1">
+        <v-row
+          class="white-bottom-border"
+        >
+          <v-col>Transfer Fee</v-col>
+          <v-col class="text-right cspr">
+            {{ transferFee }} CSPR
+          </v-col>
+        </v-row>
+        <v-row
+          class="white-bottom-border"
+        >
+          <v-col>Balance</v-col>
+          <v-col class="text-right cspr">
+            <template v-if="loadingBalance">
+              Loading balance ...
+              <v-progress-circular
+                class="ml-3"
+                color="white"
+                indeterminate
+                size="14"
+              />
+            </template>
+            <template v-else>
+              {{ balance }} CSPR
+            </template>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>Balance after operation</v-col>
+          <v-col class="text-right cspr">
+            {{ remainingBalance }} CSPR
+          </v-col>
+        </v-row>
+      </div>
       <v-alert
         v-if="errorBalance"
         class="mt-5"

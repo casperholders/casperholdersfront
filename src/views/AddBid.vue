@@ -45,21 +45,60 @@
       track-color="white"
       track-fill-color="white"
     />
-    <p>
-      Add bid operation fee : {{ bidFee }} CSPR<br>
-      Balance : {{ balance }} CSPR<br>
-      Validator bid : {{ validatorBalance }} CSPR
-      <template v-if="loadingBalance">
-        Loading balance ...
-        <v-progress-circular
-          class="ml-3"
-          color="white"
-          indeterminate
-        />
-      </template>
-      <br>
-      Remaining funds after operation : {{ remainingBalance }} CSPR<br>
-    </p>
+    <div class="mx-n1">
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Add bid operation fee</v-col>
+        <v-col class="text-right cspr">
+          {{ bidFee }} CSPR
+        </v-col>
+      </v-row>
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Balance</v-col>
+        <v-col class="text-right cspr">
+          <template v-if="loadingBalance">
+            Loading balance ...
+            <v-progress-circular
+              class="ml-3"
+              color="white"
+              indeterminate
+              size="14"
+            />
+          </template>
+          <template v-else>
+            {{ balance }} CSPR
+          </template>
+        </v-col>
+      </v-row>
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Validator bid</v-col>
+        <v-col class="text-right cspr">
+          <template v-if="loadingBalance">
+            Loading balance ...
+            <v-progress-circular
+              class="ml-3"
+              color="white"
+              indeterminate
+              size="14"
+            />
+          </template>
+          <template v-else>
+            {{ validatorBalance }} CSPR
+          </template>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>Balance after operation</v-col>
+        <v-col class="text-right cspr">
+          {{ remainingBalance }} CSPR
+        </v-col>
+      </v-row>
+    </div>
     <v-alert
       v-if="errorBalance"
       class="mt-5"
