@@ -1,14 +1,3 @@
-import AccountInfo from '@/views/AccountInfo';
-import AddBid from '@/views/AddBid';
-import Balance from '@/views/Balance';
-import Contact from '@/views/Contact';
-import Delegate from '@/views/Delegate';
-import FAQ from '@/views/FAQ';
-import Home from '@/views/Home';
-import SmartContract from '@/views/SmartContract';
-import Transfer from '@/views/Transfer';
-import Undelegate from '@/views/Undelegate';
-import WithdrawBid from '@/views/WithdrawBid';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
@@ -20,57 +9,57 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home,
+    component: () => import(/* webpackChunkName: "home-view" */ '@/views/Home'),
   },
   {
     path: '/balance',
     name: 'Balance',
-    component: Balance,
+    component: () => import(/* webpackChunkName: "balance-view" */ '@/views/Balance'),
   },
   {
     path: '/transfer',
     name: 'Transfer',
-    component: Transfer,
+    component: () => import(/* webpackChunkName: "transfer-view" */ '@/views/Transfer'),
   },
   {
     path: '/account',
     name: 'Account Info',
-    component: AccountInfo,
+    component: () => import(/* webpackChunkName: "account-view" */ '@/views/AccountInfo'),
   },
   {
     path: '/stake',
     name: 'Stake',
-    component: Delegate,
+    component: () => import(/* webpackChunkName: "stake-view" */ '@/views/Delegate'),
   },
   {
     path: '/unstake',
     name: 'Unstake',
-    component: Undelegate,
+    component: () => import(/* webpackChunkName: "unstake-view" */ '@/views/Undelegate'),
   },
   {
     path: '/addbid',
     name: 'Add Bid',
-    component: AddBid,
+    component: () => import(/* webpackChunkName: "addbid-view" */ '@/views/AddBid'),
   },
   {
     path: '/withdrawbid',
     name: 'Withdraw Bid',
-    component: WithdrawBid,
+    component: () => import(/* webpackChunkName: "withdrawbid-view" */ '@/views/WithdrawBid'),
   },
   {
     path: '/smartcontract',
     name: 'Send smart contract',
-    component: SmartContract,
+    component: () => import(/* webpackChunkName: "smartcontract-view" */ '@/views/SmartContract'),
   },
   {
     path: '/faq',
     name: 'FAQ',
-    component: FAQ,
+    component: () => import(/* webpackChunkName: "faq-view" */ '@/views/FAQ'),
   },
   {
     path: '/contact',
     name: 'contact',
-    component: Contact,
+    component: () => import(/* webpackChunkName: "contact-view" */ '@/views/Contact'),
   },
 ];
 
