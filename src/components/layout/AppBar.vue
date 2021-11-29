@@ -8,8 +8,9 @@
     elevate-on-scroll
   >
     <v-app-bar-nav-icon
-      id="toggleDrawer"
       v-show="$vuetify.breakpoint.mobile"
+      id="toggleDrawer"
+      aria-label="Toggle Drawer"
       @click.stop="toggleDrawer"
     />
 
@@ -81,6 +82,7 @@
           :disabled="disabledNotifications"
           :ripple="false"
           icon
+          aria-label="Notifications"
           v-on="on"
         >
           <v-badge
@@ -122,6 +124,7 @@
                 color="secondary"
                 fab
                 target="_blank"
+                rel="noopener"
                 x-small
               >
                 <v-icon x-small>

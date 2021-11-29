@@ -10,6 +10,7 @@
           fab
           small
           color="primary"
+          aria-label="Connection"
           v-bind="attrs"
           v-on="on"
         >
@@ -74,7 +75,10 @@
               class="mb-4"
               @click="signerConnect"
             >
-              <v-card-text id="connectCasperSigner" class="d-flex align-center">
+              <v-card-text
+                id="connectCasperSigner"
+                class="d-flex align-center"
+              >
                 <img
                   :src="casper"
                   width="32"
@@ -96,7 +100,10 @@
               link
               @click="ledgerConnect"
             >
-              <v-card-text id="connectLedger" class="d-flex align-center">
+              <v-card-text
+                id="connectLedger"
+                class="d-flex align-center"
+              >
                 <img
                   :src="ledger"
                   width="32"

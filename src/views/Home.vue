@@ -23,6 +23,7 @@
         large
         rounded
         target="_blank"
+        rel="noopener"
       >
         <v-icon
           class="mr-3"
@@ -83,6 +84,7 @@
                     <a
                       href="https://chrome.google.com/webstore/detail/casperlabs-signer/djhndpllfiibmcdbnmaaahkhchcoijce"
                       target="_blank"
+                      rel="noopener"
                     >
                       here
                     </a>.
@@ -280,6 +282,7 @@
       large
       rounded
       target="_blank"
+      rel="noopener"
     >
       <v-icon
         class="mr-3"

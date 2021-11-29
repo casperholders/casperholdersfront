@@ -34,6 +34,7 @@
             class="text-decoration-none"
             href="https://www.devxdao.com/"
             target="_blank"
+            rel="noopener"
           >
             <strong>
               Made with the help of DEVxDAO &#128150;

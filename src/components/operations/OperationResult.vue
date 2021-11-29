@@ -34,6 +34,7 @@
       <a
         :href="deployHashUrl"
         target="_blank"
+        rel="noopener"
       >
         {{ deployResult.hash }}
         <v-icon x-small>mdi-open-in-new</v-icon>

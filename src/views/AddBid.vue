@@ -15,6 +15,7 @@
       <a
         :href="validatorUrl"
         target="_blank"
+        rel="noopener"
       >
         {{ signer.activeKey }}
         <v-icon x-small>mdi-open-in-new</v-icon>

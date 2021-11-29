@@ -15,6 +15,7 @@
       <a
         href="https://github.com/make-software/casper-account-info-standard#how-does-it-work"
         target="_blank"
+        rel="noopener"
       >here</a> for more details.
     </p>
     <p>
