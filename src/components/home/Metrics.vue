@@ -61,6 +61,7 @@
 <script>
 import LineChart from '@/components/chart/LineChart';
 import { DATA_API } from '@/helpers/env';
+import colors from 'vuetify/lib/util/colors';
 
 /**
  * Metric component displayed on the homepage, fetch the metrics from the
@@ -110,7 +111,18 @@ export default {
   methods: {
     getRandomColor(index) {
       const { tertiary, quaternary, quinary, senary } = this.$vuetify.theme.currentTheme;
-      const availableColors = [tertiary, quaternary, quinary, senary];
+      const availableColors = [
+        tertiary,
+        quaternary,
+        quinary,
+        senary,
+        colors.purple.base,
+        colors.lime.base,
+        colors.red.base,
+        colors.yellow.base,
+        colors.green.base,
+        colors.deepOrange.base,
+      ];
 
       return availableColors[index % availableColors.length];
     },
