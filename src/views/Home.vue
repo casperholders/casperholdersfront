@@ -60,6 +60,7 @@
         </template>
 
         <v-card
+          id="tutorialDialog"
           class="rounded-xl primary"
         >
           <v-card-title class="text-h5">
@@ -257,6 +258,7 @@
 
           <v-card-actions>
             <v-btn
+              id="closeTutorial"
               color="quaternary"
               rounded
               @click="dialog = false"

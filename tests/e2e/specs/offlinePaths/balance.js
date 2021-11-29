@@ -32,6 +32,7 @@ describe('Balance', () => {
       .and((chart) => {
         expect(chart.height()).to.be.equals(400);
       });
+    cy.wait(60000).get('.operations').should('contain', '1-10 of');
 
     cy.wait(1000).window().then((win) => {
       msg.detail.activeKey = '01270a577d2d106c4d29402775f3dffcb9f04aad542579dd4d1cfad20572ebcb7a';

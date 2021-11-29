@@ -118,7 +118,7 @@ import Amount from '@/components/operations/Amount';
 import Operation from '@/components/operations/Operation';
 import balanceService from '@/helpers/balanceService';
 import deployManager from '@/helpers/deployManager';
-import { CSPR_LIVE_URL, NETWORK } from '@/helpers/env';
+import { NETWORK } from '@/helpers/env';
 import { SmartContractDeployParameters } from '@casperholders/core/dist/services/deploys/smartContract/smartContractDeployParameters';
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
@@ -159,9 +159,6 @@ export default {
     remainingBalance() {
       const result = this.balance - this.amount;
       return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
-    },
-    validatorUrl() {
-      return `${CSPR_LIVE_URL}validator/${this.signer.activeKey}`;
     },
     isInstanceOfNoActiveKeyError() {
       return this.errorBalance instanceof NoActiveKeyError;

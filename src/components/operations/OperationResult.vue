@@ -16,6 +16,7 @@
     <v-card-title>
       Operation result
       <v-btn
+        id="removeDeployResult"
         class="ml-auto"
         fab
         small

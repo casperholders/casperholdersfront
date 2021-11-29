@@ -168,7 +168,7 @@
 
 <script>
 import DoughnutChart from '@/components/chart/DoughnutChart';
-import Operations from '@/components/chart/Operations';
+import Operations from '@/components/operations/Operations';
 import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
 import balanceService from '@/helpers/balanceService';
 import Big from 'big.js';

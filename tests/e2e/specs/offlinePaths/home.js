@@ -21,5 +21,18 @@ describe('Home', () => {
       .should('contain', msg.detail.activeKey);
     cy.get('#copyToClipboard').click();
     cy.get('.v-tooltip__content').should('contain', 'Copied !');
+    cy.get('#closeTutorial').click();
+    cy.get('#tutorialDialog').should('not.be.visible');
+    cy.get('#metrics-loading')
+      .should('be.visible');
+    cy.get('#metrics-chart')
+      .should('not.exist');
+    cy.get('#metrics-no-data')
+      .should('not.exist');
+    cy.wait(5000);
+    cy.get('#metrics-loading')
+      .should('not.exist');
+    cy.get('#metrics-chart')
+      .should('be.visible');
   });
 });

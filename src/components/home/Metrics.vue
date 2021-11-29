@@ -27,6 +27,7 @@
             >
               <v-progress-circular
                 v-if="loading"
+                id="metrics-loading"
                 color="primary"
                 size="128"
                 width="10"
@@ -35,6 +36,7 @@
             </v-layout>
             <line-chart
               v-else-if="chartData"
+              id="metrics-chart"
               key="chart"
               :chart-data="chartData"
               :chart-options="chartOptions"
@@ -42,7 +44,7 @@
             />
             <div
               v-else
-              id="balance-no-liquidity"
+              id="metrics-no-data"
               key="nodata"
               class="text-overline d-flex align-center justify-center"
               style="height: 500px;"
