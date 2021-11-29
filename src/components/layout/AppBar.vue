@@ -145,17 +145,13 @@
 
 <script>
 import Connect from '@/components/layout/Connect';
-import deployManager from '@/helpers/deployManager';
 import { CSPR_LIVE_URL, HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
 import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER } from '@/helpers/signers';
-import { TransferDeployParameters } from '@casperholders/core/dist/services/deploys/transfer/TransferDeployParameters';
 import { STATUS_OK, STATUS_UNKNOWN } from '@casperholders/core/dist/services/results/deployResult';
-import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
-import CasperApp from '@zondax/ledger-casper';
 import { mapGetters, mapState } from 'vuex';
 
 /**
- * AppBar Component. Only displayed on non mobile screen
+ * AppBar Component
  * Contains a lot of utilities methods to display correctly some data or to
  * update the notification tray with the VueX store data
  */
@@ -266,27 +262,6 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('logout');
-    },
-    async connectLedger() {
-      try {
-        const transport = await TransportWebUSB.create();
-        transport.setDebugMode(true);
-        const app = new CasperApp(transport);
-        const resp = await app.getAddressAndPubKey('m/44\'/506\'/0\'/0/0');
-        console.log(resp);
-        console.log(resp.publicKey.toString('hex'));
-        await this.$store.dispatch('updateFromLedgerEvent', resp.publicKey.toString('hex'));
-        const deployResult = await deployManager.prepareSignAndSendDeploy(
-          new TransferDeployParameters(
-            this.signer.activeKey, NETWORK, 3, '020268d0aee78aee5b0d18d5e518aade42d7d929306db38ad357eaa8c1edbbee702a', 0,
-          ),
-          this.signerObject,
-          this.signerOptionsFactory.getOptionsForTransfer(app),
-        );
-        console.log(deployResult);
-      } catch (e) {
-        console.log(e);
-      }
     },
   },
 };

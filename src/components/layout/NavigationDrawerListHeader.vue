@@ -13,6 +13,9 @@
 </template>
 
 <script>
+/**
+ * NavigationDrawerListHeader component
+ */
 export default {
   name: 'NavigationDrawerListHeader',
   props: {

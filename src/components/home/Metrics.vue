@@ -62,7 +62,7 @@ import { DATA_API } from '@/helpers/env';
 
 /**
  * Metric component displayed on the homepage, fetch the metrics from the
- * api and parse them to be displayed in the sparklines
+ * api and parse them to be displayed in the chart
  */
 export default {
   name: 'Metrics',

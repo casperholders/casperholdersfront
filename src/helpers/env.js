@@ -1,3 +1,6 @@
+/**
+ * Make some env variables available in the whole app
+ */
 export const AUCTION_MANAGER_HASH = process.env.VUE_APP_AUCTION_MANAGER_HASH;
 export const ACCOUNT_INFO_HASH = process.env.VUE_APP_ACCOUNT_INFO_HASH;
 export const NETWORK = process.env.VUE_APP_NETWORK;

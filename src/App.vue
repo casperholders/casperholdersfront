@@ -73,6 +73,9 @@ export default {
   }),
   computed: {
     ...mapState(['signerType']),
+    /**
+     * Return the links available. Dynamically adjusted until ledger support any operations.
+     */
     links() {
       return {
         Account: [

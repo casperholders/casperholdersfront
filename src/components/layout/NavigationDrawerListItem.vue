@@ -16,6 +16,9 @@
 </template>
 
 <script>
+/**
+ * NavigationDrawerListItem component
+ */
 export default {
   name: 'NavigationDrawerListItem',
   inheritAttrs: false,

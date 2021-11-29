@@ -30,6 +30,9 @@
 <script>
 import RewardCalculator from '@/components/chart/RewardCalculator';
 
+/**
+ * RewardCalculatorPanel wrapper for the RewardCalculator component
+ */
 export default {
   name: 'RewardCalculatorPanel',
   components: { RewardCalculator },

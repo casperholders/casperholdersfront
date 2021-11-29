@@ -207,6 +207,9 @@ import CasperApp from '@zondax/ledger-casper';
 import { Signer } from 'casper-js-sdk';
 import { mapState } from 'vuex';
 
+/**
+ * Connect Component used to help the user connect to CasperSigner or Ledger
+ */
 export default {
   name: 'Connect',
   data: () => ({

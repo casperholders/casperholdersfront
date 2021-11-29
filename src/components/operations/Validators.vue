@@ -69,6 +69,9 @@ import Big from 'big.js';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapState } from 'vuex';
 
+/**
+ * Validator component display the list of validators
+ */
 export default {
   name: 'Validators',
   props: {
@@ -140,9 +143,17 @@ export default {
     await this.getValidators();
   },
   methods: {
+    /**
+     * Remove the current validator selected
+     */
     remove() {
       this.validator = undefined;
     },
+    /**
+     * Retrieve all validators with additional metadata
+     * from MAKE Account info smart contract if possible
+     * @returns {Promise<void>}
+     */
     async getValidators() {
       let userStake;
       if (this.undelegate) {

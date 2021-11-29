@@ -9,6 +9,9 @@ import cloneDeep from 'lodash.clonedeep';
 Chart.defaults.font.family = 'Roboto, sans-serif';
 Chart.register(Legend, Tooltip);
 
+/**
+ * AbstractChart component used to set default values on charts
+ */
 export default {
   name: 'AbstractChart',
   props: {

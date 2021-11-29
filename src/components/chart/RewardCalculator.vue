@@ -111,6 +111,9 @@ const MONTH_NAMES = [
   'August', 'September', 'October', 'November', 'December',
 ];
 
+/**
+ * RewardCalculator component retrieve APY from the API and display potential rewards to the user
+ */
 export default {
   name: 'RewardCalculator',
   components: { LineChart },

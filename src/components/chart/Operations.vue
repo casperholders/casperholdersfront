@@ -109,6 +109,9 @@ import { DATA_API } from '@/helpers/env';
 import { CurrencyUtils } from '@casperholders/core/dist/services/helpers/currencyUtils';
 import { mapState } from 'vuex';
 
+/**
+ * Operations component. List all operations of a user
+ */
 export default {
   name: 'Operations',
   data() {
@@ -191,8 +194,6 @@ export default {
       }
       const offset = (page - 1) * limit;
       let order = '';
-      console.log(this.options.sortBy[0]);
-      console.log(this.options.sortDesc[0]);
       if (this.options.sortBy[0]) {
         order = `&order=${this.options.sortBy[0]}`;
         if (this.options.sortDesc[0]) {

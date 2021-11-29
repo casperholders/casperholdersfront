@@ -13,6 +13,11 @@ const debug = process.env.NODE_ENV !== 'production';
 let randomKey;
 let validatorKey;
 
+/**
+ * Generate a random fake asymmetric key for E2E tests
+ * @param fakeKey
+ * @returns {AsymmetricKey}
+ */
 function generateAsymmetricKey(fakeKey) {
   const privateKey = Keys.Ed25519.parsePrivateKey(
     Keys.Ed25519.readBase64WithPEM(fakeKey),
@@ -21,6 +26,9 @@ function generateAsymmetricKey(fakeKey) {
   return Keys.Ed25519.parseKeyPair(publicKey, privateKey);
 }
 
+/**
+ * Store the casperApp if the user is connected with ledger
+ */
 export const ledgerOptions = {
   casperApp: undefined,
 };
@@ -34,12 +42,18 @@ if (process.env.VUE_APP_E2E === 'true') {
   validatorKey = generateAsymmetricKey(process.env.VUE_APP_FAKE_VALIDATOR_KEY);
 }
 
+/**
+ * Types of signer
+ */
 const SIGNER_TYPES = {
   [CASPER_SIGNER]: CasperSigner,
   [LOCAL_SIGNER]: LocalSigner,
   [LEDGER_SIGNER]: LedgerSigner,
 };
 
+/**
+ * Object used to retrieve the correct options for a given signer Type
+ */
 const SIGNER_OPTIONS_FACTORIES = {
   [CASPER_SIGNER]: (state) => ({
     getOptionsForTransfer: (to) => ({
@@ -80,7 +94,6 @@ const SIGNER_OPTIONS_FACTORIES = {
       key: validatorKey,
     }),
   }),
-  // [LEDGER_SIGNER]: undefined,
 };
 
 /**
@@ -88,6 +101,8 @@ const SIGNER_OPTIONS_FACTORIES = {
  * - The Casper Signer state
  * - An array of DeployResult objects used to keep track
  *   of the different deploys done by the user on the website
+ * - The type of signer currently used
+ * - The state of the connect dialog
  */
 const initialState = () => ({
   signer: {
