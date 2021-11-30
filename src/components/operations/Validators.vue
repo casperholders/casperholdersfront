@@ -24,7 +24,16 @@
         @click:close="remove()"
       >
         <v-avatar left>
-          <v-icon>mdi-alert</v-icon>
+          <template v-if="data.item.group === 'Inactive'">
+            <v-icon color="red">
+              mdi-alert
+            </v-icon>
+          </template>
+          <template v-else>
+            <v-icon color="green">
+              mdi-checkbox-marked-circle
+            </v-icon>
+          </template>
         </v-avatar>
         {{ data.item.name }}
       </v-chip>
