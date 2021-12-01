@@ -22,7 +22,7 @@
       placeholder="Select your contracts"
       prepend-icon="mdi-paperclip"
     >
-      <template v-slot:selection="{ text }">
+      <template #selection="{ text }">
         {{ text }}
       </template>
     </v-file-input>
@@ -34,21 +34,49 @@
       class="mb-4"
       @input="amount = $event"
     />
-    <p>
-      Payment amount the smart contract : {{ amount }} CSPR<br />
-      Balance : {{ balance }} CSPR
-      <template v-if="loadingBalance">
-        Loading balance ...
-        <v-progress-circular
-          class="ml-3"
-          color="white"
-          indeterminate
-        ></v-progress-circular>
-      </template>
-      <br />
-      Total cost : {{ amount }} CSPR<br />
-      Remaining funds after operation : {{ remainingBalance }} CSPR<br />
-    </p>
+    <div class="mx-n1">
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Payment amount for the smart contract</v-col>
+        <v-col class="text-right cspr">
+          {{ amount }} CSPR
+        </v-col>
+      </v-row>
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Balance</v-col>
+        <v-col class="text-right cspr">
+          <template v-if="loadingBalance">
+            Loading balance ...
+            <v-progress-circular
+              class="ml-3"
+              color="white"
+              indeterminate
+              size="14"
+            />
+          </template>
+          <template v-else>
+            {{ balance }} CSPR
+          </template>
+        </v-col>
+      </v-row>
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Total cost</v-col>
+        <v-col class="text-right cspr">
+          {{ amount }} CSPR
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>Balance after operation</v-col>
+        <v-col class="text-right cspr">
+          {{ remainingBalance }} CSPR
+        </v-col>
+      </v-row>
+    </div>
     <v-alert
       v-if="errorBalance"
       class="mt-5"
@@ -66,7 +94,9 @@
             color="primary"
             @click="connectionRequest"
           >
-            <v-icon left>mdi-account-circle</v-icon>
+            <v-icon left>
+              mdi-account-circle
+            </v-icon>
             Connect
           </v-btn>
         </v-col>
@@ -84,14 +114,17 @@
 </template>
 
 <script>
-import Operation from "@/components/operations/Operation";
-import Amount from "@/components/operations/Amount";
-import {Signer} from "casper-js-sdk";
-import {mapState} from "vuex";
-import {SmartContractResult} from "@casperholders/core/dist/services/results/smartContractResult";
-import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiveKeyError";
-import {InsufficientFunds} from "@casperholders/core/dist/services/errors/insufficientFunds";
-import {SmartContractDeployParameters} from "@casperholders/core/dist/services/deploys/smartContract/smartContractDeployParameters";
+import Amount from '@/components/operations/Amount';
+import Operation from '@/components/operations/Operation';
+import balanceService from '@/helpers/balanceService';
+import deployManager from '@/helpers/deployManager';
+import { NETWORK } from '@/helpers/env';
+import { SmartContractDeployParameters } from '@casperholders/core/dist/services/deploys/smartContract/smartContractDeployParameters';
+import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
+import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
+import { SmartContractResult } from '@casperholders/core/dist/services/results/smartContractResult';
+import { mapGetters, mapState } from 'vuex';
+
 /**
  * SmartContract view
  * Contains two fields
@@ -99,108 +132,111 @@ import {SmartContractDeployParameters} from "@casperholders/core/dist/services/d
  * - File input for the wasm smart contract
  */
 export default {
-    name: "SmartContract",
-    components: {Amount, Operation},
-    data() {
-        return {
-            minPayment: 1,
-            contract: [],
-            amount: "1",
-            balance: "0",
-            errorBalance: null,
-            loadingSignAndDeploy: false,
-            errorDeploy: null,
-            loadingBalance: false,
-            type: SmartContractResult.getName(),
-            buffer: null,
-        }
+  name: 'SmartContract',
+  components: { Amount, Operation },
+  data() {
+    return {
+      minPayment: 1,
+      contract: [],
+      amount: '1',
+      balance: '0',
+      errorBalance: null,
+      loadingSignAndDeploy: false,
+      errorDeploy: null,
+      loadingBalance: false,
+      type: SmartContractResult.getName(),
+      buffer: null,
+    };
+  },
+  computed: {
+    ...mapState([
+      'signer',
+    ]),
+    ...mapGetters([
+      'signerObject',
+      'signerOptionsFactory',
+    ]),
+    remainingBalance() {
+      const result = this.balance - this.amount;
+      return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
     },
-    computed: {
-        ...mapState([
-            "signer",
-        ]),
-        remainingBalance() {
-            let result = this.balance - this.amount
-            return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0
-        },
-        validatorUrl() {
-            return this.$getCsprLiveUrl() + "validator/" + this.signer.activeKey;
-        },
-        isInstanceOfNoActiveKeyError() {
-            return this.errorBalance instanceof NoActiveKeyError
-        }
+    isInstanceOfNoActiveKeyError() {
+      return this.errorBalance instanceof NoActiveKeyError;
     },
-    watch: {
-        async 'signer.activeKey'() {
-            await this.getBalance()
-        },
-        /**
-         * Read the file selected by the user
-         */
-        contract() {
-            let reader = new FileReader();
+  },
+  watch: {
+    'signer.activeKey': 'getBalance',
+    /**
+     * Read the file selected by the user
+     */
+    contract() {
+      const reader = new FileReader();
 
-            reader.onload = (evt) => {
-                this.buffer = evt.target.result;
-            };
+      reader.onload = (evt) => {
+        this.buffer = evt.target.result;
+      };
 
-            reader.onerror = function (evt) {
-                console.error("An error ocurred reading the file", evt);
-            };
+      reader.onerror = (evt) => {
+        console.error('An error ocurred reading the file', evt);
+      };
 
-            reader.readAsArrayBuffer(this.contract, "UTF-8");
+      reader.readAsArrayBuffer(this.contract, 'UTF-8');
+    },
+  },
+  async mounted() {
+    await this.getBalance();
+    this.$root.$on('operationOnGoing', () => {
+      this.errorDeploy = null;
+    });
+  },
+  methods: {
+    /**
+     * Get the user balance
+     */
+    async getBalance() {
+      this.loadingBalance = true;
+      this.errorBalance = null;
+      this.balance = '0';
+      try {
+        this.balance = await balanceService.fetchBalance();
+        if (this.balance <= this.minPayment) {
+          throw new InsufficientFunds(this.minPayment);
         }
+      } catch (e) {
+        this.errorBalance = e;
+      }
+      this.loadingBalance = false;
     },
-    async mounted() {
-        await this.getBalance();
-        this.$root.$on("operationOnGoing", () => this.errorDeploy = null)
+    /**
+     * Method used by the OperationDialog component when the user confirm the operation.
+     * Use the prepareSignAndSendDeploy method from the core library
+     * Update the store with a deploy result containing the deployhash of the deploy sent
+     */
+    async sendDeploy() {
+      this.errorDeploy = null;
+      this.loadingSignAndDeploy = true;
+      try {
+        const deployResult = await deployManager.prepareSignAndSendDeploy(
+          new SmartContractDeployParameters(
+            this.signer.activeKey, NETWORK, this.buffer, this.amount,
+          ),
+          this.signerObject,
+          this.signerOptionsFactory.getOptionsForOperations(),
+        );
+        await this.$store.dispatch('addDeployResult', deployResult);
+      } catch (e) {
+        console.log(e);
+        this.errorDeploy = e;
+      }
+      this.loadingSignAndDeploy = false;
+      this.$root.$emit('closeOperationDialog');
+      this.$root.$emit('operationFinished');
     },
-    methods: {
-        /**
-         * Get the user balance
-         */
-        async getBalance() {
-            this.loadingBalance = true;
-            this.errorBalance = null;
-            this.balance = "0";
-            try {
-                this.balance = await this.$getBalanceService().fetchBalance();
-                if (this.balance <= this.minPayment) {
-                    throw new InsufficientFunds(this.minPayment)
-                }
-            } catch (e) {
-                this.errorBalance = e;
-            }
-            this.loadingBalance = false;
-        },
-        /**
-         * Method used by the OperationDialog component when the user confirm the operation.
-         * Use the prepareSignAndSendDeploy method from the core library
-         * Update the store with a deploy result containing the deployhash of the deploy sent
-         */
-        async sendDeploy() {
-            this.errorDeploy = null;
-            this.loadingSignAndDeploy = true;
-            try {
-                const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
-                    new SmartContractDeployParameters(this.signer.activeKey, this.$getNetwork(), this.buffer, this.amount),
-                    this.$getSigner(),
-                    this.$getOptionsActiveKey()
-                );
-                await this.$store.dispatch("addDeployResult", deployResult)
-            } catch (e) {
-                console.log(e)
-                this.errorDeploy = e;
-            }
-            this.loadingSignAndDeploy = false;
-            this.$root.$emit('closeOperationDialog');
-            this.$root.$emit('operationFinished');
-        },
-        connectionRequest() {
-            Signer.sendConnectionRequest();
-        },
-    }
-}
+    async connectionRequest() {
+      await this.$store.dispatch('openConnectDialog');
+    },
+  },
+};
 </script>
 
 <style scoped>

@@ -1,8 +1,5 @@
 <template>
-  <v-container
-    class="flex-column justify-center container__small"
-    fill-height
-  >
+  <div>
     <v-card
       class="align-center rounded-xl secondary"
       width="100%"
@@ -14,7 +11,9 @@
         >
           <v-icon>mdi-mail</v-icon>
         </v-avatar>
-        <v-card-title class="pl-4">Contact</v-card-title>
+        <v-card-title class="pl-4">
+          Contact
+        </v-card-title>
       </v-card-title>
       <v-card-text class="text-body-1">
         <h2>Discord</h2>
@@ -78,7 +77,7 @@
         </v-btn>
       </v-card-actions>
     </v-card>
-  </v-container>
+  </div>
 </template>
 
 <script>
@@ -86,6 +85,6 @@
  * Contact view
  */
 export default {
-    name: 'FAQ',
-}
+  name: 'Contact',
+};
 </script>

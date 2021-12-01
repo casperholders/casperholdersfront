@@ -14,13 +14,16 @@
     "testnet": "vue-cli-service serve --mode testnet"
   },
   "dependencies": {
-    "@casperholders/core": "^1.1.1",
+    "@casperholders/core": "^1.10.0",
+    "@ledgerhq/hw-transport-webusb": "^6.11.2",
+    "@zondax/ledger-casper": "^0.0.1",
     "big.js": "^6.1.1",
-    "casper-js-sdk": "^2.4.0",
-    "chart.js": "2",
+    "casper-js-sdk": "^2.7.1",
+    "chart.js": "^3.5.1",
     "core-js": "^3.6.5",
+    "lodash.clonedeep": "^4.5.0",
+    "toformat": "^2.0.0",
     "vue": "^2.6.11",
-    "vue-chartjs": "^3.5.1",
     "vue-router": "^3.2.0",
     "vuetify": "^2.5.7",
     "vuex": "^3.6.2"
@@ -32,30 +35,19 @@
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
+    "@vue/eslint-config-airbnb": "^5.3.0",
     "babel-eslint": "^10.1.0",
     "babel-plugin-istanbul": "^6.0.0",
+    "cypress": "^8.7.0",
     "cypress-file-upload": "^5.0.8",
     "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.2.2",
+    "eslint-plugin-vue": "^7.17.0",
     "sass": "~1.32.6",
     "sass-loader": "^10.0.0",
     "vue-cli-plugin-vuetify": "^2.4.2",
+    "vue-eslint-parser": "^7.11.0",
     "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.7.0"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {}
   },
   "browserslist": [
     "> 1%",

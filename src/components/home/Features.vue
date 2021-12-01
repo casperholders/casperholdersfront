@@ -20,7 +20,7 @@
         <v-card-text class="text-body-1 text-center">
           See your current wallet balance, distribution of staked tokens and your staked rewards.
         </v-card-text>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-card-actions class="justify-center">
           <v-btn
             color="primary"
@@ -52,7 +52,7 @@
         <v-card-text class="text-body-1 text-center">
           Transfer funds to another account in just a few clicks and within seconds.
         </v-card-text>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-card-actions class="justify-center">
           <v-btn
             color="primary"
@@ -82,9 +82,9 @@
           </v-card-title>
         </v-card-title>
         <v-card-text class="text-body-1 text-center">
-          Stake your tokens to secure the network.<br />Earn up to 20% APY.
+          Stake your tokens to secure the network.<br>Earn up to 20% APY.
         </v-card-text>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-card-actions class="justify-center">
           <v-btn
             color="primary"
@@ -114,9 +114,10 @@
           </v-card-title>
         </v-card-title>
         <v-card-text class="text-body-1 text-center">
-          Unstake your tokens easily to restake to another validator or enjoy freely your tokens in your wallet.
+          Unstake your tokens easily to restake to another validator
+          or enjoy freely your tokens in your wallet.
         </v-card-text>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-card-actions class="justify-center">
           <v-btn
             color="primary"
@@ -148,7 +149,7 @@
         <v-card-text class="text-body-1 text-center">
           Add bid to your current Validator node to stay in the Casper Validators list.
         </v-card-text>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-card-actions class="justify-center">
           <v-btn
             color="primary"
@@ -178,9 +179,10 @@
           </v-card-title>
         </v-card-title>
         <v-card-text class="text-body-1 text-center">
-          Withdraw your tokens from your Validator Node easily and enjoy freely your tokens in your wallet.
+          Withdraw your tokens from your Validator Node easily and
+          enjoy freely your tokens in your wallet.
         </v-card-text>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-card-actions class="justify-center">
           <v-btn
             color="primary"
@@ -212,7 +214,7 @@
         <v-card-text class="text-body-1 text-center">
           Deploy smart contracts on the Casper blockchain !
         </v-card-text>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-card-actions class="justify-center">
           <v-btn
             color="primary"
@@ -242,9 +244,10 @@
           </v-card-title>
         </v-card-title>
         <v-card-text class="text-body-1 text-center">
-          Enjoy full platform metrics hover all the different types of operations available on the website.
+          Enjoy full platform metrics hover all the different
+          types of operations available on the website.
         </v-card-text>
-        <v-spacer></v-spacer>
+        <v-spacer />
       </v-card>
     </v-col>
   </v-row>
@@ -255,8 +258,8 @@
  * Features component display on the homepage
  */
 export default {
-    name: "Features"
-}
+  name: 'Features',
+};
 </script>
 
 <style scoped>

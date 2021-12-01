@@ -2,9 +2,6 @@ name: tests
 
 on:
   push:
-    branches-ignore:
-      - 'main'
-      - 'develop'
 
 jobs:
   build:
@@ -19,6 +16,7 @@ jobs:
           start: yarn serve
           wait-on: http://localhost:8080
           browser: chrome
+          spec: tests/e2e/specs/offlinePaths/*.js
         env:
           VUE_APP_FAKE_KEY: ${{ secrets.VUE_APP_FAKE_KEY }}
           VUE_APP_FAKE_VALIDATOR_KEY: ${{ secrets.VUE_APP_FAKE_VALIDATOR_KEY }}

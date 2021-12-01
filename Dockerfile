@@ -1,4 +1,4 @@
-FROM node:latest as build-stage
+FROM node:lts as build-stage
 ARG mode
 WORKDIR /app
 COPY package*.json ./

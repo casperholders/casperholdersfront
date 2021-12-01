@@ -11,16 +11,22 @@
     title="Add bid"
   >
     <p class="text-body-1">
-      Here's your validator : <a
-      :href=validatorUrl
-      target="_blank"
-    >{{ signer.activeKey }}
-      <v-icon x-small>mdi-open-in-new</v-icon>
-    </a><br />
-      <br />
-      Actually there's a commission rate of {{ commission }}%. (Applies on the staking rewards only.)<br />
-      Example : if your delegators receive 100 CSPR rewards from staking, you will received {{ commission }} CSPR and
-      they will
+      Here's your validator :
+      <a
+        :href="validatorUrl"
+        target="_blank"
+        rel="noopener"
+      >
+        {{ signer.activeKey }}
+        <v-icon x-small>mdi-open-in-new</v-icon>
+      </a>
+      <br>
+      <br>
+      Actually there's a commission rate of {{ commission }}%.
+      (Applies on the staking rewards only.)
+      <br>
+      Example : if your delegators receive 100 CSPR rewards from staking,
+      you will received {{ commission }} CSPR and they will
       get {{ 100 - commission }} CSPR.
     </p>
     <Amount
@@ -39,22 +45,61 @@
       thumb-label="always"
       track-color="white"
       track-fill-color="white"
-    ></v-slider>
-    <p>
-      Add bid operation fee : {{ bidFee }} CSPR<br />
-      Balance : {{ balance }} CSPR<br />
-      Validator bid : {{ validatorBalance }} CSPR
-      <template v-if="loadingBalance">
-        Loading balance ...
-        <v-progress-circular
-          class="ml-3"
-          color="white"
-          indeterminate
-        ></v-progress-circular>
-      </template>
-      <br />
-      Remaining funds after operation : {{ remainingBalance }} CSPR<br />
-    </p>
+    />
+    <div class="mx-n1">
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Add bid operation fee</v-col>
+        <v-col class="text-right cspr">
+          {{ bidFee }} CSPR
+        </v-col>
+      </v-row>
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Balance</v-col>
+        <v-col class="text-right cspr">
+          <template v-if="loadingBalance">
+            Loading balance ...
+            <v-progress-circular
+              class="ml-3"
+              color="white"
+              indeterminate
+              size="14"
+            />
+          </template>
+          <template v-else>
+            {{ balance }} CSPR
+          </template>
+        </v-col>
+      </v-row>
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Validator bid</v-col>
+        <v-col class="text-right cspr">
+          <template v-if="loadingBalance">
+            Loading balance ...
+            <v-progress-circular
+              class="ml-3"
+              color="white"
+              indeterminate
+              size="14"
+            />
+          </template>
+          <template v-else>
+            {{ validatorBalance }} CSPR
+          </template>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>Balance after operation</v-col>
+        <v-col class="text-right cspr">
+          {{ remainingBalance }} CSPR
+        </v-col>
+      </v-row>
+    </div>
     <v-alert
       v-if="errorBalance"
       class="mt-5"
@@ -72,7 +117,9 @@
             color="primary"
             @click="connectionRequest"
           >
-            <v-icon left>mdi-account-circle</v-icon>
+            <v-icon left>
+              mdi-account-circle
+            </v-icon>
             Connect
           </v-btn>
         </v-col>
@@ -90,14 +137,16 @@
 </template>
 
 <script>
-import Operation from "@/components/operations/Operation";
-import Amount from "@/components/operations/Amount";
-import {Signer} from "casper-js-sdk";
-import {mapState} from "vuex";
-import {AddBidResult} from "@casperholders/core/dist/services/results/addBidResult";
-import {NoActiveKeyError} from "@casperholders/core/dist/services/errors/noActiveKeyError";
-import {InsufficientFunds} from "@casperholders/core/dist/services/errors/insufficientFunds";
-import {AddBid} from "@casperholders/core/dist/services/deploys/auction/actions/addBid";
+import Amount from '@/components/operations/Amount';
+import Operation from '@/components/operations/Operation';
+import balanceService from '@/helpers/balanceService';
+import deployManager from '@/helpers/deployManager';
+import { AUCTION_MANAGER_HASH, CSPR_LIVE_URL, NETWORK } from '@/helpers/env';
+import { AddBid } from '@casperholders/core/dist/services/deploys/auction/actions/addBid';
+import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
+import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
+import { AddBidResult } from '@casperholders/core/dist/services/results/addBidResult';
+import { mapGetters, mapState } from 'vuex';
 
 /**
  * AddBid view
@@ -106,100 +155,110 @@ import {AddBid} from "@casperholders/core/dist/services/deploys/auction/actions/
  * - Slider to adjust the commission rate of the validator
  */
 export default {
-    name: "AddBid",
-    components: {Amount, Operation},
-    data() {
-        return {
-            minBid: 1,
-            bidFee: 2.50001,
-            amount: "1",
-            balance: "0",
-            validatorBalance: "0",
-            commission: 0,
-            errorBalance: null,
-            loadingSignAndDeploy: false,
-            errorDeploy: null,
-            loadingBalance: false,
-            type: AddBidResult.getName()
+  name: 'AddBid',
+  components: { Amount, Operation },
+  data() {
+    return {
+      minBid: 1,
+      bidFee: 2.50001,
+      amount: '1',
+      balance: '0',
+      validatorBalance: '0',
+      commission: 0,
+      errorBalance: null,
+      loadingSignAndDeploy: false,
+      errorDeploy: null,
+      loadingBalance: false,
+      type: AddBidResult.getName(),
+    };
+  },
+  computed: {
+    ...mapState([
+      'signer',
+    ]),
+    ...mapGetters([
+      'signerObject',
+      'signerOptionsFactory',
+    ]),
+    remainingBalance() {
+      const result = this.balance - this.amount - this.bidFee;
+      return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
+    },
+    validatorUrl() {
+      return `${CSPR_LIVE_URL}validator/${this.signer.activeKey}`;
+    },
+    minimumFundsNeeded() {
+      return this.minBid + this.bidFee;
+    },
+    isInstanceOfNoActiveKeyError() {
+      return this.errorBalance instanceof NoActiveKeyError;
+    },
+  },
+  watch: {
+    'signer.activeKey': 'getBalance',
+  },
+  async mounted() {
+    await this.getBalance();
+    this.$root.$on('operationOnGoing', () => {
+      this.errorDeploy = null;
+    });
+  },
+  methods: {
+    /**
+     * Get the user balance and the validator balance
+     */
+    async getBalance() {
+      this.loadingBalance = true;
+      this.errorBalance = null;
+      this.balance = '0';
+      this.validatorBalance = '0';
+      this.commission = 0;
+      try {
+        this.balance = await balanceService.fetchBalance();
+        const validatorInfos = await balanceService.fetchValidatorBalance();
+        this.validatorBalance = validatorInfos.balance;
+        this.commission = validatorInfos.commission;
+        if (this.balance <= this.minimumFundsNeeded) {
+          throw new InsufficientFunds(this.minimumFundsNeeded);
         }
+      } catch (e) {
+        this.errorBalance = e;
+      }
+      this.loadingBalance = false;
     },
-    computed: {
-        ...mapState([
-            "signer",
-        ]),
-        remainingBalance() {
-            let result = this.balance - this.amount - this.bidFee
-            return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0
-        },
-        validatorUrl() {
-            return this.$getCsprLiveUrl() + "validator/" + this.signer.activeKey;
-        },
-        minimumFundsNeeded() {
-            return this.minBid + this.bidFee;
-        },
-        isInstanceOfNoActiveKeyError() {
-            return this.errorBalance instanceof NoActiveKeyError
-        }
+    /**
+     * Method used by the OperationDialog component when the user confirm the operation.
+     * Use the prepareSignAndSendDeploy method from the core library
+     * Update the store with a deploy result containing the deployhash of the deploy sent
+     */
+    async sendDeploy() {
+      this.errorDeploy = null;
+      this.loadingSignAndDeploy = true;
+      try {
+        const deployResult = await deployManager.prepareSignAndSendDeploy(
+          new AddBid(
+            this.amount,
+            this.signer.activeKey,
+            this.commission,
+            NETWORK,
+            AUCTION_MANAGER_HASH,
+          ),
+          this.signerObject,
+          this.signerOptionsFactory.getOptionsForValidatorOperations(),
+        );
+        await this.$store.dispatch('addDeployResult', deployResult);
+      } catch (e) {
+        this.errorDeploy = e;
+      }
+      this.loadingSignAndDeploy = false;
+      this.$root.$emit('closeOperationDialog');
+      this.$root.$emit('operationFinished');
     },
-    watch: {
-        async 'signer.activeKey'() {
-            await this.getBalance()
-        }
+    async connectionRequest() {
+      await this.$store.dispatch('openConnectDialog');
     },
-    async mounted() {
-        await this.getBalance();
-        this.$root.$on("operationOnGoing", () => this.errorDeploy = null)
-    },
-    methods: {
-        /**
-         * Get the user balance and the validator balance
-         */
-        async getBalance() {
-            this.loadingBalance = true;
-            this.errorBalance = null;
-            this.balance = "0";
-            this.validatorBalance = "0";
-            this.commission = 0;
-            try {
-                this.balance = await this.$getBalanceService().fetchBalance();
-                const validatorInfos = await this.$getBalanceService().fetchValidatorBalance();
-                this.validatorBalance = validatorInfos.balance;
-                this.commission = validatorInfos.commission;
-                if (this.balance <= this.minimumFundsNeeded) {
-                    throw new InsufficientFunds(this.minimumFundsNeeded)
-                }
-            } catch (e) {
-                this.errorBalance = e;
-            }
-            this.loadingBalance = false;
-        },
-        /**
-         * Method used by the OperationDialog component when the user confirm the operation.
-         * Use the prepareSignAndSendDeploy method from the core library
-         * Update the store with a deploy result containing the deployhash of the deploy sent
-         */
-        async sendDeploy() {
-            this.errorDeploy = null;
-            this.loadingSignAndDeploy = true;
-            try {
-                const deployResult = await this.$getDeployManager().prepareSignAndSendDeploy(
-                    new AddBid(this.amount, this.signer.activeKey, this.commission, this.$getNetwork(), this.$getAuctionHash()),
-                    this.$getSigner(),
-                    this.$getOptionsActiveKeyValidatorOperations()
-                );
-                await this.$store.dispatch("addDeployResult", deployResult)
-            } catch (e) {
-                this.errorDeploy = e;
-            }
-            this.loadingSignAndDeploy = false;
-            this.$root.$emit('closeOperationDialog');
-            this.$root.$emit('operationFinished');
-        },
-        connectionRequest() {
-            Signer.sendConnectionRequest();
-        },
-    }
-}
+  },
+};
 </script>
 
 <style scoped>
