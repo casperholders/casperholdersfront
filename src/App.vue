@@ -43,7 +43,7 @@
         </p>
         <p class="mb-0 text-center text-caption">
           Hosted by OVH - 2 rue Kellermann - 59100 Roubaix - France - 1077 (+33 9
-          72 10 10 07)
+          72 10 10 07) - Powered by CoinGecko
         </p>
       </div>
     </v-footer>
