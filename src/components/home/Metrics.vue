@@ -152,6 +152,7 @@ export default {
 
             return {
               label: this.humanReadableLabel(label),
+              rawData: data,
               data,
               borderColor: color,
               backgroundColor: color,
@@ -170,6 +171,7 @@ export default {
 
           const total = {
             label: 'Total',
+            rawData: dataTotal,
             data: dataTotal,
             borderColor: 'white',
             backgroundColor: 'white',
