@@ -223,9 +223,7 @@ export default {
         const validators = (await clientCasper.casperRPC.getValidatorsInfo())
           .auction_state.era_validators;
         const currentEra = validators[0].validator_weights.map((v) => v.public_key);
-        console.log(currentEra);
         const nextEra = validators[1].validator_weights.map((v) => v.public_key);
-        console.log(nextEra);
         for (let i = 0; i < validatorsInfo.length; i++) {
           const validatorInfo = validatorsInfo[i];
           let totalStake = '0';
@@ -259,7 +257,6 @@ export default {
       }
 
       if (validatorsData.filter((validator) => validator.group === 'Active').length > 0 || validatorsData.filter((validator) => validator.group === 'Inactive').length > 0) {
-        console.log(validatorsData.filter((validator) => validator.group === 'Active' && validator.currentEra && validator.nextEra));
         this.validators = [
           { header: 'Current & next era validators' },
           ...validatorsData.filter((validator) => validator.group === 'Active' && validator.currentEra && validator.nextEra),
