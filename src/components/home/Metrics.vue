@@ -137,6 +137,7 @@ export default {
         const values = await (await fetch(`${DATA_API}/full_stats`)).json();
         if (values.length > 0) {
           const dates = [...new Set(values.map((v) => v.day.replace('T00:00:00+00:00', '')))];
+          dates.sort();
           const types = [...new Set(values.map((v) => v.type))];
 
           const datasets = [];
@@ -151,7 +152,6 @@ export default {
 
             return {
               label: this.humanReadableLabel(label),
-              rawData: data,
               data,
               borderColor: color,
               backgroundColor: color,
@@ -170,7 +170,6 @@ export default {
 
           const total = {
             label: 'Total',
-            rawData: dataTotal,
             data: dataTotal,
             borderColor: 'white',
             backgroundColor: 'white',
