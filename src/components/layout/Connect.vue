@@ -154,39 +154,116 @@
                 <div class="text-body-1 text-center mb-4">
                   Choose your Ledger Key
                 </div>
-                <template v-for="(ledgerKey, index) in ledgerKeys">
-                  <v-card
-                    :key="index"
-                    outlined
-                    elevation="3"
-                    link
-                    class="mb-4"
-                    @click="setLedgerKey(ledgerKey, index)"
+                <v-expansion-panels
+                  v-model="panels"
+                  :v-show="!initKeys"
+                  accordion
+                  flat
+                  tile
+                >
+                  <v-expansion-panel
+                    v-model="panels"
+                    expand
+                    class="secondary"
                   >
-                    <v-card-text
-                      id="connectCasperSigner"
-                      class="d-flex align-start"
-                    >
-                      <div>
-                        <span class="text-body-1">
-                          <v-icon>
-                            mdi-account
-                          </v-icon>
-                          {{ truncateText(ledgerKey.key) }}
-                        </span>
-                        <div class="text-left">
-                          <v-icon>
-                            mdi-currency-usd
-                          </v-icon>
-                          {{ ledgerKey.balance }} CSPR
-                        </div>
+                    <v-expansion-panel-header class="reward-calculator-panel-header">
+                      <div class="d-flex align-center text-overline">
+                        <v-icon
+                          left
+                        >
+                          mdi-currency-usd
+                        </v-icon>
+                        Keys with funds ({{ ledgerKeys.funds.length }})
                       </div>
-                      <v-icon class="ml-auto">
-                        mdi-chevron-right
-                      </v-icon>
-                    </v-card-text>
-                  </v-card>
-                </template>
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                      <template v-for="(ledgerKey, index) in ledgerKeys.funds">
+                        <v-card
+                          :key="index"
+                          outlined
+                          elevation="3"
+                          link
+                          class="mb-4"
+                          @click="setLedgerKey(ledgerKey, ledgerKey.keyPath)"
+                        >
+                          <v-card-text
+                            id="connectCasperSigner"
+                            class="d-flex align-start"
+                          >
+                            <div>
+                              <span class="text-body-1">
+                                <v-icon>
+                                  mdi-account
+                                </v-icon>
+                                {{ truncateText(ledgerKey.key) }}
+                              </span>
+                              <div class="text-left">
+                                <v-icon>
+                                  mdi-currency-usd
+                                </v-icon>
+                                {{ ledgerKey.balance }} CSPR
+                              </div>
+                            </div>
+                            <v-icon class="ml-auto">
+                              mdi-chevron-right
+                            </v-icon>
+                          </v-card-text>
+                        </v-card>
+                      </template>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                  <v-expansion-panel
+                    v-model="panels"
+                    expand
+                    class="secondary"
+                  >
+                    <v-expansion-panel-header class="reward-calculator-panel-header">
+                      <div class="d-flex align-center text-overline">
+                        <v-icon
+                          left
+                        >
+                          mdi-currency-usd-off
+                        </v-icon>
+                        Keys without funds ({{ ledgerKeys.noFunds.length }})
+                      </div>
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                      <template v-for="(ledgerKey, index) in ledgerKeys.noFunds">
+                        <v-card
+                          :key="index"
+                          outlined
+                          elevation="3"
+                          link
+                          class="mb-4"
+                          @click="setLedgerKey(ledgerKey, ledgerKey.keyPath)"
+                        >
+                          <v-card-text
+                            id="connectCasperSigner"
+                            class="d-flex align-start"
+                          >
+                            <div>
+                              <span class="text-body-1">
+                                <v-icon>
+                                  mdi-account
+                                </v-icon>
+                                {{ truncateText(ledgerKey.key) }}
+                              </span>
+                              <div class="text-left">
+                                <v-icon>
+                                  mdi-currency-usd
+                                </v-icon>
+                                {{ ledgerKey.balance }} CSPR
+                              </div>
+                            </div>
+                            <v-icon class="ml-auto">
+                              mdi-chevron-right
+                            </v-icon>
+                          </v-card-text>
+                        </v-card>
+                      </template>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
                 <v-btn
                   color="primary"
                   rounded
@@ -276,6 +353,7 @@ import balanceService from '@/helpers/balanceService';
 import { ledgerOptions } from '@/store';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import CasperApp from '@zondax/ledger-casper';
+import Big from 'big.js';
 import { Signer } from 'casper-js-sdk';
 import { mapState } from 'vuex';
 
@@ -291,8 +369,13 @@ export default {
     chooseLedgerKey: false,
     casper,
     ledger,
-    ledgerKeys: [],
+    ledgerKeys: {
+      funds: [],
+      noFunds: [],
+    },
     loadingKeys: false,
+    initKeys: true,
+    panels: undefined,
   }),
   computed: {
     ...mapState(['signer']),
@@ -358,8 +441,14 @@ export default {
         const transport = await TransportWebUSB.create();
         const app = new CasperApp(transport);
         const key = `02${(await app.getAddressAndPubKey('m/44\'/506\'/0\'/0/0')).publicKey.toString('hex')}`;
-        console.log(key);
-        this.ledgerKeys.push({ key, balance: await balanceService.fetchBalanceOfPublicKey(key) });
+        const balance = await balanceService.fetchBalanceOfPublicKey(key);
+        if (Big(balance).gt(0)) {
+          this.ledgerKeys.funds.push({ key, balance, keyPath: 0 });
+          this.panels = 0;
+        } else {
+          this.ledgerKeys.noFunds.push({ key, balance, keyPath: 0 });
+          this.panels = 1;
+        }
         ledgerOptions.casperApp = app;
         this.loading = false;
         this.chooseLedgerKey = true;
@@ -374,14 +463,19 @@ export default {
     async loadMoreLedgerKeys() {
       if (this.loadingKeys === false) {
         this.loadingKeys = true;
-        const nextKeyPath = this.ledgerKeys.length;
+        const nextKeyPath = this.ledgerKeys.funds.length + this.ledgerKeys.noFunds.length;
         for (let i = nextKeyPath; i < nextKeyPath + 4; i++) {
-          console.log(i);
           // eslint-disable-next-line no-await-in-loop
           const key = `02${(await ledgerOptions.casperApp.getAddressAndPubKey(`m/44'/506'/0'/0/${i}`)).publicKey.toString('hex')}`;
           // eslint-disable-next-line no-await-in-loop
-          this.ledgerKeys.push({ key, balance: await balanceService.fetchBalanceOfPublicKey(key) });
+          const balance = await balanceService.fetchBalanceOfPublicKey(key);
+          if (Big(balance).gt(0)) {
+            this.ledgerKeys.funds.push({ key, balance, keyPath: i });
+          } else {
+            this.ledgerKeys.noFunds.push({ key, balance, keyPath: i });
+          }
         }
+        this.initKeys = false;
         this.loadingKeys = false;
       }
     },
