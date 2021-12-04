@@ -1061,10 +1061,10 @@
     "@babel/helper-validator-identifier" "^7.15.7"
     to-fast-properties "^2.0.0"
 
-"@casperholders/core@^1.10.0":
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/@casperholders/core/-/core-1.10.0.tgz#d993c8e47b2d01554d2e38e59cac13ec630ec163"
-  integrity sha512-u/0ixcS6VIY3p7l1/Ivpo44RDNsuQuefOuV9juDP+Fof8tFNMdumL98iXTv+iAmU0BMI9GgsUtW7woJ22ivg5w==
+"@casperholders/core@^1.11.0":
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/@casperholders/core/-/core-1.11.0.tgz#f40830e45548687ac2641527b56ad0de028f7716"
+  integrity sha512-bllk9u0EeEX+rxFEfMLUoBoi9wTOF2t7GZZUDlfmG360kAvnWyhUXrp4+/XLbVSdwP6eQnDNCD+zBSMlN6+6sw==
   dependencies:
     "@ethersproject/bignumber" "^5.5.0"
     big.js "^6.1.1"

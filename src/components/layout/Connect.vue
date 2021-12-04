@@ -65,7 +65,7 @@
           group
         >
           <div
-            v-if="!loading && !connected && !timeout"
+            v-if="!loading && !connected && !timeout && !chooseLedgerKey"
             key="wallets"
           >
             <v-card
@@ -138,6 +138,63 @@
                   indeterminate
                   color="white"
                 />
+              </v-card-text>
+            </v-card>
+          </div>
+          <div
+            v-if="!connected && !loading && chooseLedgerKey"
+            key="loader"
+            class="text-center"
+          >
+            <v-card
+              outlined
+              elevation="3"
+            >
+              <v-card-text>
+                <div class="text-body-1 text-center mb-4">
+                  Choose your Ledger Key
+                </div>
+                <template v-for="(ledgerKey, index) in ledgerKeys">
+                  <v-card
+                    :key="index"
+                    outlined
+                    elevation="3"
+                    link
+                    class="mb-4"
+                    @click="setLedgerKey(ledgerKey, index)"
+                  >
+                    <v-card-text
+                      id="connectCasperSigner"
+                      class="d-flex align-start"
+                    >
+                      <div>
+                        <span class="text-body-1">
+                          <v-icon>
+                            mdi-account
+                          </v-icon>
+                          {{ truncateText(ledgerKey.key) }}
+                        </span>
+                        <div class="text-left">
+                          <v-icon>
+                            mdi-currency-usd
+                          </v-icon>
+                          {{ ledgerKey.balance }} CSPR
+                        </div>
+                      </div>
+                      <v-icon class="ml-auto">
+                        mdi-chevron-right
+                      </v-icon>
+                    </v-card-text>
+                  </v-card>
+                </template>
+                <v-btn
+                  color="primary"
+                  rounded
+                  :loading="loadingKeys"
+                  @click="loadMoreLedgerKeys"
+                >
+                  Load more keys
+                </v-btn>
               </v-card-text>
             </v-card>
           </div>
@@ -215,6 +272,7 @@
 <script>
 import casper from '@/assets/images/casper_logo.svg';
 import ledger from '@/assets/images/ledger_logo.png';
+import balanceService from '@/helpers/balanceService';
 import { ledgerOptions } from '@/store';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import CasperApp from '@zondax/ledger-casper';
@@ -230,8 +288,11 @@ export default {
     loading: false,
     connected: false,
     timeout: false,
+    chooseLedgerKey: false,
     casper,
     ledger,
+    ledgerKeys: [],
+    loadingKeys: false,
   }),
   computed: {
     ...mapState(['signer']),
@@ -296,14 +357,40 @@ export default {
         this.loading = true;
         const transport = await TransportWebUSB.create();
         const app = new CasperApp(transport);
-        const resp = await app.getAddressAndPubKey('m/44\'/506\'/0\'/0/0');
-        await this.$store.dispatch('updateFromLedgerEvent', resp.publicKey.toString('hex'));
+        const key = `02${(await app.getAddressAndPubKey('m/44\'/506\'/0\'/0/0')).publicKey.toString('hex')}`;
+        console.log(key);
+        this.ledgerKeys.push({ key, balance: await balanceService.fetchBalanceOfPublicKey(key) });
         ledgerOptions.casperApp = app;
+        this.loading = false;
+        this.chooseLedgerKey = true;
+        clearTimeout(inactivity);
       } catch (e) {
+        console.log(e);
         clearTimeout(inactivity);
         this.timeout = true;
         this.loading = false;
       }
+    },
+    async loadMoreLedgerKeys() {
+      if (this.loadingKeys === false) {
+        this.loadingKeys = true;
+        const nextKeyPath = this.ledgerKeys.length;
+        for (let i = nextKeyPath; i < nextKeyPath + 4; i++) {
+          console.log(i);
+          // eslint-disable-next-line no-await-in-loop
+          const key = `02${(await ledgerOptions.casperApp.getAddressAndPubKey(`m/44'/506'/0'/0/${i}`)).publicKey.toString('hex')}`;
+          // eslint-disable-next-line no-await-in-loop
+          this.ledgerKeys.push({ key, balance: await balanceService.fetchBalanceOfPublicKey(key) });
+        }
+        this.loadingKeys = false;
+      }
+    },
+    async setLedgerKey(activeKey, keyPath) {
+      await this.$store.dispatch('updateFromLedgerEvent', { activeKey, keyPath });
+      this.chooseLedgerKey = true;
+    },
+    truncateText(str) {
+      return `${str.substring(0, 10)}...${str.substring(str.length - 10)}`;
     },
     async closeDialog() {
       await this.$store.dispatch('closeConnectDialog');

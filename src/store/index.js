@@ -73,14 +73,17 @@ const SIGNER_OPTIONS_FACTORIES = {
     getOptionsForTransfer: () => ({
       app: ledgerOptions.casperApp,
       publicKey: state.signer.activeKey,
+      keyPath: state.ledger.keyPath,
     }),
     getOptionsForOperations: () => ({
       app: ledgerOptions.casperApp,
       publicKey: state.signer.activeKey,
+      keyPath: state.ledger.keyPath,
     }),
     getOptionsForValidatorOperations: () => ({
       app: ledgerOptions.casperApp,
       publicKey: state.signer.activeKey,
+      keyPath: state.ledger.keyPath,
     }),
   }),
   [LOCAL_SIGNER]: () => ({
@@ -114,6 +117,9 @@ const initialState = () => ({
   signerType: process.env.VUE_APP_E2E === 'true' ? LOCAL_SIGNER : '',
   operations: [],
   connectDialog: false,
+  ledger: {
+    keyPath: 0,
+  },
 });
 
 const getters = {
@@ -135,11 +141,12 @@ const mutations = {
     }
     state.signerType = process.env.VUE_APP_E2E === 'true' ? LOCAL_SIGNER : CASPER_SIGNER;
   },
-  updateLedger(state, { activeKey }) {
-    state.signer.activeKey = `02${activeKey}`;
+  updateLedger(state, { options }) {
+    state.signer.activeKey = options.activeKey.key;
     state.signer.lock = false;
     state.signer.connected = true;
     state.signerType = LEDGER_SIGNER;
+    state.ledger.keyPath = options.keyPath;
   },
   updateSignerLock(state, { lock }) {
     state.signer.lock = lock;
@@ -205,8 +212,8 @@ const actions = {
       context.commit('updateSignerLock', { lock: !detail.isUnlocked });
     }
   },
-  updateFromLedgerEvent(context, activeKey) {
-    context.commit('updateLedger', { activeKey });
+  updateFromLedgerEvent(context, options) {
+    context.commit('updateLedger', { options });
   },
   addDeployResult(context, deployResult) {
     context.commit('addDeployResult', { deployResult });

@@ -14,7 +14,7 @@
     "testnet": "vue-cli-service serve --mode testnet"
   },
   "dependencies": {
-    "@casperholders/core": "^1.10.0",
+    "@casperholders/core": "^1.11.0",
     "@ledgerhq/hw-transport-webusb": "^6.11.2",
     "@zondax/ledger-casper": "^0.0.1",
     "big.js": "^6.1.1",
