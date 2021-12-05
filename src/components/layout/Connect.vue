@@ -65,7 +65,7 @@
           group
         >
           <div
-            v-if="!loading && !connected && !timeout && !chooseLedgerKey"
+            v-if="!loading && !connected && !timeout && !chooseLedgerKey && !ledgerType"
             key="wallets"
           >
             <v-card
@@ -99,7 +99,7 @@
               elevation="3"
               link
               class="mb-4"
-              @click="ledgerConnect"
+              @click="ledgerType = true"
             >
               <v-card-text
                 id="connectLedger"
@@ -145,6 +145,72 @@
                 </v-icon>
               </v-card-text>
             </v-card>
+          </div>
+          <div
+            v-if="ledgerType"
+            key="loader"
+          >
+            <v-card
+              outlined
+              elevation="3"
+              link
+              class="mb-4"
+              @click="ledgerConnect(true)"
+            >
+              <v-card-text
+                id="connectLedger"
+                class="d-flex align-center"
+              >
+                <img
+                  :src="ledger"
+                  width="32"
+                  alt="Ledger Logo"
+                  class="mr-3"
+                >
+                <div>
+                  <span class="text-body-1">Ledger USB</span>
+                  <div>Support Nano S/X on Web & Android Chrome (OTG)</div>
+                </div>
+                <v-icon class="ml-auto">
+                  mdi-chevron-right
+                </v-icon>
+              </v-card-text>
+            </v-card>
+            <v-card
+              outlined
+              elevation="3"
+              link
+              class="mb-4"
+              @click="ledgerConnect(false)"
+            >
+              <v-card-text
+                id="connectLedger"
+                class="d-flex align-center"
+              >
+                <img
+                  :src="ledger"
+                  width="32"
+                  alt="Ledger Logo"
+                  class="mr-3"
+                >
+                <div>
+                  <span class="text-body-1">Ledger Bluetooth</span>
+                  <div>Support Nano X on Web & Mobile</div>
+                </div>
+                <v-icon class="ml-auto">
+                  mdi-chevron-right
+                </v-icon>
+              </v-card-text>
+            </v-card>
+            <div class="d-flex justify-center">
+              <v-btn
+                class="primary"
+                rounded
+                @click="ledgerType = false"
+              >
+                Back
+              </v-btn>
+            </div>
           </div>
           <div
             v-if="loading"
@@ -364,9 +430,17 @@
         <p>
           New to casper?
         </p>
-        <a href="#">Create a new wallet with Casper Signer</a>
+        <a
+          href="https://casper.network/docs/workflow/signer-guide"
+          target="_blank"
+          rel="noopener"
+        >Create a new wallet with Casper Signer</a>
         <br>
-        <a href="#">Create a new wallet with Ledger</a>
+        <a
+          href="https://casper.network/docs/workflow/ledger-setup"
+          target="_blank"
+          rel="noopener"
+        >Create a new wallet with Ledger</a>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -377,6 +451,7 @@ import casper from '@/assets/images/casper_logo.svg';
 import torus from '@/assets/images/torus.svg';
 import ledger from '@/assets/images/ledger_logo.png';
 import balanceService from '@/helpers/balanceService';
+import TransportWebBLE from '@ledgerhq/hw-transport-web-ble';
 import getTorusNetwork from '@/helpers/torusNetwork';
 import { ledgerOptions, torusOptions } from '@/store';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
@@ -395,6 +470,7 @@ export default {
     loading: false,
     connected: false,
     timeout: false,
+    ledgerType: false,
     chooseLedgerKey: false,
     casper,
     ledger,
@@ -459,7 +535,8 @@ export default {
         Signer.sendConnectionRequest();
       }
     },
-    async ledgerConnect() {
+    async ledgerConnect(usb) {
+      this.ledgerType = false;
       const inactivity = setTimeout(() => {
         if (this.signer.activeKey === null) {
           this.timeout = true;
@@ -468,7 +545,12 @@ export default {
       }, 60000);
       try {
         this.loading = true;
-        const transport = await TransportWebUSB.create();
+        let transport;
+        if (usb) {
+          transport = await TransportWebUSB.create();
+        } else {
+          transport = await TransportWebBLE.create();
+        }
         const app = new CasperApp(transport);
         const key = `02${(await app.getAddressAndPubKey('m/44\'/506\'/0\'/0/0')).publicKey.toString('hex')}`;
         const balance = await balanceService.fetchBalanceOfPublicKey(key);
