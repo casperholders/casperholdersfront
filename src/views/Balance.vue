@@ -168,8 +168,8 @@
 
 <script>
 import DoughnutChart from '@/components/chart/DoughnutChart';
-import Operations from '@/components/operations/Operations';
 import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
+import Operations from '@/components/operations/Operations';
 import balanceService from '@/helpers/balanceService';
 import Big from 'big.js';
 import { mapState } from 'vuex';
@@ -189,6 +189,7 @@ export default {
       chartData: undefined,
       validator: undefined,
       totalStaked: Big(0),
+      balance: Big(0),
     };
   },
   computed: {
@@ -222,8 +223,13 @@ export default {
                 }
 
                 const rawValue = datasets[0].data[legendItem.index];
-                // eslint-disable-next-line no-param-reassign
-                legendItem.text = `${legendItem.text}: ${rawValue} CSPR (${this.csprPercentage(legendItem.index)}%)`;
+                if (legendItem.text.includes('Total')) {
+                  // eslint-disable-next-line no-param-reassign
+                  legendItem.text = `${legendItem.text}`;
+                } else {
+                  // eslint-disable-next-line no-param-reassign
+                  legendItem.text = `${legendItem.text}: ${rawValue} CSPR (${this.csprPercentage(legendItem.index)}%)`;
+                }
 
                 return true;
               },
@@ -261,15 +267,16 @@ export default {
       this.errored = false;
       this.chartData = undefined;
       this.totalStaked = Big(0);
+      this.balance = Big(0);
 
       const { primary } = this.$vuetify.theme.currentTheme;
       const newChartData = {
         datasets: [{ backgroundColor: [primary], borderWidth: 0 }],
       };
       try {
-        const balance = await balanceService.fetchBalance();
+        this.balance = await balanceService.fetchBalance();
         newChartData.labels = ['Available'];
-        newChartData.datasets[0].data = [balance];
+        newChartData.datasets[0].data = [this.balance];
       } catch (error) {
         this.errored = true;
         this.loading = false;
@@ -293,7 +300,9 @@ export default {
       } catch (error) {
         console.log(error);
       }
-
+      newChartData.labels.push(`Total: ${this.totalStaked.plus(this.balance)} CSPR`);
+      newChartData.datasets[0].data.push(0);
+      newChartData.datasets[0].backgroundColor.push('grey');
       this.chartData = newChartData;
       this.loading = false;
     },
