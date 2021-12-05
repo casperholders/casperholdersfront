@@ -14,6 +14,7 @@
     required
     return-object
     persistent-hint
+    :filter="filterObject"
   >
     <template #selection="data">
       <v-chip
@@ -172,6 +173,17 @@ export default {
     await this.getValidators();
   },
   methods: {
+    // eslint-disable-next-line no-unused-vars
+    filterObject(item, queryText, itemText) {
+      if (item.name || item.publicKey) {
+        console.log(item.publicKey.toLowerCase() === queryText.toLowerCase());
+        return (
+          item.name.toLocaleLowerCase().indexOf(queryText.toLocaleLowerCase()) > -1
+          || item.publicKey.toLocaleLowerCase().indexOf(queryText.toLocaleLowerCase()) > -1
+        );
+      }
+      return false;
+    },
     /**
      * Remove the current validator selected
      */
@@ -266,6 +278,9 @@ export default {
           { divider: true },
           { header: 'Next era validators under top 100' },
           ...validatorsData.filter((validator) => validator.group === 'Active' && validator.currentEra && !validator.nextEra),
+          { divider: true },
+          { header: 'Active validators under top 100' },
+          ...validatorsData.filter((validator) => validator.group === 'Active' && !validator.currentEra && !validator.nextEra),
           { divider: true },
           { header: 'Inactive' },
           ...validatorsData.filter((validator) => validator.group === 'Inactive'),

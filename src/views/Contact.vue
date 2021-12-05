@@ -29,13 +29,14 @@
         </p>
       </v-card-text>
 
-      <v-card-actions class="justify-center">
+      <v-card-actions class="justify-md-space-around flex-md-row flex-column">
         <v-btn
           color="primary"
           href="https://discord.com/invite/Q38s3Vh"
           rel="noopener"
           rounded
           target="_blank"
+          class="mb-3"
         >
           <v-icon
             dark
@@ -51,6 +52,7 @@
           rel="noopener"
           rounded
           target="_blank"
+          class="mb-3"
         >
           <v-icon
             dark
@@ -66,6 +68,7 @@
           rel="noopener"
           rounded
           target="_blank"
+          class="mb-3"
         >
           <v-icon
             dark
@@ -81,6 +84,7 @@
 </template>
 
 <script>
+
 /**
  * Contact view
  */

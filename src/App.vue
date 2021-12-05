@@ -231,6 +231,10 @@ export default {
     border-bottom: 1px solid rgba(255, 255, 255, 0.5)
   }
 
+  .white-top-border {
+    border-top: 1px solid rgba(255, 255, 255, 0.5)
+  }
+
   .theme--dark.v-list-item.v-list-item--active {
     color: white !important;
   }
