@@ -49,6 +49,5 @@ describe('Balance', () => {
       .should('contain', 'No liquidity available');
     cy.get('#balance-chart')
       .should('not.exist');
-
   });
 });

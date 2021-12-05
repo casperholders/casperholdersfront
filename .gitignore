@@ -25,3 +25,5 @@ pnpm-debug.log*
 coverage/
 
 .nyc_output/
+
+localhost_*.report.html
