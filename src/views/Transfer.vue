@@ -108,6 +108,16 @@
       >
         {{ errorDeploy.message }}
       </v-alert>
+      <v-alert
+        v-if="exchange"
+        class="mt-5"
+        type="warning"
+        prominent
+        border="left"
+      >
+        You're going to transfer some funds to <b>{{ getExchange }}</b> (presumably)! <br>
+        Verify your <b>transfer ID</b> and make sure it's correct <b>BEFORE</b> signing the deploy.
+      </v-alert>
     </operation>
   </div>
 </template>
@@ -118,6 +128,7 @@ import Operation from '@/components/operations/Operation';
 import balanceService from '@/helpers/balanceService';
 import deployManager from '@/helpers/deployManager';
 import { NETWORK } from '@/helpers/env';
+import exchanges from '@/helpers/exchanges';
 import { TransferDeployParameters } from '@casperholders/core/dist/services/deploys/transfer/TransferDeployParameters';
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
@@ -183,6 +194,24 @@ export default {
     },
     isInstanceOfNoActiveKeyError() {
       return this.errorBalance instanceof NoActiveKeyError;
+    },
+    exchange() {
+      let result = false;
+      exchanges.forEach((value, index) => {
+        if (index.toLowerCase() === this.address.toLowerCase()) {
+          result = true;
+        }
+      });
+      return result;
+    },
+    getExchange() {
+      let result = '';
+      exchanges.forEach((value, index) => {
+        if (index.toLowerCase() === this.address.toLowerCase()) {
+          result = value;
+        }
+      });
+      return result;
     },
   },
   watch: {
