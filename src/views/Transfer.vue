@@ -23,6 +23,7 @@
       />
       <v-text-field
         id="transferID"
+        v-model="transferID"
         :rules="transferIDRules"
         :value="transferID"
         color="white"
