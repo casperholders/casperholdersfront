@@ -286,27 +286,29 @@ export default {
           this.getDeployResult().then(() => this.eventWatcher.close());
         }
       };
-    }
-    setTimeout(() => {
-      if (this.step < 2) {
-        this.step = 2;
-      }
-    }, 10000);
-    setTimeout(() => {
-      if (this.step < 3) {
-        this.step = 3;
-      }
-    }, 20000);
-    setTimeout(async () => {
-      this.eventWatcher.close();
-      await this.getDeployResult();
-      if (this.deployResult.status === STATUS_UNKNOWN) {
-        this.deployResult.status = STATUS_KO;
-        this.deployResult.message = 'No deploy result from the network. Please check on cspr.live or reach someone on the discord with the deploy hash.';
-        await this.$store.dispatch('updateDeployResult', this.deployResult);
+      setTimeout(() => {
+        if (this.step < 2) {
+          this.step = 2;
+        }
+      }, 10000);
+      setTimeout(() => {
+        if (this.step < 3) {
+          this.step = 3;
+        }
+      }, 20000);
+      setTimeout(async () => {
+        this.eventWatcher.close();
+        await this.getDeployResult();
+        if (this.deployResult.status === STATUS_UNKNOWN) {
+          this.deployResult.status = STATUS_KO;
+          this.deployResult.message = 'No deploy result from the network. Please check on cspr.live or reach someone on the discord with the deploy hash.';
+          await this.$store.dispatch('updateDeployResult', this.deployResult);
+        }
         this.step = 4;
-      }
-    }, 180000);
+      }, 180000);
+    } else {
+      this.step = 4;
+    }
   },
   methods: {
     /**

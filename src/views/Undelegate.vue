@@ -112,6 +112,7 @@ import { Undelegate } from '@casperholders/core/dist/services/deploys/auction/ac
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { UndelegateResult } from '@casperholders/core/dist/services/results/undelegateResult';
+import Big from 'big.js';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -146,8 +147,8 @@ export default {
       'signerOptionsFactory',
     ]),
     remainingBalance() {
-      const result = this.balance + this.amount - this.undelegateFee;
-      return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
+      const result = Big(this.balance).plus(this.amount).minus(this.undelegateFee);
+      return result.gte(0) ? Big(result.toFixed(5)).toNumber() : 0;
     },
     minimumFundsNeeded() {
       return this.undelegateFee;
