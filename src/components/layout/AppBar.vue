@@ -152,7 +152,7 @@
 <script>
 import Connect from '@/components/layout/Connect';
 import { CSPR_LIVE_URL, HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
-import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER } from '@/helpers/signers';
+import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER, TORUS_SIGNER } from '@/helpers/signers';
 import { STATUS_OK, STATUS_UNKNOWN } from '@casperholders/core/dist/services/results/deployResult';
 import { mapGetters, mapState } from 'vuex';
 
@@ -189,6 +189,9 @@ export default {
       }
       if (this.signerType === LOCAL_SIGNER) {
         return 'Local';
+      }
+      if (this.signerType === TORUS_SIGNER) {
+        return 'Torus';
       }
       return 'None';
     },

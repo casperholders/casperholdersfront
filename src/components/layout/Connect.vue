@@ -98,6 +98,7 @@
               outlined
               elevation="3"
               link
+              class="mb-4"
               @click="ledgerConnect"
             >
               <v-card-text
@@ -113,6 +114,31 @@
                 <div>
                   <span class="text-body-1">Ledger</span>
                   <div>Unlock your ledger and open the Casper app first.</div>
+                </div>
+                <v-icon class="ml-auto">
+                  mdi-chevron-right
+                </v-icon>
+              </v-card-text>
+            </v-card>
+            <v-card
+              outlined
+              elevation="3"
+              link
+              @click="torusConnect"
+            >
+              <v-card-text
+                id="connectTorus"
+                class="d-flex align-center"
+              >
+                <img
+                  :src="torus"
+                  width="32"
+                  alt="Torus Logo"
+                  class="mr-3"
+                >
+                <div>
+                  <span class="text-body-1">Torus</span>
+                  <div>Non-custodial Key Management, Meets Passwordless Auth.</div>
                 </div>
                 <v-icon class="ml-auto">
                   mdi-chevron-right
@@ -348,10 +374,13 @@
 
 <script>
 import casper from '@/assets/images/casper_logo.svg';
+import torus from '@/assets/images/torus.svg';
 import ledger from '@/assets/images/ledger_logo.png';
 import balanceService from '@/helpers/balanceService';
-import { ledgerOptions } from '@/store';
+import getTorusNetwork from '@/helpers/torusNetwork';
+import { ledgerOptions, torusOptions } from '@/store';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
+import Torus from '@toruslabs/casper-embed';
 import CasperApp from '@zondax/ledger-casper';
 import Big from 'big.js';
 import { Signer } from 'casper-js-sdk';
@@ -369,6 +398,7 @@ export default {
     chooseLedgerKey: false,
     casper,
     ledger,
+    torus,
     ledgerKeys: {
       funds: [],
       noFunds: [],
@@ -482,6 +512,23 @@ export default {
     async setLedgerKey(activeKey, keyPath) {
       await this.$store.dispatch('updateFromLedgerEvent', { activeKey, keyPath });
       this.chooseLedgerKey = true;
+    },
+    async torusConnect() {
+      this.loading = true;
+      try {
+        const torusInstance = new Torus();
+        await torusInstance.init({
+          showTorusButton: false,
+          network: getTorusNetwork(),
+        });
+        const publicKey = (await torusInstance?.login())[0];
+        await this.$store.dispatch('updateFromTorusEvent', publicKey);
+        torusOptions.torusInstance = torusInstance;
+      } catch (e) {
+        console.log(e);
+        this.timeout = true;
+        this.loading = false;
+      }
     },
     truncateText(str) {
       return `${str.substring(0, 10)}...${str.substring(str.length - 10)}`;

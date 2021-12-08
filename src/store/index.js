@@ -1,8 +1,9 @@
 import deployManager from '@/helpers/deployManager';
-import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER } from '@/helpers/signers';
+import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER, TORUS_SIGNER } from '@/helpers/signers';
 import { CasperSigner } from '@casperholders/core/dist/services/signers/casperSigner';
 import { LedgerSigner } from '@casperholders/core/dist/services/signers/ledgerSigner';
 import { LocalSigner } from '@casperholders/core/dist/services/signers/localSigner';
+import { TorusSigner } from '@casperholders/core/dist/services/signers/torusSigner';
 import { Keys, Signer } from 'casper-js-sdk';
 import Vue from 'vue';
 import Vuex from 'vuex';
@@ -34,6 +35,10 @@ export const ledgerOptions = {
   casperApp: undefined,
 };
 
+export const torusOptions = {
+  torusInstance: undefined,
+};
+
 /**
  * If we run the app in End to End test mode we override the signer with
  * a LocalSigner and set fake keys to be used in the options sent to the signer.
@@ -50,6 +55,7 @@ const SIGNER_TYPES = {
   [CASPER_SIGNER]: CasperSigner,
   [LOCAL_SIGNER]: LocalSigner,
   [LEDGER_SIGNER]: LedgerSigner,
+  [TORUS_SIGNER]: TorusSigner,
 };
 
 /**
@@ -96,6 +102,17 @@ const SIGNER_OPTIONS_FACTORIES = {
     }),
     getOptionsForValidatorOperations: () => ({
       key: validatorKey,
+    }),
+  }),
+  [TORUS_SIGNER]: () => ({
+    getOptionsForTransfer: () => ({
+      torus: torusOptions.torusInstance,
+    }),
+    getOptionsForOperations: () => ({
+      torus: torusOptions.torusInstance,
+    }),
+    getOptionsForValidatorOperations: () => ({
+      torus: torusOptions.torusInstance,
     }),
   }),
 };
@@ -150,6 +167,12 @@ const mutations = {
     state.signer.connected = true;
     state.signerType = LEDGER_SIGNER;
     state.ledger.keyPath = options.keyPath;
+  },
+  updateTorus(state, { publicKey }) {
+    state.signer.activeKey = publicKey;
+    state.signer.lock = false;
+    state.signer.connected = true;
+    state.signerType = TORUS_SIGNER;
   },
   updateSignerLock(state, { lock }) {
     state.signer.lock = lock;
@@ -238,6 +261,9 @@ const actions = {
   },
   updateFromLedgerEvent(context, options) {
     context.commit('updateLedger', { options });
+  },
+  updateFromTorusEvent(context, publicKey) {
+    context.commit('updateTorus', { publicKey });
   },
   addDeployResult(context, deployResult) {
     context.commit('addDeployResult', { deployResult });
