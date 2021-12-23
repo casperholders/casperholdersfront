@@ -142,6 +142,7 @@ export default {
   computed: {
     ...mapState([
       'signer',
+      'internet',
     ]),
     ...mapGetters([
       'signerObject',

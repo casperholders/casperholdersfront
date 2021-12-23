@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@casperholders/core": "^1.14.1",
-    "@toruslabs/casper-embed": "^1.1.0",
+    "@toruslabs/casper-embed": "^1.1.2",
     "@ledgerhq/hw-transport-webusb": "^6.11.2",
     "@zondax/ledger-casper": "^0.0.1",
     "big.js": "^6.1.1",

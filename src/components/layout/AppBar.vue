@@ -153,6 +153,7 @@
 import Connect from '@/components/layout/Connect';
 import { CSPR_LIVE_URL, HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
 import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER, TORUS_SIGNER } from '@/helpers/signers';
+import { torusOptions } from '@/store';
 import { STATUS_OK, STATUS_UNKNOWN } from '@casperholders/core/dist/services/results/deployResult';
 import { mapGetters, mapState } from 'vuex';
 
@@ -270,6 +271,9 @@ export default {
       this.$store.dispatch('removeDeployResult', operation);
     },
     async logout() {
+      if (this.signerType === TORUS_SIGNER) {
+        await torusOptions.torusInstance.logout();
+      }
       await this.$store.dispatch('logout');
     },
   },

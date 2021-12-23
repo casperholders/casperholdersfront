@@ -176,7 +176,6 @@ export default {
     // eslint-disable-next-line no-unused-vars
     filterObject(item, queryText, itemText) {
       if (item.name || item.publicKey) {
-        console.log(item.publicKey.toLowerCase() === queryText.toLowerCase());
         return (
           item.name.toLocaleLowerCase().indexOf(queryText.toLocaleLowerCase()) > -1
           || item.publicKey.toLocaleLowerCase().indexOf(queryText.toLocaleLowerCase()) > -1

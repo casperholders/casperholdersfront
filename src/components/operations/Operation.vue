@@ -23,28 +23,40 @@
         <v-card-text class="text-body-1">
           <slot />
           <v-alert
-            v-if="!internet & !sendDeployDisconnected"
+            v-if="!internet & !sendDeployDisconnected & signerType !== TORUS_SIGNER"
             class="mt-5"
             type="warning"
             prominent
             border="left"
           >
-            You're disconnect from internet and
-            you've disabled sending deploy when you're offline.<br>
-            You change change this settings <a href="/settings"> here</a>.
+            You are disconnect from internet and
+            have disabled sending deploy when you're offline.<br>
+            You can change this settings <a href="/settings"> here</a>.
           </v-alert>
           <v-alert
-            v-if="!internet & sendDeployDisconnected"
+            v-if="!internet & signerType === TORUS_SIGNER"
             class="mt-5"
             type="warning"
             prominent
             border="left"
           >
-            You're disconnect from internet and you've <b>ENABLED</b>
-            sending deploy when you're offline.<br>
+            You are disconnect from internet and
+            connected with the <b>Tor.us</b> wallet.<br>
+            Tor.us wallet is <b>not compatible</b> with offline use.
+            You'll be able to send operations when you will get back online.
+          </v-alert>
+          <v-alert
+            v-if="!internet & sendDeployDisconnected & signerType !== TORUS_SIGNER"
+            class="mt-5"
+            type="warning"
+            prominent
+            border="left"
+          >
+            You are disconnect from internet and have <b>ENABLED</b>
+            sending deploy when you are offline.<br>
             We can't verify your balance before sending the deploy
             so it may fail when you get back online<br>
-            You change change this settings <a href="/settings"> here</a>.
+            You can change this settings <a href="/settings"> here</a>.
           </v-alert>
         </v-card-text>
 
@@ -77,6 +89,7 @@
 import OperationDialog from '@/components/operations/OperationDialog';
 import OperationPending from '@/components/operations/OperationPending';
 import OperationResult from '@/components/operations/OperationResult';
+import { TORUS_SIGNER } from '@/helpers/signers';
 import { mapState } from 'vuex';
 
 /**
@@ -166,12 +179,14 @@ export default {
   data() {
     return {
       operationOnGoing: false,
+      TORUS_SIGNER,
     };
   },
   computed: {
     ...mapState([
       'internet',
       'offlineDeploys',
+      'signerType',
     ]),
     /**
      * Retrieve all the DeployResult of the type set in the type prop of the component

@@ -156,7 +156,6 @@ export default {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       await this.$store.dispatch('retrySendingDeploy', index);
       this.retryDeploy = false;
-      console.log(this.retryDeploy);
     },
     cancelSendingDeploy(index) {
       this.$store.dispatch('removeOfflineDeploy', index);

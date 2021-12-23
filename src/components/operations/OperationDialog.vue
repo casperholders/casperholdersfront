@@ -60,6 +60,7 @@
 </template>
 
 <script>
+import { TORUS_SIGNER } from '@/helpers/signers';
 import { mapState } from 'vuex';
 
 /**
@@ -154,7 +155,7 @@ export default {
       'signerType',
     ]),
     offline() {
-      return !this.internet && !(localStorage.sendDeployDisconnected === 'true'); // || this.signerType === TORUS);
+      return !this.internet && (this.signerType === TORUS_SIGNER || !(localStorage.sendDeployDisconnected === 'true'));
     },
   },
   mounted() {
