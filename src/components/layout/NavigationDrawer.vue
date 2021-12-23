@@ -35,6 +35,20 @@
           <v-list-item-title>Home</v-list-item-title>
         </v-list-item-content>
       </navigation-drawer-list-item>
+      <navigation-drawer-list-item
+        :minified="minified"
+        tooltip="Settings"
+        to="/settings"
+        link
+        exact
+      >
+        <v-list-item-icon>
+          <v-icon>mdi-cog</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>Settings</v-list-item-title>
+        </v-list-item-content>
+      </navigation-drawer-list-item>
     </navigation-drawer-list>
 
     <template v-for="(items, name) in links">

@@ -151,6 +151,7 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.$store.dispatch('initSignerStatus');
+      this.$store.dispatch('initConnectivityStatus');
       window.addEventListener('signer:initialState', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
       window.addEventListener('signer:connected', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
       window.addEventListener('signer:disconnected', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
@@ -158,7 +159,10 @@ export default {
       window.addEventListener('signer:activeKeyChanged', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
       window.addEventListener('signer:locked', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
       window.addEventListener('signer:unlocked', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
+      window.addEventListener('online', () => this.$store.dispatch('onlineEvent'));
+      window.addEventListener('offline', () => this.$store.dispatch('offlineEvent'));
     });
+    if (!localStorage.sendDeployDisconnected) localStorage.sendDeployDisconnected = false;
   },
 };
 </script>

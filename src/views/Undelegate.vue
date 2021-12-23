@@ -113,6 +113,7 @@ import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insu
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { UndelegateResult } from '@casperholders/core/dist/services/results/undelegateResult';
 import Big from 'big.js';
+import { DeployUtil } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -197,22 +198,40 @@ export default {
      * Update the store with a deploy result containing the deployhash of the deploy sent
      */
     async sendDeploy() {
+      const deployParameter = new Undelegate(
+        this.amount,
+        this.signer.activeKey,
+        this.validator.publicKey,
+        NETWORK,
+        AUCTION_MANAGER_HASH,
+      );
+      const options = this.signerOptionsFactory.getOptionsForOperations();
+      await this.genericSendDeploy(deployParameter, options);
+    },
+    async genericSendDeploy(deployParameter, options) {
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
       try {
-        const deployResult = await deployManager.prepareSignAndSendDeploy(
-          new Undelegate(
-            this.amount,
-            this.signer.activeKey,
-            this.validator.publicKey,
-            NETWORK,
-            AUCTION_MANAGER_HASH,
-          ),
-          this.signerObject,
-          this.signerOptionsFactory.getOptionsForOperations(),
-        );
-        await this.$store.dispatch('addDeployResult', deployResult);
+        if (this.internet) {
+          const deployResult = await deployManager.prepareSignAndSendDeploy(
+            deployParameter,
+            this.signerObject,
+            options,
+          );
+          await this.$store.dispatch('addDeployResult', deployResult);
+        } else {
+          const signedDeploy = await this.signerObject.sign(deployParameter.makeDeploy, options);
+          const { deployResult } = deployParameter;
+          const pendingDeploy = {
+            deploy: signedDeploy,
+            // eslint-disable-next-line new-cap
+            deployResult: new deployResult(DeployUtil.deployToJson(signedDeploy).deploy.hash),
+            deployResultType: deployResult,
+          };
+          await this.$store.dispatch('addOfflineDeploy', pendingDeploy);
+        }
       } catch (e) {
+        console.log(e);
         this.errorDeploy = e;
       }
       this.loadingSignAndDeploy = false;

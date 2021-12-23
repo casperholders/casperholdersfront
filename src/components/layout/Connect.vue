@@ -378,7 +378,7 @@ export default {
     panels: undefined,
   }),
   computed: {
-    ...mapState(['signer']),
+    ...mapState(['signer', 'internet']),
     connectDialog: {
       get() {
         return this.$store.state.connectDialog;

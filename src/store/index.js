@@ -1,3 +1,4 @@
+import deployManager from '@/helpers/deployManager';
 import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER } from '@/helpers/signers';
 import { CasperSigner } from '@casperholders/core/dist/services/signers/casperSigner';
 import { LedgerSigner } from '@casperholders/core/dist/services/signers/ledgerSigner';
@@ -116,10 +117,12 @@ const initialState = () => ({
   },
   signerType: process.env.VUE_APP_E2E === 'true' ? LOCAL_SIGNER : '',
   operations: [],
+  offlineDeploys: [],
   connectDialog: false,
   ledger: {
     keyPath: 0,
   },
+  internet: true,
 });
 
 const getters = {
@@ -186,6 +189,27 @@ const mutations = {
   closeConnectDialog(state) {
     state.connectDialog = false;
   },
+  initConnectivityStatus(state) {
+    state.internet = navigator.onLine;
+  },
+  onlineEvent(state) {
+    state.internet = true;
+  },
+  offlineEvent(state) {
+    state.internet = false;
+  },
+  addOfflineDeploy(state, { pendingDeploy }) {
+    state.offlineDeploys.push(pendingDeploy);
+  },
+  removePendingDeploy(state, { index }) {
+    state.offlineDeploys.splice(index, 1);
+  },
+  removePendingDeployPop(state) {
+    state.offlineDeploys.pop();
+  },
+  addErrorPendingDeploy(state, { index, e }) {
+    state.offlineDeploys[index].error = e;
+  },
 };
 
 const actions = {
@@ -232,6 +256,54 @@ const actions = {
   },
   closeConnectDialog(context) {
     context.commit('closeConnectDialog');
+  },
+  initConnectivityStatus(context) {
+    context.commit('initConnectivityStatus');
+  },
+  async onlineEvent(context) {
+    context.commit('onlineEvent');
+    // todo
+    // for
+    // [0]
+    // commitPop
+    // catch
+    // commitPush
+    // eslint-disable-next-line no-restricted-syntax
+    for (let i = context.state.offlineDeploys.length - 1; i >= 0; i--) {
+      const pendingDeploy = context.state.offlineDeploys[i];
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        const deployResult = await deployManager.sendDeploy(
+          pendingDeploy.deploy,
+          pendingDeploy.deployResultType,
+        );
+        context.commit('addDeployResult', { deployResult });
+        context.commit('removePendingDeployPop');
+      } catch (e) {
+        context.commit('addErrorPendingDeploy', { i, e });
+      }
+    }
+  },
+  async retrySendingDeploy(context, index) {
+    try {
+      const deployResult = await deployManager.sendDeploy(
+        context.state.offlineDeploys[index].deploy,
+        context.state.offlineDeploys[index].deployResultType,
+      );
+      context.commit('addDeployResult', { deployResult });
+      context.commit('removePendingDeploy', { index });
+    } catch (e) {
+      context.commit('addErrorPendingDeploy', { index, e });
+    }
+  },
+  offlineEvent(context) {
+    context.commit('offlineEvent');
+  },
+  addOfflineDeploy(context, pendingDeploy) {
+    context.commit('addOfflineDeploy', { pendingDeploy });
+  },
+  removeOfflineDeploy(context, index) {
+    context.commit('removePendingDeploy', { index });
   },
 };
 

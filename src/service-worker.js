@@ -8,6 +8,7 @@ if (workbox) {
   // eslint-disable-next-line no-undef
   workbox.precaching.precacheAndRoute([
     { url: '/', revision: null },
+    { url: '/settings', revision: null },
     { url: '/balance', revision: null },
     { url: '/transfer', revision: null },
     { url: '/account', revision: null },

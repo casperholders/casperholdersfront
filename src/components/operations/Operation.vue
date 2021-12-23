@@ -22,6 +22,30 @@
       >
         <v-card-text class="text-body-1">
           <slot />
+          <v-alert
+            v-if="!internet & !sendDeployDisconnected"
+            class="mt-5"
+            type="warning"
+            prominent
+            border="left"
+          >
+            You're disconnect from internet and
+            you've disabled sending deploy when you're offline.<br>
+            You change change this settings <a href="/settings"> here</a>.
+          </v-alert>
+          <v-alert
+            v-if="!internet & sendDeployDisconnected"
+            class="mt-5"
+            type="warning"
+            prominent
+            border="left"
+          >
+            You're disconnect from internet and you've <b>ENABLED</b>
+            sending deploy when you're offline.<br>
+            We can't verify your balance before sending the deploy
+            so it may fail when you get back online<br>
+            You change change this settings <a href="/settings"> here</a>.
+          </v-alert>
         </v-card-text>
 
         <v-card-actions class="pa-4">
@@ -45,12 +69,15 @@
       :key="operation.hash"
       :deploy-hash="operation.hash"
     />
+    <OperationPending v-if="offlineDeploys.length > 0" />
   </div>
 </template>
 
 <script>
 import OperationDialog from '@/components/operations/OperationDialog';
+import OperationPending from '@/components/operations/OperationPending';
 import OperationResult from '@/components/operations/OperationResult';
+import { mapState } from 'vuex';
 
 /**
  * This component is used on every page that needs to perform an operation on the network.
@@ -63,7 +90,7 @@ import OperationResult from '@/components/operations/OperationResult';
  */
 export default {
   name: 'Operation',
-  components: { OperationDialog, OperationResult },
+  components: { OperationPending, OperationDialog, OperationResult },
   props: {
     /**
      * The icon of the operation
@@ -142,12 +169,19 @@ export default {
     };
   },
   computed: {
+    ...mapState([
+      'internet',
+      'offlineDeploys',
+    ]),
     /**
      * Retrieve all the DeployResult of the type set in the type prop of the component
      * @returns {*}
      */
     filteredOperations() {
       return this.$store.getters.filterOperations(this.type).map((object) => ({ ...object }));
+    },
+    sendDeployDisconnected() {
+      return localStorage.sendDeployDisconnected === 'true';
     },
   },
   mounted() {

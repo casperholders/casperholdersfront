@@ -25,6 +25,7 @@
     "register-service-worker": "^1.7.1",
     "toformat": "^2.0.0",
     "vue": "^2.6.11",
+    "vue-json-pretty": "^1.8.2",
     "vue-router": "^3.2.0",
     "vuetify": "^2.5.7",
     "vuex": "^3.6.2",

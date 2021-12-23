@@ -12,6 +12,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "home-view" */ '@/views/Home'),
   },
   {
+    path: '/settings',
+    name: 'settings',
+    component: () => import(/* webpackChunkName: "settings-view" */ '@/views/Settings'),
+  },
+  {
     path: '/balance',
     name: 'Balance',
     component: () => import(/* webpackChunkName: "balance-view" */ '@/views/Balance'),
