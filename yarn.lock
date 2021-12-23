@@ -974,10 +974,10 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
-"@casperholders/core@^1.12.0":
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/@casperholders/core/-/core-1.12.0.tgz#898ab53d9ca17ee921cc1c1520bbe9f465523c8c"
-  integrity sha512-cojXLTFwzW0DhYeEMhLuDgC3K/NeqLVB+YEb6ouCEY9EAKJXtoxwVaaWI1zNyq00cMnPXns4DVJHwxiVaB8o2g==
+"@casperholders/core@^1.14.1":
+  version "1.14.1"
+  resolved "https://registry.yarnpkg.com/@casperholders/core/-/core-1.14.1.tgz#a9203e6377ddcdba3720b064b6a4251f80243e0a"
+  integrity sha512-fO0KPdV857XzhVTp1a1ZAqQjcpTOHya6TvW2AJoPaZWac/5KuIb3LedjC97Ip421agBpRX1MijA84noef+M9YQ==
   dependencies:
     "@ethersproject/bignumber" "^5.5.0"
     big.js "^6.1.1"
@@ -1159,7 +1159,7 @@
     rxjs "6"
     semver "^7.3.5"
 
-"@ledgerhq/devices@^6.11.2", "@ledgerhq/devices@^6.20.0":
+"@ledgerhq/devices@^6.20.0":
   version "6.20.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/devices/-/devices-6.20.0.tgz#4280aaa5dc16f821ecab9ee8ae882299411ba5b7"
   integrity sha512-WehM7HGdb+nSUzyUlz1t2qJ8Tg4I+rQkOJJsx0/Dpjkx6/+1hHcX6My/apPuwh39qahqwYhjszq0H1YzGDS0Yg==
@@ -1179,14 +1179,14 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-6.10.0.tgz#dda9127b65f653fbb2f74a55e8f0e550d69de6e4"
   integrity sha512-fQFnl2VIXh9Yd41lGjReCeK+Q2hwxQJvLZfqHnKqWapTz68NHOv5QcI0OHuZVNEbv0xhgdLhi5b65kgYeQSUVg==
 
-"@ledgerhq/hw-transport-web-ble@^6.11.2":
-  version "6.11.2"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-web-ble/-/hw-transport-web-ble-6.11.2.tgz#e85bef50d7cbfe4be38f891ca8fd6dafa430a4eb"
-  integrity sha512-DH2llLwVorVyZipxaNIgwvM5FRYqspWcQlDMlXGtuAw+GveXImR9cPSZeFJ042Dw4B7K9oPB13JfMyilBFiaSQ==
+"@ledgerhq/hw-transport-web-ble@^6.20.0":
+  version "6.20.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-web-ble/-/hw-transport-web-ble-6.20.0.tgz#c2f9f2284cde0b13f91cac24763e9bfbb7b1acc5"
+  integrity sha512-1T5+6515mlIJwX5PeedMb7Kz4cF/TpVcsm/u4djzJqW6Gg4ubIllE+5FZZA7ThA9ZeQlgdQTJs7XZ7QqmRUSyw==
   dependencies:
-    "@ledgerhq/devices" "^6.11.2"
+    "@ledgerhq/devices" "^6.20.0"
     "@ledgerhq/errors" "^6.10.0"
-    "@ledgerhq/hw-transport" "^6.11.2"
+    "@ledgerhq/hw-transport" "^6.20.0"
     "@ledgerhq/logs" "^6.10.0"
     rxjs "6"
 
@@ -1209,7 +1209,7 @@
     "@ledgerhq/errors" "^5.50.0"
     events "^3.3.0"
 
-"@ledgerhq/hw-transport@^6.11.2", "@ledgerhq/hw-transport@^6.20.0":
+"@ledgerhq/hw-transport@^6.20.0":
   version "6.20.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-6.20.0.tgz#16e84c99fca2d10f637c0e36c87088322479a488"
   integrity sha512-5KS0Y6CbWRDOv3FgNIfk53ViQOIZqMxAw0RuOexreW5GMwuYfK7ddGi4142qcu7YrxkGo7cNe42wBbx1hdXl0Q==
@@ -3378,7 +3378,7 @@ caseless@~0.12.0:
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
   integrity sha1-G2gcIf+EAzyCZUMJBolCDRhxUdw=
 
-casper-js-sdk@^2.7.1, casper-js-sdk@^2.7.2:
+casper-js-sdk@^2.7.4:
   version "2.7.4"
   resolved "https://registry.yarnpkg.com/casper-js-sdk/-/casper-js-sdk-2.7.4.tgz#287b5eea95196ca830c7130acf9b4d7d1b70413f"
   integrity sha512-y/587DHKNDtOxl/BNwHssTnBLClFW3JyFg2z5AE0HAevda3clkyOCgpNgTMGuLF8LFOb/DBvXpfEAYl/F36cIQ==

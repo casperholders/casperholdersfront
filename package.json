@@ -16,8 +16,9 @@
   "dependencies": {
     "@casperholders/core": "^1.14.1",
     "@toruslabs/casper-embed": "^1.1.2",
-    "@ledgerhq/hw-transport-web-ble": "^6.11.2",
+    "@ledgerhq/hw-transport-web-ble": "^6.20.0",
     "@ledgerhq/hw-transport-webusb": "^6.11.2",
+    "@toruslabs/casper-embed": "^1.1.2",
     "@zondax/ledger-casper": "^0.0.1",
     "big.js": "^6.1.1",
     "casper-js-sdk": "^2.7.4",
