@@ -26,6 +26,7 @@
       v-if="signer.activeKey"
       left
       offset-y
+      :close-on-content-click="false"
     >
       <template #activator="{ on, attrs }">
         <v-btn
@@ -57,7 +58,26 @@
               Connected with : {{ humanReadableSigner }}
             </v-list-item-subtitle>
           </v-list-item-content>
-          <v-list-item-action>
+          <v-list-item-action-text>
+            <v-tooltip
+              bottom
+            >
+              <template #activator="{ on, attrs }">
+                <v-btn
+                  fab
+                  x-small
+                  icon
+                  v-bind="attrs"
+                  class="mr-3"
+                  @click="copyPublicKey"
+                  v-on="on"
+                >
+                  <v-icon>mdi-content-copy</v-icon>
+                </v-btn>
+              </template>
+
+              <span>{{ copied ? 'Copied !' : 'Not copied' }}</span>
+            </v-tooltip>
             <v-btn
               id="logout"
               color="secondary"
@@ -68,13 +88,14 @@
               </v-icon>
               Logout
             </v-btn>
-          </v-list-item-action>
+          </v-list-item-action-text>
         </v-list-item>
       </v-list>
     </v-menu>
     <v-menu
       left
       offset-y
+      :close-on-content-click="false"
     >
       <template #activator="{ on, attrs }">
         <v-btn
@@ -104,7 +125,7 @@
       >
         <template v-for="(operation, index) in operations">
           <v-divider
-            v-if="index > 0 || (!signer.connected || signer.lock || signer.activeKey === null)"
+            v-if="index > 0"
             :key="'app_bar_divider'+operation.hash"
           />
           <v-list-item :key="'app_bar'+operation.hash">
@@ -144,6 +165,57 @@
             </v-list-item-action-text>
           </v-list-item>
         </template>
+        <v-divider
+          v-if="operations.length > 0 && offlineDeploys.length > 0"
+        />
+        <v-list-item v-if="offlineDeploys.length > 0">
+          <v-list-item-icon>
+            <v-icon color="white">
+              mdi-clock
+            </v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>Pending Operations</v-list-item-title>
+            <v-list-item-subtitle>
+              Those operations will be send when you will be back online.
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <template v-for="(operation) in offlineDeploys">
+          <v-divider
+            :key="'app_bar_divider'+operation.deployResult.hash"
+          />
+          <v-list-item :key="'app_bar'+operation.deployResult.hash">
+            <v-list-item-icon>
+              <v-icon :color="operationIconColor(operation.deployResult)">
+                {{ operationIcon(operation.deployResult) }}
+              </v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ operation.deployResult.name }}</v-list-item-title>
+              <v-list-item-subtitle>
+                {{
+                  truncateText(operation.deployResult.hash)
+                }}
+              </v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action-text>
+              <v-btn
+                :href="getOperationUrl(operation.deployResult)"
+                class="mr-3"
+                color="secondary"
+                fab
+                target="_blank"
+                rel="noopener"
+                x-small
+              >
+                <v-icon x-small>
+                  mdi-open-in-new
+                </v-icon>
+              </v-btn>
+            </v-list-item-action-text>
+          </v-list-item>
+        </template>
       </v-list>
     </v-menu>
   </v-app-bar>
@@ -174,9 +246,10 @@ export default {
   data: () => ({
     isWindowTop: true,
     displayConnect: false,
+    copied: false,
   }),
   computed: {
-    ...mapState(['operations', 'signer', 'signerType']),
+    ...mapState(['operations', 'signer', 'signerType', 'offlineDeploys']),
     ...mapGetters([
       'signerObject',
       'signerOptionsFactory',
@@ -197,13 +270,16 @@ export default {
       return 'None';
     },
     disabledNotifications() {
-      return this.operations.length === 0;
+      return this.operations.length === 0 && this.offlineDeploys.length === 0;
     },
     titleNetwork() {
       return NETWORK !== 'casper' ? HUMAN_READABLE_NETWORK : '';
     },
     badgeColor() {
-      if (this.operations.filter((operation) => operation.status === STATUS_UNKNOWN).length > 0) {
+      if (
+        this.operations.filter((operation) => operation.status === STATUS_UNKNOWN).length > 0
+        || this.offlineDeploys.length > 0
+      ) {
         return 'primary';
       }
 
@@ -214,6 +290,10 @@ export default {
       return 'green';
     },
     badgeContent() {
+      if (this.offlineDeploys.length > 0) {
+        return this.offlineDeploys.length;
+      }
+
       if (this.operations.filter((operation) => operation.status === STATUS_UNKNOWN).length > 0) {
         return this.operations.filter((operation) => operation.status === STATUS_UNKNOWN).length;
       }
@@ -275,6 +355,13 @@ export default {
         await torusOptions.torusInstance.logout();
       }
       await this.$store.dispatch('logout');
+    },
+    copyPublicKey() {
+      navigator.clipboard.writeText(this.signer.activeKey);
+      this.copied = true;
+      setTimeout(() => {
+        this.copied = false;
+      }, 2000);
     },
   },
 };

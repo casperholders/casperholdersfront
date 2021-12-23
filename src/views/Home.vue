@@ -201,12 +201,6 @@
                 >
                   <p class="text-body-1">
                     <template v-if="publicKey">
-                      <input
-                        id="publicKey"
-                        type="text"
-                        :value="publicKey"
-                        class="d-none"
-                      >
                       Here's your public key : {{ publicKey }}
                       <v-tooltip
                         bottom
@@ -352,9 +346,7 @@ export default {
       await this.$store.dispatch('openConnectDialog');
     },
     copyPublicKey() {
-      const publicKey = document.getElementById('publicKey');
-      publicKey.select();
-      document.execCommand('copy');
+      navigator.clipboard.writeText(this.signer.activeKey);
       this.copied = true;
       setTimeout(() => {
         this.copied = false;
