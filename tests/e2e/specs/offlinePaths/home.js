@@ -15,12 +15,7 @@ describe('Home', () => {
       win.dispatchEvent(event);
     });
     cy.get('#tutorial').click().get('.v-window__prev button').click()
-      .get('#publicKey')
-      .parent()
-      .should('be.visible')
-      .should('contain', msg.detail.activeKey);
-    cy.get('#copyToClipboard').click();
-    cy.get('.v-tooltip__content').should('contain', 'Copied !');
+      .should('be.visible');
     cy.get('#closeTutorial').click();
     cy.get('#tutorialDialog').should('not.be.visible');
     cy.wait(5000);

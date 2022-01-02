@@ -15,7 +15,7 @@ describe('Undelegate', () => {
     cy.wait(2000);
     cy.get('#validator').parent().click();
     cy.get('#validator').type('0124BFDae2Ed128fa5e4057BC398E4933329570E47240e57fc92F5611A6178EBA5');
-    cy.get('.v-list-item__title').contains('0124BFDae2Ed128fa5e4057BC398E4933329570E47240e57fc92F5611A6178EBA5').click();
+    cy.get('.v-list-item__title').contains('0124BFDae2Ed128fa5e4057BC398E4933329570E47240e57fc92F5611A6178EBA5', { matchCase: false }).click();
     cy.wait(2000);
     cy.get('#submitOperation').click();
     cy.get('#agreeAndSign').parents('.v-dialog').should('be.visible');

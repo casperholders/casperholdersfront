@@ -14,11 +14,11 @@
     "testnet": "vue-cli-service serve --mode testnet"
   },
   "dependencies": {
-    "@casperholders/core": "^1.11.0",
+    "@casperholders/core": "^1.14.1",
     "@ledgerhq/hw-transport-webusb": "^6.11.2",
     "@zondax/ledger-casper": "^0.0.1",
     "big.js": "^6.1.1",
-    "casper-js-sdk": "^2.7.1",
+    "casper-js-sdk": "^2.7.4",
     "chart.js": "^3.5.1",
     "core-js": "^3.6.5",
     "lodash.clonedeep": "^4.5.0",
