@@ -33,6 +33,7 @@ describe('Home', () => {
     cy.get('#connectDialog')
       .should('be.visible');
     cy.get('#connectLedger').should('be.visible').click();
+    cy.get('#connectLedgerUSB').should('be.visible').click();
     cy.get('#retryButton').should('be.visible').click();
     cy.get('#connectCasperSigner').should('be.visible').click();
     cy.window().then((win) => {

@@ -158,7 +158,7 @@
               @click="ledgerConnect(true)"
             >
               <v-card-text
-                id="connectLedger"
+                id="connectLedgerUSB"
                 class="d-flex align-center"
               >
                 <img
@@ -184,7 +184,7 @@
               @click="ledgerConnect(false)"
             >
               <v-card-text
-                id="connectLedger"
+                id="connectLedgerBLE"
                 class="d-flex align-center"
               >
                 <img
