@@ -161,6 +161,11 @@ export default {
   },
   watch: {
     'signer.activeKey': 'getBalance',
+    async internet(val) {
+      if (val) {
+        await this.getBalance();
+      }
+    },
     validator: 'getBalance',
   },
   async mounted() {
@@ -184,7 +189,7 @@ export default {
           this.stakingBalance = await balanceService
             .fetchStakeBalance(this.validator.publicKey);
         }
-        if (this.balance <= this.minimumFundsNeeded) {
+        if (this.balance <= this.minimumFundsNeeded && this.internet) {
           throw new InsufficientFunds(this.minimumFundsNeeded);
         }
       } catch (e) {

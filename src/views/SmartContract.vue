@@ -168,6 +168,11 @@ export default {
   },
   watch: {
     'signer.activeKey': 'getBalance',
+    async internet(val) {
+      if (val) {
+        await this.getBalance();
+      }
+    },
     /**
      * Read the file selected by the user
      */
@@ -201,7 +206,7 @@ export default {
       this.balance = '0';
       try {
         this.balance = await balanceService.fetchBalance();
-        if (this.balance <= this.minPayment) {
+        if (this.balance <= this.minPayment && this.internet) {
           throw new InsufficientFunds(this.minPayment);
         }
       } catch (e) {

@@ -129,7 +129,9 @@ import balanceService from '@/helpers/balanceService';
 import deployManager from '@/helpers/deployManager';
 import { NETWORK } from '@/helpers/env';
 import exchanges from '@/helpers/exchanges';
-import { TransferDeployParameters } from '@casperholders/core/dist/services/deploys/transfer/TransferDeployParameters';
+import {
+  TransferDeployParameters,
+} from '@casperholders/core/dist/services/deploys/transfer/TransferDeployParameters';
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
 import { TransferResult } from '@casperholders/core/dist/services/results/transferResult';
@@ -217,6 +219,11 @@ export default {
   },
   watch: {
     'signer.activeKey': 'getBalance',
+    async internet(val) {
+      if (val) {
+        await this.getBalance();
+      }
+    },
   },
   async mounted() {
     await this.getBalance();
@@ -234,7 +241,7 @@ export default {
       this.balance = '0';
       try {
         this.balance = await balanceService.fetchBalance();
-        if (this.balance <= this.minimumFundsNeeded) {
+        if (this.balance <= this.minimumFundsNeeded && this.internet) {
           throw new InsufficientFunds(this.minimumFundsNeeded);
         }
       } catch (e) {
