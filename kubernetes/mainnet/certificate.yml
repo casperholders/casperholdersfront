@@ -1,4 +1,4 @@
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: casperholders-cert
@@ -6,6 +6,7 @@ spec:
   secretName: casperholders-cert
   issuerRef:
     name: letsencrypt-prod
+    kind: ClusterIssuer
   commonName: casperholders.io
   dnsNames:
     - casperholders.io

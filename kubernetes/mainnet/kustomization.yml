@@ -1,6 +1,5 @@
 resources:
   - https.yml
-  - issuer.yml
   - deployment.yml
   - service.yml
   - ingress.yml
