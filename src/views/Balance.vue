@@ -171,6 +171,7 @@ import DoughnutChart from '@/components/chart/DoughnutChart';
 import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
 import Operations from '@/components/operations/Operations';
 import balanceService from '@/helpers/balanceService';
+import { API } from '@/helpers/env';
 import Big from 'big.js';
 import { mapState } from 'vuex';
 
@@ -284,10 +285,21 @@ export default {
       }
 
       try {
+        let validatorsData = [];
+        try {
+          validatorsData = await (await fetch(`${API}/validators/accountinfos`)).json();
+        } catch (e) {
+          console.log('Unable to retrieve validators info.');
+        }
         const validators = await balanceService.fetchAllStakeBalance();
         const fees = [];
         validators.forEach((validator, index) => {
-          newChartData.labels.push(`Validator ${this.truncate(validator.validator)}`);
+          const validatorData = validatorsData.filter((v) => v.publicKey === validator.validator);
+          if (validatorData.length > 0) {
+            newChartData.labels.push(`Validator ${this.truncate(validatorData[0].name)}`);
+          } else {
+            newChartData.labels.push(`Validator ${this.truncate(validator.validator)}`);
+          }
           newChartData.datasets[0].data.push(validator.stakedTokens);
           newChartData.datasets[0].backgroundColor.push(this.getRandomColor(index));
           this.totalStaked = this.totalStaked.plus(Big(validator.stakedTokens));
