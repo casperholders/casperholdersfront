@@ -211,7 +211,7 @@ export default {
           Prefer: 'count=exact',
         }),
       });
-      this.totalOperations = Number(response.headers.get('content-range').replace(/^[0-9]*-[0-9]*\//, ''));
+      this.totalOperations = Number(response.headers.get('content-range').replace(/^.*\//, ''));
       this.operations = await response.json();
       this.loading = false;
     },
