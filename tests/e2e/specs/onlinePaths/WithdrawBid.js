@@ -12,7 +12,7 @@ describe('Withdraw bid', () => {
     cy.window().then((win) => {
       win.dispatchEvent(event);
     });
-    cy.wait(2000);
+    cy.wait(10000);
     cy.get('#submitOperation').click();
     cy.get('#agreeAndSign').parents('.v-dialog').should('be.visible');
     cy.get('#agreeAndSign').click().parents('.v-dialog').should('not.be.visible');
