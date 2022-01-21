@@ -259,7 +259,7 @@ export default {
               publicKey: validatorInfo.public_key,
               group: validatorInfo.bid.inactive ? 'Inactive' : 'Active',
               delegation_rate: validatorInfo.bid.delegation_rate,
-              staked_amount: new Big(stakedAmount).toFixed(2),
+              staked_amount: Big(stakedAmount).toFixed(2),
               currentEra: currentEra.includes(validatorInfo.public_key),
               nextEra: nextEra.includes(validatorInfo.public_key),
             });

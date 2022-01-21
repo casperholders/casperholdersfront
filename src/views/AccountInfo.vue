@@ -182,7 +182,7 @@ export default {
      * @param {string} url
      */
     isUrl(url) {
-      const regex = new RegExp('^(http:\\/\\/|https:\\/\\/)?([a-zA-Z0-9-_]+\\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\\.[a-zA-Z]{2,11}?$', 'g');
+      const regex = new RegExp('^(http:\\/\\/|https:\\/\\/)([a-zA-Z0-9-_]+\\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\\.[a-zA-Z]{2,11}?$', 'g');
       return regex.test(url);
     },
     /**

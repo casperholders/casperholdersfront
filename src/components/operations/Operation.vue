@@ -41,8 +41,8 @@
             border="left"
           >
             You are disconnect from internet and
-            connected with the <b>Tor.us</b> wallet.<br>
-            Tor.us wallet is <b>not compatible</b> with offline use.
+            connected with the <strong>Tor.us</strong> wallet.<br>
+            Tor.us wallet is <strong>not compatible</strong> with offline use.
             You'll be able to send operations when you will get back online.
           </v-alert>
           <v-alert
@@ -52,7 +52,7 @@
             prominent
             border="left"
           >
-            You are disconnect from internet and have <b>ENABLED</b>
+            You are disconnect from internet and have <strong>ENABLED</strong>
             sending deploy when you are offline.<br>
             We can't verify your balance before sending the deploy
             so it may fail when you get back online<br>

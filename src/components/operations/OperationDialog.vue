@@ -155,7 +155,7 @@ export default {
       'signerType',
     ]),
     offline() {
-      return !this.internet && (this.signerType === TORUS_SIGNER || !(localStorage.sendDeployDisconnected === 'true'));
+      return !this.internet && (this.signerType === TORUS_SIGNER || localStorage.sendDeployDisconnected !== 'true');
     },
   },
   mounted() {
@@ -171,7 +171,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

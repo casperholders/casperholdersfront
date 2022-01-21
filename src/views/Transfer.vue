@@ -115,8 +115,9 @@
         prominent
         border="left"
       >
-        You're going to transfer some funds to <b>{{ getExchange }}</b> (presumably)! <br>
-        Verify your <b>transfer ID</b> and make sure it's correct <b>BEFORE</b> signing the deploy.
+        You're going to transfer some funds to <strong>{{ getExchange }}</strong> (presumably)! <br>
+        Verify your <strong>transfer ID</strong>
+        and make sure it's correct <strong>BEFORE</strong> signing the deploy.
       </v-alert>
     </operation>
   </div>
@@ -297,7 +298,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

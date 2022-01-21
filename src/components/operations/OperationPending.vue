@@ -47,7 +47,7 @@
                 </v-icon>
                 Oops... A problem as occurred. <br>
                 Check the error message here (or on the cspr.live website) : <br>
-                <b> {{ pendingDeploy.error.toString() }} </b> <br>
+                <strong> {{ pendingDeploy.error.toString() }} </strong> <br>
               </p>
               <v-btn
                 v-if="pendingDeploy.error"

@@ -179,7 +179,7 @@
                   <div class="text-body-1 text-center mb-6">
                     Oops... A problem as occurred. <br>
                     Check the error message here (or on the cspr.live website) :
-                    <b> {{ deployResult.message }} </b> <br><br>
+                    <strong> {{ deployResult.message }} </strong> <br><br>
                     Deploy hash : <br>
                     <a
                       :href="deployHashUrl"

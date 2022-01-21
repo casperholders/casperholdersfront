@@ -452,7 +452,7 @@ import torus from '@/assets/images/torus.svg';
 import ledger from '@/assets/images/ledger_logo.png';
 import balanceService from '@/helpers/balanceService';
 import TransportWebBLE from '@ledgerhq/hw-transport-web-ble';
-import getTorusNetwork from '@/helpers/torusNetwork';
+import getTorusNetwork from '@/helpers/getTorusNetwork';
 import { ledgerOptions, torusOptions } from '@/store';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import Torus from '@toruslabs/casper-embed';
@@ -578,7 +578,8 @@ export default {
         const nextKeyPath = this.ledgerKeys.funds.length + this.ledgerKeys.noFunds.length;
         for (let i = nextKeyPath; i < nextKeyPath + 4; i++) {
           // eslint-disable-next-line no-await-in-loop
-          const key = `02${(await ledgerOptions.casperApp.getAddressAndPubKey(`m/44'/506'/0'/0/${i}`)).publicKey.toString('hex')}`;
+          const ledgerPubKey = await ledgerOptions.casperApp.getAddressAndPubKey(`m/44'/506'/0'/0/${i}`);
+          const key = `02${ledgerPubKey.publicKey.toString('hex')}`;
           // eslint-disable-next-line no-await-in-loop
           const balance = await balanceService.fetchBalanceOfPublicKey(key);
           if (Big(balance).gt(0)) {

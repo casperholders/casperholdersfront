@@ -288,12 +288,6 @@ const actions = {
   },
   async onlineEvent(context) {
     context.commit('onlineEvent');
-    // todo
-    // for
-    // [0]
-    // commitPop
-    // catch
-    // commitPush
     // eslint-disable-next-line no-restricted-syntax
     for (let i = context.state.offlineDeploys.length - 1; i >= 0; i--) {
       const pendingDeploy = context.state.offlineDeploys[i];

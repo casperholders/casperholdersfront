@@ -70,10 +70,10 @@
             <template #default>
               <tbody>
                 <tr>
-                  <th>
+                  <th scope="col">
                     Argument
                   </th>
-                  <th>
+                  <th scope="col">
                     Value
                   </th>
                 </tr>
@@ -249,7 +249,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-
-</style>
