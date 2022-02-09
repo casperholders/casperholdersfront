@@ -1,40 +1,37 @@
-# CasperHolders
+# CasperHolders（Casperのコミュニティメンバーによって運営されています）
 [![codecov](https://codecov.io/gh/casperholders/casperholdersfront/branch/main/graph/badge.svg?token=J111YFA2Q3)](https://codecov.io/gh/casperholders/casperholdersfront)
-## The first third party UI to interact with the Casper Blockchain.
+## 第三者によって始めて作られた、Casperブロックチェーン用のUIです。
 
-### CasperHolders is not affiliated with CasperNetwork / CasperAssociation.This is a project from a community member.
+### CasperHoldersは、CasperNetworkやCasperAssociationと提携は結んでいません。コミュニティメンバーが立ち上げたプロジェクトです。
 
-## CasperHolders is not affiliated with CasperNetwork / CasperAssociation.
-## This is a project from a community member.
+ここに載せているものは、CasperHoldersのウェブサイト用のソースです。
 
-This project contains the sources files for the CasperHolders website.
+# 重要事項
 
-# Important notes
+**CasperHoldersのSoftwareは、いかなるサービスに対しても外部リクエストは一切行っていません。**
 
-**The CasperHolders Software doesn't make any external request to any services.**
+**Casper Networkを除く**
 
-**Except to the Casper Network itself.**
+**CasperHolders Softwareは、いかなる個人情報も保存もしくは共有いたしません。**
 
-**The CasperHolders Software doesn't store/share any personal data with anybody.**
+**秘密鍵の読み取りや保存、他人への共有も行いません。**
 
-**The software doesn't read your private key, and your private key is not saved/shared with anybody.**
+**スマートコントラクトの読取りや保存、他人への共有もいたしません。**
 
-**The software doesn't read your smart contract, and your smart contract is not saved/shared with anybody.**
+# ビルド方法
 
-# How to build
-
-## Local dev
+## ローカル開発
 
 ```bash
 yarn install
 yarn serve
 ```
 
-## Local tests
+## ローカルテスト
 
-### !! Important !!
+### !! 重要 !!
 
-In order to run correctly the tests locally create a file name .env.local with the following content :
+testsをローカルで正常に行う為には、作成するファイル名は .env.local とし、下記コンテンツを入れてください。
 
 ```
 VUE_APP_FAKE_KEY="<TestnetPrivateKeyWithoutPem>"
@@ -42,91 +39,91 @@ VUE_APP_FAKE_VALIDATOR_KEY="<TestnetValidatorPrivateKeyWithoutPem>"
 VUE_APP_E2E=true
 ```
 
-The first env variable will enable you to test all users interactions (Transfer / Stake / Unstake)  
-The second env variable will enable you to test all validators operations (Add & Withdraw bid)  
-The third one will tell the app to run in E2E mode and will bypass the casper signer to use a local signer with the fake keys provided.  
-Check the globalPlugin.js to see how it works.  
-Only the positive path for sending smart contract is not tested. See issue #10
+最初のenv変数は、全てのユーザーアクション（転送 / ステーク / アンステーク）をテストします。
+次のenv変数は、全てのバリデーター操作（入札の追加 & 引き出し）をテストします。
+3つめは、E2Eモードで実行するようにアプリケーションに指示を出し、Casper Signerを迂回して偽の鍵にてローカルのSignerで署名します。
+仕組みについては、globalPlugin.js を確認してください。
+スマートコントラクトを送信する正常なパスに限り、テスト対象外となります。Issue #10を参照ください。
 
-### Run tests
+### testsの実行
 ```bash
 yarn test:e2e
 ```
 
-## Production build for TestNet
+## TestNet用にビルドした場合
 
-Will use the .env.testnet file
+.env.testnet ファイルを使用
 
 ```bash
 yarn build-testnet
 ```
 
-## Production build for MainNet
+## MainNet用にビルドした場合
 
-Will use the .env.testnet file
+.env.testnet ファイルを使用
 
 ```bash
 yarn build-mainnet
 ```
 
-## Docker build
+## Dockerを使ってビルドする場合
 
-Use the correct value for the mode argument to build either for testnet or mainnet .env file
+modeの引数として正しい値を入力し、testnetもしくはmainnetのどちらかの .envファイル用にビルドしてください。
 
 ```bash
 docker build --build-arg mode=(testnet|mainnet) . 
 ```
 
-## Kubernetes deployment
+## Kubernetesでのデプロイ
 
-Use the correct folder for either testnet or mainnet config.
+testnetもしくはmainnetのフォルダーを使用してください。
 
-### Warning: The current kubernetes files are specific to my kubenertes architecture. It's basically an example how to use CasperHolders on Kubernetes.
+### 警告：現存するkubernetesファイルは、kubernetesアーキテクチャに特化しています。基本的には、CasperHoldersをKubernetes上で使用する方法例となっています。
 
 ```bash
 kubectl apply -f kubernetes/(testnet|mainnet)/
 ```
 
-# Architecture
+# アーキテクチャ
 
-The CasperHolders application(s) contains actually 4 main parts :
+CasperHoldersのアプリケーションは、4つのメインパートから作られています。
 
-## CasperHolders Front
-Contains all the UI for the CasperHolders website (This repo)
+## CasperHoldersのフロント
+CasperHoldersの全てのウェブサイト用UIが、このリポジトリにあります。
 
-The website interact directly with a Casper Node that's why we don't need a proper api.
+ウェブサイトは、Casperノードに直接通信する為、適切なapiは不要となっています。
 
-The connection to a Casper node is done directly with a nginx reverse proxy.
+NGINXリバースプロキシにて、直接Casperノードへ接続されます。
 
-The nginx reverse proxy configuration **is not open source** as this simple to do for any sysadmin and is part of the *commercial** part of the website.
+NGINXリバースプロキシ設定は、**オープンソースではありません** 。システムアドミンにとっては簡単に対応可能であるのと、ウェブサイトの **商用** 部分でもある為です。
 
-## CasperHolders Core
-Contains almost all the CasperHolders logic. [Link](https://github.com/casperholders/casperholderscore)
+## CasperHoldersのコア部分
+殆ど全てのCasperHoldersのロジックが、ここにあります。[Link](https://github.com/casperholders/casperholderscore)
 
 ## CasperData
 
-Parse the whole blockchain into a database.
+ブロックチェーン全体を解析しデータベースにします。
 
-This is used to retrieve users operations and calculate the APY faster on the API. [Link](https://github.com/casperholders/casperdata)
+このcasperdataは、ユーザーオペレーションとAPI上でのAPY（年収率）を素早く計算してくれます。[Link](https://github.com/casperholders/casperdata)
 
 ## CasperHolders API
 
 [Link](https://github.com/casperholders/casperholdersapi)
 
-Only contains 5 endpoints to generate and consume prometheus metrics from operations that are done on the CasperHolders Website
-and also retrieve validator metadata and the APY on the network.
+5つのエンドポイントのみとなっており、CasperHoldersウェブサイト上で行われるオペレーションのプロメテウス・メトリックスを生成し利用しています。
+そして、バリデーターのメタデータとネットワークのAPY（年収率）を取得します。
 
-This API is useless if you don't need / want metrics.
+メトリックスが不要の場合は、このAPIは必要ありません。
 
-The frontend can work flawlessly without the API. 
+APIを使用しなくても、フロントエンドは問題なく動作します。
 
-It will not impact any feature (Except the metrics graph on the front page) on the website.
+ウェブサイト上のいかなる機能にも影響しません。（フロントページのメトリックスグラフを除く）
 
-You may get some errors in the javascript console by not providing the API url.
+APIのURLを提示しないと、Javascriptコンソールではエラーが発生するかもしれません。
 
-Maybe in the future this API will contain more features.
+将来的には、このAPIに機能を更に追加する予定です。
     
 # Notes
-(* Every component hosted on casperholders.io is Open Source and every component hosted on casperholders.com is Closed Source)
+(* casperholders.ioにて管理している全てのコンポーネントはオープンソースだが、casperholders.com上のものは全てクローズドソースです。)
 
 
