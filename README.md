@@ -1,10 +1,10 @@
-# CasperHolders（Casperのコミュニティメンバーによって運営されています）
+# CasperHolders
 [![codecov](https://codecov.io/gh/casperholders/casperholdersfront/branch/main/graph/badge.svg?token=J111YFA2Q3)](https://codecov.io/gh/casperholders/casperholdersfront)
 ## 第三者によって始めて作られた、Casperブロックチェーン用のUIです。
 
 ### CasperHoldersは、CasperNetworkやCasperAssociationと提携は結んでいません。コミュニティメンバーが立ち上げたプロジェクトです。
 
-ここに載せているものは、CasperHoldersのウェブサイト用のソースです。
+ここに載せているものは、CasperHoldersのウェブサイト用のソースです。（承諾を得て翻訳させてもらいました）
 
 # 重要事項
 
@@ -39,11 +39,11 @@ VUE_APP_FAKE_VALIDATOR_KEY="<TestnetValidatorPrivateKeyWithoutPem>"
 VUE_APP_E2E=true
 ```
 
-最初のenv変数は、全てのユーザーアクション（転送 / ステーク / アンステーク）をテストします。
-次のenv変数は、全てのバリデーター操作（入札の追加 & 引き出し）をテストします。
-3つめは、E2Eモードで実行するようにアプリケーションに指示を出し、Casper Signerを迂回して偽の鍵にてローカルのSignerで署名します。
-仕組みについては、globalPlugin.js を確認してください。
-スマートコントラクトを送信する正常なパスに限り、テスト対象外となります。Issue #10を参照ください。
+最初のenv変数は、全てのユーザーアクション（転送 / ステーク / アンステーク）をテストします。  
+次のenv変数は、全てのバリデーター操作（入札の追加 & 引き出し）をテストします。  
+3つめは、E2Eモードで実行するようにアプリケーションに指示を出し、Casper Signerを迂回して偽の鍵にてローカルのSignerで署名します。  
+仕組みについては、globalPlugin.js を確認してください。  
+スマートコントラクトを送信する正常なパスに限り、テスト対象外となります。Issue #10を参照ください。  
 
 ### testsの実行
 ```bash
@@ -78,7 +78,8 @@ docker build --build-arg mode=(testnet|mainnet) .
 
 testnetもしくはmainnetのフォルダーを使用してください。
 
-### 警告：現存するkubernetesファイルは、kubernetesアーキテクチャに特化しています。基本的には、CasperHoldersをKubernetes上で使用する方法例となっています。
+### 警告：現存するkubernetesファイルは、kubernetesアーキテクチャに特化しています。  
+基本的には、CasperHoldersをKubernetes上で使用する方法例となっています。
 
 ```bash
 kubectl apply -f kubernetes/(testnet|mainnet)/
