@@ -21,9 +21,7 @@ describe('Balance', () => {
     cy.window().then((win) => {
       win.dispatchEvent(event);
     });
-    cy.wait(2000);
-
-    cy.get('#balance-not-connected')
+    cy.get('#balance-not-connected', { timeout: 5000 })
       .should('not.exist');
     cy.get('#balance-no-liquidity')
       .should('not.exist');
@@ -35,9 +33,9 @@ describe('Balance', () => {
 
     cy.get('.reward-calculator-panel-header').click();
     cy.get('.reward-calculator').should('be.visible');
-    cy.wait(60000).get('.operations').should('contain', '1-10 of');
+    cy.get('.operations', { timeout: 60000 }).should('contain', '1-10 of');
 
-    cy.wait(1000).window().then((win) => {
+    cy.wait(2000).window().then((win) => {
       msg.detail.activeKey = '01270a577d2d106c4d29402775f3dffcb9f04aad542579dd4d1cfad20572ebcb7a';
       win.dispatchEvent(event);
     });

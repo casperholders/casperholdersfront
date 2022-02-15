@@ -12,7 +12,7 @@ describe('Smart Contract', () => {
     cy.window().then((win) => {
       win.dispatchEvent(event);
     });
-    cy.wait(2000);
+    cy.wait(5000);
     cy.fixture('counter.wasm').then((fileContent) => {
       cy.get('#smartContractFile').attachFile({
         fileContent: fileContent.toString(),

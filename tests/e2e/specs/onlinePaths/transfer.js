@@ -12,11 +12,12 @@ describe('Transfer', () => {
     cy.window().then((win) => {
       win.dispatchEvent(event);
     });
-    cy.wait(2000);
+    cy.wait(5000);
     cy.get('#address').type('0124bfdae2ed128fa5e4057bc398e4933329570e47240e57fc92f5611a6178eba5');
     cy.get('#submitOperation').click();
     cy.get('#agreeAndSign').parents('.v-dialog').should('be.visible');
     cy.get('#disagree').click().parents('.v-dialog').should('not.be.visible');
+    cy.wait(5000);
     cy.get('#submitOperation').click();
     cy.get('#agreeAndSign').parents('.v-dialog').should('be.visible');
     cy.get('#agreeAndSign').click().parents('.v-dialog').should('not.be.visible');
