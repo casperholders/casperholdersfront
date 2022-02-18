@@ -61,6 +61,11 @@ const routes = [
     name: 'contact',
     component: () => import(/* webpackChunkName: "contact-view" */ '@/views/Contact'),
   },
+  {
+    path: '/privacy',
+    name: 'privacy',
+    component: () => import(/* webpackChunkName: "contact-view" */ '@/views/Privacy'),
+  },
 ];
 
 const router = new VueRouter({
