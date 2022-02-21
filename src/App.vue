@@ -189,6 +189,7 @@ export default {
   #app {
     font-family: "RobotoCondensed", Helvetica, Arial, sans-serif;
 
+    background-color: #00126b;
     &::before {
       content: " ";
       position: fixed;
@@ -198,6 +199,7 @@ export default {
       left: 0;
       background-color: #00126b;
       background-image: url("~@/assets/images/background.svg");
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.2));
       background-size: cover;
       will-change: transform;
     }
