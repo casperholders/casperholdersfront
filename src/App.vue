@@ -88,6 +88,13 @@ export default {
             subtitle: null,
           },
           {
+            title: 'Security',
+            icon: 'mdi-key',
+            route: 'security',
+            disabled: this.signerType === LEDGER_SIGNER,
+            subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
+          },
+          {
             title: 'Transfer',
             icon: 'mdi-send',
             route: 'transfer',

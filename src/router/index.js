@@ -22,6 +22,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "balance-view" */ '@/views/Balance'),
   },
   {
+    path: '/security',
+    name: 'Security',
+    component: () => import(/* webpackChunkName: "balance-view" */ '@/views/Security'),
+  },
+  {
     path: '/transfer',
     name: 'Transfer',
     component: () => import(/* webpackChunkName: "transfer-view" */ '@/views/Transfer'),
