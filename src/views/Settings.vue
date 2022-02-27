@@ -18,48 +18,46 @@
       </v-card-title>
     </v-card-title>
     <v-card-text>
-      <v-card-text>
-        <v-card
-          outlined
-          elevation="3"
-          class="mb-4"
+      <v-card
+        outlined
+        elevation="3"
+        class="mb-4"
+      >
+        <v-card-title>
+          <v-icon left>
+            mdi-wifi
+          </v-icon>
+          Internet settings
+        </v-card-title>
+        <v-card-text
+          id="internetSettings"
+          class="d-flex align-center"
         >
-          <v-card-title>
-            <v-icon left>
-              mdi-wifi
-            </v-icon>
-            Internet settings
-          </v-card-title>
-          <v-card-text
-            id="internetSettings"
-            class="d-flex align-center"
-          >
-            <v-radio-group v-model="sendDeployDisconnected">
-              <template
-                #label
-              >
-                <div class="text-body-1">
-                  What behavior do you want to apply to deploys when you are offline ?
-                </div>
-              </template>
-              <v-radio
-                color="white"
-                label="Disabled when disconnected"
-                :value="false"
-              />
-              <v-radio
-                color="white"
-                label="Send directly when back online"
-                :value="true"
-              />
-            </v-radio-group>
-          </v-card-text>
-        </v-card>
-      </v-card-text>
+          <v-radio-group v-model="sendDeployDisconnected">
+            <template
+              #label
+            >
+              <div class="text-body-1">
+                What behavior do you want to apply to deploys when you are offline ?
+              </div>
+            </template>
+            <v-radio
+              color="white"
+              label="Disabled when disconnected"
+              :value="false"
+            />
+            <v-radio
+              color="white"
+              label="Send directly when back online"
+              :value="true"
+            />
+          </v-radio-group>
+        </v-card-text>
+      </v-card>
+      <div class="text-center font-weight-bold text-body-2">
+        Settings are saved automatically
+      </div>
     </v-card-text>
-    <v-card-actions class="d-block text-center">
-      Settings are saved automatically
-    </v-card-actions>
   </v-card>
 </template>
 

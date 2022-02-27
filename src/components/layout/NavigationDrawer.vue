@@ -181,4 +181,10 @@ export default {
     ::v-deep .v-list-item__icon {
         margin: auto 12px auto 0 !important;
     }
+
+    ::v-deep .v-list-item__title {
+        font-weight: bold !important;
+        font-size: 0.890rem !important;
+        letter-spacing: 0.1rem;
+    }
 </style>

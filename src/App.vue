@@ -168,26 +168,14 @@ export default {
 </script>
 
 <style lang="scss">
-  @font-face {
-    font-family: "RobotoCondensed";
-    src: url("assets/fonts/RobotoCondensed/RobotoCondensed-Regular.ttf");
-    font-weight: normal;
-    font-style: normal;
-  }
-
-  @font-face {
-    font-family: "EczarBold";
-    src: url("assets/fonts/Eczar/Eczar-Bold.ttf");
+  .cspr {
+    font-family: "Eczar", "Roboto", Helvetica, Arial, sans-serif;
     font-weight: bold;
     font-style: normal;
   }
 
-  .cspr {
-    font-family: "EczarBold", "RobotoCondensed", Helvetica, Arial, sans-serif;
-  }
-
   #app {
-    font-family: "RobotoCondensed", Helvetica, Arial, sans-serif;
+    font-family: "Roboto", Helvetica, Arial, sans-serif;
 
     background-color: #00126b;
     &::before {
