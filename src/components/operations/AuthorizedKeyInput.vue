@@ -2,6 +2,8 @@
   <v-row
     align="center"
     justify="center"
+    class="rounded mb-7 mx-1"
+    style="border: thin solid rgba(255, 255, 255, 0.12)"
   >
     <v-col
       cols="12"
@@ -9,21 +11,29 @@
     >
       <v-text-field
         color="white"
-        label="Public key"
+        label="Account Hash"
         type="text"
-        :value="data.publicKey"
-        :rules="publicKeyRules"
+        :value="data.accountHash"
+        :rules="accountHashRules"
         required
-        @input="$emit('update', {publicKey: $event})"
+        @input="$emit('update', {accountHash: $event})"
       >
         <template #prepend>
           <v-tooltip
             bottom
           >
             <template #activator="{ on }">
-              <v-icon v-on="on">
-                mdi-open-in-new
-              </v-icon>
+              <v-btn
+                icon
+                :href="getAccountHashUrl(data.accountHash)"
+                target="_blank"
+                rel="noopener"
+                v-on="on"
+              >
+                <v-icon>
+                  mdi-open-in-new
+                </v-icon>
+              </v-btn>
             </template>
             See on cspr.live
           </v-tooltip>
@@ -69,7 +79,7 @@
 </template>
 
 <script>
-import { CLPublicKey } from 'casper-js-sdk';
+import { CSPR_LIVE_URL } from '@/helpers/env';
 
 export default {
   name: 'AuthorizedKeyInput',
@@ -82,20 +92,11 @@ export default {
   data() {
     return {
       /**
-       * Rules for the Public Key text field
+       * Rules for the Account Hash text field
        */
-      publicKeyRules: [
-        (a) => !!a || 'Public Key required',
-        (a) => {
-          try {
-            if (a) {
-              CLPublicKey.fromHex(a);
-            }
-            return true;
-          } catch (e) {
-            return e.toString();
-          }
-        },
+      accountHashRules: [
+        (a) => !!a || 'Account Hash required',
+        (a) => /^[a-f0-9]{64}$/.test(a) || 'Account hash must be valid. (32 char string [a-f0-9]{64})',
       ],
       /**
        * Rules for the Weight field
@@ -105,6 +106,11 @@ export default {
         (a) => a > 0 || 'Weight must be at least 1',
       ],
     };
+  },
+  methods: {
+    getAccountHashUrl(accountHash) {
+      return `${CSPR_LIVE_URL}account/${accountHash}`;
+    },
   },
 };
 </script>
