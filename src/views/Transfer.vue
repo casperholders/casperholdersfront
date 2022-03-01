@@ -1,126 +1,124 @@
 <template>
-  <div>
-    <operation
-      :amount="amount"
+  <operation
+    :amount="amount"
+    :fee="transferFee"
+    :loading-sign-and-deploy="loadingSignAndDeploy"
+    :remaining-balance="remainingBalance"
+    :send-deploy="sendDeploy"
+    :type="type"
+    icon="mdi-send"
+    submit-title="Send Transaction"
+    title="Transfer"
+  >
+    <v-text-field
+      id="address"
+      v-model="address"
+      :rules="addressRules"
+      :value="address"
+      color="white"
+      label="Send to address"
+      prepend-icon="mdi-account"
+      required
+    />
+    <v-text-field
+      id="transferID"
+      v-model="transferID"
+      :rules="transferIDRules"
+      :value="transferID"
+      color="white"
+      hint="Set to 0 if not known"
+      label="Transfer ID"
+      prepend-icon="mdi-music-accidental-sharp"
+      required
+    />
+    <Amount
+      :balance="balance"
       :fee="transferFee"
-      :loading-sign-and-deploy="loadingSignAndDeploy"
-      :remaining-balance="remainingBalance"
-      :send-deploy="sendDeploy"
-      :type="type"
-      icon="mdi-send"
-      submit-title="Send Transaction"
-      title="Transfer"
+      :min="minimumCSPRTransfer"
+      :value="amount"
+      class="mb-4"
+      @input="amount = $event"
+    />
+    <div class="mx-n1">
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Transfer Fee</v-col>
+        <v-col class="text-right cspr">
+          {{ transferFee }} CSPR
+        </v-col>
+      </v-row>
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Balance</v-col>
+        <v-col class="text-right cspr">
+          <template v-if="loadingBalance">
+            Loading balance ...
+            <v-progress-circular
+              class="ml-3"
+              color="white"
+              indeterminate
+              size="14"
+            />
+          </template>
+          <template v-else>
+            {{ balance }} CSPR
+          </template>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>Balance after operation</v-col>
+        <v-col class="text-right cspr">
+          {{ remainingBalance }} CSPR
+        </v-col>
+      </v-row>
+    </div>
+    <v-alert
+      v-if="errorBalance"
+      class="mt-5"
+      dense
+      prominent
+      type="error"
     >
-      <v-text-field
-        id="address"
-        v-model="address"
-        :rules="addressRules"
-        :value="address"
-        color="white"
-        label="Send to address"
-        prepend-icon="mdi-account"
-        required
-      />
-      <v-text-field
-        id="transferID"
-        v-model="transferID"
-        :rules="transferIDRules"
-        :value="transferID"
-        color="white"
-        hint="Set to 0 if not known"
-        label="Transfer ID"
-        prepend-icon="mdi-music-accidental-sharp"
-        required
-      />
-      <Amount
-        :balance="balance"
-        :fee="transferFee"
-        :min="minimumCSPRTransfer"
-        :value="amount"
-        class="mb-4"
-        @input="amount = $event"
-      />
-      <div class="mx-n1">
-        <v-row
-          class="white-bottom-border"
-        >
-          <v-col>Transfer Fee</v-col>
-          <v-col class="text-right cspr">
-            {{ transferFee }} CSPR
-          </v-col>
-        </v-row>
-        <v-row
-          class="white-bottom-border"
-        >
-          <v-col>Balance</v-col>
-          <v-col class="text-right cspr">
-            <template v-if="loadingBalance">
-              Loading balance ...
-              <v-progress-circular
-                class="ml-3"
-                color="white"
-                indeterminate
-                size="14"
-              />
-            </template>
-            <template v-else>
-              {{ balance }} CSPR
-            </template>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>Balance after operation</v-col>
-          <v-col class="text-right cspr">
-            {{ remainingBalance }} CSPR
-          </v-col>
-        </v-row>
-      </div>
-      <v-alert
-        v-if="errorBalance"
-        class="mt-5"
-        dense
-        prominent
-        type="error"
-      >
-        <v-row align="center">
-          <v-col class="grow">
-            {{ errorBalance.message }}
-          </v-col>
-          <v-col class="shrink">
-            <v-btn
-              v-if="isInstanceOfNoActiveKeyError"
-              color="primary"
-              @click="connectionRequest"
-            >
-              <v-icon left>
-                mdi-account-circle
-              </v-icon>
-              Connect
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-alert>
-      <v-alert
-        v-if="errorDeploy"
-        class="mt-5"
-        dense
-        type="error"
-      >
-        {{ errorDeploy.message }}
-      </v-alert>
-      <v-alert
-        v-if="exchange"
-        class="mt-5"
-        type="warning"
-        prominent
-        border="left"
-      >
-        You're going to transfer some funds to <strong>{{ getExchange }}</strong> (presumably)! <br>
-        Verify your <strong>transfer ID</strong>
-        and make sure it's correct <strong>BEFORE</strong> signing the deploy.
-      </v-alert>
-    </operation>
-  </div>
+      <v-row align="center">
+        <v-col class="grow">
+          {{ errorBalance.message }}
+        </v-col>
+        <v-col class="shrink">
+          <v-btn
+            v-if="isInstanceOfNoActiveKeyError"
+            color="primary"
+            @click="connectionRequest"
+          >
+            <v-icon left>
+              mdi-account-circle
+            </v-icon>
+            Connect
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-alert>
+    <v-alert
+      v-if="errorDeploy"
+      class="mt-5"
+      dense
+      type="error"
+    >
+      {{ errorDeploy.message }}
+    </v-alert>
+    <v-alert
+      v-if="exchange"
+      class="mt-5"
+      type="warning"
+      prominent
+      border="left"
+    >
+      You're going to transfer some funds to <strong>{{ getExchange }}</strong> (presumably)! <br>
+      Verify your <strong>transfer ID</strong>
+      and make sure it's correct <strong>BEFORE</strong> signing the deploy.
+    </v-alert>
+  </operation>
 </template>
 
 <script>
