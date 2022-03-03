@@ -15,6 +15,10 @@
         type="text"
         :value="data.accountHash"
         :rules="accountHashRules"
+        :readonly="data.existingKey"
+        :hint="data.existingKey ?
+          'You can\'t edit this key, you can only modify it\'s weight or delete it.' : undefined"
+        :persistent-hint="data.existingKey"
         required
         @input="$emit('update', {accountHash: $event})"
       >
@@ -48,10 +52,12 @@
         color="white"
         label="Weight"
         type="number"
-        min="1"
+        :min="data.existingKey ? 0 : 1"
         required
         :value="data.weight"
         :rules="weightRules"
+        :hint="data.existingKey ? 'Set to 0 to remove this key' : undefined"
+        :persistent-hint="data.existingKey"
         @input="$emit('update', {weight: $event})"
       >
         <template #prepend>
@@ -102,8 +108,8 @@ export default {
        * Rules for the Weight field
        */
       weightRules: [
-        (a) => !!a || 'Weight required',
-        (a) => a > 0 || 'Weight must be at least 1',
+        (a) => a !== '' || 'Weight required',
+        (a) => a > (this.data.existingKey ? -1 : 0) || `Weight must be at least ${this.data.existingKey ? '0' : '1'}`,
       ],
     };
   },

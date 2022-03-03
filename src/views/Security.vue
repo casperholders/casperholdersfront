@@ -16,7 +16,7 @@
       border="left"
     >
       Warning : don't change your security settings without knowing what you do. You could
-      permanently loose access to your account!
+      <span class="font-weight-bold">PERMANENTLY</span> loose access to your account!
     </v-alert>
     <v-card
       outlined
@@ -166,75 +166,157 @@
         </v-icon>
         Summary
       </v-card-title>
-      <v-card-text>
-        <p class="text-body-1 font-weight-bold">
-          To make changes to the authorized keys or the thresholds you will need
-          to sign the future deploys with a weight of : {{ keyManagementThreshold }}
+      <v-card-text v-if="!keyInfo">
+        You need to connect first to see the summary.
+      </v-card-text>
+      <v-card-text v-if="keyInfo">
+        <p
+          v-if="!isThresholdChanged"
+          class="text-body-1 font-weight-bold"
+        >
+          No changes will be made to your thresholds
         </p>
-        <ul>
-          <li
-            v-for="(authorizedInput, index) in authorizedInputs"
-            :key="index+'-keyManagementThresholdValidation'"
-          >
-            The account hash
-            <span
-              :class="{
-                'keyError': (authorizedInput.weight < keyManagementThreshold),
-                'keyValid':(authorizedInput.weight >= keyManagementThreshold)
-              }"
-            >
-              {{ authorizedInput.accountHash }}
-            </span>
-            {{ authorizedInput.weight >= keyManagementThreshold ? 'will be' : 'won\'t be' }}
-            able to make changes to the authorized keys or the thresholds.
-          </li>
-          <li>
-            The sum of the weight of the keys is equal
-            or higher than the key management threshold :
-            <span
-              :class="{
-                'keyError': (sumWeight() < keyManagementThreshold),
-                'keyValid':(sumWeight() >= keyManagementThreshold)
-              }"
-            >
-              {{ sumWeight() >= keyManagementThreshold ? 'Yes' : 'No' }}
-            </span>
-          </li>
-        </ul>
-        <p class="text-body-1 font-weight-bold mt-4">
-          To make deploys you will need
-          to sign future deploys with a weight of : {{ deployThreshold }}
+        <p
+          v-if="isKeyManagementThresholdChanged"
+          class="text-body-1 font-weight-bold"
+        >
+          Your key management threshold will change from a weight of
+          {{ keyInfo.Account.actionThresholds.keyManagement }} to {{ keyManagementThreshold }}
         </p>
-        <ul>
-          <li
-            v-for="(authorizedInput, index) in authorizedInputs"
-            :key="index+'-deployThresholdValidation'"
-          >
-            The account hash
-            <span
-              :class="{
-                'keyError': (authorizedInput.weight < deployThreshold),
-                'keyValid':(authorizedInput.weight >= deployThreshold)
-              }"
-            >
-              {{ authorizedInput.accountHash }}
-            </span>
-            {{ authorizedInput.weight >= deployThreshold ? 'will be' : 'won\'t be' }}
-            able to make deploys.
-          </li>
-          <li>
-            The sum of the weight of the keys is equal
-            or higher than the deploy threshold :
-            <span
-              :class="{
-                'keyError': (sumWeight() < deployThreshold),
-                'keyValid':(sumWeight() >= deployThreshold)
-              }"
-            >
-              {{ sumWeight() >= deployThreshold ? 'Yes' : 'No' }}
-            </span>
-          </li>
-        </ul>
+        <p
+          v-if="isDeployThresholdChanged"
+          class="text-body-1 font-weight-bold"
+        >
+          Your deployment threshold will change from a weight of
+          {{ keyInfo.Account.actionThresholds.deployment }} to {{ deployThreshold }}
+        </p>
+        <v-slide-y-transition leave-absolute>
+          <div v-if="isKeysChanged || isThresholdChanged">
+            <p class="text-body-1 font-weight-bold">
+              To make changes to the authorized keys or the thresholds you will need
+              to sign the future deploys with a weight of : {{ keyManagementThreshold }}
+            </p>
+            <ul>
+              <li
+                v-for="(authorizedInput, index) in authorizedInputs"
+                :key="index+'-keyManagementThresholdValidation'"
+              >
+                The account hash
+                <span
+                  :class="{
+                    'keyError': (authorizedInput.weight < keyManagementThreshold),
+                    'keyValid':(authorizedInput.weight >= keyManagementThreshold)
+                  }"
+                >
+                  {{ authorizedInput.accountHash }}
+                </span>
+                {{ authorizedInput.weight >= keyManagementThreshold ? 'will be' : 'won\'t be' }}
+                able to make changes to the authorized keys or the thresholds.
+              </li>
+              <li>
+                The sum of the weight of the keys is equal
+                or higher than the key management threshold :
+                <span
+                  :class="{
+                    'keyError': (sumWeight() < keyManagementThreshold),
+                    'keyValid':(sumWeight() >= keyManagementThreshold)
+                  }"
+                >
+                  {{ sumWeight() >= keyManagementThreshold ? 'Yes' : 'No' }}
+                </span>
+              </li>
+            </ul>
+            <p class="text-body-1 font-weight-bold mt-4">
+              To make deploys you will need
+              to sign future deploys with a weight of : {{ deployThreshold }}
+            </p>
+            <ul>
+              <li
+                v-for="(authorizedInput, index) in authorizedInputs"
+                :key="index+'-deployThresholdValidation'"
+              >
+                The account hash
+                <span
+                  :class="{
+                    'keyError': (authorizedInput.weight < deployThreshold),
+                    'keyValid':(authorizedInput.weight >= deployThreshold)
+                  }"
+                >
+                  {{ authorizedInput.accountHash }}
+                </span>
+                {{ authorizedInput.weight >= deployThreshold ? 'will be' : 'won\'t be' }}
+                able to make deploys.
+              </li>
+              <li>
+                The sum of the weight of the keys is equal
+                or higher than the deploy threshold :
+                <span
+                  :class="{
+                    'keyError': (sumWeight() < deployThreshold),
+                    'keyValid':(sumWeight() >= deployThreshold)
+                  }"
+                >
+                  {{ sumWeight() >= deployThreshold ? 'Yes' : 'No' }}
+                </span>
+              </li>
+            </ul>
+            <template v-if="keysChanged.length > 0">
+              <p class="text-body-1 font-weight-bold mt-4">
+                List of key weight changes :
+              </p>
+              <ul>
+                <li
+                  v-for="(keyChanged, index) in keysChanged"
+                  :key="index+'-keyChanged'"
+                >
+                  The account hash
+                  <span
+                    style="font-weight: bold"
+                  >
+                    {{ keyChanged.accountHash }}
+                  </span>
+                  <template v-if="Number(keyChanged.weight) === 0">
+                    <span class="keyError">
+                      will be deleted!
+                    </span>
+                  </template>
+                  <template v-else>
+                    weight will be changed from
+                    <span class="font-weight-bold">{{ keyChanged.oldWeight }}</span> to
+                    <span class="font-weight-bold">{{ keyChanged.weight }}</span>.
+                  </template>
+                </li>
+              </ul>
+            </template>
+            <template v-if="keysAdded.length > 0">
+              <p class="text-body-1 font-weight-bold mt-4">
+                List of new keys :
+              </p>
+              <ul>
+                <li
+                  v-for="(keyAdded, index) in keysAdded"
+                  :key="index+'-keyAdded'"
+                >
+                  The account hash
+                  <span
+                    style="font-weight: bold"
+                  >
+                    {{ keyAdded.accountHash }}
+                  </span>
+                  weight will be added with a weight of
+                  <span class="font-weight-bold">{{ keyAdded.weight }}</span>.
+                </li>
+              </ul>
+            </template>
+          </div>
+        </v-slide-y-transition>
+        <v-slide-y-transition leave-absolute>
+          <div v-if="!isKeysChanged && !isThresholdChanged">
+            <p class="text-body-1 font-weight-bold">
+              No change will be made to your keys.
+            </p>
+          </div>
+        </v-slide-y-transition>
       </v-card-text>
     </v-card>
     <v-card>
@@ -318,15 +400,19 @@ import Operation from '@/components/operations/Operation';
 import balanceService from '@/helpers/balanceService';
 import clientCasper from '@/helpers/clientCasper';
 import deployManager from '@/helpers/deployManager';
-import { ACCOUNT_INFO_HASH, NETWORK } from '@/helpers/env';
-import { AccountInfo } from '@casperholders/core/dist/services/deploys/account-info/AccountInfo';
+import { NETWORK } from '@/helpers/env';
+import {
+  KeyManagement,
+} from '@casperholders/core/dist/services/deploys/keyManagement/keyManagement';
 import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
 import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
-import { AccountInfoResult } from '@casperholders/core/dist/services/results/accountInfoResult';
+import { KeyManagementResult } from '@casperholders/core/dist/services/results/keyManagementResult';
 import Big from 'big.js';
 import { CLPublicKey, DeployUtil } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 import AuthorizedKeyInput from '@/components/operations/AuthorizedKeyInput';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import KeyManagerWasm from '!!binary-loader!@/assets/smartcontracts/keys-manager.wasm';
 
 /**
  * Security view
@@ -342,14 +428,13 @@ export default {
       connected: false,
       errorKey: null,
       keyInfo: null,
-      keyManagementFee: 0.5,
       amount: '0',
       balance: '0',
       errorBalance: null,
       loadingSignAndDeploy: false,
       errorDeploy: null,
       loadingBalance: false,
-      type: AccountInfoResult.getName(),
+      type: KeyManagementResult.getName(),
       authorizedInputs: [],
       /**
        * Rules for the threshold fields
@@ -378,6 +463,72 @@ export default {
     },
     isInstanceOfNoActiveKeyError() {
       return this.errorBalance instanceof NoActiveKeyError;
+    },
+    isThresholdChanged() {
+      return this.isKeyManagementThresholdChanged || this.isDeployThresholdChanged;
+    },
+    isKeyManagementThresholdChanged() {
+      if (this.keyInfo) {
+        return Number(this.keyManagementThreshold)
+          !== this.keyInfo.Account.actionThresholds.keyManagement;
+      }
+      return false;
+    },
+    isDeployThresholdChanged() {
+      if (this.keyInfo) {
+        return Number(this.deployThreshold) !== this.keyInfo.Account.actionThresholds.deployment;
+      }
+      return false;
+    },
+    isKeysChanged() {
+      if (this.authorizedInputs.length !== this.keyInfo?.Account?.associatedKeys?.length) {
+        return true;
+      }
+      for (let i = 0; i < this.keyInfo.Account.associatedKeys.length; i++) {
+        if (this.keyInfo.Account.associatedKeys[i].accountHash.replace('account-hash-', '') !== this.authorizedInputs[i].accountHash) {
+          return true;
+        }
+        if (this.keyInfo.Account.associatedKeys[i].weight
+          !== Number(this.authorizedInputs[i].weight)
+        ) {
+          return true;
+        }
+      }
+      return false;
+    },
+    keysChanged() {
+      const keysChanged = [];
+      if (this.keyInfo) {
+        for (let i = 0; i < this.keyInfo.Account.associatedKeys.length; i++) {
+          if (this.keyInfo.Account.associatedKeys[i].weight
+            !== Number(this.authorizedInputs[i].weight)
+          ) {
+            const keyChange = this.authorizedInputs[i];
+            keyChange.oldWeight = this.keyInfo.Account.associatedKeys[i].weight;
+            keysChanged.push(keyChange);
+          }
+        }
+      }
+      return keysChanged;
+    },
+    keysAdded() {
+      const currentKeys = [...this.authorizedInputs];
+      if (this.keyInfo) {
+        currentKeys.splice(0, this.keyInfo.Account.associatedKeys.length);
+      }
+      return currentKeys;
+    },
+    keyManagementFee() {
+      let fee = Big(0);
+      if (this.isKeyManagementThresholdChanged) {
+        fee = fee.plus(Big(0.2));
+      }
+      if (this.isDeployThresholdChanged) {
+        fee = fee.plus(Big(0.2));
+      }
+      fee = fee.plus(Big(this.keysChanged.length).times(Big(0.2)));
+      fee = fee.plus(Big(this.keysAdded.length).times(Big(0.2)));
+      return fee.toNumber();
     },
   },
   watch: {
@@ -433,6 +584,7 @@ export default {
             this.authorizedInputs.push({
               accountHash: this.keyInfo.Account.associatedKeys[i].accountHash.replace('account-hash-', ''),
               weight: this.keyInfo.Account.associatedKeys[i].weight,
+              existingKey: true,
             });
           }
           this.keyManagementThreshold = this.keyInfo.Account.actionThresholds.keyManagement;
@@ -467,15 +619,34 @@ export default {
      * Update the store with a deploy result containing the deployhash of the deploy sent
      */
     async sendDeploy() {
-      const deployParameter = new AccountInfo(
-        this.url,
+      const keyManagementThresholdValue = (
+        Number(this.keyManagementThreshold) === this.keyInfo.Account.actionThresholds.keyManagement
+          ? undefined : Number(this.keyManagementThreshold)
+      );
+      const deployThresholdValue = (
+        Number(this.deployThreshold) === this.keyInfo.Account.actionThresholds.deployment
+          ? undefined : Number(this.deployThreshold)
+      );
+      let accounts;
+      if (this.keysChanged.length > 0 || this.keysAdded.length > 0) {
+        accounts = [...this.keysChanged, ...this.keysAdded].map((k) => ({ ...k }));
+        for (let i = 0; i < accounts.length; i++) {
+          accounts[i].accountHash = Uint8Array.from(Buffer.from(accounts[i].accountHash, 'hex'));
+        }
+      }
+      const KeyManagerU8 = new Uint8Array(KeyManagerWasm.length).map(
+        (v, i) => KeyManagerWasm.charCodeAt(i),
+      );
+      const deployParameter = new KeyManagement(
+        deployThresholdValue,
+        keyManagementThresholdValue,
+        accounts,
         this.signer.activeKey,
         NETWORK,
-        ACCOUNT_INFO_HASH,
+        KeyManagerU8.buffer,
       );
       const options = this.signerOptionsFactory.getOptionsForOperations();
 
-      await deployParameter.init(clientCasper);
       await this.genericSendDeploy(deployParameter, options);
     },
     async genericSendDeploy(deployParameter, options) {
@@ -515,6 +686,7 @@ export default {
       this.authorizedInputs.push({
         accountHash: '',
         weight: 1,
+        existingKey: false,
       });
     },
     onUpdate(index, data) {
@@ -523,7 +695,11 @@ export default {
       });
     },
     onDelete(index) {
-      this.authorizedInputs.splice(index, 1);
+      if (this.authorizedInputs[index].existingKey) {
+        this.authorizedInputs[index].weight = 0;
+      } else {
+        this.authorizedInputs.splice(index, 1);
+      }
     },
     sumWeight() {
       let sum = Big(0);

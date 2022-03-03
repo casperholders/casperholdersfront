@@ -17,4 +17,18 @@ module.exports = {
       swSrc: 'src/service-worker.js',
     },
   },
+  configureWebpack: {
+    module: {
+      defaultRules: [
+        {
+          type: 'javascript/auto',
+          resolve: {},
+        },
+        {
+          test: /\.json$/i,
+          type: 'json',
+        },
+      ],
+    },
+  },
 };
