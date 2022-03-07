@@ -15,6 +15,9 @@ export default class VuexKeyManager extends AbstractKeyManager {
    */
   static get activeKey() {
     if (store.state.signer.connected && store.state.signer.activeKey) {
+      if (store.state.impersonatePublicKey !== '') {
+        return store.state.impersonatePublicKey;
+      }
       return store.state.signer.activeKey;
     }
 

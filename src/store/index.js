@@ -140,6 +140,7 @@ const initialState = () => ({
     keyPath: 0,
   },
   internet: true,
+  impersonatePublicKey: '',
 });
 
 const getters = {
@@ -149,6 +150,7 @@ const getters = {
     .filter((operation) => operation.hash.toLowerCase() === hash.toLowerCase())[0],
   signerObject: (state) => SIGNER_TYPES[state.signerType],
   signerOptionsFactory: (state) => SIGNER_OPTIONS_FACTORIES[state.signerType](state),
+  activeKey: (state) => (state.impersonatePublicKey !== '' ? state.impersonatePublicKey : state.signer.activeKey),
 };
 
 const mutations = {
@@ -232,6 +234,9 @@ const mutations = {
   },
   addErrorPendingDeploy(state, { index, e }) {
     state.offlineDeploys[index].error = e;
+  },
+  impersonatePublicKey(state, { publicKey }) {
+    state.impersonatePublicKey = publicKey;
   },
 };
 
@@ -324,6 +329,9 @@ const actions = {
   },
   removeOfflineDeploy(context, index) {
     context.commit('removePendingDeploy', { index });
+  },
+  impersonatePublicKey(context, publicKey) {
+    context.commit('impersonatePublicKey', { publicKey });
   },
 };
 

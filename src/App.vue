@@ -10,6 +10,14 @@
         >
       </div>
       <v-container class="app__wrapper container__small">
+        <v-alert
+          v-if="impersonatePublicKey"
+          dense
+          type="info"
+          style="overflow-wrap: anywhere!important;"
+        >
+          You're impersonating this public key : {{ impersonatePublicKey }}
+        </v-alert>
         <router-view />
       </v-container>
     </v-main>
@@ -73,7 +81,7 @@ export default {
      */
   }),
   computed: {
-    ...mapState(['signerType']),
+    ...mapState(['signerType', 'impersonatePublicKey']),
     /**
      * Return the links available. Dynamically adjusted until ledger support any operations.
      */
