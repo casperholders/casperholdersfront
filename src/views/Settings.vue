@@ -82,6 +82,9 @@
                 label="Public key"
                 type="text"
                 :value="publicKeyImpersonation"
+                :rules="publicKeyRules"
+                :disabled="signer.activeKey === null"
+                clearable
                 required
               />
               <v-text-field
@@ -91,14 +94,117 @@
                 :value="accountHashImpersonation"
                 disabled
               />
-              {{ validated ? 'Account authorized' : 'Account not authorized' }}
+              <v-alert
+                v-if="signer.activeKey === null"
+                class="mt-5"
+                dense
+                prominent
+                type="error"
+              >
+                <v-row align="center">
+                  <v-col class="grow">
+                    You must connect first to impersonate another key.
+                  </v-col>
+                  <v-col class="shrink">
+                    <v-btn
+                      color="primary"
+                      @click="connectionRequest"
+                    >
+                      <v-icon left>
+                        mdi-account-circle
+                      </v-icon>
+                      Connect
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-alert>
+              <p v-if="accountHashImpersonation !== '' && loadingKeyInfo === true">
+                <v-progress-circular
+                  class="ml-3"
+                  color="white"
+                  indeterminate
+                  size="14"
+                />
+                Loading key info...
+              </p>
+              <template v-if="accountHashImpersonation !== '' && loadingKeyInfo === false">
+                <p>
+                  <template v-if="validated">
+                    <v-icon
+                      color="success"
+                      left
+                    >
+                      mdi-checkbox-marked-circle
+                    </v-icon>
+                    Account authorized. Current weight : {{ currentWeight }}.
+                  </template>
+                  <template v-else>
+                    <v-icon
+                      color="error"
+                      left
+                    >
+                      mdi-alert-circle
+                    </v-icon>
+                    Account not authorized.
+                  </template>
+                </p>
+                <p>
+                  <template
+                    v-if="validated && currentWeight >= deployThreshold"
+                  >
+                    <v-icon
+                      color="success"
+                      left
+                    >
+                      mdi-checkbox-marked-circle
+                    </v-icon>
+                    Account authorized to make deploy.
+                  </template>
+                  <template v-else>
+                    <v-icon
+                      color="error"
+                      left
+                    >
+                      mdi-alert-circle
+                    </v-icon>
+                    Account not authorized to make deploy.
+                  </template>
+                </p>
+                <p>
+                  <template
+                    v-if="validated && currentWeight >= keyManagementThreshold"
+                  >
+                    <v-icon
+                      color="success"
+                      left
+                    >
+                      mdi-checkbox-marked-circle
+                    </v-icon>
+                    Account authorized to manage keys.
+                  </template>
+                  <template v-else>
+                    <v-icon
+                      color="error"
+                      left
+                    >
+                      mdi-alert-circle
+                    </v-icon>
+                    Account not authorized to manage keys.
+                  </template>
+                </p>
+              </template>
             </v-col>
           </v-row>
         </v-card-text>
       </v-card>
-      <div class="text-center font-weight-bold text-body-2">
+      <v-alert
+        outlined
+        dense
+        type="info"
+        text
+      >
         Settings are saved automatically
-      </div>
+      </v-alert>
     </v-card-text>
   </v-card>
 </template>
@@ -122,12 +228,25 @@ export default {
     errorKey: null,
     keyInfo: null,
     validated: false,
+    currentWeight: 0,
     sendDeployDisconnected: false,
     publicKeyImpersonation: '',
+    publicKeyRules: [
+      (a) => a.length >= 2 || 'Public key is too short',
+      (a) => {
+        try {
+          CLPublicKey.fromHex(a);
+          return true;
+        } catch (e) {
+          return e.toString();
+        }
+      },
+    ],
   }),
   computed: {
     ...mapState([
       'signer',
+      'impersonatePublicKey',
     ]),
     accountHashImpersonation() {
       try {
@@ -148,9 +267,11 @@ export default {
       this.sendDeployDisconnected = localStorage.sendDeployDisconnected === 'true';
     }
     localStorage.sendDeployDisconnected = this.sendDeployDisconnected;
+    this.publicKeyImpersonation = this.impersonatePublicKey;
   },
   methods: {
     async onAccountHashImpersonationChange(accountHashImpersonation) {
+      await this.$store.dispatch('impersonatePublicKey', '');
       if (accountHashImpersonation !== '') {
         this.loadingKeyInfo = true;
         try {
@@ -163,17 +284,26 @@ export default {
             `account-hash-${accountHashImpersonation}`,
             [],
           );
-          this.validated = this.keyInfo.Account.associatedKeys.some(
+          const account = this.keyInfo.Account.associatedKeys.find(
             (v) => v.accountHash === CLPublicKey.fromHex(this.signer.activeKey).toAccountHashStr(),
           );
+          this.validated = account !== undefined;
+          this.currentWeight = account ? account.weight : 0;
           this.keyManagementThreshold = this.keyInfo.Account.actionThresholds.keyManagement;
           this.deployThreshold = this.keyInfo.Account.actionThresholds.deployment;
+          await this.$store.dispatch('impersonatePublicKey', this.publicKeyImpersonation);
           this.loadingKeyInfo = false;
         } catch (e) {
           this.errorKey = e;
           this.loadingKeyInfo = false;
         }
+      } else {
+        this.validated = false;
+        this.currentWeight = 0;
       }
+    },
+    async connectionRequest() {
+      await this.$store.dispatch('openConnectDialog');
     },
   },
 };
