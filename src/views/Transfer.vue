@@ -186,6 +186,7 @@ export default {
     ...mapGetters([
       'signerObject',
       'signerOptionsFactory',
+      'activeKey',
     ]),
     remainingBalance() {
       const result = this.balance - this.amount - this.transferFee;
@@ -255,7 +256,7 @@ export default {
      */
     async sendDeploy() {
       const deployParameter = new TransferDeployParameters(
-        this.signer.activeKey, NETWORK, this.amount, this.address, this.transferID,
+        this.activeKey, NETWORK, this.amount, this.address, this.transferID,
       );
       const options = this.signerOptionsFactory.getOptionsForTransfer(this.address);
       await this.genericSendDeploy(deployParameter, options);

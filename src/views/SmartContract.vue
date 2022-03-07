@@ -157,6 +157,7 @@ export default {
     ...mapGetters([
       'signerObject',
       'signerOptionsFactory',
+      'activeKey',
     ]),
     remainingBalance() {
       const result = this.balance - this.amount;
@@ -221,7 +222,7 @@ export default {
      */
     async sendDeploy() {
       const deployParameter = new SmartContractDeployParameters(
-        this.signer.activeKey,
+        this.activeKey,
         NETWORK,
         this.buffer,
         this.amount,

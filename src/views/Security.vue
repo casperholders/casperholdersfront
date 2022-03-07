@@ -453,6 +453,7 @@ export default {
     ...mapGetters([
       'signerObject',
       'signerOptionsFactory',
+      'activeKey',
     ]),
     remainingBalance() {
       const result = this.balance - this.keyManagementFee;
@@ -568,7 +569,7 @@ export default {
      * Get Key infos
      */
     async getKeyInfos() {
-      if (this.signer.activeKey) {
+      if (this.activeKey) {
         this.loadingKeyInfo = true;
         try {
           const latestBlock = await clientCasper.casperRPC.getLatestBlockInfo();
@@ -577,7 +578,7 @@ export default {
           );
           this.keyInfo = await clientCasper.casperRPC.getBlockState(
             stateRootHash,
-            CLPublicKey.fromHex(this.signer.activeKey).toAccountHashStr(),
+            CLPublicKey.fromHex(this.activeKey).toAccountHashStr(),
             [],
           );
           for (let i = 0; i < this.keyInfo.Account.associatedKeys.length; i++) {
@@ -641,7 +642,7 @@ export default {
         deployThresholdValue,
         keyManagementThresholdValue,
         accounts,
-        this.signer.activeKey,
+        this.activeKey,
         NETWORK,
         KeyManagerU8.buffer,
       );

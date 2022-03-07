@@ -147,6 +147,7 @@ export default {
     ...mapGetters([
       'signerObject',
       'signerOptionsFactory',
+      'activeKey',
     ]),
     remainingBalance() {
       const result = Big(this.balance).plus(this.amount).minus(this.undelegateFee);
@@ -206,7 +207,7 @@ export default {
     async sendDeploy() {
       const deployParameter = new Undelegate(
         this.amount,
-        this.signer.activeKey,
+        this.activeKey,
         this.validator.publicKey,
         NETWORK,
         AUCTION_MANAGER_HASH,

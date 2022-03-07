@@ -150,6 +150,7 @@ export default {
     ...mapGetters([
       'signerObject',
       'signerOptionsFactory',
+      'activeKey',
     ]),
     remainingBalance() {
       const result = this.balance - this.accountInfoFee;
@@ -191,7 +192,7 @@ export default {
     async getBalance() {
       const validatorService = new Validators(clientCasper);
       this.accountInfoFee = await validatorService.isUrlSet(
-        this.signer.activeKey,
+        this.activeKey,
         ACCOUNT_INFO_HASH,
         NETWORK,
       ) ? 0.5 : 10;
@@ -216,7 +217,7 @@ export default {
     async sendDeploy() {
       const deployParameter = new AccountInfo(
         this.url,
-        this.signer.activeKey,
+        this.activeKey,
         NETWORK,
         ACCOUNT_INFO_HASH,
       );

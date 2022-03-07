@@ -181,13 +181,14 @@ export default {
     ...mapGetters([
       'signerObject',
       'signerOptionsFactory',
+      'activeKey',
     ]),
     remainingBalance() {
       const result = this.balance - this.amount - this.bidFee;
       return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
     },
     validatorUrl() {
-      return `${CSPR_LIVE_URL}validator/${this.signer.activeKey}`;
+      return `${CSPR_LIVE_URL}validator/${this.activeKey}`;
     },
     minimumFundsNeeded() {
       return this.minBid + this.bidFee;
@@ -241,7 +242,7 @@ export default {
     async sendDeploy() {
       const deployParameter = new AddBid(
         this.amount,
-        this.signer.activeKey,
+        this.activeKey,
         this.commission,
         NETWORK,
         AUCTION_MANAGER_HASH,

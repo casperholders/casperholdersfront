@@ -146,6 +146,7 @@ export default {
     ...mapGetters([
       'signerObject',
       'signerOptionsFactory',
+      'activeKey',
     ]),
     remainingBalance() {
       const result = this.balance - this.amount - this.delegationFee;
@@ -198,7 +199,7 @@ export default {
     async sendDeploy() {
       const deployParameter = new Delegate(
         this.amount,
-        this.signer.activeKey,
+        this.activeKey,
         this.validator.publicKey,
         NETWORK,
         AUCTION_MANAGER_HASH,
