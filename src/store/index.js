@@ -135,6 +135,7 @@ const initialState = () => ({
   signerType: process.env.VUE_APP_E2E === 'true' ? LOCAL_SIGNER : '',
   operations: [],
   offlineDeploys: [],
+  weightedDeploys: [],
   connectDialog: false,
   ledger: {
     keyPath: 0,
@@ -238,6 +239,12 @@ const mutations = {
   impersonatePublicKey(state, { publicKey }) {
     state.impersonatePublicKey = publicKey;
   },
+  addWeightDeploy(state, { weightDeploy }) {
+    state.weightedDeploys.push(weightDeploy);
+  },
+  removeWeightDeploy(state, { index }) {
+    state.weightedDeploys.splice(index, 1);
+  },
 };
 
 const actions = {
@@ -332,6 +339,12 @@ const actions = {
   },
   impersonatePublicKey(context, publicKey) {
     context.commit('impersonatePublicKey', { publicKey });
+  },
+  addWeightDeploy(context, weightDeploy) {
+    context.commit('addWeightDeploy', { weightDeploy });
+  },
+  removeWeightDeploy(context, index) {
+    context.commit('removeWeightDeploy', { index });
   },
 };
 

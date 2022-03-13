@@ -82,12 +82,14 @@
       :deploy-hash="operation.hash"
     />
     <OperationPending v-if="offlineDeploys.length > 0" />
+    <OperationPendingWeight v-if="weightedDeploys.length > 0" />
   </div>
 </template>
 
 <script>
 import OperationDialog from '@/components/operations/OperationDialog';
 import OperationPending from '@/components/operations/OperationPending';
+import OperationPendingWeight from '@/components/operations/OperationPendingWeight';
 import OperationResult from '@/components/operations/OperationResult';
 import { TORUS_SIGNER } from '@/helpers/signers';
 import { mapState } from 'vuex';
@@ -103,7 +105,7 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'Operation',
-  components: { OperationPending, OperationDialog, OperationResult },
+  components: { OperationPendingWeight, OperationPending, OperationDialog, OperationResult },
   props: {
     /**
      * The icon of the operation
@@ -186,6 +188,7 @@ export default {
     ...mapState([
       'internet',
       'offlineDeploys',
+      'weightedDeploys',
       'signerType',
     ]),
     /**

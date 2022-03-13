@@ -357,7 +357,7 @@
           </v-row>
         </div>
         <v-alert
-          v-if="errorBalance"
+          v-if="errorBalance && errorKey === null"
           class="mt-5"
           dense
           prominent
@@ -378,6 +378,22 @@
                 </v-icon>
                 Connect
               </v-btn>
+            </v-col>
+          </v-row>
+        </v-alert>
+        <v-alert
+          v-if="errorKey"
+          class="mt-5"
+          dense
+          prominent
+          type="error"
+        >
+          <v-row align="center">
+            <v-col class="grow">
+              {{
+                errorKey.message.includes('ValueNotFound')
+                  ? 'Error: Account not found.' : errorKey.message
+              }}
             </v-col>
           </v-row>
         </v-alert>
@@ -581,6 +597,7 @@ export default {
             CLPublicKey.fromHex(this.activeKey).toAccountHashStr(),
             [],
           );
+          this.authorizedInputs.length = 0;
           for (let i = 0; i < this.keyInfo.Account.associatedKeys.length; i++) {
             this.authorizedInputs.push({
               accountHash: this.keyInfo.Account.associatedKeys[i].accountHash.replace('account-hash-', ''),
@@ -592,7 +609,11 @@ export default {
           this.deployThreshold = this.keyInfo.Account.actionThresholds.deployment;
           this.loadingKeyInfo = false;
         } catch (e) {
+          console.log(e);
           this.errorKey = e;
+          this.authorizedInputs.length = 0;
+          this.keyManagementThreshold = 1;
+          this.deployThreshold = 1;
           this.loadingKeyInfo = false;
         }
       }
@@ -653,14 +674,47 @@ export default {
     async genericSendDeploy(deployParameter, options) {
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
+      this.errorDeploy = null;
       try {
         if (this.internet) {
-          const deployResult = await deployManager.prepareSignAndSendDeploy(
-            deployParameter,
-            this.signerObject,
-            options,
-          );
-          await this.$store.dispatch('addDeployResult', deployResult);
+          try {
+            const latestBlock = await clientCasper.casperRPC.getLatestBlockInfo();
+            const stateRootHash = await clientCasper.casperRPC.getStateRootHash(
+              latestBlock.block.hash,
+            );
+            const keyInfo = await clientCasper.casperRPC.getBlockState(
+              stateRootHash,
+              CLPublicKey.fromHex(this.activeKey).toAccountHashStr(),
+              [],
+            );
+            const keyManagementThreshold = keyInfo.Account.actionThresholds.keyManagement;
+            const account = this.keyInfo.Account.associatedKeys.find(
+              (v) => v.accountHash
+                === CLPublicKey.fromHex(this.signer.activeKey).toAccountHashStr(),
+            );
+            if (account.weight >= keyManagementThreshold) {
+              const deployResult = await deployManager.prepareSignAndSendDeploy(
+                deployParameter,
+                this.signerObject,
+                options,
+              );
+              await this.$store.dispatch('addDeployResult', deployResult);
+            } else {
+              const signedDeploy = await this.signerObject
+                .sign(deployParameter.makeDeploy, options);
+              const { deployResult } = deployParameter;
+              const weightDeploy = {
+                deploy: signedDeploy,
+                // eslint-disable-next-line new-cap
+                deployResult: new deployResult(DeployUtil.deployToJson(signedDeploy).deploy.hash),
+                deployResultType: deployResult,
+              };
+              await this.$store.dispatch('addWeightDeploy', weightDeploy);
+            }
+          } catch (e) {
+            console.log(e);
+            this.errorDeploy = e;
+          }
         } else {
           const signedDeploy = await this.signerObject.sign(deployParameter.makeDeploy, options);
           const { deployResult } = deployParameter;

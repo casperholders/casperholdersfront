@@ -69,7 +69,7 @@
     </v-col>
     <v-col cols="1">
       <v-btn
-        class="rounded-xl mx-2"
+        class="rounded-xl"
         color="primary"
         fab
         dark
@@ -81,11 +81,24 @@
         </v-icon>
       </v-btn>
     </v-col>
+    <v-col
+      v-if="isCurrentAccount"
+      cols="12"
+    >
+      <v-alert
+        dense
+        type="info"
+      >
+        This is the account hash of the currently connected/impersonated account.
+      </v-alert>
+    </v-col>
   </v-row>
 </template>
 
 <script>
 import { CSPR_LIVE_URL } from '@/helpers/env';
+import { CLPublicKey } from 'casper-js-sdk';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'AuthorizedKeyInput',
@@ -112,6 +125,14 @@ export default {
         (a) => a > (this.data.existingKey ? -1 : 0) || `Weight must be at least ${this.data.existingKey ? '0' : '1'}`,
       ],
     };
+  },
+  computed: {
+    ...mapGetters([
+      'activeKey',
+    ]),
+    isCurrentAccount() {
+      return CLPublicKey.fromHex(this.activeKey).toAccountHashStr().replace('account-hash-', '') === this.data.accountHash;
+    },
   },
   methods: {
     getAccountHashUrl(accountHash) {

@@ -27,6 +27,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "balance-view" */ '@/views/Security'),
   },
   {
+    path: '/multisig/:deployHash',
+    name: 'Multisig',
+    component: () => import(/* webpackChunkName: "balance-view" */ '@/views/MultiSig'),
+  },
+  {
     path: '/transfer',
     name: 'Transfer',
     component: () => import(/* webpackChunkName: "transfer-view" */ '@/views/Transfer'),
