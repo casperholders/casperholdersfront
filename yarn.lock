@@ -977,10 +977,10 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
-"@casperholders/core@^1.17.1":
-  version "1.17.1"
-  resolved "https://registry.yarnpkg.com/@casperholders/core/-/core-1.17.1.tgz#7efde7888a05e77fa2c7fd5953aac112fa3df655"
-  integrity sha512-IBjD67Ua76I4x86akxM/1pYpiF1gHEXhzg7o9ixenYbqGjor+dh6UScShmtTvuX34fjQUbXJ1/gye0cHb8Omeg==
+"@casperholders/core@^1.18.0":
+  version "1.18.0"
+  resolved "https://registry.yarnpkg.com/@casperholders/core/-/core-1.18.0.tgz#f4a6bed3239824de0c4dc010183fb1aa4d452ae7"
+  integrity sha512-Rb9++jqnB/371S7cDrppX0ZR9TtvgBC1O5Y2q3pI9QYGC0aaGFk8QcIFBd4hNdSA9W47D8V0ChIOPiv+rRSV6g==
   dependencies:
     "@ethersproject/bignumber" "^5.5.0"
     big.js "^6.1.1"
@@ -4006,6 +4006,11 @@ cosmiconfig@^5.0.0:
     is-directory "^0.3.1"
     js-yaml "^3.13.1"
     parse-json "^4.0.0"
+
+countdown@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/countdown/-/countdown-2.6.0.tgz#677fb8e3a9d4cc4e76415901ba253b518af34177"
+  integrity sha1-Z3+446nUzE52QVkBuiU7UYrzQXc=
 
 create-ecdh@^4.0.0:
   version "4.0.4"
@@ -8706,6 +8711,11 @@ parse-asn1@^5.0.0, parse-asn1@^5.1.5:
     evp_bytestokey "^1.0.0"
     pbkdf2 "^3.0.3"
     safe-buffer "^5.1.1"
+
+parse-duration@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/parse-duration/-/parse-duration-1.0.2.tgz#b9aa7d3a1363cc7e8845bea8fd3baf8a11df5805"
+  integrity sha512-Dg27N6mfok+ow1a2rj/nRjtCfaKrHUZV2SJpEn/s8GaVUSlf4GGRCRP1c13Hj+wfPKVMrFDqLMLITkYKgKxyyg==
 
 parse-json@^4.0.0:
   version "4.0.0"

@@ -709,6 +709,7 @@ export default {
                 deployResult: new deployResult(DeployUtil.deployToJson(signedDeploy).deploy.hash),
                 deployResultType: deployResult,
               };
+              weightDeploy.deployResult.cost = Big(this.keyManagementFee);
               await this.$store.dispatch('addWeightDeploy', weightDeploy);
             }
           } catch (e) {

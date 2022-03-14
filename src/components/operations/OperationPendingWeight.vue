@@ -170,11 +170,11 @@ export default {
       if (!res.ok) {
         const text = await res.text();
         if (text.includes('Deploy already exist')) {
-          this.$set(this.urls, this.deployJson(this.weightedDeploys[index].deploy).deploy.hash, `${API}/deploys/${this.deployJson(this.weightedDeploys[index].deploy).deploy.hash}`);
+          this.$set(this.urls, this.deployJson(this.weightedDeploys[index].deploy).deploy.hash, `/multisig/${this.deployJson(this.weightedDeploys[index].deploy).deploy.hash}`);
         }
         this.$set(this.urls, this.deployJson(this.weightedDeploys[index].deploy).deploy.hash, 'Unknown error');
       }
-      this.$set(this.urls, this.deployJson(this.weightedDeploys[index].deploy).deploy.hash, `${API}/deploys/${this.deployJson(this.weightedDeploys[index].deploy).deploy.hash}`);
+      this.$set(this.urls, this.deployJson(this.weightedDeploys[index].deploy).deploy.hash, `/multisig/${this.deployJson(this.weightedDeploys[index].deploy).deploy.hash}`);
     },
     cancelSendingDeploy(index) {
       this.$store.dispatch('removeWeightDeploy', index);
