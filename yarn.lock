@@ -977,10 +977,10 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
-"@casperholders/core@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@casperholders/core/-/core-2.0.0.tgz#be19f31a7e68df6f6f122602fff5ec74351d3db6"
-  integrity sha512-DhU4jV5przCz2RebWwGSGMYPel3bQ3m6o+lVmwbm/MyMefjzo5T+PeFnvqcVBmMcodL/dJLhpMqHoyeEaFlSBg==
+"@casperholders/core@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@casperholders/core/-/core-2.0.1.tgz#bbd21422d80a04cce37ddb25423666c39f18ec9c"
+  integrity sha512-bK5k2skrmWb6buswLRIviQuZaSfRHt57ukFkDxy8xhTrduZR3M9bzcX14JjYqshedVTrCgEofIamp+L7C0JkEQ==
   dependencies:
     "@ethersproject/bignumber" "^5.5.0"
     big.js "^6.1.1"

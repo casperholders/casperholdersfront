@@ -177,7 +177,7 @@
             color="error"
             left
           >
-            mdi-alert-circle
+            mdi-checkbox-marked-circle
           </v-icon>
           You already signed this deploy.
         </p>
@@ -199,7 +199,7 @@
         color="primary"
         dark
         large
-        :disabled="!countdown"
+        :disabled="!countdown && alreadySigned"
         :loading="signingLoading"
         @click="signMultisig"
       >
