@@ -14,7 +14,7 @@
     "testnet": "vue-cli-service serve --mode testnet"
   },
   "dependencies": {
-    "@casperholders/core": "^1.18.0",
+    "@casperholders/core": "^2.0.0",
     "@ledgerhq/hw-transport-web-ble": "^6.24.1",
     "@ledgerhq/hw-transport-webusb": "^6.24.1",
     "@toruslabs/casper-embed": "^1.1.2",

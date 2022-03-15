@@ -229,11 +229,7 @@
 <script>
 import deployManager from '@/helpers/deployManager';
 import { CSPR_LIVE_URL } from '@/helpers/env';
-import {
-  STATUS_KO,
-  STATUS_OK,
-  STATUS_UNKNOWN,
-} from '@casperholders/core/dist/services/results/deployResult';
+import DeployResult from '@casperholders/core/dist/services/results/deployResult';
 import { mapGetters } from 'vuex';
 
 /**
@@ -255,9 +251,9 @@ export default {
     return {
       deployResult: null,
       deployHashUrl: '',
-      UNKNOWN: STATUS_UNKNOWN,
-      OK: STATUS_OK,
-      KO: STATUS_KO,
+      UNKNOWN: DeployResult.STATUS_UNKNOWN,
+      OK: DeployResult.STATUS_OK,
+      KO: DeployResult.STATUS_KO,
       eventWatcher: new EventSource(`${process.env.VUE_APP_RPC}/events/?start_from=0`),
       step: 1,
     };
@@ -279,7 +275,7 @@ export default {
   created() {
     this.deployResult = { ...this.getOperation(this.deployHash) };
     this.deployHashUrl = `${CSPR_LIVE_URL}deploy/${this.deployResult.hash}`;
-    if (this.deployResult.status === STATUS_UNKNOWN) {
+    if (this.deployResult.status === DeployResult.STATUS_UNKNOWN) {
       this.eventWatcher.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if ('DeployProcessed' in data && data.DeployProcessed.deploy_hash.toLowerCase() === this.deployHash.toLowerCase()) {
@@ -299,8 +295,8 @@ export default {
       setTimeout(async () => {
         this.eventWatcher.close();
         await this.getDeployResult();
-        if (this.deployResult.status === STATUS_UNKNOWN) {
-          this.deployResult.status = STATUS_KO;
+        if (this.deployResult.status === DeployResult.STATUS_UNKNOWN) {
+          this.deployResult.status = DeployResult.STATUS_KO;
           this.deployResult.message = 'No deploy result from the network. Please check on cspr.live or reach someone on the discord with the deploy hash.';
           await this.$store.dispatch('updateDeployResult', this.deployResult);
         }
@@ -318,13 +314,13 @@ export default {
      * and we send a get request to the api to register the deploy in the metrics
      */
     async getDeployResult() {
-      if (this.deployResult.status !== STATUS_UNKNOWN) {
+      if (this.deployResult.status !== DeployResult.STATUS_UNKNOWN) {
         return;
       }
       try {
         const updatedDeployResult = await deployManager
           .getDeployResult(this.deployResult);
-        if (updatedDeployResult.status !== STATUS_UNKNOWN) {
+        if (updatedDeployResult.status !== DeployResult.STATUS_UNKNOWN) {
           this.deployResult = updatedDeployResult;
           await this.$store.dispatch('updateDeployResult', updatedDeployResult);
           this.step = 4;

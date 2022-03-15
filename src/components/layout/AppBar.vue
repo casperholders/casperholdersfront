@@ -226,7 +226,7 @@ import Connect from '@/components/layout/Connect';
 import { CSPR_LIVE_URL, HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
 import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER, TORUS_SIGNER } from '@/helpers/signers';
 import { torusOptions } from '@/store';
-import { STATUS_OK, STATUS_UNKNOWN } from '@casperholders/core/dist/services/results/deployResult';
+import DeployResult from '@casperholders/core/dist/services/results/deployResult';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -277,8 +277,9 @@ export default {
     },
     badgeColor() {
       if (
-        this.operations.filter((operation) => operation.status === STATUS_UNKNOWN).length > 0
-        || this.offlineDeploys.length > 0
+        this.operations.filter(
+          (operation) => operation.status === DeployResult.STATUS_UNKNOWN,
+        ).length > 0 || this.offlineDeploys.length > 0
       ) {
         return 'primary';
       }
@@ -294,8 +295,14 @@ export default {
         return this.offlineDeploys.length;
       }
 
-      if (this.operations.filter((operation) => operation.status === STATUS_UNKNOWN).length > 0) {
-        return this.operations.filter((operation) => operation.status === STATUS_UNKNOWN).length;
+      if (
+        this.operations.filter(
+          (operation) => operation.status === DeployResult.STATUS_UNKNOWN,
+        ).length > 0
+      ) {
+        return this.operations.filter(
+          (operation) => operation.status === DeployResult.STATUS_UNKNOWN,
+        ).length;
       }
 
       if (this.operations.filter((operation) => operation.status === false).length > 0) {
@@ -330,16 +337,16 @@ export default {
       this.isWindowTop = document.documentElement.scrollTop === 0;
     },
     operationIcon(operation) {
-      if (operation.status === STATUS_UNKNOWN) {
+      if (operation.status === DeployResult.STATUS_UNKNOWN) {
         return 'mdi-help-circle';
       }
-      return operation.status === STATUS_OK ? 'mdi-checkbox-marked-circle' : 'mdi-alert-circle';
+      return operation.status === DeployResult.STATUS_OK ? 'mdi-checkbox-marked-circle' : 'mdi-alert-circle';
     },
     operationIconColor(operation) {
-      if (operation.status === STATUS_UNKNOWN) {
+      if (operation.status === DeployResult.STATUS_UNKNOWN) {
         return 'white';
       }
-      return operation.status === STATUS_OK ? 'green' : 'tertiary';
+      return operation.status === DeployResult.STATUS_OK ? 'green' : 'tertiary';
     },
     getOperationUrl(operation) {
       return `${CSPR_LIVE_URL}deploy/${operation.hash}`;

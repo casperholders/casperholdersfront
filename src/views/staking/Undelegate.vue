@@ -1,35 +1,23 @@
 <template>
   <operation
     :amount="amount"
-    :fee="0"
+    :fee="undelegateFee"
     :loading-sign-and-deploy="loadingSignAndDeploy"
     :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"
     :type="type"
-    icon="mdi-file-document-edit"
-    submit-title="Deploy"
-    title="Send smart contract"
+    icon="mdi-lock-open"
+    submit-title="Unstake"
+    title="Unstake"
   >
-    <v-file-input
-      id="smartContractFile"
-      v-model="contract"
-      :show-size="1000"
-      accept=".wasm"
-      color="white"
-      counter
-      label="Smart Contracts"
-      outlined
-      placeholder="Select your contracts"
-      prepend-icon="mdi-paperclip"
-    >
-      <template #selection="{ text }">
-        {{ text }}
-      </template>
-    </v-file-input>
+    <Validators
+      v-model="validator"
+      :undelegate="true"
+    />
     <Amount
-      :balance="balance"
+      :balance="stakingBalance"
       :fee="Number(0)"
-      :min="minPayment"
+      :min="minimumCSPRUnstake"
       :value="amount"
       class="mb-4"
       @input="amount = $event"
@@ -38,9 +26,17 @@
       <v-row
         class="white-bottom-border"
       >
-        <v-col>Payment amount for the smart contract</v-col>
+        <v-col>Undelegation fee</v-col>
         <v-col class="text-right cspr">
-          {{ amount }} CSPR
+          {{ undelegateFee }} CSPR
+        </v-col>
+      </v-row>
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Staking balance</v-col>
+        <v-col class="text-right cspr">
+          {{ stakingBalance }} CSPR
         </v-col>
       </v-row>
       <v-row
@@ -62,16 +58,8 @@
           </template>
         </v-col>
       </v-row>
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Total cost</v-col>
-        <v-col class="text-right cspr">
-          {{ amount }} CSPR
-        </v-col>
-      </v-row>
       <v-row>
-        <v-col>Balance after operation</v-col>
+        <v-col>Balance after unstake</v-col>
         <v-col class="text-right cspr">
           {{ remainingBalance }} CSPR
         </v-col>
@@ -116,37 +104,39 @@
 <script>
 import Amount from '@/components/operations/Amount';
 import Operation from '@/components/operations/Operation';
+import Validators from '@/components/operations/Validators';
 import balanceService from '@/helpers/balanceService';
 import deployManager from '@/helpers/deployManager';
-import { NETWORK } from '@/helpers/env';
-import { SmartContractDeployParameters } from '@casperholders/core/dist/services/deploys/smartContract/smartContractDeployParameters';
-import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
-import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
-import { SmartContractResult } from '@casperholders/core/dist/services/results/smartContractResult';
+import { AUCTION_MANAGER_HASH, NETWORK } from '@/helpers/env';
+import Undelegate from '@casperholders/core/dist/services/deploys/auction/actions/undelegate';
+import InsufficientFunds from '@casperholders/core/dist/services/errors/insufficientFunds';
+import NoActiveKeyError from '@casperholders/core/dist/services/errors/noActiveKeyError';
+import UndelegateResult from '@casperholders/core/dist/services/results/undelegateResult';
+import Big from 'big.js';
 import { DeployUtil } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 
 /**
- * SmartContract view
- * Contains two fields
- * - Amount of fee to deploy the smartcontract
- * - File input for the wasm smart contract
+ * Undelegate view
+ * Contains one fields
+ * - Amount to undelegate to the node set in the .env file
  */
 export default {
-  name: 'SmartContract',
-  components: { Amount, Operation },
+  name: 'Undelegate',
+  components: { Validators, Amount, Operation },
   data() {
     return {
-      minPayment: 1,
-      contract: [],
+      minimumCSPRUnstake: 1,
+      undelegateFee: 0.00001,
       amount: '1',
-      balance: '0',
       errorBalance: null,
+      balance: '0',
+      stakingBalance: '0',
       loadingSignAndDeploy: false,
       errorDeploy: null,
       loadingBalance: false,
-      type: SmartContractResult.getName(),
-      buffer: null,
+      type: UndelegateResult.getName(),
+      validator: undefined,
     };
   },
   computed: {
@@ -160,8 +150,11 @@ export default {
       'activeKey',
     ]),
     remainingBalance() {
-      const result = this.balance - this.amount;
-      return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
+      const result = Big(this.balance).plus(this.amount).minus(this.undelegateFee);
+      return result.gte(0) ? Big(result.toFixed(5)).toNumber() : 0;
+    },
+    minimumFundsNeeded() {
+      return this.undelegateFee;
     },
     isInstanceOfNoActiveKeyError() {
       return this.errorBalance instanceof NoActiveKeyError;
@@ -174,22 +167,7 @@ export default {
         await this.getBalance();
       }
     },
-    /**
-     * Read the file selected by the user
-     */
-    contract() {
-      const reader = new FileReader();
-
-      reader.onload = (evt) => {
-        this.buffer = evt.target.result;
-      };
-
-      reader.onerror = (evt) => {
-        console.error('An error ocurred reading the file', evt);
-      };
-
-      reader.readAsArrayBuffer(this.contract, 'UTF-8');
-    },
+    validator: 'getBalance',
   },
   async mounted() {
     await this.getBalance();
@@ -199,18 +177,24 @@ export default {
   },
   methods: {
     /**
-     * Get the user balance
+     * Get the user balance and staking balance
      */
     async getBalance() {
       this.loadingBalance = true;
       this.errorBalance = null;
       this.balance = '0';
+      this.stakingBalance = '0';
       try {
         this.balance = await balanceService.fetchBalance();
-        if (this.balance <= this.minPayment && this.internet) {
-          throw new InsufficientFunds(this.minPayment);
+        if (this.validator) {
+          this.stakingBalance = await balanceService
+            .fetchStakeBalance(this.validator.publicKey);
+        }
+        if (this.balance <= this.minimumFundsNeeded && this.internet) {
+          throw new InsufficientFunds(this.minimumFundsNeeded);
         }
       } catch (e) {
+        console.log(e);
         this.errorBalance = e;
       }
       this.loadingBalance = false;
@@ -221,11 +205,12 @@ export default {
      * Update the store with a deploy result containing the deployhash of the deploy sent
      */
     async sendDeploy() {
-      const deployParameter = new SmartContractDeployParameters(
-        this.activeKey,
-        NETWORK,
-        this.buffer,
+      const deployParameter = new Undelegate(
         this.amount,
+        this.activeKey,
+        this.validator.publicKey,
+        NETWORK,
+        AUCTION_MANAGER_HASH,
       );
       const options = this.signerOptionsFactory.getOptionsForOperations();
       await this.genericSendDeploy(deployParameter, options);

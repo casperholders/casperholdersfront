@@ -132,10 +132,10 @@ import Operation from '@/components/operations/Operation';
 import balanceService from '@/helpers/balanceService';
 import deployManager from '@/helpers/deployManager';
 import { AUCTION_MANAGER_HASH, CSPR_LIVE_URL, NETWORK } from '@/helpers/env';
-import { WithdrawBid } from '@casperholders/core/dist/services/deploys/auction/actions/withdrawBid';
-import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
-import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
-import { WithdrawBidResult } from '@casperholders/core/dist/services/results/withdrawBidResult';
+import WithdrawBid from '@casperholders/core/dist/services/deploys/auction/actions/withdrawBid';
+import InsufficientFunds from '@casperholders/core/dist/services/errors/insufficientFunds';
+import NoActiveKeyError from '@casperholders/core/dist/services/errors/noActiveKeyError';
+import WithdrawBidResult from '@casperholders/core/dist/services/results/withdrawBidResult';
 import { DeployUtil } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 

@@ -1,9 +1,9 @@
 import deployManager from '@/helpers/deployManager';
 import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER, TORUS_SIGNER } from '@/helpers/signers';
-import { CasperSigner } from '@casperholders/core/dist/services/signers/casperSigner';
-import { LedgerSigner } from '@casperholders/core/dist/services/signers/ledgerSigner';
-import { LocalSigner } from '@casperholders/core/dist/services/signers/localSigner';
-import { TorusSigner } from '@casperholders/core/dist/services/signers/torusSigner';
+import CasperSigner from '@casperholders/core/dist/services/signers/casperSigner';
+import LedgerSigner from '@casperholders/core/dist/services/signers/ledgerSigner';
+import LocalSigner from '@casperholders/core/dist/services/signers/localSigner';
+import TorusSigner from '@casperholders/core/dist/services/signers/torusSigner';
 import { Keys, Signer } from 'casper-js-sdk';
 import Vue from 'vue';
 import Vuex from 'vuex';
