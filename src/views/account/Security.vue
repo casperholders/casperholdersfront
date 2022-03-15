@@ -415,16 +415,14 @@
 import Operation from '@/components/operations/Operation';
 import balanceService from '@/helpers/balanceService';
 import clientCasper from '@/helpers/clientCasper';
-import deployManager from '@/helpers/deployManager';
 import { NETWORK } from '@/helpers/env';
-import {
-  KeyManagement,
-} from '@casperholders/core/dist/services/deploys/keyManagement/keyManagement';
-import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
-import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
-import { KeyManagementResult } from '@casperholders/core/dist/services/results/keyManagementResult';
+import genericSendDeploy from '@/helpers/genericSendDeploy';
+import KeyManagement from '@casperholders/core/dist/services/deploys/keyManagement/keyManagement';
+import InsufficientFunds from '@casperholders/core/dist/services/errors/insufficientFunds';
+import NoActiveKeyError from '@casperholders/core/dist/services/errors/noActiveKeyError';
+import KeyManagementResult from '@casperholders/core/dist/services/results/keyManagementResult';
 import Big from 'big.js';
-import { CLPublicKey, DeployUtil } from 'casper-js-sdk';
+import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 import AuthorizedKeyInput from '@/components/operations/AuthorizedKeyInput';
 // eslint-disable-next-line import/no-webpack-loader-syntax
@@ -668,68 +666,25 @@ export default {
         KeyManagerU8.buffer,
       );
       const options = this.signerOptionsFactory.getOptionsForOperations();
-
-      await this.genericSendDeploy(deployParameter, options);
-    },
-    async genericSendDeploy(deployParameter, options) {
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
       this.errorDeploy = null;
-      try {
-        if (this.internet) {
-          try {
-            const latestBlock = await clientCasper.casperRPC.getLatestBlockInfo();
-            const stateRootHash = await clientCasper.casperRPC.getStateRootHash(
-              latestBlock.block.hash,
-            );
-            const keyInfo = await clientCasper.casperRPC.getBlockState(
-              stateRootHash,
-              CLPublicKey.fromHex(this.activeKey).toAccountHashStr(),
-              [],
-            );
-            const keyManagementThreshold = keyInfo.Account.actionThresholds.keyManagement;
-            const account = this.keyInfo.Account.associatedKeys.find(
-              (v) => v.accountHash
-                === CLPublicKey.fromHex(this.signer.activeKey).toAccountHashStr(),
-            );
-            if (account.weight >= keyManagementThreshold) {
-              const deployResult = await deployManager.prepareSignAndSendDeploy(
-                deployParameter,
-                this.signerObject,
-                options,
-              );
-              await this.$store.dispatch('addDeployResult', deployResult);
-            } else {
-              const signedDeploy = await this.signerObject
-                .sign(deployParameter.makeDeploy, options);
-              const { deployResult } = deployParameter;
-              const weightDeploy = {
-                deploy: signedDeploy,
-                // eslint-disable-next-line new-cap
-                deployResult: new deployResult(DeployUtil.deployToJson(signedDeploy).deploy.hash),
-                deployResultType: deployResult,
-              };
-              weightDeploy.deployResult.cost = Big(this.keyManagementFee);
-              await this.$store.dispatch('addWeightDeploy', weightDeploy);
-            }
-          } catch (e) {
-            console.log(e);
-            this.errorDeploy = e;
-          }
-        } else {
-          const signedDeploy = await this.signerObject.sign(deployParameter.makeDeploy, options);
-          const { deployResult } = deployParameter;
-          const pendingDeploy = {
-            deploy: signedDeploy,
-            // eslint-disable-next-line new-cap
-            deployResult: new deployResult(DeployUtil.deployToJson(signedDeploy).deploy.hash),
-            deployResultType: deployResult,
-          };
-          await this.$store.dispatch('addOfflineDeploy', pendingDeploy);
-        }
-      } catch (e) {
-        console.log(e);
-        this.errorDeploy = e;
+      const result = await genericSendDeploy(
+        this.internet,
+        this.activeKey,
+        this.signer.activeKey,
+        this.signerObject,
+        deployParameter,
+        options,
+        this.keyManagementFee,
+        '0',
+        true,
+      );
+      if (result.error) {
+        console.log(result.error);
+        this.errorDeploy = result.error;
+      } else {
+        await this.$store.dispatch(result.event, result.data);
       }
       this.loadingSignAndDeploy = false;
       this.$root.$emit('closeOperationDialog');

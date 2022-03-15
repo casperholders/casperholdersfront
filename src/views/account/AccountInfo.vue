@@ -109,11 +109,12 @@ import balanceService from '@/helpers/balanceService';
 import clientCasper from '@/helpers/clientCasper';
 import deployManager from '@/helpers/deployManager';
 import { ACCOUNT_INFO_HASH, NETWORK } from '@/helpers/env';
-import { AccountInfo } from '@casperholders/core/dist/services/deploys/account-info/AccountInfo';
-import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
-import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
-import { AccountInfoResult } from '@casperholders/core/dist/services/results/accountInfoResult';
-import { Validators } from '@casperholders/core/dist/services/validators/validators';
+import genericSendDeploy from '@/helpers/genericSendDeploy';
+import AccountInfo from '@casperholders/core/dist/services/deploys/account-info/AccountInfo';
+import InsufficientFunds from '@casperholders/core/dist/services/errors/insufficientFunds';
+import NoActiveKeyError from '@casperholders/core/dist/services/errors/noActiveKeyError';
+import AccountInfoResult from '@casperholders/core/dist/services/results/accountInfoResult';
+import Validators from '@casperholders/core/dist/services/validators/validators';
 import { DeployUtil } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 
@@ -194,7 +195,6 @@ export default {
       this.accountInfoFee = await validatorService.isUrlSet(
         this.activeKey,
         ACCOUNT_INFO_HASH,
-        NETWORK,
       ) ? 0.5 : 10;
       this.loadingBalance = true;
       this.errorBalance = null;
@@ -224,11 +224,28 @@ export default {
       const options = this.signerOptionsFactory.getOptionsForOperations();
 
       await deployParameter.init(clientCasper);
-      await this.genericSendDeploy(deployParameter, options);
-    },
-    async genericSendDeploy(deployParameter, options) {
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
+      const result = await genericSendDeploy(
+        this.internet,
+        this.activeKey,
+        this.signer.activeKey,
+        this.signerObject,
+        deployParameter,
+        options,
+        this.accountInfoFee,
+      );
+      if (result.error) {
+        console.log(result.error);
+        this.errorDeploy = result.error;
+      } else {
+        await this.$store.dispatch(result.event, result.data);
+      }
+      this.loadingSignAndDeploy = false;
+      this.$root.$emit('closeOperationDialog');
+      this.$root.$emit('operationFinished');
+    },
+    async genericSendDeploy(deployParameter, options) {
       try {
         if (this.internet) {
           const deployResult = await deployManager.prepareSignAndSendDeploy(
@@ -252,9 +269,6 @@ export default {
         console.log(e);
         this.errorDeploy = e;
       }
-      this.loadingSignAndDeploy = false;
-      this.$root.$emit('closeOperationDialog');
-      this.$root.$emit('operationFinished');
     },
     async connectionRequest() {
       await this.$store.dispatch('openConnectDialog');

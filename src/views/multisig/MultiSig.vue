@@ -79,7 +79,7 @@
           </div>
         </v-card-text>
       </v-card>
-      <template v-if="countdown">
+      <template v-if="countdown && !alreadySigned">
         <p>
           <template
             v-if="validated"
@@ -90,7 +90,7 @@
             >
               mdi-checkbox-marked-circle
             </v-icon>
-            Account authorized to manage keys.
+            Account authorized to sign this deploy.
           </template>
           <template v-else>
             <v-icon
@@ -99,7 +99,7 @@
             >
               mdi-alert-circle
             </v-icon>
-            Account not authorized to manage keys.
+            Account not authorized to sign this deploy.
           </template>
         </p>
         <p>
@@ -163,7 +163,7 @@
         </p>
       </template>
       <template v-else>
-        <p>
+        <p v-if="!countdown">
           <v-icon
             color="error"
             left
@@ -171,6 +171,15 @@
             mdi-alert-circle
           </v-icon>
           Unfortunately this deploy is expired.
+        </p>
+        <p v-if="alreadySigned">
+          <v-icon
+            color="error"
+            left
+          >
+            mdi-alert-circle
+          </v-icon>
+          You already signed this deploy.
         </p>
       </template>
       <v-alert
@@ -206,8 +215,10 @@
 <script>
 
 import clientCasper from '@/helpers/clientCasper';
+import deployManager from '@/helpers/deployManager';
 import { API } from '@/helpers/env';
-import { KeyManagementResult } from '@casperholders/core/dist/services/results/keyManagementResult';
+import KeyManagementResult from '@casperholders/core/dist/services/results/keyManagementResult';
+import TransferResult from '@casperholders/core/dist/services/results/transferResult';
 import Big from 'big.js';
 import { CLPublicKey, DeployUtil } from 'casper-js-sdk';
 import parse from 'parse-duration';
@@ -247,6 +258,13 @@ export default {
     },
     approvals() {
       return this.deploy?.deploy ? this.deploy.deploy.deploy.approvals : [];
+    },
+    alreadySigned() {
+      return this.deploy?.deploy
+        ? this.deploy.deploy.deploy.approvals.some(
+          (approval) => approval.signer === this.signer.activeKey,
+        )
+        : false;
     },
     amount() {
       return this.deploy?.deployResult ? Big(this.deploy.deployResult.amount) : 0;
@@ -313,7 +331,7 @@ export default {
             clearInterval(countdownID);
           }
         },
-        ttl + 10000000 + timestamp,
+        ttl + timestamp,
         // eslint-disable-next-line no-bitwise
         countdown.HOURS | countdown.MINUTES | countdown.SECONDS);
       } else {
@@ -324,7 +342,14 @@ export default {
       this.signingLoading = true;
       this.errorSign = null;
       try {
-        const options = this.signerOptionsFactory.getOptionsForOperations();
+        let options = this.signerOptionsFactory.getOptionsForOperations();
+        console.log(this.deploy.deployResult.name);
+        console.log(KeyManagementResult);
+        if (this.deploy.deployResult.name === TransferResult.getName()) {
+          console.log(DeployUtil.deployFromJson(this.deploy.deploy).val.session.getArgByName('target'));
+          console.log(DeployUtil.deployFromJson(this.deploy.deploy).val.session.getArgByName('target').toHex());
+          options = this.signerOptionsFactory.getOptionsForTransfer(DeployUtil.deployFromJson(this.deploy.deploy).val.session.getArgByName('target').toHex());
+        }
         const signedDeploy = await this.signerObject
           .sign(DeployUtil.deployFromJson(this.deploy.deploy).val, options);
         this.deploy.deploy = DeployUtil.deployToJson(signedDeploy);
@@ -335,6 +360,13 @@ export default {
           );
           this.currentWeight += approvalAccount ? approvalAccount.weight : 0;
         });
+        if (this.currentWeight >= this.weightNeeded) {
+          const deployResult = await deployManager.sendDeploy(
+            signedDeploy,
+            TransferResult,
+          );
+          await this.$store.dispatch('addDeployResult', deployResult);
+        }
       } catch (e) {
         console.log(e);
         this.errorSign = e;
