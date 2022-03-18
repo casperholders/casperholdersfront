@@ -106,7 +106,7 @@
 <script>
 
 import { DATA_API } from '@/helpers/env';
-import CurrencyUtils from '@casperholders/core/dist/services/helpers/currencyUtils';
+import { CurrencyUtils } from '@casperholders/core';
 import { mapState } from 'vuex';
 
 /**

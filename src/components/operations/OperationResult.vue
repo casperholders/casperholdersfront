@@ -229,7 +229,7 @@
 <script>
 import deployManager from '@/helpers/deployManager';
 import { CSPR_LIVE_URL } from '@/helpers/env';
-import DeployResult from '@casperholders/core/dist/services/results/deployResult';
+import { DeployResult } from '@casperholders/core';
 import { mapGetters } from 'vuex';
 
 /**

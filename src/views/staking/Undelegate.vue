@@ -108,10 +108,12 @@ import Validators from '@/components/operations/Validators';
 import balanceService from '@/helpers/balanceService';
 import deployManager from '@/helpers/deployManager';
 import { AUCTION_MANAGER_HASH, NETWORK } from '@/helpers/env';
-import Undelegate from '@casperholders/core/dist/services/deploys/auction/actions/undelegate';
-import InsufficientFunds from '@casperholders/core/dist/services/errors/insufficientFunds';
-import NoActiveKeyError from '@casperholders/core/dist/services/errors/noActiveKeyError';
-import UndelegateResult from '@casperholders/core/dist/services/results/undelegateResult';
+import {
+  Undelegate,
+  InsufficientFunds,
+  NoActiveKeyError,
+  UndelegateResult,
+} from '@casperholders/core';
 import Big from 'big.js';
 import { DeployUtil } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';

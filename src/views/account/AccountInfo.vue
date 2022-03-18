@@ -110,11 +110,13 @@ import clientCasper from '@/helpers/clientCasper';
 import deployManager from '@/helpers/deployManager';
 import { ACCOUNT_INFO_HASH, NETWORK } from '@/helpers/env';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
-import AccountInfo from '@casperholders/core/dist/services/deploys/account-info/AccountInfo';
-import InsufficientFunds from '@casperholders/core/dist/services/errors/insufficientFunds';
-import NoActiveKeyError from '@casperholders/core/dist/services/errors/noActiveKeyError';
-import AccountInfoResult from '@casperholders/core/dist/services/results/accountInfoResult';
-import Validators from '@casperholders/core/dist/services/validators/validators';
+import {
+  AccountInfo,
+  InsufficientFunds,
+  NoActiveKeyError,
+  AccountInfoResult,
+  Validators,
+} from '@casperholders/core';
 import { DeployUtil } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 

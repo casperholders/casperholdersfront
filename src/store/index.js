@@ -1,10 +1,15 @@
+import clientCasper from '@/helpers/clientCasper';
 import deployManager from '@/helpers/deployManager';
 import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER, TORUS_SIGNER } from '@/helpers/signers';
-import CasperSigner from '@casperholders/core/dist/services/signers/casperSigner';
-import LedgerSigner from '@casperholders/core/dist/services/signers/ledgerSigner';
-import LocalSigner from '@casperholders/core/dist/services/signers/localSigner';
-import TorusSigner from '@casperholders/core/dist/services/signers/torusSigner';
-import { Keys, Signer } from 'casper-js-sdk';
+import {
+  KeyManagementResult,
+  TorusSigner,
+  LocalSigner,
+  LedgerSigner,
+  CasperSigner,
+} from '@casperholders/core';
+import _cloneDeep from 'lodash/cloneDeep';
+import { CLPublicKey, Keys, Signer } from 'casper-js-sdk';
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -305,13 +310,45 @@ const actions = {
       const pendingDeploy = context.state.offlineDeploys[i];
       try {
         // eslint-disable-next-line no-await-in-loop
-        const deployResult = await deployManager.sendDeploy(
-          pendingDeploy.deploy,
-          pendingDeploy.deployResultType,
+        let currentWeight = 0;
+        // eslint-disable-next-line no-await-in-loop
+        const latestBlock = await clientCasper.casperRPC.getLatestBlockInfo();
+        // eslint-disable-next-line no-await-in-loop
+        const stateRootHash = await clientCasper.casperRPC.getStateRootHash(
+          latestBlock.block.hash,
         );
-        context.commit('addDeployResult', { deployResult });
-        context.commit('removePendingDeployPop');
+        console.log(pendingDeploy.deploy);
+        // eslint-disable-next-line no-await-in-loop
+        const keyInfo = await clientCasper.casperRPC.getBlockState(
+          stateRootHash,
+          pendingDeploy.deploy.header.account.toAccountHashStr(),
+          [],
+        );
+        pendingDeploy.deploy.approvals.forEach((approval) => {
+          const approvalAccount = keyInfo.Account.associatedKeys.find(
+            (v) => v.accountHash === CLPublicKey.fromHex(approval.signer).toAccountHashStr(),
+          );
+          currentWeight += approvalAccount ? approvalAccount.weight : 0;
+        });
+        let weightNeeded = keyInfo.Account.actionThresholds.deployment;
+        if (pendingDeploy.deployResultType === KeyManagementResult.getName()) {
+          weightNeeded = keyInfo.Account.actionThresholds.keyManagement;
+        }
+        if (currentWeight >= weightNeeded) {
+          // eslint-disable-next-line no-await-in-loop,no-unreachable
+          const deployResult = await deployManager.sendDeploy(
+            pendingDeploy.deploy,
+            pendingDeploy.deployResultType,
+          );
+          context.commit('addDeployResult', { deployResult });
+          context.commit('removePendingDeployPop');
+        } else {
+          const weightDeploy = _cloneDeep(pendingDeploy);
+          context.commit('addWeightDeploy', { weightDeploy });
+          context.commit('removePendingDeployPop');
+        }
       } catch (e) {
+        console.log(e);
         context.commit('addErrorPendingDeploy', { i, e });
       }
     }

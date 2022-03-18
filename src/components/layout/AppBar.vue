@@ -226,7 +226,7 @@ import Connect from '@/components/layout/Connect';
 import { CSPR_LIVE_URL, HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
 import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER, TORUS_SIGNER } from '@/helpers/signers';
 import { torusOptions } from '@/store';
-import DeployResult from '@casperholders/core/dist/services/results/deployResult';
+import { DeployResult } from '@casperholders/core';
 import { mapGetters, mapState } from 'vuex';
 
 /**

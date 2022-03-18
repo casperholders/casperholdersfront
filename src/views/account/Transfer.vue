@@ -128,10 +128,12 @@ import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
 import exchanges from '@/helpers/exchanges';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
-import TransferDeployParameters from '@casperholders/core/dist/services/deploys/transfer/TransferDeployParameters';
-import InsufficientFunds from '@casperholders/core/dist/services/errors/insufficientFunds';
-import NoActiveKeyError from '@casperholders/core/dist/services/errors/noActiveKeyError';
-import TransferResult from '@casperholders/core/dist/services/results/transferResult';
+import {
+  TransferDeployParameters,
+  InsufficientFunds,
+  NoActiveKeyError,
+  TransferResult,
+} from '@casperholders/core';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 

@@ -1,4 +1,4 @@
-import ClientCasper from '@casperholders/core/dist/services/clients/clientCasper';
+import { ClientCasper } from '@casperholders/core';
 
 const RPC = process.env.VUE_APP_RPC;
 /**

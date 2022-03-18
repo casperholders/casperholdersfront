@@ -142,10 +142,7 @@ import Operation from '@/components/operations/Operation';
 import balanceService from '@/helpers/balanceService';
 import deployManager from '@/helpers/deployManager';
 import { AUCTION_MANAGER_HASH, CSPR_LIVE_URL, NETWORK } from '@/helpers/env';
-import AddBid from '@casperholders/core/dist/services/deploys/auction/actions/addBid';
-import InsufficientFunds from '@casperholders/core/dist/services/errors/insufficientFunds';
-import NoActiveKeyError from '@casperholders/core/dist/services/errors/noActiveKeyError';
-import AddBidResult from '@casperholders/core/dist/services/results/addBidResult';
+import { AddBid, InsufficientFunds, NoActiveKeyError, AddBidResult } from '@casperholders/core';
 import { DeployUtil } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 

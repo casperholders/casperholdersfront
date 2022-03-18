@@ -417,10 +417,12 @@ import balanceService from '@/helpers/balanceService';
 import clientCasper from '@/helpers/clientCasper';
 import { NETWORK } from '@/helpers/env';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
-import KeyManagement from '@casperholders/core/dist/services/deploys/keyManagement/keyManagement';
-import InsufficientFunds from '@casperholders/core/dist/services/errors/insufficientFunds';
-import NoActiveKeyError from '@casperholders/core/dist/services/errors/noActiveKeyError';
-import KeyManagementResult from '@casperholders/core/dist/services/results/keyManagementResult';
+import {
+  KeyManagement,
+  InsufficientFunds,
+  NoActiveKeyError,
+  KeyManagementResult,
+} from '@casperholders/core';
 import Big from 'big.js';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';

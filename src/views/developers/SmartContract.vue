@@ -119,10 +119,12 @@ import Operation from '@/components/operations/Operation';
 import balanceService from '@/helpers/balanceService';
 import deployManager from '@/helpers/deployManager';
 import { NETWORK } from '@/helpers/env';
-import SmartContractDeployParameters from '@casperholders/core/dist/services/deploys/smartContract/smartContractDeployParameters';
-import InsufficientFunds from '@casperholders/core/dist/services/errors/insufficientFunds';
-import NoActiveKeyError from '@casperholders/core/dist/services/errors/noActiveKeyError';
-import SmartContractResult from '@casperholders/core/dist/services/results/smartContractResult';
+import {
+  SmartContractDeployParameters,
+  InsufficientFunds,
+  NoActiveKeyError,
+  SmartContractResult,
+} from '@casperholders/core';
 import { DeployUtil } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 

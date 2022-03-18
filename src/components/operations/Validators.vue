@@ -92,9 +92,7 @@
 import balanceService from '@/helpers/balanceService';
 import clientCasper from '@/helpers/clientCasper';
 import { API } from '@/helpers/env';
-import NoActiveKeyError from '@casperholders/core/dist/services/errors/noActiveKeyError';
-import NoStakeBalanceError from '@casperholders/core/dist/services/errors/noStakeBalanceError';
-import CurrencyUtils from '@casperholders/core/dist/services/helpers/currencyUtils';
+import { NoActiveKeyError, CurrencyUtils, NoStakeBalanceError } from '@casperholders/core';
 import Big from 'big.js';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapState } from 'vuex';
