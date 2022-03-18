@@ -69,7 +69,11 @@ export default async function genericSendDeploy(
       const pendingDeploy = {
         deploy: signedDeploy,
         // eslint-disable-next-line new-cap
-        deployResult: new deployResult(DeployUtil.deployToJson(signedDeploy).deploy.hash),
+        deployResult: new deployResult(
+          DeployUtil.deployToJson(signedDeploy).deploy.hash,
+          Big(fee).toString(),
+          Big(amount).toString(),
+        ),
         deployResultType: deployResult,
       };
       return { event: 'addOfflineDeploy', data: pendingDeploy };

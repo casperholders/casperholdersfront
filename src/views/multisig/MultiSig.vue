@@ -246,6 +246,7 @@ import clientCasper from '@/helpers/clientCasper';
 import deployManager from '@/helpers/deployManager';
 import { API } from '@/helpers/env';
 import { KeyManagementResult, TransferResult } from '@casperholders/core';
+import deployResultsMap from '@casperholders/core/src/services/results/deployResultsMap';
 import Big from 'big.js';
 import { CLPublicKey, DeployUtil } from 'casper-js-sdk';
 import parse from 'parse-duration';
@@ -285,6 +286,7 @@ export default {
       'offlineDeploys',
       'weightedDeploys',
       'operations',
+      'internet',
     ]),
     ...mapGetters([
       'signerObject',
@@ -391,11 +393,7 @@ export default {
       this.errorSign = null;
       try {
         let options = this.signerOptionsFactory.getOptionsForOperations();
-        console.log(this.deploy.deployResult.name);
-        console.log(KeyManagementResult);
         if (this.deploy.deployResult.name === TransferResult.getName()) {
-          console.log(DeployUtil.deployFromJson(this.deploy.deploy).val.session.getArgByName('target'));
-          console.log(DeployUtil.deployFromJson(this.deploy.deploy).val.session.getArgByName('target').toHex());
           options = this.signerOptionsFactory.getOptionsForTransfer(DeployUtil.deployFromJson(this.deploy.deploy).val.session.getArgByName('target').toHex());
         }
         const signedDeploy = await this.signerObject
@@ -409,11 +407,54 @@ export default {
           this.currentWeight += approvalAccount ? approvalAccount.weight : 0;
         });
         if (this.currentWeight >= this.weightNeeded) {
-          const deployResult = await deployManager.sendDeploy(
-            signedDeploy,
-            TransferResult,
-          );
-          await this.$store.dispatch('addDeployResult', deployResult);
+          console.log(this.weightNeeded);
+          console.log(this.currentWeight);
+          if (!this.internet) {
+            const pendingDeploy = {
+              deploy: signedDeploy,
+              // eslint-disable-next-line new-cap
+              deployResult: new (deployResultsMap.get(this.deploy.deployResult.name))(
+                DeployUtil.deployToJson(signedDeploy).deploy.hash,
+                Big(this.deploy.deployResult.amount).toString(),
+                Big(this.deploy.deployResult.cost).toString(),
+              ),
+              deployResultType: (deployResultsMap.get(this.deploy.deployResult.name)),
+            };
+            await this.$store.dispatch('addOfflineDeploy', pendingDeploy);
+          } else {
+            const deployResult = await deployManager.sendDeploy(
+              signedDeploy,
+              (deployResultsMap.get(this.deploy.deployResult.name)),
+            );
+            await this.$store.dispatch('addDeployResult', deployResult);
+          }
+        } else {
+          const weightDeploy = {
+            deploy: signedDeploy,
+            // eslint-disable-next-line new-cap
+            deployResult: new (deployResultsMap.get(this.deploy.deployResult.name))(
+              DeployUtil.deployToJson(signedDeploy).deploy.hash,
+              Big(this.deploy.deployResult.amount).toString(),
+              Big(this.deploy.deployResult.cost).toString(),
+            ),
+            deployResultType: (deployResultsMap.get(this.deploy.deployResult.name)),
+          };
+          try {
+            await fetch(`${API}/deploys/`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                ...this.deployJson(weightDeploy.deploy),
+                deployResult: weightDeploy.deployResult,
+              }),
+            });
+          } catch (e) {
+            throw new Error('Failed to update the deploy link. Make sure you\'re online to update the current link. You can do it by clicking on the copy link button.');
+          } finally {
+            await this.$store.dispatch('addWeightDeploy', weightDeploy);
+          }
         }
       } catch (e) {
         console.log(e);

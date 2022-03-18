@@ -1,6 +1,7 @@
 module.exports = {
   transpileDependencies: [
     'vuetify',
+    '@casperholders/core',
   ],
   pwa: {
     name: 'CasperHolders - Interact with the Casper Blockchain.',
