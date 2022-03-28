@@ -82,6 +82,19 @@
               v-text="item.subtitle"
             />
           </v-list-item-content>
+          <v-list-item-action
+            v-if="item.beta"
+          >
+            <v-chip
+              outlined
+              small
+            >
+              <v-icon left>
+                mdi-fire
+              </v-icon>
+              Beta
+            </v-chip>
+          </v-list-item-action>
         </navigation-drawer-list-item>
       </navigation-drawer-list>
     </template>

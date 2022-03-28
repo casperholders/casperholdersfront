@@ -10,6 +10,14 @@
         >
       </div>
       <v-container class="app__wrapper container__small">
+        <v-alert
+          v-if="impersonatePublicKey"
+          dense
+          type="info"
+          style="overflow-wrap: anywhere!important;"
+        >
+          You're impersonating this public key : {{ impersonatePublicKey }}
+        </v-alert>
         <router-view />
       </v-container>
     </v-main>
@@ -73,7 +81,7 @@ export default {
      */
   }),
   computed: {
-    ...mapState(['signerType']),
+    ...mapState(['signerType', 'impersonatePublicKey']),
     /**
      * Return the links available. Dynamically adjusted until ledger support any operations.
      */
@@ -83,21 +91,29 @@ export default {
           {
             title: 'Balance',
             icon: 'mdi-wallet',
-            route: 'balance',
+            route: '/balance',
             disabled: false,
             subtitle: null,
           },
           {
+            title: 'Security',
+            icon: 'mdi-key',
+            route: '/security',
+            disabled: this.signerType === LEDGER_SIGNER,
+            subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
+            beta: true,
+          },
+          {
             title: 'Transfer',
             icon: 'mdi-send',
-            route: 'transfer',
+            route: '/transfer',
             disabled: false,
             subtitle: null,
           },
           {
             title: 'Account info',
             icon: 'mdi-account',
-            route: 'account',
+            route: '/account',
             disabled: this.signerType === LEDGER_SIGNER,
             subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
           },
@@ -107,7 +123,7 @@ export default {
           {
             title: 'Unstake',
             icon: 'mdi-lock-open',
-            route: 'unstake',
+            route: '/unstake',
             disabled: false,
             subtitle: null,
           },
@@ -116,14 +132,14 @@ export default {
           {
             title: 'Add Bid',
             icon: 'mdi-gavel',
-            route: 'addbid',
+            route: '/addbid',
             disabled: this.signerType === LEDGER_SIGNER,
             subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
           },
           {
             title: 'Withdraw Bid',
             icon: 'mdi-connection',
-            route: 'withdrawbid',
+            route: '/withdrawbid',
             disabled: this.signerType === LEDGER_SIGNER,
             subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
           },
@@ -132,14 +148,14 @@ export default {
           {
             title: 'Send smart contract',
             icon: 'mdi-file-document-edit',
-            route: 'smartcontract',
+            route: '/smartcontract',
             disabled: this.signerType === LEDGER_SIGNER,
             subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
           },
         ],
         Others: [
-          { title: 'FAQ', icon: 'mdi-help', route: 'faq', disabled: false, subtitle: null },
-          { title: 'Contact', icon: 'mdi-mail', route: 'contact', disabled: false, subtitle: null },
+          { title: 'FAQ', icon: 'mdi-help', route: '/faq', disabled: false, subtitle: null },
+          { title: 'Contact', icon: 'mdi-mail', route: '/contact', disabled: false, subtitle: null },
         ],
       };
     },

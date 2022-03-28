@@ -1,6 +1,5 @@
 import store from '@/store';
-import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
-import { AbstractKeyManager } from '@casperholders/core/dist/services/keys/abstractKeyManager';
+import { NoActiveKeyError, AbstractKeyManager } from '@casperholders/core';
 
 /**
  * VuexKeyManager class
@@ -15,6 +14,9 @@ export default class VuexKeyManager extends AbstractKeyManager {
    */
   static get activeKey() {
     if (store.state.signer.connected && store.state.signer.activeKey) {
+      if (store.state.impersonatePublicKey !== '') {
+        return store.state.impersonatePublicKey;
+      }
       return store.state.signer.activeKey;
     }
 

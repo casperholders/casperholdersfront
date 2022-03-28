@@ -1,35 +1,40 @@
 <template>
   <operation
     :amount="amount"
-    :fee="0"
+    :fee="transferFee"
     :loading-sign-and-deploy="loadingSignAndDeploy"
     :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"
     :type="type"
-    icon="mdi-file-document-edit"
-    submit-title="Deploy"
-    title="Send smart contract"
+    icon="mdi-send"
+    submit-title="Send Transaction"
+    title="Transfer"
   >
-    <v-file-input
-      id="smartContractFile"
-      v-model="contract"
-      :show-size="1000"
-      accept=".wasm"
+    <v-text-field
+      id="address"
+      v-model="address"
+      :rules="addressRules"
+      :value="address"
       color="white"
-      counter
-      label="Smart Contracts"
-      outlined
-      placeholder="Select your contracts"
-      prepend-icon="mdi-paperclip"
-    >
-      <template #selection="{ text }">
-        {{ text }}
-      </template>
-    </v-file-input>
+      label="Send to address"
+      prepend-icon="mdi-account"
+      required
+    />
+    <v-text-field
+      id="transferID"
+      v-model="transferID"
+      :rules="transferIDRules"
+      :value="transferID"
+      color="white"
+      hint="Set to 0 if not known"
+      label="Transfer ID"
+      prepend-icon="mdi-music-accidental-sharp"
+      required
+    />
     <Amount
       :balance="balance"
-      :fee="Number(0)"
-      :min="minPayment"
+      :fee="transferFee"
+      :min="minimumCSPRTransfer"
       :value="amount"
       class="mb-4"
       @input="amount = $event"
@@ -38,9 +43,9 @@
       <v-row
         class="white-bottom-border"
       >
-        <v-col>Payment amount for the smart contract</v-col>
+        <v-col>Transfer Fee</v-col>
         <v-col class="text-right cspr">
-          {{ amount }} CSPR
+          {{ transferFee }} CSPR
         </v-col>
       </v-row>
       <v-row
@@ -60,14 +65,6 @@
           <template v-else>
             {{ balance }} CSPR
           </template>
-        </v-col>
-      </v-row>
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Total cost</v-col>
-        <v-col class="text-right cspr">
-          {{ amount }} CSPR
         </v-col>
       </v-row>
       <v-row>
@@ -110,6 +107,17 @@
     >
       {{ errorDeploy.message }}
     </v-alert>
+    <v-alert
+      v-if="exchange"
+      class="mt-5"
+      type="warning"
+      prominent
+      border="left"
+    >
+      You're going to transfer some funds to <strong>{{ getExchange }}</strong> (presumably)! <br>
+      Verify your <strong>transfer ID</strong>
+      and make sure it's correct <strong>BEFORE</strong> signing the deploy.
+    </v-alert>
   </operation>
 </template>
 
@@ -117,36 +125,57 @@
 import Amount from '@/components/operations/Amount';
 import Operation from '@/components/operations/Operation';
 import balanceService from '@/helpers/balanceService';
-import deployManager from '@/helpers/deployManager';
 import { NETWORK } from '@/helpers/env';
-import { SmartContractDeployParameters } from '@casperholders/core/dist/services/deploys/smartContract/smartContractDeployParameters';
-import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
-import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
-import { SmartContractResult } from '@casperholders/core/dist/services/results/smartContractResult';
-import { DeployUtil } from 'casper-js-sdk';
+import exchanges from '@/helpers/exchanges';
+import genericSendDeploy from '@/helpers/genericSendDeploy';
+import {
+  TransferDeployParameters,
+  InsufficientFunds,
+  NoActiveKeyError,
+  TransferResult,
+} from '@casperholders/core';
+import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 
 /**
- * SmartContract view
- * Contains two fields
- * - Amount of fee to deploy the smartcontract
- * - File input for the wasm smart contract
+ * Transfer view
+ * Contains three fields
+ * - Receiver Address
+ * - Transfer id
+ * - Amount to transfer
  */
 export default {
-  name: 'SmartContract',
+  name: 'Transfer',
   components: { Amount, Operation },
   data() {
     return {
-      minPayment: 1,
-      contract: [],
-      amount: '1',
-      balance: '0',
+      addressRules: [
+        (a) => !!a || 'Address is required',
+        (a) => a.length >= 2 || 'Address is too short',
+        (a) => {
+          try {
+            CLPublicKey.fromHex(a);
+            return true;
+          } catch (e) {
+            return e.toString();
+          }
+        },
+      ],
+      transferIDRules: [
+        (a) => !!a || 'Transfer ID is required',
+        (a) => /^[0-9]+$/.test(a) || 'Transfer ID must be a number',
+      ],
+      address: '',
+      transferID: '0',
+      minimumCSPRTransfer: 2.5,
+      transferFee: 0.1,
+      amount: '2.5',
       errorBalance: null,
+      balance: '0',
       loadingSignAndDeploy: false,
       errorDeploy: null,
       loadingBalance: false,
-      type: SmartContractResult.getName(),
-      buffer: null,
+      type: TransferResult.getName(),
     };
   },
   computed: {
@@ -157,13 +186,35 @@ export default {
     ...mapGetters([
       'signerObject',
       'signerOptionsFactory',
+      'activeKey',
     ]),
     remainingBalance() {
-      const result = this.balance - this.amount;
+      const result = this.balance - this.amount - this.transferFee;
       return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
+    },
+    minimumFundsNeeded() {
+      return this.minimumCSPRTransfer + this.transferFee;
     },
     isInstanceOfNoActiveKeyError() {
       return this.errorBalance instanceof NoActiveKeyError;
+    },
+    exchange() {
+      let result = false;
+      exchanges.forEach((value, index) => {
+        if (index.toLowerCase() === this.address.toLowerCase()) {
+          result = true;
+        }
+      });
+      return result;
+    },
+    getExchange() {
+      let result = '';
+      exchanges.forEach((value, index) => {
+        if (index.toLowerCase() === this.address.toLowerCase()) {
+          result = value;
+        }
+      });
+      return result;
     },
   },
   watch: {
@@ -172,22 +223,6 @@ export default {
       if (val) {
         await this.getBalance();
       }
-    },
-    /**
-     * Read the file selected by the user
-     */
-    contract() {
-      const reader = new FileReader();
-
-      reader.onload = (evt) => {
-        this.buffer = evt.target.result;
-      };
-
-      reader.onerror = (evt) => {
-        console.error('An error ocurred reading the file', evt);
-      };
-
-      reader.readAsArrayBuffer(this.contract, 'UTF-8');
     },
   },
   async mounted() {
@@ -206,8 +241,8 @@ export default {
       this.balance = '0';
       try {
         this.balance = await balanceService.fetchBalance();
-        if (this.balance <= this.minPayment && this.internet) {
-          throw new InsufficientFunds(this.minPayment);
+        if (this.balance <= this.minimumFundsNeeded && this.internet) {
+          throw new InsufficientFunds(this.minimumFundsNeeded);
         }
       } catch (e) {
         this.errorBalance = e;
@@ -220,40 +255,27 @@ export default {
      * Update the store with a deploy result containing the deployhash of the deploy sent
      */
     async sendDeploy() {
-      const deployParameter = new SmartContractDeployParameters(
-        this.signer.activeKey,
-        NETWORK,
-        this.buffer,
-        this.amount,
+      const deployParameter = new TransferDeployParameters(
+        this.activeKey, NETWORK, this.amount, this.address, this.transferID,
       );
-      const options = this.signerOptionsFactory.getOptionsForOperations();
-      await this.genericSendDeploy(deployParameter, options);
-    },
-    async genericSendDeploy(deployParameter, options) {
+      const options = this.signerOptionsFactory.getOptionsForTransfer(this.address);
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
-      try {
-        if (this.internet) {
-          const deployResult = await deployManager.prepareSignAndSendDeploy(
-            deployParameter,
-            this.signerObject,
-            options,
-          );
-          await this.$store.dispatch('addDeployResult', deployResult);
-        } else {
-          const signedDeploy = await this.signerObject.sign(deployParameter.makeDeploy, options);
-          const { deployResult } = deployParameter;
-          const pendingDeploy = {
-            deploy: signedDeploy,
-            // eslint-disable-next-line new-cap
-            deployResult: new deployResult(DeployUtil.deployToJson(signedDeploy).deploy.hash),
-            deployResultType: deployResult,
-          };
-          await this.$store.dispatch('addOfflineDeploy', pendingDeploy);
-        }
-      } catch (e) {
-        console.log(e);
-        this.errorDeploy = e;
+      const result = await genericSendDeploy(
+        this.internet,
+        this.activeKey,
+        this.signer.activeKey,
+        this.signerObject,
+        deployParameter,
+        options,
+        this.transferFee,
+        this.amount,
+      );
+      if (result.error) {
+        console.log(result.error);
+        this.errorDeploy = result.error;
+      } else {
+        await this.$store.dispatch(result.event, result.data);
       }
       this.loadingSignAndDeploy = false;
       this.$root.$emit('closeOperationDialog');

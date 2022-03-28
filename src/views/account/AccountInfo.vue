@@ -1,48 +1,44 @@
 <template>
   <operation
     :amount="amount"
-    :fee="bidFee"
+    :fee="accountInfoFee"
     :loading-sign-and-deploy="loadingSignAndDeploy"
     :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"
     :type="type"
-    icon="mdi-connection"
-    submit-title="Withdraw bid"
-    title="Withdraw bid"
+    icon="mdi-account"
+    submit-title="Set url"
+    title="Account info"
   >
     <p class="text-body-1">
-      Here's your validator :
+      Set url for the Account Info Smart Contract. See
       <a
-        :href="validatorUrl"
+        href="https://github.com/make-software/casper-account-info-standard#how-does-it-work"
         target="_blank"
         rel="noopener"
-      >
-        {{ signer.activeKey }}
-        <v-icon x-small>mdi-open-in-new</v-icon>
-      </a>
-      <br>
-      <br>
-      Actually there's a commission rate of {{ commission }}%.
-      (Applies on the staking rewards only.)<br>
-      Example : if your delegators receive 100 CSPR rewards from staking,
-      you will received {{ commission }} CSPR and they will get
-      {{ 100 - commission }} CSPR.
+      >here</a> for more details.
     </p>
-    <Amount
-      :balance="validatorBalance"
-      :fee="bidFee"
-      :min="minBid"
-      :value="amount"
-      class="mb-4"
-      @input="amount = $event"
+    <p>
+      First deploy cost 10 CSPR, updates cost 0.5 CSPR. This is automatically calculated.
+    </p>
+    <v-text-field
+      id="url"
+      v-model="url"
+      :rules="urlRules"
+      :value="url"
+      color="white"
+      hint="Base domain name"
+      label="URL"
+      prepend-icon="mdi-link"
+      required
     />
     <div class="mx-n1">
       <v-row
         class="white-bottom-border"
       >
-        <v-col>Withdraw bid operation fee</v-col>
+        <v-col>Account info fee</v-col>
         <v-col class="text-right cspr">
-          {{ bidFee }} CSPR
+          {{ accountInfoFee }} CSPR
         </v-col>
       </v-row>
       <v-row
@@ -61,25 +57,6 @@
           </template>
           <template v-else>
             {{ balance }} CSPR
-          </template>
-        </v-col>
-      </v-row>
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Validator bid</v-col>
-        <v-col class="text-right cspr">
-          <template v-if="loadingBalance">
-            Loading balance ...
-            <v-progress-circular
-              class="ml-3"
-              color="white"
-              indeterminate
-              size="14"
-            />
-          </template>
-          <template v-else>
-            {{ validatorBalance }} CSPR
           </template>
         </v-col>
       </v-row>
@@ -127,39 +104,43 @@
 </template>
 
 <script>
-import Amount from '@/components/operations/Amount';
 import Operation from '@/components/operations/Operation';
 import balanceService from '@/helpers/balanceService';
-import deployManager from '@/helpers/deployManager';
-import { AUCTION_MANAGER_HASH, CSPR_LIVE_URL, NETWORK } from '@/helpers/env';
-import { WithdrawBid } from '@casperholders/core/dist/services/deploys/auction/actions/withdrawBid';
-import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
-import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
-import { WithdrawBidResult } from '@casperholders/core/dist/services/results/withdrawBidResult';
-import { DeployUtil } from 'casper-js-sdk';
+import clientCasper from '@/helpers/clientCasper';
+import { ACCOUNT_INFO_HASH, NETWORK } from '@/helpers/env';
+import genericSendDeploy from '@/helpers/genericSendDeploy';
+import {
+  AccountInfo,
+  InsufficientFunds,
+  NoActiveKeyError,
+  AccountInfoResult,
+  Validators,
+} from '@casperholders/core';
 import { mapGetters, mapState } from 'vuex';
 
 /**
- * WithdrawBid view
+ * AccountInfo view
  * Contains one fields
- * - Amount to withdraw to the bid of the validator
+ * - Url to set in the Account Info smart contract. See https://github.com/make-software/casper-account-info-standard#how-does-it-work
  */
 export default {
-  name: 'WithdrawBid',
-  components: { Amount, Operation },
+  name: 'AccountInfo',
+  components: { Operation },
   data() {
     return {
-      minBid: 1,
-      bidFee: 0.00001,
-      amount: '1',
+      url: '',
+      urlRules: [
+        (a) => !!a || 'URL is required',
+        (a) => this.isUrl(a) || 'Non valid base domain : should be https://domain.name',
+      ],
+      accountInfoFee: 0.5,
+      amount: '0',
       balance: '0',
-      validatorBalance: '0',
-      commission: 0,
       errorBalance: null,
       loadingSignAndDeploy: false,
       errorDeploy: null,
       loadingBalance: false,
-      type: WithdrawBidResult.getName(),
+      type: AccountInfoResult.getName(),
     };
   },
   computed: {
@@ -170,16 +151,14 @@ export default {
     ...mapGetters([
       'signerObject',
       'signerOptionsFactory',
+      'activeKey',
     ]),
     remainingBalance() {
-      const result = this.balance + this.amount - this.bidFee;
+      const result = this.balance - this.accountInfoFee;
       return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
     },
-    validatorUrl() {
-      return `${CSPR_LIVE_URL}validator/${this.signer.activeKey}`;
-    },
     minimumFundsNeeded() {
-      return this.bidFee;
+      return this.accountInfoFee;
     },
     isInstanceOfNoActiveKeyError() {
       return this.errorBalance instanceof NoActiveKeyError;
@@ -201,19 +180,27 @@ export default {
   },
   methods: {
     /**
+     * Method to verify url
+     * @param {string} url
+     */
+    isUrl(url) {
+      const regex = new RegExp('^(http:\\/\\/|https:\\/\\/)([a-zA-Z0-9-_]+\\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\\.[a-zA-Z]{2,11}?$', 'g');
+      return regex.test(url);
+    },
+    /**
      * Get the user balance and the validator balance
      */
     async getBalance() {
+      const validatorService = new Validators(clientCasper);
+      this.accountInfoFee = await validatorService.isUrlSet(
+        this.activeKey,
+        ACCOUNT_INFO_HASH,
+      ) ? 0.5 : 10;
       this.loadingBalance = true;
       this.errorBalance = null;
       this.balance = '0';
-      this.validatorBalance = '0';
-      this.commission = 0;
       try {
         this.balance = await balanceService.fetchBalance();
-        const validatorInfos = await balanceService.fetchValidatorBalance();
-        this.validatorBalance = validatorInfos.balance;
-        this.commission = validatorInfos.commission;
         if (this.balance <= this.minimumFundsNeeded && this.internet) {
           throw new InsufficientFunds(this.minimumFundsNeeded);
         }
@@ -228,40 +215,31 @@ export default {
      * Update the store with a deploy result containing the deployhash of the deploy sent
      */
     async sendDeploy() {
-      const deployParameter = new WithdrawBid(
-        this.amount,
-        this.signer.activeKey,
+      const deployParameter = new AccountInfo(
+        this.url,
+        this.activeKey,
         NETWORK,
-        AUCTION_MANAGER_HASH,
+        ACCOUNT_INFO_HASH,
       );
-      const options = this.signerOptionsFactory.getOptionsForValidatorOperations();
-      await this.genericSendDeploy(deployParameter, options);
-    },
-    async genericSendDeploy(deployParameter, options) {
+      const options = this.signerOptionsFactory.getOptionsForOperations();
+
+      await deployParameter.init(clientCasper);
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
-      try {
-        if (this.internet) {
-          const deployResult = await deployManager.prepareSignAndSendDeploy(
-            deployParameter,
-            this.signerObject,
-            options,
-          );
-          await this.$store.dispatch('addDeployResult', deployResult);
-        } else {
-          const signedDeploy = await this.signerObject.sign(deployParameter.makeDeploy, options);
-          const { deployResult } = deployParameter;
-          const pendingDeploy = {
-            deploy: signedDeploy,
-            // eslint-disable-next-line new-cap
-            deployResult: new deployResult(DeployUtil.deployToJson(signedDeploy).deploy.hash),
-            deployResultType: deployResult,
-          };
-          await this.$store.dispatch('addOfflineDeploy', pendingDeploy);
-        }
-      } catch (e) {
-        console.log(e);
-        this.errorDeploy = e;
+      const result = await genericSendDeploy(
+        this.internet,
+        this.activeKey,
+        this.signer.activeKey,
+        this.signerObject,
+        deployParameter,
+        options,
+        this.accountInfoFee,
+      );
+      if (result.error) {
+        console.log(result.error);
+        this.errorDeploy = result.error;
+      } else {
+        await this.$store.dispatch(result.event, result.data);
       }
       this.loadingSignAndDeploy = false;
       this.$root.$emit('closeOperationDialog');

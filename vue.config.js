@@ -1,6 +1,7 @@
 module.exports = {
   transpileDependencies: [
     'vuetify',
+    '@casperholders/core',
   ],
   pwa: {
     name: 'CasperHolders - Interact with the Casper Blockchain.',
@@ -15,6 +16,20 @@ module.exports = {
     workboxPluginMode: 'InjectManifest',
     workboxOptions: {
       swSrc: 'src/service-worker.js',
+    },
+  },
+  configureWebpack: {
+    module: {
+      defaultRules: [
+        {
+          type: 'javascript/auto',
+          resolve: {},
+        },
+        {
+          test: /\.json$/i,
+          type: 'json',
+        },
+      ],
     },
   },
 };

@@ -1,44 +1,34 @@
 <template>
   <operation
     :amount="amount"
-    :fee="accountInfoFee"
+    :fee="delegationFee"
     :loading-sign-and-deploy="loadingSignAndDeploy"
     :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"
     :type="type"
-    icon="mdi-account"
-    submit-title="Set url"
-    title="Account info"
+    icon="mdi-safe"
+    submit-title="Stake"
+    title="Stake"
   >
-    <p class="text-body-1">
-      Set url for the Account Info Smart Contract. See
-      <a
-        href="https://github.com/make-software/casper-account-info-standard#how-does-it-work"
-        target="_blank"
-        rel="noopener"
-      >here</a> for more details.
-    </p>
-    <p>
-      First deploy cost 10 CSPR, updates cost 0.5 CSPR. This is automatically calculated.
-    </p>
-    <v-text-field
-      id="url"
-      v-model="url"
-      :rules="urlRules"
-      :value="url"
-      color="white"
-      hint="Base domain name"
-      label="URL"
-      prepend-icon="mdi-link"
-      required
+    <Validators
+      v-model="validator"
+      :undelegate="false"
+    />
+    <Amount
+      :balance="balance"
+      :fee="delegationFee"
+      :min="minimumCSPRStake"
+      :value="amount"
+      class="mb-4"
+      @input="amount = $event"
     />
     <div class="mx-n1">
       <v-row
         class="white-bottom-border"
       >
-        <v-col>Account info fee</v-col>
+        <v-col>Staking operation fee</v-col>
         <v-col class="text-right cspr">
-          {{ accountInfoFee }} CSPR
+          {{ delegationFee }} CSPR
         </v-col>
       </v-row>
       <v-row
@@ -60,10 +50,18 @@
           </template>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col>Balance after operation</v-col>
+      <v-row class="white-bottom-border">
+        <v-col>Remaining funds after staking</v-col>
         <v-col class="text-right cspr">
           {{ remainingBalance }} CSPR
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col class="py-0">
+          <reward-calculator-panel
+            :validator="validator"
+            :amount="amount"
+          />
         </v-col>
       </v-row>
     </div>
@@ -104,42 +102,36 @@
 </template>
 
 <script>
+import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
+import Amount from '@/components/operations/Amount';
 import Operation from '@/components/operations/Operation';
+import Validators from '@/components/operations/Validators';
 import balanceService from '@/helpers/balanceService';
-import clientCasper from '@/helpers/clientCasper';
-import deployManager from '@/helpers/deployManager';
-import { ACCOUNT_INFO_HASH, NETWORK } from '@/helpers/env';
-import { AccountInfo } from '@casperholders/core/dist/services/deploys/account-info/AccountInfo';
-import { InsufficientFunds } from '@casperholders/core/dist/services/errors/insufficientFunds';
-import { NoActiveKeyError } from '@casperholders/core/dist/services/errors/noActiveKeyError';
-import { AccountInfoResult } from '@casperholders/core/dist/services/results/accountInfoResult';
-import { Validators } from '@casperholders/core/dist/services/validators/validators';
-import { DeployUtil } from 'casper-js-sdk';
+import { AUCTION_MANAGER_HASH, NETWORK } from '@/helpers/env';
+import genericSendDeploy from '@/helpers/genericSendDeploy';
+import { Delegate, InsufficientFunds, NoActiveKeyError, DelegateResult } from '@casperholders/core';
 import { mapGetters, mapState } from 'vuex';
 
 /**
- * AccountInfo view
+ * Delegate view
  * Contains one fields
- * - Url to set in the Account Info smart contract. See https://github.com/make-software/casper-account-info-standard#how-does-it-work
+ * - Amount to delegate to the node set in the .env file
  */
 export default {
-  name: 'AccountInfo',
-  components: { Operation },
+  name: 'Delegate',
+  components: { RewardCalculatorPanel, Validators, Amount, Operation },
   data() {
     return {
-      url: '',
-      urlRules: [
-        (a) => !!a || 'URL is required',
-        (a) => this.isUrl(a) || 'Non valid base domain : should be https://domain.name',
-      ],
-      accountInfoFee: 0.5,
-      amount: '0',
-      balance: '0',
+      minimumCSPRStake: 1,
+      delegationFee: 2.5,
+      amount: '1',
       errorBalance: null,
+      balance: '0',
       loadingSignAndDeploy: false,
       errorDeploy: null,
       loadingBalance: false,
-      type: AccountInfoResult.getName(),
+      type: DelegateResult.getName(),
+      validator: undefined,
     };
   },
   computed: {
@@ -150,13 +142,14 @@ export default {
     ...mapGetters([
       'signerObject',
       'signerOptionsFactory',
+      'activeKey',
     ]),
     remainingBalance() {
-      const result = this.balance - this.accountInfoFee;
+      const result = this.balance - this.amount - this.delegationFee;
       return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
     },
     minimumFundsNeeded() {
-      return this.accountInfoFee;
+      return this.minimumCSPRStake + this.delegationFee;
     },
     isInstanceOfNoActiveKeyError() {
       return this.errorBalance instanceof NoActiveKeyError;
@@ -178,23 +171,9 @@ export default {
   },
   methods: {
     /**
-     * Method to verify url
-     * @param {string} url
-     */
-    isUrl(url) {
-      const regex = new RegExp('^(http:\\/\\/|https:\\/\\/)([a-zA-Z0-9-_]+\\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\\.[a-zA-Z]{2,11}?$', 'g');
-      return regex.test(url);
-    },
-    /**
-     * Get the user balance and the validator balance
+     * Get the user balance
      */
     async getBalance() {
-      const validatorService = new Validators(clientCasper);
-      this.accountInfoFee = await validatorService.isUrlSet(
-        this.signer.activeKey,
-        ACCOUNT_INFO_HASH,
-        NETWORK,
-      ) ? 0.5 : 10;
       this.loadingBalance = true;
       this.errorBalance = null;
       this.balance = '0';
@@ -214,42 +193,32 @@ export default {
      * Update the store with a deploy result containing the deployhash of the deploy sent
      */
     async sendDeploy() {
-      const deployParameter = new AccountInfo(
-        this.url,
-        this.signer.activeKey,
+      const deployParameter = new Delegate(
+        this.amount,
+        this.activeKey,
+        this.validator.publicKey,
         NETWORK,
-        ACCOUNT_INFO_HASH,
+        AUCTION_MANAGER_HASH,
       );
       const options = this.signerOptionsFactory.getOptionsForOperations();
 
-      await deployParameter.init(clientCasper);
-      await this.genericSendDeploy(deployParameter, options);
-    },
-    async genericSendDeploy(deployParameter, options) {
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
-      try {
-        if (this.internet) {
-          const deployResult = await deployManager.prepareSignAndSendDeploy(
-            deployParameter,
-            this.signerObject,
-            options,
-          );
-          await this.$store.dispatch('addDeployResult', deployResult);
-        } else {
-          const signedDeploy = await this.signerObject.sign(deployParameter.makeDeploy, options);
-          const { deployResult } = deployParameter;
-          const pendingDeploy = {
-            deploy: signedDeploy,
-            // eslint-disable-next-line new-cap
-            deployResult: new deployResult(DeployUtil.deployToJson(signedDeploy).deploy.hash),
-            deployResultType: deployResult,
-          };
-          await this.$store.dispatch('addOfflineDeploy', pendingDeploy);
-        }
-      } catch (e) {
-        console.log(e);
-        this.errorDeploy = e;
+      const result = await genericSendDeploy(
+        this.internet,
+        this.activeKey,
+        this.signer.activeKey,
+        this.signerObject,
+        deployParameter,
+        options,
+        this.delegationFee,
+        this.amount,
+      );
+      if (result.error) {
+        console.log(result.error);
+        this.errorDeploy = result.error;
+      } else {
+        await this.$store.dispatch(result.event, result.data);
       }
       this.loadingSignAndDeploy = false;
       this.$root.$emit('closeOperationDialog');
@@ -261,3 +230,15 @@ export default {
   },
 };
 </script>
+
+<style
+  lang="scss"
+  scoped
+>
+  ::v-deep .reward-calculator-panel {
+    .v-expansion-panel-header, .v-expansion-panel-content__wrap {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  }
+</style>
