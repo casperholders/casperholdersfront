@@ -17,10 +17,10 @@
     "@casperholders/core": "^3.0.0",
     "@ledgerhq/hw-transport-web-ble": "^6.24.1",
     "@ledgerhq/hw-transport-webusb": "^6.24.1",
-    "@toruslabs/casper-embed": "^1.1.2",
+    "@toruslabs/casper-embed": "^1.2.0",
     "@zondax/ledger-casper": "^0.0.1",
     "big.js": "^6.1.1",
-    "casper-js-sdk": "^2.8.0",
+    "casper-js-sdk": "^2.9.1",
     "chart.js": "^3.7.1",
     "core-js": "^3.21.1",
     "countdown": "^2.6.0",
@@ -32,11 +32,11 @@
     "vue": "^2.6.11",
     "vue-json-pretty": "^1.8.2",
     "vue-router": "^3.2.0",
-    "vuetify": "^2.6.3",
+    "vuetify": "^2.6.4",
     "vuex": "^3.6.2",
-    "workbox-precaching": "^6.5.0",
-    "workbox-routing": "^6.5.0",
-    "workbox-strategies": "^6.5.0"
+    "workbox-precaching": "^6.5.2",
+    "workbox-routing": "^6.5.2",
+    "workbox-strategies": "^6.5.2"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.9.10",
@@ -56,7 +56,7 @@
     "eslint-plugin-vue": "^7.17.0",
     "sass": "~1.32.6",
     "sass-loader": "^10.0.0",
-    "vue-cli-plugin-vuetify": "^2.4.6",
+    "vue-cli-plugin-vuetify": "^2.4.8",
     "vue-eslint-parser": "^7.11.0",
     "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.7.0"
