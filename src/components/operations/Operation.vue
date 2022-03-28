@@ -15,6 +15,16 @@
           <v-icon>{{ icon }}</v-icon>
         </v-avatar>
         {{ title }}
+        <v-chip
+          v-if="beta"
+          outlined
+          class="ma-2"
+        >
+          <v-icon left>
+            mdi-fire
+          </v-icon>
+          Beta
+        </v-chip>
       </v-card-title>
       <v-form
         ref="form"
@@ -176,6 +186,11 @@ export default {
       required: true,
       type: Number,
       default: 0,
+    },
+    beta: {
+      required: false,
+      type: Boolean,
+      default: false,
     },
   },
   data() {

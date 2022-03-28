@@ -9,6 +9,7 @@
     icon="mdi-key"
     submit-title="Set security settings"
     title="Security"
+    :beta="true"
   >
     <v-alert
       type="warning"

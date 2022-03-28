@@ -101,6 +101,7 @@ export default {
             route: '/security',
             disabled: this.signerType === LEDGER_SIGNER,
             subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
+            beta: true,
           },
           {
             title: 'Transfer',
