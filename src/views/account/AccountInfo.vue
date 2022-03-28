@@ -107,7 +107,6 @@
 import Operation from '@/components/operations/Operation';
 import balanceService from '@/helpers/balanceService';
 import clientCasper from '@/helpers/clientCasper';
-import deployManager from '@/helpers/deployManager';
 import { ACCOUNT_INFO_HASH, NETWORK } from '@/helpers/env';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import {
@@ -117,7 +116,6 @@ import {
   AccountInfoResult,
   Validators,
 } from '@casperholders/core';
-import { DeployUtil } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -246,31 +244,6 @@ export default {
       this.loadingSignAndDeploy = false;
       this.$root.$emit('closeOperationDialog');
       this.$root.$emit('operationFinished');
-    },
-    async genericSendDeploy(deployParameter, options) {
-      try {
-        if (this.internet) {
-          const deployResult = await deployManager.prepareSignAndSendDeploy(
-            deployParameter,
-            this.signerObject,
-            options,
-          );
-          await this.$store.dispatch('addDeployResult', deployResult);
-        } else {
-          const signedDeploy = await this.signerObject.sign(deployParameter.makeDeploy, options);
-          const { deployResult } = deployParameter;
-          const pendingDeploy = {
-            deploy: signedDeploy,
-            // eslint-disable-next-line new-cap
-            deployResult: new deployResult(DeployUtil.deployToJson(signedDeploy).deploy.hash),
-            deployResultType: deployResult,
-          };
-          await this.$store.dispatch('addOfflineDeploy', pendingDeploy);
-        }
-      } catch (e) {
-        console.log(e);
-        this.errorDeploy = e;
-      }
     },
     async connectionRequest() {
       await this.$store.dispatch('openConnectDialog');

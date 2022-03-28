@@ -106,8 +106,8 @@ import Amount from '@/components/operations/Amount';
 import Operation from '@/components/operations/Operation';
 import Validators from '@/components/operations/Validators';
 import balanceService from '@/helpers/balanceService';
-import deployManager from '@/helpers/deployManager';
 import { AUCTION_MANAGER_HASH, NETWORK } from '@/helpers/env';
+import genericSendDeploy from '@/helpers/genericSendDeploy';
 import {
   Undelegate,
   InsufficientFunds,
@@ -115,7 +115,6 @@ import {
   UndelegateResult,
 } from '@casperholders/core';
 import Big from 'big.js';
-import { DeployUtil } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -215,33 +214,23 @@ export default {
         AUCTION_MANAGER_HASH,
       );
       const options = this.signerOptionsFactory.getOptionsForOperations();
-      await this.genericSendDeploy(deployParameter, options);
-    },
-    async genericSendDeploy(deployParameter, options) {
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
-      try {
-        if (this.internet) {
-          const deployResult = await deployManager.prepareSignAndSendDeploy(
-            deployParameter,
-            this.signerObject,
-            options,
-          );
-          await this.$store.dispatch('addDeployResult', deployResult);
-        } else {
-          const signedDeploy = await this.signerObject.sign(deployParameter.makeDeploy, options);
-          const { deployResult } = deployParameter;
-          const pendingDeploy = {
-            deploy: signedDeploy,
-            // eslint-disable-next-line new-cap
-            deployResult: new deployResult(DeployUtil.deployToJson(signedDeploy).deploy.hash),
-            deployResultType: deployResult,
-          };
-          await this.$store.dispatch('addOfflineDeploy', pendingDeploy);
-        }
-      } catch (e) {
-        console.log(e);
-        this.errorDeploy = e;
+      const result = await genericSendDeploy(
+        this.internet,
+        this.activeKey,
+        this.signer.activeKey,
+        this.signerObject,
+        deployParameter,
+        options,
+        this.undelegateFee,
+        this.amount,
+      );
+      if (result.error) {
+        console.log(result.error);
+        this.errorDeploy = result.error;
+      } else {
+        await this.$store.dispatch(result.event, result.data);
       }
       this.loadingSignAndDeploy = false;
       this.$root.$emit('closeOperationDialog');
