@@ -157,8 +157,8 @@ export default {
      */
     max() {
       return Big(this.balance).minus(this.fee).gt(0)
-        ? Big(this.balance).minus(this.fee).toString()
-        : Big(this.min).toString();
+        ? Math.trunc(Big(this.balance).minus(this.fee).toString())
+        : Math.trunc(Big(this.min).toString());
     },
   },
   methods: {
