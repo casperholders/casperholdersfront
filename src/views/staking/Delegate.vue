@@ -162,6 +162,7 @@ export default {
         await this.getBalance();
       }
     },
+    validator: 'setMinStake',
   },
   async mounted() {
     await this.getBalance();
@@ -170,6 +171,20 @@ export default {
     });
   },
   methods: {
+    /**
+     * Get the user balance
+     */
+    async setMinStake() {
+      try {
+        const userStake = await balanceService.fetchAllStakeBalance();
+        const alreadyStake = userStake.some(
+          (stake) => stake.validator.toLowerCase() === this.validator.publicKey.toLowerCase(),
+        );
+        this.minimumCSPRStake = alreadyStake ? 1 : 500;
+      } catch (e) {
+        this.minimumCSPRStake = 500;
+      }
+    },
     /**
      * Get the user balance
      */
