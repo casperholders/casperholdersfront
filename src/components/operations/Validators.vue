@@ -81,6 +81,7 @@
           <v-list-item-subtitle>
             {{ data.item.group }} - {{ data.item.delegation_rate }}% Fee -
             {{ data.item.staked_amount }} CSPR Staked
+            {{ data.item.disabled ? '- Validator full' : '' }}
           </v-list-item-subtitle>
         </v-list-item-content>
       </template>
@@ -194,23 +195,23 @@ export default {
      */
     async getValidators() {
       let userStake;
-      if (this.undelegate) {
-        try {
-          userStake = await balanceService.fetchAllStakeBalance();
-        } catch (e) {
+      try {
+        userStake = await balanceService.fetchAllStakeBalance();
+      } catch (e) {
+        this.validators = [
+          { header: `Oops an error occurred : ${e}` },
+        ];
+        if (e instanceof NoActiveKeyError) {
           this.validators = [
-            { header: `Oops an error occurred : ${e}` },
+            { header: 'Connect to a wallet to know your currents validators' },
           ];
-          if (e instanceof NoActiveKeyError) {
-            this.validators = [
-              { header: 'Connect to a wallet to know your currents validators' },
-            ];
-          }
-          if (e instanceof NoStakeBalanceError) {
-            this.validators = [
-              { header: 'You don\'t stake on any validators' },
-            ];
-          }
+        }
+        if (e instanceof NoStakeBalanceError) {
+          this.validators = [
+            { header: 'You don\'t stake on any validators' },
+          ];
+        }
+        if (this.undelegate) {
           return;
         }
       }
@@ -223,6 +224,18 @@ export default {
               (stake) => stake.validator.toLowerCase() === validatorInfo.publicKey.toLowerCase(),
             ),
           );
+        }
+        for (let i = 0; i < validatorsData.length; i++) {
+          let userStakedCurrentValidator = false;
+          if (userStake) {
+            userStakedCurrentValidator = userStake.some(
+              (stake) => (
+                stake.validator.toLowerCase() === validatorsData[i].publicKey.toLowerCase()
+              ),
+            );
+          }
+          validatorsData[i].disabled = !userStakedCurrentValidator
+            && validatorsData[i].numberOfDelegators >= 953;
         }
       } catch (e) {
         console.log(e);
@@ -252,6 +265,12 @@ export default {
               ))
             || !this.undelegate
           ) {
+            let userStakedCurrentValidator = false;
+            if (userStake) {
+              userStakedCurrentValidator = userStake.some(
+                (stake) => stake.validator.toLowerCase() === validatorInfo.public_key.toLowerCase(),
+              );
+            }
             validatorsData.push({
               name: validatorInfo.public_key,
               publicKey: validatorInfo.public_key,
@@ -260,27 +279,42 @@ export default {
               staked_amount: Big(stakedAmount).toFixed(2),
               currentEra: currentEra.includes(validatorInfo.public_key),
               nextEra: nextEra.includes(validatorInfo.public_key),
+              disabled: validatorInfo.bid.delegators.length >= 953 && !userStakedCurrentValidator,
             });
           }
         }
       }
 
       if (validatorsData.filter((validator) => validator.group === 'Active').length > 0 || validatorsData.filter((validator) => validator.group === 'Inactive').length > 0) {
+        const stakingValidatorsArray = [];
+        if (userStake && !this.undelegate) {
+          const stakingValidators = validatorsData.filter(
+            (validatorInfo) => userStake.some(
+              (stake) => stake.validator.toLowerCase() === validatorInfo.publicKey.toLowerCase(),
+            ),
+          );
+          stakingValidators.push({ header: 'Current validators where you already stake' });
+          stakingValidators.push(...stakingValidators);
+        }
         this.validators = [
+          ...stakingValidatorsArray,
           { header: 'Current & next era validators' },
-          ...validatorsData.filter((validator) => validator.group === 'Active' && validator.currentEra && validator.nextEra),
+          ...validatorsData.filter((validator) => validator.group === 'Active' && validator.currentEra && validator.nextEra && !validator.full),
           { divider: true },
           { header: 'Next era validators that will be included in the top 100' },
-          ...validatorsData.filter((validator) => validator.group === 'Active' && !validator.currentEra && validator.nextEra),
+          ...validatorsData.filter((validator) => validator.group === 'Active' && !validator.currentEra && validator.nextEra && !validator.full),
           { divider: true },
           { header: 'Next era validators under top 100' },
-          ...validatorsData.filter((validator) => validator.group === 'Active' && validator.currentEra && !validator.nextEra),
+          ...validatorsData.filter((validator) => validator.group === 'Active' && validator.currentEra && !validator.nextEra && !validator.full),
           { divider: true },
           { header: 'Active validators under top 100' },
-          ...validatorsData.filter((validator) => validator.group === 'Active' && !validator.currentEra && !validator.nextEra),
+          ...validatorsData.filter((validator) => validator.group === 'Active' && !validator.currentEra && !validator.nextEra && !validator.full),
+          { divider: true },
+          { header: 'Validator full' },
+          ...validatorsData.filter((validator) => validator.full),
           { divider: true },
           { header: 'Inactive' },
-          ...validatorsData.filter((validator) => validator.group === 'Inactive'),
+          ...validatorsData.filter((validator) => validator.group === 'Inactive' && !validator.full),
         ];
       } else {
         this.validators = [
