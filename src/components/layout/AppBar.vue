@@ -22,76 +22,7 @@
       Casper Holders {{ titleNetwork }}
     </v-toolbar-title>
     <connect v-if="displayConnect" />
-    <v-menu
-      v-if="signer.activeKey"
-      left
-      offset-y
-      :close-on-content-click="false"
-    >
-      <template #activator="{ on, attrs }">
-        <v-btn
-          id="account"
-          v-bind="attrs"
-          icon
-          v-on="on"
-        >
-          <v-icon dark>
-            mdi-account
-          </v-icon>
-        </v-btn>
-      </template>
-      <v-list
-        color="primary"
-        style="border-bottom: 5px solid #ff473e !important;"
-      >
-        <v-list-item>
-          <v-list-item-icon>
-            <v-icon color="white">
-              mdi-key
-            </v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ truncateText(signer.activeKey) }}
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              Connected with : {{ humanReadableSigner }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-action-text>
-            <v-tooltip
-              bottom
-            >
-              <template #activator="{ on, attrs }">
-                <v-btn
-                  fab
-                  x-small
-                  icon
-                  v-bind="attrs"
-                  class="mr-3"
-                  @click="copyPublicKey"
-                  v-on="on"
-                >
-                  <v-icon>mdi-content-copy</v-icon>
-                </v-btn>
-              </template>
-
-              <span>{{ copied ? 'Copied !' : 'Not copied' }}</span>
-            </v-tooltip>
-            <v-btn
-              id="logout"
-              color="secondary"
-              @click="logout"
-            >
-              <v-icon left>
-                mdi-close
-              </v-icon>
-              Logout
-            </v-btn>
-          </v-list-item-action-text>
-        </v-list-item>
-      </v-list>
-    </v-menu>
+    <Account v-if="signer.activeKey" />
     <v-menu
       left
       offset-y
@@ -222,10 +153,9 @@
 </template>
 
 <script>
+import Account from '@/components/layout/AccountPopup';
 import Connect from '@/components/layout/Connect';
 import { CSPR_LIVE_URL, HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
-import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER, TORUS_SIGNER } from '@/helpers/signers';
-import { torusOptions } from '@/store';
 import { DeployResult } from '@casperholders/core';
 import { mapGetters, mapState } from 'vuex';
 
@@ -236,7 +166,7 @@ import { mapGetters, mapState } from 'vuex';
  */
 export default {
   name: 'AppBar',
-  components: { Connect },
+  components: { Account, Connect },
   props: {
     links: {
       type: Object,
@@ -254,21 +184,6 @@ export default {
       'signerObject',
       'signerOptionsFactory',
     ]),
-    humanReadableSigner() {
-      if (this.signerType === CASPER_SIGNER) {
-        return 'Casper Signer';
-      }
-      if (this.signerType === LEDGER_SIGNER) {
-        return 'Ledger';
-      }
-      if (this.signerType === LOCAL_SIGNER) {
-        return 'Local';
-      }
-      if (this.signerType === TORUS_SIGNER) {
-        return 'Torus';
-      }
-      return 'None';
-    },
     disabledNotifications() {
       return this.operations.length === 0 && this.offlineDeploys.length === 0;
     },
@@ -316,9 +231,7 @@ export default {
     'signer.activeKey': {
       handler(current, previous) {
         if (previous === null && current !== null) {
-          setTimeout(() => {
-            this.displayConnect = false;
-          }, 2000);
+          this.displayConnect = false;
         }
         if (previous !== null && current === null) {
           this.displayConnect = true;
@@ -356,19 +269,6 @@ export default {
     },
     removeDeployResult(operation) {
       this.$store.dispatch('removeDeployResult', operation);
-    },
-    async logout() {
-      if (this.signerType === TORUS_SIGNER) {
-        await torusOptions.torusInstance.logout();
-      }
-      await this.$store.dispatch('logout');
-    },
-    copyPublicKey() {
-      navigator.clipboard.writeText(this.signer.activeKey);
-      this.copied = true;
-      setTimeout(() => {
-        this.copied = false;
-      }, 2000);
     },
   },
 };
