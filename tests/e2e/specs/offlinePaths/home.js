@@ -24,7 +24,7 @@ describe('Home', () => {
       .should('be.visible');
     cy.get('#account')
       .should('be.visible').click();
-    cy.get('#logout').should('be.visible').click();
+    cy.get('#logout').scrollIntoView().should('be.visible').click();
     cy.get('#account', { timeout: 5000 })
       .should('not.exist');
     cy.get('#connect', { timeout: 5000 })

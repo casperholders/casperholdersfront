@@ -14,7 +14,7 @@ describe('Add bid', () => {
     cy.window().then((win) => {
       win.dispatchEvent(event);
     });
-    cy.get('.v-alert', { timeout: 5000 }).should('have.length', 1);
+    cy.get('.v-alert', { timeout: 10000 }).should('have.length', 1);
     cy.get('.v-alert').should('contain', ' Unable to retrieve your Validator balance. Make sure that you are correctly bonded to the network. ');
     cy.wait(1000).window().then((win) => {
       msg.detail.activeKey = '0124bfdae2ed128fa5e4057bc398e4933329570e47240e57fc92f5611a6178eba5';
