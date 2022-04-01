@@ -25,7 +25,7 @@ describe('Balance', () => {
       .should('not.exist');
     cy.get('#balance-no-liquidity')
       .should('not.exist');
-    cy.get('#balance-chart', { timeout: 5000 })
+    cy.get('#balance-chart', { timeout: 10000 })
       .should('be.visible')
       .and((chart) => {
         expect(chart.height()).to.be.equals(400);
