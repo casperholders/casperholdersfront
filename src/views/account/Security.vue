@@ -586,6 +586,7 @@ export default {
      * Get Key infos
      */
     async getKeyInfos() {
+      this.errorKey = null;
       if (this.activeKey) {
         this.loadingKeyInfo = true;
         try {
