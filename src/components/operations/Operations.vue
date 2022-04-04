@@ -36,10 +36,22 @@
         </v-container>
       </template>
       <template #[`item.hash`]="{ item }">
-        {{ truncate(item.hash) }}
+        <a
+          :href="deployUrl(item.hash)"
+          target="_blank"
+          rel="noopener"
+        >
+          {{ truncate(item.hash) }}
+        </a>
       </template>
       <template #[`item.from`]="{ item }">
-        {{ truncate(item.hash) }}
+        <a
+          :href="accountUrl(item.from)"
+          target="_blank"
+          rel="noopener"
+        >
+          {{ truncate(item.from) }}
+        </a>
       </template>
       <template #[`item.cost`]="{ item }">
         {{ motesToCsprString(item.cost) }}
@@ -57,7 +69,13 @@
         </template>
       </template>
       <template #[`item.block`]="{ item }">
-        {{ truncate(item.hash) }}
+        <a
+          :href="blockUrl(item.block)"
+          target="_blank"
+          rel="noopener"
+        >
+          {{ truncate(item.block) }}
+        </a>
       </template>
       <template #[`item.type`]="{ item }">
         {{ capitalizeFirstLetter(item.type) }}
@@ -82,16 +100,39 @@
                     <td>
                       {{ capitalizeFirstLetter(key) }}
                     </td>
-                    <template v-if="key === 'amount'">
-                      <td>
-                        {{ motesToCsprString(value) }}
-                      </td>
-                    </template>
-                    <template v-else>
-                      <td>
+                    <td v-if="key === 'amount'">
+                      {{ motesToCsprString(value) }}
+                    </td>
+                    <td v-else-if="key === 'hash'">
+                      <a
+                        :href="deployUrl(value)"
+                        target="_blank"
+                        rel="noopener"
+                      >
                         {{ value.toString() }}
-                      </td>
-                    </template>
+                      </a>
+                    </td>
+                    <td v-else-if="key === 'validator'">
+                      <a
+                        :href="validatorUrl(value)"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        {{ value.toString() }}
+                      </a>
+                    </td>
+                    <td v-else-if="['from', 'delegator', 'target'].indexOf(key) !== -1">
+                      <a
+                        :href="accountUrl(value)"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        {{ value.toString() }}
+                      </a>
+                    </td>
+                    <td v-else>
+                      {{ value.toString() }}
+                    </td>
                   </tr>
                 </template>
               </tbody>
@@ -105,7 +146,7 @@
 
 <script>
 
-import { DATA_API } from '@/helpers/env';
+import { CSPR_LIVE_URL, DATA_API } from '@/helpers/env';
 import { CurrencyUtils } from '@casperholders/core';
 import { mapState } from 'vuex';
 
@@ -245,6 +286,18 @@ export default {
     remove(item) {
       const index = this.typesSelected.indexOf(item.name);
       if (index >= 0) this.typesSelected.splice(index, 1);
+    },
+    validatorUrl(value) {
+      return `${CSPR_LIVE_URL}validator/${value}`;
+    },
+    accountUrl(value) {
+      return `${CSPR_LIVE_URL}account/${value}`;
+    },
+    deployUrl(value) {
+      return `${CSPR_LIVE_URL}deploy/${value}`;
+    },
+    blockUrl(value) {
+      return `${CSPR_LIVE_URL}block/${value}`;
     },
   },
 };

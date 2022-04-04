@@ -87,7 +87,7 @@
       </v-form>
     </v-card>
     <OperationResult
-      v-for="operation in filteredOperations"
+      v-for="operation in [...filteredOperations].reverse()"
       :key="operation.hash"
       :deploy-hash="operation.hash"
     />
