@@ -70,10 +70,10 @@
             <template #default>
               <tbody>
                 <tr>
-                  <th>
+                  <th scope="col">
                     Argument
                   </th>
-                  <th>
+                  <th scope="col">
                     Value
                   </th>
                 </tr>
@@ -106,7 +106,7 @@
 <script>
 
 import { DATA_API } from '@/helpers/env';
-import { CurrencyUtils } from '@casperholders/core/dist/services/helpers/currencyUtils';
+import { CurrencyUtils } from '@casperholders/core';
 import { mapState } from 'vuex';
 
 /**
@@ -211,7 +211,7 @@ export default {
           Prefer: 'count=exact',
         }),
       });
-      this.totalOperations = Number(response.headers.get('content-range').replace(/^[0-9]*-[0-9]*\//, ''));
+      this.totalOperations = Number(response.headers.get('content-range').replace(/^.*\//, ''));
       this.operations = await response.json();
       this.loading = false;
     },
@@ -249,7 +249,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-
-</style>

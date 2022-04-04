@@ -35,6 +35,20 @@
           <v-list-item-title>Home</v-list-item-title>
         </v-list-item-content>
       </navigation-drawer-list-item>
+      <navigation-drawer-list-item
+        :minified="minified"
+        tooltip="Settings"
+        to="/settings"
+        link
+        exact
+      >
+        <v-list-item-icon>
+          <v-icon>mdi-cog</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>Settings</v-list-item-title>
+        </v-list-item-content>
+      </navigation-drawer-list-item>
     </navigation-drawer-list>
 
     <template v-for="(items, name) in links">
@@ -68,6 +82,19 @@
               v-text="item.subtitle"
             />
           </v-list-item-content>
+          <v-list-item-action
+            v-if="item.beta"
+          >
+            <v-chip
+              outlined
+              small
+            >
+              <v-icon left>
+                mdi-fire
+              </v-icon>
+              Beta
+            </v-chip>
+          </v-list-item-action>
         </navigation-drawer-list-item>
       </navigation-drawer-list>
     </template>
@@ -166,5 +193,11 @@ export default {
 <style scoped>
     ::v-deep .v-list-item__icon {
         margin: auto 12px auto 0 !important;
+    }
+
+    ::v-deep .v-list-item__title {
+        font-weight: bold !important;
+        font-size: 0.890rem !important;
+        letter-spacing: 0.1rem;
     }
 </style>

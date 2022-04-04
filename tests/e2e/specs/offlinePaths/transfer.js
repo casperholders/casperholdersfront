@@ -14,8 +14,7 @@ describe('Transfer', () => {
     cy.window().then((win) => {
       win.dispatchEvent(event);
     });
-    cy.wait(2000);
-    cy.get('.v-alert').should('have.length', 1);
+    cy.get('.v-alert', { timeout: 5000 }).should('have.length', 1);
     cy.get('.v-alert').should('contain', ' Insufficient funds. You must have more than 2.6 CSPR on your wallet. ');
     cy.wait(1000).window().then((win) => {
       msg.detail.activeKey = '01270a577d2d106c4d29402775f3dffcb9f04aad542579dd4d1cfad20572ebcb7c';

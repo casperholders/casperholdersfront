@@ -8,7 +8,7 @@
       <v-btn
         id="submitOperation"
         v-bind="attrs"
-        :disabled="operationOnGoing"
+        :disabled="operationOnGoing || offline"
         :loading="operationOnGoing"
         class="rounded-xl"
         color="primary"
@@ -60,6 +60,9 @@
 </template>
 
 <script>
+import { TORUS_SIGNER } from '@/helpers/signers';
+import { mapState } from 'vuex';
+
 /**
  * Generic dialog to confirm the Operation before signing & sending it on the blockchain
  */
@@ -146,6 +149,15 @@ export default {
       confirmDialog: false,
     };
   },
+  computed: {
+    ...mapState([
+      'internet',
+      'signerType',
+    ]),
+    offline() {
+      return !this.internet && (this.signerType === TORUS_SIGNER || localStorage.sendDeployDisconnected !== 'true');
+    },
+  },
   mounted() {
     this.$root.$on('closeOperationDialog', () => {
       this.confirmDialog = false;
@@ -159,7 +171,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

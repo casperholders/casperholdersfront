@@ -1,5 +1,11 @@
 # CasperHolders
 [![codecov](https://codecov.io/gh/casperholders/casperholdersfront/branch/main/graph/badge.svg?token=J111YFA2Q3)](https://codecov.io/gh/casperholders/casperholdersfront)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=casperholders_casperholdersfront&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=casperholders_casperholdersfront)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=casperholders_casperholdersfront&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=casperholders_casperholdersfront)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=casperholders_casperholdersfront&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=casperholders_casperholdersfront)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=casperholders_casperholdersfront&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=casperholders_casperholdersfront)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=casperholders_casperholdersfront&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=casperholders_casperholdersfront)
+
 ## The first third party UI to interact with the Casper Blockchain.
 
 ### CasperHolders is not affiliated with CasperNetwork / CasperAssociation.This is a project from a community member.

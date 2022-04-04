@@ -22,59 +22,11 @@
       Casper Holders {{ titleNetwork }}
     </v-toolbar-title>
     <connect v-if="displayConnect" />
-    <v-menu
-      v-if="signer.activeKey"
-      left
-      offset-y
-    >
-      <template #activator="{ on, attrs }">
-        <v-btn
-          id="account"
-          v-bind="attrs"
-          icon
-          v-on="on"
-        >
-          <v-icon dark>
-            mdi-account
-          </v-icon>
-        </v-btn>
-      </template>
-      <v-list
-        color="primary"
-        style="border-bottom: 5px solid #ff473e !important;"
-      >
-        <v-list-item>
-          <v-list-item-icon>
-            <v-icon color="white">
-              mdi-key
-            </v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ truncateText(signer.activeKey) }}
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              Connected with : {{ humanReadableSigner }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-action>
-            <v-btn
-              id="logout"
-              color="secondary"
-              @click="logout"
-            >
-              <v-icon left>
-                mdi-close
-              </v-icon>
-              Logout
-            </v-btn>
-          </v-list-item-action>
-        </v-list-item>
-      </v-list>
-    </v-menu>
+    <Account v-if="signer.activeKey" />
     <v-menu
       left
       offset-y
+      :close-on-content-click="false"
     >
       <template #activator="{ on, attrs }">
         <v-btn
@@ -104,7 +56,7 @@
       >
         <template v-for="(operation, index) in operations">
           <v-divider
-            v-if="index > 0 || (!signer.connected || signer.lock || signer.activeKey === null)"
+            v-if="index > 0"
             :key="'app_bar_divider'+operation.hash"
           />
           <v-list-item :key="'app_bar'+operation.hash">
@@ -144,16 +96,67 @@
             </v-list-item-action-text>
           </v-list-item>
         </template>
+        <v-divider
+          v-if="operations.length > 0 && offlineDeploys.length > 0"
+        />
+        <v-list-item v-if="offlineDeploys.length > 0">
+          <v-list-item-icon>
+            <v-icon color="white">
+              mdi-clock
+            </v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>Pending Operations</v-list-item-title>
+            <v-list-item-subtitle>
+              Those operations will be send when you will be back online.
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <template v-for="(operation) in offlineDeploys">
+          <v-divider
+            :key="'app_bar_divider'+operation.deployResult.hash"
+          />
+          <v-list-item :key="'app_bar'+operation.deployResult.hash">
+            <v-list-item-icon>
+              <v-icon :color="operationIconColor(operation.deployResult)">
+                {{ operationIcon(operation.deployResult) }}
+              </v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ operation.deployResult.name }}</v-list-item-title>
+              <v-list-item-subtitle>
+                {{
+                  truncateText(operation.deployResult.hash)
+                }}
+              </v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action-text>
+              <v-btn
+                :href="getOperationUrl(operation.deployResult)"
+                class="mr-3"
+                color="secondary"
+                fab
+                target="_blank"
+                rel="noopener"
+                x-small
+              >
+                <v-icon x-small>
+                  mdi-open-in-new
+                </v-icon>
+              </v-btn>
+            </v-list-item-action-text>
+          </v-list-item>
+        </template>
       </v-list>
     </v-menu>
   </v-app-bar>
 </template>
 
 <script>
+import Account from '@/components/layout/AccountPopup';
 import Connect from '@/components/layout/Connect';
 import { CSPR_LIVE_URL, HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
-import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER } from '@/helpers/signers';
-import { STATUS_OK, STATUS_UNKNOWN } from '@casperholders/core/dist/services/results/deployResult';
+import { DeployResult } from '@casperholders/core';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -163,7 +166,7 @@ import { mapGetters, mapState } from 'vuex';
  */
 export default {
   name: 'AppBar',
-  components: { Connect },
+  components: { Account, Connect },
   props: {
     links: {
       type: Object,
@@ -173,33 +176,26 @@ export default {
   data: () => ({
     isWindowTop: true,
     displayConnect: false,
+    copied: false,
   }),
   computed: {
-    ...mapState(['operations', 'signer', 'signerType']),
+    ...mapState(['operations', 'signer', 'signerType', 'offlineDeploys']),
     ...mapGetters([
       'signerObject',
       'signerOptionsFactory',
     ]),
-    humanReadableSigner() {
-      if (this.signerType === CASPER_SIGNER) {
-        return 'Casper Signer';
-      }
-      if (this.signerType === LEDGER_SIGNER) {
-        return 'Ledger';
-      }
-      if (this.signerType === LOCAL_SIGNER) {
-        return 'Local';
-      }
-      return 'None';
-    },
     disabledNotifications() {
-      return this.operations.length === 0;
+      return this.operations.length === 0 && this.offlineDeploys.length === 0;
     },
     titleNetwork() {
       return NETWORK !== 'casper' ? HUMAN_READABLE_NETWORK : '';
     },
     badgeColor() {
-      if (this.operations.filter((operation) => operation.status === STATUS_UNKNOWN).length > 0) {
+      if (
+        this.operations.filter(
+          (operation) => operation.status === DeployResult.STATUS_UNKNOWN,
+        ).length > 0 || this.offlineDeploys.length > 0
+      ) {
         return 'primary';
       }
 
@@ -210,8 +206,18 @@ export default {
       return 'green';
     },
     badgeContent() {
-      if (this.operations.filter((operation) => operation.status === STATUS_UNKNOWN).length > 0) {
-        return this.operations.filter((operation) => operation.status === STATUS_UNKNOWN).length;
+      if (this.offlineDeploys.length > 0) {
+        return this.offlineDeploys.length;
+      }
+
+      if (
+        this.operations.filter(
+          (operation) => operation.status === DeployResult.STATUS_UNKNOWN,
+        ).length > 0
+      ) {
+        return this.operations.filter(
+          (operation) => operation.status === DeployResult.STATUS_UNKNOWN,
+        ).length;
       }
 
       if (this.operations.filter((operation) => operation.status === false).length > 0) {
@@ -225,9 +231,7 @@ export default {
     'signer.activeKey': {
       handler(current, previous) {
         if (previous === null && current !== null) {
-          setTimeout(() => {
-            this.displayConnect = false;
-          }, 2000);
+          this.displayConnect = false;
         }
         if (previous !== null && current === null) {
           this.displayConnect = true;
@@ -246,16 +250,16 @@ export default {
       this.isWindowTop = document.documentElement.scrollTop === 0;
     },
     operationIcon(operation) {
-      if (operation.status === STATUS_UNKNOWN) {
+      if (operation.status === DeployResult.STATUS_UNKNOWN) {
         return 'mdi-help-circle';
       }
-      return operation.status === STATUS_OK ? 'mdi-checkbox-marked-circle' : 'mdi-alert-circle';
+      return operation.status === DeployResult.STATUS_OK ? 'mdi-checkbox-marked-circle' : 'mdi-alert-circle';
     },
     operationIconColor(operation) {
-      if (operation.status === STATUS_UNKNOWN) {
+      if (operation.status === DeployResult.STATUS_UNKNOWN) {
         return 'white';
       }
-      return operation.status === STATUS_OK ? 'green' : 'tertiary';
+      return operation.status === DeployResult.STATUS_OK ? 'green' : 'tertiary';
     },
     getOperationUrl(operation) {
       return `${CSPR_LIVE_URL}deploy/${operation.hash}`;
@@ -265,9 +269,6 @@ export default {
     },
     removeDeployResult(operation) {
       this.$store.dispatch('removeDeployResult', operation);
-    },
-    async logout() {
-      await this.$store.dispatch('logout');
     },
   },
 };

@@ -77,6 +77,7 @@
  * Generic amount component to allow the user to choose an "amount"
  */
 import Big from 'big.js';
+import { mapState } from 'vuex';
 
 export default {
   name: 'Amount',
@@ -129,6 +130,9 @@ export default {
     };
   },
   computed: {
+    ...mapState([
+      'internet',
+    ]),
     /**
      * Trick to send the current amount to the parent component (View)
      * Because the prop value contain the amount, this computed property
@@ -153,12 +157,15 @@ export default {
      */
     max() {
       return Big(this.balance).minus(this.fee).gt(0)
-        ? Big(this.balance).minus(this.fee).toString()
-        : Big(this.min).toString();
+        ? Math.trunc(Big(this.balance).minus(this.fee).toString())
+        : Math.trunc(Big(this.min).toString());
     },
   },
   methods: {
     mustBeAtLeast(val) {
+      if (!this.internet && Big(this.balance).eq(0)) {
+        return true;
+      }
       try {
         return Big(val).gte(this.min) ? true : `Amount must be at least ${this.min}`;
       } catch (e) {
@@ -166,6 +173,9 @@ export default {
       }
     },
     mustBeBellow(val) {
+      if (!this.internet && Big(this.balance).eq(0)) {
+        return true;
+      }
       try {
         return Big(val).lte(this.max) ? true : `Amount must equal or bellow ${this.max}`;
       } catch (e) {
@@ -173,6 +183,9 @@ export default {
       }
     },
     enoughFunds(val) {
+      if (!this.internet && Big(this.balance).eq(0)) {
+        return true;
+      }
       try {
         return Big(val).lte(Big(this.balance).minus(this.fee)) ? true : 'Not enough funds';
       } catch (e) {
@@ -206,7 +219,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

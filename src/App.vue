@@ -10,6 +10,14 @@
         >
       </div>
       <v-container class="app__wrapper container__small">
+        <v-alert
+          v-if="impersonatePublicKey"
+          dense
+          type="info"
+          style="overflow-wrap: anywhere!important;"
+        >
+          You're impersonating this public key : {{ impersonatePublicKey }}
+        </v-alert>
         <router-view />
       </v-container>
     </v-main>
@@ -73,7 +81,7 @@ export default {
      */
   }),
   computed: {
-    ...mapState(['signerType']),
+    ...mapState(['signerType', 'impersonatePublicKey']),
     /**
      * Return the links available. Dynamically adjusted until ledger support any operations.
      */
@@ -83,21 +91,29 @@ export default {
           {
             title: 'Balance',
             icon: 'mdi-wallet',
-            route: 'balance',
+            route: '/balance',
             disabled: false,
             subtitle: null,
           },
           {
+            title: 'Security',
+            icon: 'mdi-key',
+            route: '/security',
+            disabled: this.signerType === LEDGER_SIGNER,
+            subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
+            beta: true,
+          },
+          {
             title: 'Transfer',
             icon: 'mdi-send',
-            route: 'transfer',
+            route: '/transfer',
             disabled: false,
             subtitle: null,
           },
           {
             title: 'Account info',
             icon: 'mdi-account',
-            route: 'account',
+            route: '/account',
             disabled: this.signerType === LEDGER_SIGNER,
             subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
           },
@@ -107,7 +123,7 @@ export default {
           {
             title: 'Unstake',
             icon: 'mdi-lock-open',
-            route: 'unstake',
+            route: '/unstake',
             disabled: false,
             subtitle: null,
           },
@@ -116,14 +132,14 @@ export default {
           {
             title: 'Add Bid',
             icon: 'mdi-gavel',
-            route: 'addbid',
+            route: '/addbid',
             disabled: this.signerType === LEDGER_SIGNER,
             subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
           },
           {
             title: 'Withdraw Bid',
             icon: 'mdi-connection',
-            route: 'withdrawbid',
+            route: '/withdrawbid',
             disabled: this.signerType === LEDGER_SIGNER,
             subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
           },
@@ -132,14 +148,14 @@ export default {
           {
             title: 'Send smart contract',
             icon: 'mdi-file-document-edit',
-            route: 'smartcontract',
+            route: '/smartcontract',
             disabled: this.signerType === LEDGER_SIGNER,
             subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
           },
         ],
         Others: [
-          { title: 'FAQ', icon: 'mdi-help', route: 'faq', disabled: false, subtitle: null },
-          { title: 'Contact', icon: 'mdi-mail', route: 'contact', disabled: false, subtitle: null },
+          { title: 'FAQ', icon: 'mdi-help', route: '/faq', disabled: false, subtitle: null },
+          { title: 'Contact', icon: 'mdi-mail', route: '/contact', disabled: false, subtitle: null },
         ],
       };
     },
@@ -151,6 +167,7 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.$store.dispatch('initSignerStatus');
+      this.$store.dispatch('initConnectivityStatus');
       window.addEventListener('signer:initialState', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
       window.addEventListener('signer:connected', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
       window.addEventListener('signer:disconnected', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
@@ -158,33 +175,25 @@ export default {
       window.addEventListener('signer:activeKeyChanged', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
       window.addEventListener('signer:locked', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
       window.addEventListener('signer:unlocked', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
+      window.addEventListener('online', () => this.$store.dispatch('onlineEvent'));
+      window.addEventListener('offline', () => this.$store.dispatch('offlineEvent'));
     });
+    if (!localStorage.sendDeployDisconnected) localStorage.sendDeployDisconnected = false;
   },
 };
 </script>
 
 <style lang="scss">
-  @font-face {
-    font-family: "RobotoCondensed";
-    src: url("assets/fonts/RobotoCondensed/RobotoCondensed-Regular.ttf");
-    font-weight: normal;
-    font-style: normal;
-  }
-
-  @font-face {
-    font-family: "EczarBold";
-    src: url("assets/fonts/Eczar/Eczar-Bold.ttf");
+  .cspr {
+    font-family: "Eczar", "Roboto", Helvetica, Arial, sans-serif;
     font-weight: bold;
     font-style: normal;
   }
 
-  .cspr {
-    font-family: "EczarBold", "RobotoCondensed", Helvetica, Arial, sans-serif;
-  }
-
   #app {
-    font-family: "RobotoCondensed", Helvetica, Arial, sans-serif;
+    font-family: "Roboto", Helvetica, Arial, sans-serif;
 
+    background-color: #00126b;
     &::before {
       content: " ";
       position: fixed;
@@ -194,6 +203,7 @@ export default {
       left: 0;
       background-color: #00126b;
       background-image: url("~@/assets/images/background.svg");
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.2));
       background-size: cover;
       will-change: transform;
     }

@@ -1,8 +1,15 @@
-import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER } from '@/helpers/signers';
-import { CasperSigner } from '@casperholders/core/dist/services/signers/casperSigner';
-import { LedgerSigner } from '@casperholders/core/dist/services/signers/ledgerSigner';
-import { LocalSigner } from '@casperholders/core/dist/services/signers/localSigner';
-import { Keys, Signer } from 'casper-js-sdk';
+import clientCasper from '@/helpers/clientCasper';
+import deployManager from '@/helpers/deployManager';
+import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER, TORUS_SIGNER } from '@/helpers/signers';
+import {
+  KeyManagementResult,
+  TorusSigner,
+  LocalSigner,
+  LedgerSigner,
+  CasperSigner,
+} from '@casperholders/core';
+import _cloneDeep from 'lodash/cloneDeep';
+import { CLPublicKey, Keys, Signer } from 'casper-js-sdk';
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -33,6 +40,10 @@ export const ledgerOptions = {
   casperApp: undefined,
 };
 
+export const torusOptions = {
+  torusInstance: undefined,
+};
+
 /**
  * If we run the app in End to End test mode we override the signer with
  * a LocalSigner and set fake keys to be used in the options sent to the signer.
@@ -49,6 +60,7 @@ const SIGNER_TYPES = {
   [CASPER_SIGNER]: CasperSigner,
   [LOCAL_SIGNER]: LocalSigner,
   [LEDGER_SIGNER]: LedgerSigner,
+  [TORUS_SIGNER]: TorusSigner,
 };
 
 /**
@@ -97,6 +109,17 @@ const SIGNER_OPTIONS_FACTORIES = {
       key: validatorKey,
     }),
   }),
+  [TORUS_SIGNER]: () => ({
+    getOptionsForTransfer: () => ({
+      torus: torusOptions.torusInstance,
+    }),
+    getOptionsForOperations: () => ({
+      torus: torusOptions.torusInstance,
+    }),
+    getOptionsForValidatorOperations: () => ({
+      torus: torusOptions.torusInstance,
+    }),
+  }),
 };
 
 /**
@@ -116,10 +139,14 @@ const initialState = () => ({
   },
   signerType: process.env.VUE_APP_E2E === 'true' ? LOCAL_SIGNER : '',
   operations: [],
+  offlineDeploys: [],
+  weightedDeploys: [],
   connectDialog: false,
   ledger: {
     keyPath: 0,
   },
+  internet: true,
+  impersonatePublicKey: '',
 });
 
 const getters = {
@@ -129,6 +156,7 @@ const getters = {
     .filter((operation) => operation.hash.toLowerCase() === hash.toLowerCase())[0],
   signerObject: (state) => SIGNER_TYPES[state.signerType],
   signerOptionsFactory: (state) => SIGNER_OPTIONS_FACTORIES[state.signerType](state),
+  activeKey: (state) => (state.impersonatePublicKey !== '' ? state.impersonatePublicKey : state.signer.activeKey),
 };
 
 const mutations = {
@@ -147,6 +175,12 @@ const mutations = {
     state.signer.connected = true;
     state.signerType = LEDGER_SIGNER;
     state.ledger.keyPath = options.keyPath;
+  },
+  updateTorus(state, { publicKey }) {
+    state.signer.activeKey = publicKey;
+    state.signer.lock = false;
+    state.signer.connected = true;
+    state.signerType = TORUS_SIGNER;
   },
   updateSignerLock(state, { lock }) {
     state.signer.lock = lock;
@@ -186,6 +220,36 @@ const mutations = {
   closeConnectDialog(state) {
     state.connectDialog = false;
   },
+  initConnectivityStatus(state) {
+    state.internet = navigator.onLine;
+  },
+  onlineEvent(state) {
+    state.internet = true;
+  },
+  offlineEvent(state) {
+    state.internet = false;
+  },
+  addOfflineDeploy(state, { pendingDeploy }) {
+    state.offlineDeploys.push(pendingDeploy);
+  },
+  removePendingDeploy(state, { index }) {
+    state.offlineDeploys.splice(index, 1);
+  },
+  removePendingDeployPop(state) {
+    state.offlineDeploys.pop();
+  },
+  addErrorPendingDeploy(state, { index, e }) {
+    state.offlineDeploys[index].error = e;
+  },
+  impersonatePublicKey(state, { publicKey }) {
+    state.impersonatePublicKey = publicKey;
+  },
+  addWeightDeploy(state, { weightDeploy }) {
+    state.weightedDeploys.push(weightDeploy);
+  },
+  removeWeightDeploy(state, { index }) {
+    state.weightedDeploys.splice(index, 1);
+  },
 };
 
 const actions = {
@@ -215,6 +279,9 @@ const actions = {
   updateFromLedgerEvent(context, options) {
     context.commit('updateLedger', { options });
   },
+  updateFromTorusEvent(context, publicKey) {
+    context.commit('updateTorus', { publicKey });
+  },
   addDeployResult(context, deployResult) {
     context.commit('addDeployResult', { deployResult });
   },
@@ -232,6 +299,89 @@ const actions = {
   },
   closeConnectDialog(context) {
     context.commit('closeConnectDialog');
+  },
+  initConnectivityStatus(context) {
+    context.commit('initConnectivityStatus');
+  },
+  async onlineEvent(context) {
+    context.commit('onlineEvent');
+    // eslint-disable-next-line no-restricted-syntax
+    for (let i = context.state.offlineDeploys.length - 1; i >= 0; i--) {
+      const pendingDeploy = context.state.offlineDeploys[i];
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        let currentWeight = 0;
+        // eslint-disable-next-line no-await-in-loop
+        const latestBlock = await clientCasper.casperRPC.getLatestBlockInfo();
+        // eslint-disable-next-line no-await-in-loop
+        const stateRootHash = await clientCasper.casperRPC.getStateRootHash(
+          latestBlock.block.hash,
+        );
+        console.log(pendingDeploy.deploy);
+        // eslint-disable-next-line no-await-in-loop
+        const keyInfo = await clientCasper.casperRPC.getBlockState(
+          stateRootHash,
+          pendingDeploy.deploy.header.account.toAccountHashStr(),
+          [],
+        );
+        pendingDeploy.deploy.approvals.forEach((approval) => {
+          const approvalAccount = keyInfo.Account.associatedKeys.find(
+            (v) => v.accountHash === CLPublicKey.fromHex(approval.signer).toAccountHashStr(),
+          );
+          currentWeight += approvalAccount ? approvalAccount.weight : 0;
+        });
+        let weightNeeded = keyInfo.Account.actionThresholds.deployment;
+        if (pendingDeploy.deployResultType === KeyManagementResult.getName()) {
+          weightNeeded = keyInfo.Account.actionThresholds.keyManagement;
+        }
+        if (currentWeight >= weightNeeded) {
+          // eslint-disable-next-line no-await-in-loop,no-unreachable
+          const deployResult = await deployManager.sendDeploy(
+            pendingDeploy.deploy,
+            pendingDeploy.deployResultType,
+          );
+          context.commit('addDeployResult', { deployResult });
+          context.commit('removePendingDeployPop');
+        } else {
+          const weightDeploy = _cloneDeep(pendingDeploy);
+          context.commit('addWeightDeploy', { weightDeploy });
+          context.commit('removePendingDeployPop');
+        }
+      } catch (e) {
+        console.log(e);
+        context.commit('addErrorPendingDeploy', { i, e });
+      }
+    }
+  },
+  async retrySendingDeploy(context, index) {
+    try {
+      const deployResult = await deployManager.sendDeploy(
+        context.state.offlineDeploys[index].deploy,
+        context.state.offlineDeploys[index].deployResultType,
+      );
+      context.commit('addDeployResult', { deployResult });
+      context.commit('removePendingDeploy', { index });
+    } catch (e) {
+      context.commit('addErrorPendingDeploy', { index, e });
+    }
+  },
+  offlineEvent(context) {
+    context.commit('offlineEvent');
+  },
+  addOfflineDeploy(context, pendingDeploy) {
+    context.commit('addOfflineDeploy', { pendingDeploy });
+  },
+  removeOfflineDeploy(context, index) {
+    context.commit('removePendingDeploy', { index });
+  },
+  impersonatePublicKey(context, publicKey) {
+    context.commit('impersonatePublicKey', { publicKey });
+  },
+  addWeightDeploy(context, weightDeploy) {
+    context.commit('addWeightDeploy', { weightDeploy });
+  },
+  removeWeightDeploy(context, index) {
+    context.commit('removeWeightDeploy', { index });
   },
 };
 

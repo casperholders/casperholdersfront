@@ -14,8 +14,7 @@ describe('Smart Contract', () => {
     cy.window().then((win) => {
       win.dispatchEvent(event);
     });
-    cy.wait(2000);
-    cy.get('.v-alert').should('have.length', 1);
+    cy.get('.v-alert', { timeout: 5000 }).should('have.length', 1);
     cy.get('.v-alert').should('contain', ' Insufficient funds. You must have more than 1 CSPR on your wallet. ');
     cy.wait(1000).window().then((win) => {
       msg.detail.activeKey = '0124bfdae2ed128fa5e4057bc398e4933329570e47240e57fc92f5611a6178eba5';
