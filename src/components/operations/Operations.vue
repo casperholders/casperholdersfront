@@ -68,6 +68,9 @@
           </v-icon>
         </template>
       </template>
+      <template #[`item.timestamp`]="{ item }">
+        {{ localeTimestamp(item.timestamp) }}
+      </template>
       <template #[`item.block`]="{ item }">
         <a
           :href="blockUrl(item.block)"
@@ -148,6 +151,7 @@
 
 import { CSPR_LIVE_URL, DATA_API } from '@/helpers/env';
 import { CurrencyUtils } from '@casperholders/core';
+import moment from 'moment';
 import { mapState } from 'vuex';
 
 /**
@@ -298,6 +302,9 @@ export default {
     },
     blockUrl(value) {
       return `${CSPR_LIVE_URL}block/${value}`;
+    },
+    localeTimestamp(value) {
+      return moment(value).format('LLL');
     },
   },
 };

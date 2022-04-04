@@ -26,6 +26,7 @@
     "countdown": "^2.6.0",
     "lodash": "^4.17.21",
     "lodash.clonedeep": "^4.5.0",
+    "moment": "^2.29.2",
     "parse-duration": "^1.0.2",
     "qrcode.vue": "^1.0.0",
     "register-service-worker": "^1.7.1",
