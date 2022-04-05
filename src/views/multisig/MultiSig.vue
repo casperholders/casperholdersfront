@@ -97,7 +97,7 @@
           </v-card-text>
         </v-card>
         <template v-if="countdown && !alreadySigned">
-          <p>
+          <p id="accountAuthorization">
             <template
               v-if="validated"
             >
@@ -407,8 +407,6 @@ export default {
           this.currentWeight += approvalAccount ? approvalAccount.weight : 0;
         });
         if (this.currentWeight >= this.weightNeeded) {
-          console.log(this.weightNeeded);
-          console.log(this.currentWeight);
           if (!this.internet) {
             const pendingDeploy = {
               deploy: signedDeploy,

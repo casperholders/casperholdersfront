@@ -2,6 +2,7 @@
   <div>
     <v-card
       v-for="(weightedDeploy,i) in weightedDeploys"
+      :id="`pendingWeightedDeploy-${i}`"
       :key="i"
       class="align-center rounded-xl secondary mt-5 operationResult"
       width="100%"
@@ -25,6 +26,7 @@
             class="py-0"
           >
             <v-btn
+              :id="`copyLinkWeightedDeploy-${i}`"
               class="rounded-xl mt-3 mr-3"
               style="width: 100%"
               color="primary"

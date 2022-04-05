@@ -19,6 +19,7 @@ const debug = process.env.NODE_ENV !== 'production';
 
 let randomKey;
 let validatorKey;
+let multiSigKeys;
 
 /**
  * Generate a random fake asymmetric key for E2E tests
@@ -51,6 +52,10 @@ export const torusOptions = {
 if (process.env.VUE_APP_E2E === 'true') {
   randomKey = generateAsymmetricKey(process.env.VUE_APP_FAKE_KEY);
   validatorKey = generateAsymmetricKey(process.env.VUE_APP_FAKE_VALIDATOR_KEY);
+  multiSigKeys = {
+    firstKey: generateAsymmetricKey(process.env.VUE_APP_FAKE_MULTISIG_KEY),
+    secondKey: generateAsymmetricKey(process.env.VUE_APP_FAKE_SECOND_MULTISIG_KEY),
+  };
 }
 
 /**
@@ -98,12 +103,12 @@ const SIGNER_OPTIONS_FACTORIES = {
       keyPath: state.ledger.keyPath,
     }),
   }),
-  [LOCAL_SIGNER]: () => ({
+  [LOCAL_SIGNER]: (state) => ({
     getOptionsForTransfer: () => ({
-      key: randomKey,
+      key: state.multisig ? multiSigKeys[state.multisig] : randomKey,
     }),
     getOptionsForOperations: () => ({
-      key: randomKey,
+      key: state.multisig ? multiSigKeys[state.multisig] : randomKey,
     }),
     getOptionsForValidatorOperations: () => ({
       key: validatorKey,
@@ -142,6 +147,7 @@ const initialState = () => ({
   offlineDeploys: [],
   weightedDeploys: [],
   connectDialog: false,
+  multisig: false,
   ledger: {
     keyPath: 0,
   },
@@ -160,12 +166,15 @@ const getters = {
 };
 
 const mutations = {
-  updateSigner(state, { connected, activeKey }) {
+  updateSigner(state, { connected, activeKey, multisig }) {
     if (connected) {
       state.signer.connected = connected;
     }
     if (activeKey) {
       state.signer.activeKey = activeKey;
+    }
+    if (multisig) {
+      state.multisig = multisig;
     }
     state.signerType = process.env.VUE_APP_E2E === 'true' ? LOCAL_SIGNER : CASPER_SIGNER;
   },
@@ -272,6 +281,7 @@ const actions = {
       context.commit('updateSigner', {
         connected: detail.isConnected,
         activeKey: detail.activeKey,
+        multisig: detail.isMultisig ? detail.isMultisig : false,
       });
       context.commit('updateSignerLock', { lock: !detail.isUnlocked });
     }
@@ -317,7 +327,6 @@ const actions = {
         const stateRootHash = await clientCasper.casperRPC.getStateRootHash(
           latestBlock.block.hash,
         );
-        console.log(pendingDeploy.deploy);
         // eslint-disable-next-line no-await-in-loop
         const keyInfo = await clientCasper.casperRPC.getBlockState(
           stateRootHash,

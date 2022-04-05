@@ -64,6 +64,7 @@
       <navigation-drawer-list :key="`nav-group-${name}-items`">
         <navigation-drawer-list-item
           v-for="(item, index) in items"
+          :id="`nav-group-${name}-items-${index}`"
           :key="`nav-group-${name}-items-${index}`"
           :minified="minified"
           :tooltip="item.title"

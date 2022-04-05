@@ -77,6 +77,7 @@
                 What public key do you want to impersonate ?
               </span>
               <v-text-field
+                id="impersonateKeyTextField"
                 v-model="publicKeyImpersonation"
                 color="white"
                 label="Public key"
@@ -128,7 +129,7 @@
                 Loading key info...
               </p>
               <template v-if="accountHashImpersonation !== '' && loadingKeyInfo === false">
-                <p>
+                <p id="accountAuthorization">
                   <template v-if="validated">
                     <v-icon
                       color="success"
