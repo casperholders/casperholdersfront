@@ -39,6 +39,13 @@ describe('MultiSig', () => {
       },
     };
     cy.visit('http://localhost:8080/settings');
+    cy.wrap(Cypress.automation('remote:debugger:protocol', {
+      command: 'Browser.grantPermissions',
+      params: {
+        permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'],
+        origin: window.location.origin,
+      },
+    }));
     const event = new CustomEvent('signer:connected', msg);
     cy.window().then((win) => {
       win.dispatchEvent(event);
