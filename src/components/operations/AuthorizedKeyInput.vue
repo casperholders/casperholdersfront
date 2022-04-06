@@ -10,6 +10,7 @@
       md="8"
     >
       <v-text-field
+        :id="data.existingKey ? `${data.accountHash}-field` : `${index}-field`"
         color="white"
         label="Account Hash"
         type="text"
@@ -49,6 +50,7 @@
       md="3"
     >
       <v-text-field
+        :id="data.existingKey ? `${data.accountHash}-weight` : `${index}-weight`"
         color="white"
         label="Weight"
         type="number"
@@ -69,6 +71,7 @@
     </v-col>
     <v-col cols="1">
       <v-btn
+        :id="data.existingKey ? `${data.accountHash}-delete` : `${index}-delete`"
         class="rounded-xl"
         color="primary"
         fab
@@ -106,6 +109,10 @@ export default {
     data: {
       required: true,
       type: Object,
+    },
+    index: {
+      required: true,
+      type: Number,
     },
   },
   data() {

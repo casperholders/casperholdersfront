@@ -19,10 +19,6 @@ describe('MultiSig', () => {
     cy.get('#address').type('0124bfdae2ed128fa5e4057bc398e4933329570e47240e57fc92f5611a6178eba5');
     cy.get('#submitOperation').click();
     cy.get('#agreeAndSign').parents('.v-dialog').should('be.visible');
-    cy.get('#disagree').click().parents('.v-dialog').should('not.be.visible');
-    cy.wait(5000);
-    cy.get('#submitOperation').click();
-    cy.get('#agreeAndSign').parents('.v-dialog').should('be.visible');
     cy.get('#agreeAndSign').click().parents('.v-dialog').should('not.be.visible');
     cy.get('.step1', { timeout: 20000 }).should('have.length', 1).should('be.visible').should('contain', 'Connecting to the Casper Network...');
     cy.get('.step2', { timeout: 20000 }).should('have.length', 1).should('be.visible').should('contain', 'Creation of a new block...');

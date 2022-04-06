@@ -122,6 +122,7 @@
         >
           <authorized-key-input
             :data="authorizedInput"
+            :index="index"
             @update="onUpdate(index, $event)"
             @delete="onDelete(index)"
           />
@@ -129,6 +130,7 @@
       </v-list>
       <v-card-actions>
         <v-btn
+          id="addKey"
           class="rounded-xl"
           color="primary"
           dark
@@ -142,6 +144,7 @@
           Add key
         </v-btn>
         <v-btn
+          id="reset"
           class="rounded-xl"
           color="primary"
           dark
