@@ -45,12 +45,16 @@ In order to run correctly the tests locally create a file name .env.local with t
 ```
 VUE_APP_FAKE_KEY="<TestnetPrivateKeyWithoutPem>"
 VUE_APP_FAKE_VALIDATOR_KEY="<TestnetValidatorPrivateKeyWithoutPem>"
+VUE_APP_FAKE_MULTISIG_KEY="<TestnetMultiSigPrivateKeyWithoutPem>"
+VUE_APP_FAKE_SECOND_MULTISIG_KEY="<TestnetSecondMultisigPrivateKeyWithoutPem>"
 VUE_APP_E2E=true
 ```
 
 The first env variable will enable you to test all users interactions (Transfer / Stake / Unstake)  
 The second env variable will enable you to test all validators operations (Add & Withdraw bid)  
-The third one will tell the app to run in E2E mode and will bypass the casper signer to use a local signer with the fake keys provided.  
+The third env variable will be a main test multisig account.
+The fourth env variable will be an authorized key for the multisig account.
+The last one will tell the app to run in E2E mode and will bypass the casper signer to use a local signer with the fake keys provided.  
 Check the globalPlugin.js to see how it works.  
 Only the positive path for sending smart contract is not tested. See issue #10
 
