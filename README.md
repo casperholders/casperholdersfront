@@ -8,10 +8,15 @@
 
 ## The first third party UI to interact with the Casper Blockchain.
 
-### CasperHolders is not affiliated with CasperNetwork / CasperAssociation.This is a project from a community member.
+Built with :
+- [VueJS](https://v2.vuejs.org/)
+- [Vuetify](https://vuetifyjs.com/en/)
+- [Vuex](https://vuex.vuejs.org/)
+- [Cypress](https://www.cypress.io/)
 
-## CasperHolders is not affiliated with CasperNetwork / CasperAssociation.
-## This is a project from a community member.
+We plan to refactor a lot of things in the next release. (Vue3 / Vite / Vuetify 3 / Pinia etc.)
+
+### CasperHolders is not affiliated with CasperNetwork / CasperAssociation.This is a project from a community member.
 
 This project contains the sources files for the CasperHolders website.
 
