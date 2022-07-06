@@ -1,14 +1,17 @@
 // vite.config.js
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
-import { defineConfig } from 'vite';
-import { createVuePlugin as vue } from 'vite-plugin-vue2';
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
+import path from 'path';
+import nodePolyfills from 'rollup-plugin-polyfill-node';
 import { VuetifyResolver } from 'unplugin-vue-components/resolvers';
 import createComponentsPlugin from 'unplugin-vue-components/vite';
-
-const path = require('path');
+import { defineConfig } from 'vite';
+import { createVuePlugin as vue } from 'vite-plugin-vue2';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  define: {
+    global: 'globalThis',
+  },
   plugins: [
     vue(),
     createComponentsPlugin({
@@ -20,7 +23,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      process: "process/browser",
+      process: 'process/browser',
     },
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
   },
@@ -28,17 +31,23 @@ export default defineConfig({
     esbuildOptions: {
       // Node.js global to browser globalThis
       define: {
-        global: 'globalThis'
+        global: 'globalThis',
       },
       // Enable esbuild polyfill plugins
       plugins: [
         NodeGlobalsPolyfillPlugin({
-          buffer: true
-        })
-      ]
-    }
+          buffer: true,
+        }),
+      ],
+    },
   },
   build: {
+    rollupOptions: {
+      plugins: [nodePolyfills()],
+    },
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
     sourcemap: true,
   },
   css: {
