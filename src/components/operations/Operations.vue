@@ -151,7 +151,6 @@
 
 import { CSPR_LIVE_URL, DATA_API } from '@/helpers/env';
 import { CurrencyUtils } from '@casperholders/core';
-import moment from 'moment';
 import { mapState } from 'vuex';
 
 /**
@@ -304,7 +303,8 @@ export default {
       return `${CSPR_LIVE_URL}block/${value}`;
     },
     localeTimestamp(value) {
-      return moment(value).format('LLL');
+      const date = new Date(value);
+      return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
     },
   },
 };

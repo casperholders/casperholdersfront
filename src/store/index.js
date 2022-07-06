@@ -8,7 +8,7 @@ import {
   LedgerSigner,
   CasperSigner,
 } from '@casperholders/core';
-import _cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from 'lodash.clonedeep';
 import { CLPublicKey, Keys, Signer } from 'casper-js-sdk';
 import Vue from 'vue';
 import Vuex from 'vuex';
@@ -352,7 +352,7 @@ const actions = {
           context.commit('addDeployResult', { deployResult });
           context.commit('removePendingDeployPop');
         } else {
-          const weightDeploy = _cloneDeep(pendingDeploy);
+          const weightDeploy = cloneDeep(pendingDeploy);
           context.commit('addWeightDeploy', { weightDeploy });
           context.commit('removePendingDeployPop');
         }
