@@ -26,6 +26,7 @@
         {{ text }}
       </template>
     </v-file-input>
+    <Argument index="1" />
     <Amount
       :balance="balance"
       :fee="Number(0)"
@@ -115,6 +116,7 @@
 
 <script>
 import Amount from '@/components/operations/Amount';
+import Argument from '@/components/operations/Argument';
 import Operation from '@/components/operations/Operation';
 import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
@@ -135,7 +137,7 @@ import { mapGetters, mapState } from 'vuex';
  */
 export default {
   name: 'SmartContract',
-  components: { Amount, Operation },
+  components: { Argument, Amount, Operation },
   data() {
     return {
       minPayment: 1,
