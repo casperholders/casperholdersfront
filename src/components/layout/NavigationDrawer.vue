@@ -191,12 +191,12 @@ export default {
 };
 </script>
 
-<style scoped>
-    :deep(.v-list-item__icon)  {
+<style scoped lang="scss">
+    ::v-deep .v-list-item__icon {
         margin: auto 12px auto 0 !important;
     }
 
-    :deep(.v-list-item__title) {
+    ::v-deep .v-list-item__title {
         font-weight: bold !important;
         font-size: 0.890rem !important;
         letter-spacing: 0.1rem;

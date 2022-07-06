@@ -250,7 +250,7 @@ export default {
   lang="scss"
   scoped
 >
-  :deep(.reward-calculator-panel) {
+  ::v-deep .reward-calculator-panel {
     .v-expansion-panel-header, .v-expansion-panel-content__wrap {
       padding-left: 0 !important;
       padding-right: 0 !important;

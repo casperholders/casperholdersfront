@@ -250,11 +250,12 @@ import deployResultsMap from '@casperholders/core/src/services/results/deployRes
 import Big from 'big.js';
 import { CLPublicKey, DeployUtil } from 'casper-js-sdk';
 import parse from 'parse-duration';
-import countdown from 'countdown';
+import * as countdown from 'countdown';
 import { mapGetters, mapState } from 'vuex';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
-
+console.log(countdown);
+console.log(countdown.HOURS);
 /**
  * Multi-sig View
  */

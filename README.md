@@ -48,11 +48,11 @@ yarn serve
 In order to run correctly the tests locally create a file name .env.local with the following content :
 
 ```
-VUE_APP_FAKE_KEY="<TestnetPrivateKeyWithoutPem>"
-VUE_APP_FAKE_VALIDATOR_KEY="<TestnetValidatorPrivateKeyWithoutPem>"
-VUE_APP_FAKE_MULTISIG_KEY="<TestnetMultiSigPrivateKeyWithoutPem>"
-VUE_APP_FAKE_SECOND_MULTISIG_KEY="<TestnetSecondMultisigPrivateKeyWithoutPem>"
-VUE_APP_E2E=true
+VITE_APP_FAKE_KEY="<TestnetPrivateKeyWithoutPem>"
+VITE_APP_FAKE_VALIDATOR_KEY="<TestnetValidatorPrivateKeyWithoutPem>"
+VITE_APP_FAKE_MULTISIG_KEY="<TestnetMultiSigPrivateKeyWithoutPem>"
+VITE_APP_FAKE_SECOND_MULTISIG_KEY="<TestnetSecondMultisigPrivateKeyWithoutPem>"
+VITE_APP_E2E=true
 ```
 
 The first env variable will enable you to test all users interactions (Transfer / Stake / Unstake)  

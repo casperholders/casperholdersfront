@@ -432,7 +432,7 @@ import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 import AuthorizedKeyInput from '@/components/operations/AuthorizedKeyInput';
 // eslint-disable-next-line import/no-webpack-loader-syntax
-import KeyManagerWasm from '!!binary-loader!@/assets/smartcontracts/keys-manager.wasm';
+import KeyManagerWasm from '@/assets/smartcontracts/keys-manager.wasm';
 
 /**
  * Security view

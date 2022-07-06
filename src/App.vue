@@ -202,7 +202,7 @@ export default {
       top: 0;
       left: 0;
       background-color: #00126b;
-      background-image: url("~@/assets/images/background.svg");
+      background-image: url("@/assets/images/background.svg");
       mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.2));
       background-size: cover;
       will-change: transform;

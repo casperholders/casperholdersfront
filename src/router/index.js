@@ -81,16 +81,11 @@ const routes = [
     name: 'privacy',
     component: () => import(/* webpackChunkName: "contact-view" */ '@/views/root/Privacy'),
   },
-  {
-    path: '/privacy',
-    name: 'privacy',
-    component: () => import(/* webpackChunkName: "contact-view" */ '@/views/Privacy'),
-  },
 ];
 
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
+  base: import.meta.env.BASE_URL,
   routes,
 });
 
