@@ -1,10 +1,11 @@
 <template>
-  <operation-card
+  <operation
+    :amount="amount"
+    :fee="0"
     :loading-sign-and-deploy="loadingSignAndDeploy"
+    :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"
     :type="type"
-    :balance="balance"
-    :fee="amount"
     icon="mdi-file-document-edit"
     submit-title="Deploy"
     title="Send smart contract"
@@ -25,7 +26,8 @@
         {{ text }}
       </template>
     </v-file-input>
-    <AmountInput
+    <Argument index="1" />
+    <Amount
       :balance="balance"
       :fee="Number(0)"
       :min="minPayment"
@@ -33,12 +35,49 @@
       class="mb-4"
       @input="amount = $event"
     />
-    <operation-summary
-      :balance-loading="loadingBalance"
-      :balance="balance"
-      :fee="amount"
-      class="mx-n1"
-    />
+    <div class="mx-n1">
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Payment amount for the smart contract</v-col>
+        <v-col class="text-right cspr">
+          {{ amount }} CSPR
+        </v-col>
+      </v-row>
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Balance</v-col>
+        <v-col class="text-right cspr">
+          <template v-if="loadingBalance">
+            Loading balance ...
+            <v-progress-circular
+              class="ml-3"
+              color="white"
+              indeterminate
+              size="14"
+            />
+          </template>
+          <template v-else>
+            {{ balance }} CSPR
+          </template>
+        </v-col>
+      </v-row>
+      <v-row
+        class="white-bottom-border"
+      >
+        <v-col>Total cost</v-col>
+        <v-col class="text-right cspr">
+          {{ amount }} CSPR
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>Balance after operation</v-col>
+        <v-col class="text-right cspr">
+          {{ remainingBalance }} CSPR
+        </v-col>
+      </v-row>
+    </div>
     <v-alert
       v-if="errorBalance"
       class="mt-5"
@@ -72,20 +111,20 @@
     >
       {{ errorDeploy.message }}
     </v-alert>
-  </operation-card>
+  </operation>
 </template>
 
 <script>
-import AmountInput from '@/components/operations/Amountinput';
-import OperationCard from '@/components/operations/OperationCard';
-import OperationSummary from '@/components/operations/OperationSummary';
+import Amount from '@/components/operations/Amountinput';
+import Argument from '@/components/operations/ArgumentInput';
+import Operation from '@/components/operations/OperationCard';
 import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import {
+  SmartContractDeployParameters,
   InsufficientFunds,
   NoActiveKeyError,
-  SmartContractDeployParameters,
   SmartContractResult,
 } from '@casperholders/core';
 import { mapGetters, mapState } from 'vuex';
@@ -97,8 +136,8 @@ import { mapGetters, mapState } from 'vuex';
  * - File input for the wasm smart contract
  */
 export default {
-  name: 'SmartContractView',
-  components: { OperationSummary, AmountInput, OperationCard },
+  name: 'SmartContract',
+  components: { Argument, Amount, Operation },
   data() {
     return {
       minPayment: 1,
@@ -123,6 +162,10 @@ export default {
       'signerOptionsFactory',
       'activeKey',
     ]),
+    remainingBalance() {
+      const result = this.balance - this.amount;
+      return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
+    },
     isInstanceOfNoActiveKeyError() {
       return this.errorBalance instanceof NoActiveKeyError;
     },
