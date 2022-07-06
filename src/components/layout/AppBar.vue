@@ -283,7 +283,7 @@ export default {
         background: linear-gradient(90deg, #00012A, #00126b, #ff473e)
     }
 
-    .notification-badge ::v-deep .v-badge__badge .v-icon {
+    .notification-badge :deep(.v-badge__badge .v-icon) {
         color: inherit;
         font-size: 12px !important;
         height: 12px !important;
