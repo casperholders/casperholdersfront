@@ -370,7 +370,7 @@ export default {
         });
         const ttl = parse(this.deploy.deploy.deploy.header.ttl);
         const timestamp = Date.parse(this.deploy.deploy.deploy.header.timestamp);
-        const countdownID = setInterval(function () {
+        const countdownID = setInterval(() => {
 
           // Get today's date and time
           const now = new Date().getTime();

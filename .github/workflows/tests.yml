@@ -12,8 +12,8 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v4
         with:
-          build: yarn build
-          start: yarn serve
+          build: yarn vite build --config vite.e2e.config.js
+          start: yarn vite preview --port 8080
           wait-on: http://localhost:8080
           browser: chrome
         env:
@@ -22,6 +22,8 @@ jobs:
           VITE_APP_FAKE_MULTISIG_KEY: ${{ secrets.VUE_APP_FAKE_MULTISIG_KEY }}
           VITE_APP_FAKE_SECOND_MULTISIG_KEY: ${{ secrets.VUE_APP_FAKE_SECOND_MULTISIG_KEY }}
           VITE_APP_E2E: true
+          VITE_COVERAGE: true
+          NODE_OPTIONS: --max-old-space-size=8192
       - uses: actions/upload-artifact@v2
         if: failure()
         with:

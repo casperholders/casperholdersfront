@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview --port 8080",
-    "test:e2e": "vue-cli-service test:e2e",
+    "test:e2e": "cypress run --headed --browser chrome",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
     "build-mainnet": "vite build --mode mainnet",
     "build-testnet": "vite build --mode testnet",

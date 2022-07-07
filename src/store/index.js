@@ -15,7 +15,7 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
-const debug = import.meta.env.NODE_ENV !== 'production';
+const debug = !import.meta.env.PROD;
 
 let randomKey;
 let validatorKey;
