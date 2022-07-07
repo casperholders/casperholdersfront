@@ -5,6 +5,7 @@ import nodePolyfills from 'rollup-plugin-polyfill-node';
 import { VuetifyResolver } from 'unplugin-vue-components/resolvers';
 import createComponentsPlugin from 'unplugin-vue-components/vite';
 import { defineConfig } from 'vite';
+import mkcert from 'vite-plugin-mkcert'
 import { VitePWA } from 'vite-plugin-pwa';
 import { createVuePlugin as vue } from 'vite-plugin-vue2';
 import istanbul from 'vite-plugin-istanbul';
@@ -13,6 +14,9 @@ import istanbul from 'vite-plugin-istanbul';
 export default defineConfig({
   define: {
     global: 'globalThis',
+  },
+  server: {
+    https: false
   },
   open: true,
   port: 3001,
@@ -59,6 +63,7 @@ export default defineConfig({
       exclude: ['node_modules', 'tests/'],
       extension: [ '.js', '.ts', '.vue' ],
     }),
+    mkcert(),
   ],
   resolve: {
     alias: {
