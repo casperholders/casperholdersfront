@@ -16,10 +16,10 @@
 
     <v-toolbar-title
       class="mr-auto"
-      style="cursor: pointer"
-      @click="$router.push('/')"
     >
-      Casper Holders {{ titleNetwork }}
+      <router-link class="text-decoration-none" to="/">
+        Casper Holders {{ titleNetwork }}
+      </router-link>
     </v-toolbar-title>
     <connect v-if="displayConnect" />
     <Account v-if="signer.activeKey" />

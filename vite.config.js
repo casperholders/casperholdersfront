@@ -5,19 +5,59 @@ import nodePolyfills from 'rollup-plugin-polyfill-node';
 import { VuetifyResolver } from 'unplugin-vue-components/resolvers';
 import createComponentsPlugin from 'unplugin-vue-components/vite';
 import { defineConfig } from 'vite';
+import { VitePWA } from 'vite-plugin-pwa';
 import { createVuePlugin as vue } from 'vite-plugin-vue2';
+import istanbul from 'vite-plugin-istanbul';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   define: {
     global: 'globalThis',
   },
+  open: true,
+  port: 3001,
   plugins: [
     vue(),
     createComponentsPlugin({
       resolvers: [
         VuetifyResolver(),
       ],
+    }),
+    VitePWA({
+      registerType: 'autoUpdate',
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'service-worker.js',
+      includeAssets: ['img/icons/favicon.ico', 'img/icons/apple-touch-icon-180x180.png', 'img/icons/safari-pinned-tab.svg'],
+      manifest: {
+        name: 'Casper Holders',
+        short_name: 'CasperHolders',
+        description: 'Interact with the Casper Blockchain',
+        theme_color: '#00126b',
+        icons: [
+          {
+            src: 'img/icons/pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'img/icons/pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          },
+          {
+            src: 'img/icons/pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable'
+          }
+        ]
+      }
+    }),
+    istanbul({
+      include: 'src/*',
+      exclude: ['node_modules', 'tests/'],
+      extension: [ '.js', '.ts', '.vue' ],
     }),
   ],
   resolve: {

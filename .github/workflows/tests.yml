@@ -17,10 +17,10 @@ jobs:
           wait-on: http://localhost:8080
           browser: chrome
         env:
-          VITE_APP_FAKE_KEY: ${{ secrets.VITE_APP_FAKE_KEY }}
-          VITE_APP_FAKE_VALIDATOR_KEY: ${{ secrets.VITE_APP_FAKE_VALIDATOR_KEY }}
-          VITE_APP_FAKE_MULTISIG_KEY: ${{ secrets.VITE_APP_FAKE_MULTISIG_KEY }}
-          VITE_APP_FAKE_SECOND_MULTISIG_KEY: ${{ secrets.VITE_APP_FAKE_SECOND_MULTISIG_KEY }}
+          VITE_APP_FAKE_KEY: ${{ secrets.VUE_APP_FAKE_KEY }}
+          VITE_APP_FAKE_VALIDATOR_KEY: ${{ secrets.VUE_APP_FAKE_VALIDATOR_KEY }}
+          VITE_APP_FAKE_MULTISIG_KEY: ${{ secrets.VUE_APP_FAKE_MULTISIG_KEY }}
+          VITE_APP_FAKE_SECOND_MULTISIG_KEY: ${{ secrets.VUE_APP_FAKE_SECOND_MULTISIG_KEY }}
           VITE_APP_E2E: true
       - uses: actions/upload-artifact@v2
         if: failure()

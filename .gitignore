@@ -22,6 +22,7 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
+cypress/
 coverage/
 
 .nyc_output/

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: integration-casperholders-app
+  name: integration-casperholders-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: integration-casperholders-app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: integration-casperholders-app
+        name: integration-casperholders-app
+    spec:
+      containers:
+        - name: integration-casperholders-app
+          image: killianh/casperholders:integration-front
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources: { }
+      restartPolicy: Always
