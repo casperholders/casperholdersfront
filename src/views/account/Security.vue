@@ -432,7 +432,8 @@ import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 import AuthorizedKeyInput from '@/components/operations/AuthorizedKeyInput';
 // eslint-disable-next-line import/no-webpack-loader-syntax
-import KeyManagerWasm from '!!binary-loader!@/assets/smartcontracts/keys-manager.wasm';
+import KeyManagerWasm from '@/assets/smartcontracts/keys-manager.wasm?url';
+import { Buffer } from 'buffer';
 
 /**
  * Security view
@@ -661,9 +662,7 @@ export default {
           accounts[i].accountHash = Uint8Array.from(Buffer.from(accounts[i].accountHash, 'hex'));
         }
       }
-      const KeyManagerU8 = new Uint8Array(KeyManagerWasm.length).map(
-        (v, i) => KeyManagerWasm.charCodeAt(i),
-      );
+      const KeyManagerU8 = new Uint8Array((await (await fetch(KeyManagerWasm)).arrayBuffer()));
       const deployParameter = new KeyManagement(
         deployThresholdValue,
         keyManagementThresholdValue,

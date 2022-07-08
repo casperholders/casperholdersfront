@@ -9,88 +9,83 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: () => import(/* webpackChunkName: "home-view" */ '@/views/root/Home'),
+    component: () => import('@/views/root/Home'),
   },
   {
     path: '/settings',
     name: 'settings',
-    component: () => import(/* webpackChunkName: "settings-view" */ '@/views/root/Settings'),
+    component: () => import('@/views/root/Settings'),
   },
   {
     path: '/balance',
     name: 'Balance',
-    component: () => import(/* webpackChunkName: "balance-view" */ '@/views/account/Balance'),
+    component: () => import('@/views/account/Balance'),
   },
   {
     path: '/security',
     name: 'Security',
-    component: () => import(/* webpackChunkName: "balance-view" */ '@/views/account/Security'),
+    component: () => import('@/views/account/Security'),
   },
   {
     path: '/multisig/:deployHash',
     name: 'Multisig',
-    component: () => import(/* webpackChunkName: "balance-view" */ '@/views/multisig/MultiSig'),
+    component: () => import('@/views/multisig/MultiSig'),
   },
   {
     path: '/transfer',
     name: 'Transfer',
-    component: () => import(/* webpackChunkName: "transfer-view" */ '@/views/account/Transfer'),
+    component: () => import('@/views/account/Transfer'),
   },
   {
     path: '/account',
     name: 'Account Info',
-    component: () => import(/* webpackChunkName: "account-view" */ '@/views/account/AccountInfo'),
+    component: () => import('@/views/account/AccountInfo'),
   },
   {
     path: '/stake',
     name: 'Stake',
-    component: () => import(/* webpackChunkName: "stake-view" */ '@/views/staking/Delegate'),
+    component: () => import('@/views/staking/Delegate'),
   },
   {
     path: '/unstake',
     name: 'Unstake',
-    component: () => import(/* webpackChunkName: "unstake-view" */ '@/views/staking/Undelegate'),
+    component: () => import('@/views/staking/Undelegate'),
   },
   {
     path: '/addbid',
     name: 'Add Bid',
-    component: () => import(/* webpackChunkName: "addbid-view" */ '@/views/validators/AddBid'),
+    component: () => import('@/views/validators/AddBid'),
   },
   {
     path: '/withdrawbid',
     name: 'Withdraw Bid',
-    component: () => import(/* webpackChunkName: "withdrawbid-view" */ '@/views/validators/WithdrawBid'),
+    component: () => import('@/views/validators/WithdrawBid'),
   },
   {
     path: '/smartcontract',
     name: 'Send smart contract',
-    component: () => import(/* webpackChunkName: "smartcontract-view" */ '@/views/developers/SmartContract'),
+    component: () => import('@/views/developers/SmartContract'),
   },
   {
     path: '/faq',
     name: 'FAQ',
-    component: () => import(/* webpackChunkName: "faq-view" */ '@/views/others/FAQ'),
+    component: () => import('@/views/others/FAQ'),
   },
   {
     path: '/contact',
     name: 'contact',
-    component: () => import(/* webpackChunkName: "contact-view" */ '@/views/others/Contact'),
+    component: () => import('@/views/others/Contact'),
   },
   {
     path: '/privacy',
     name: 'privacy',
-    component: () => import(/* webpackChunkName: "contact-view" */ '@/views/root/Privacy'),
-  },
-  {
-    path: '/privacy',
-    name: 'privacy',
-    component: () => import(/* webpackChunkName: "contact-view" */ '@/views/Privacy'),
+    component: () => import('@/views/root/Privacy'),
   },
 ];
 
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
+  base: import.meta.env.BASE_URL,
   routes,
 });
 

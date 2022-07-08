@@ -16,10 +16,10 @@
 
     <v-toolbar-title
       class="mr-auto"
-      style="cursor: pointer"
-      @click="$router.push('/')"
     >
-      Casper Holders {{ titleNetwork }}
+      <router-link class="text-decoration-none" to="/">
+        Casper Holders {{ titleNetwork }}
+      </router-link>
     </v-toolbar-title>
     <connect v-if="displayConnect" />
     <Account v-if="signer.activeKey" />
@@ -283,7 +283,7 @@ export default {
         background: linear-gradient(90deg, #00012A, #00126b, #ff473e)
     }
 
-    .notification-badge :deep(.v-badge__badge .v-icon) {
+    .notification-badge ::v-deep .v-badge__badge .v-icon {
         color: inherit;
         font-size: 12px !important;
         height: 12px !important;

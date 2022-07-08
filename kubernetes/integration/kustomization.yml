@@ -1,0 +1,8 @@
+resources:
+  - https.yml
+  - deployment.yml
+  - service.yml
+  - ingress.yml
+  - certificate.yml
+
+namespace: integration-casperholders

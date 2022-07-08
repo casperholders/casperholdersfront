@@ -254,7 +254,7 @@ export default {
       UNKNOWN: DeployResult.STATUS_UNKNOWN,
       OK: DeployResult.STATUS_OK,
       KO: DeployResult.STATUS_KO,
-      eventWatcher: new EventSource(`${process.env.VUE_APP_RPC}/events/?start_from=0`),
+      eventWatcher: new EventSource(`${import.meta.env.VITE_APP_RPC}/events/?start_from=0`),
       step: 1,
     };
   },

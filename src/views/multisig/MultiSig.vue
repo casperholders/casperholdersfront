@@ -250,7 +250,6 @@ import deployResultsMap from '@casperholders/core/src/services/results/deployRes
 import Big from 'big.js';
 import { CLPublicKey, DeployUtil } from 'casper-js-sdk';
 import parse from 'parse-duration';
-import countdown from 'countdown';
 import { mapGetters, mapState } from 'vuex';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
@@ -371,19 +370,28 @@ export default {
         });
         const ttl = parse(this.deploy.deploy.deploy.header.ttl);
         const timestamp = Date.parse(this.deploy.deploy.deploy.header.timestamp);
-        const countdownID = countdown(
-          (ts) => {
-            if (ts.value > 0) {
-              this.countdown = ts.toString();
-            } else {
-              this.countdown = null;
-              clearInterval(countdownID);
-            }
-          },
-          ttl + timestamp,
-          // eslint-disable-next-line no-bitwise
-          (countdown.HOURS | countdown.MINUTES | countdown.SECONDS),
-        );
+        const countdownID = setInterval(() => {
+
+          // Get today's date and time
+          const now = new Date().getTime();
+
+          // Find the distance between now and the count-down date
+          const distance = timestamp + ttl - now;
+
+          // Time calculations for days, hours, minutes and seconds
+          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+          this.countdown = days + 'd ' + hours + 'h '
+            + minutes + 'm ' + seconds + 's ';
+          // If the count-down is finished, write some text
+          if (distance === 0) {
+            clearInterval(countdownID);
+            this.countdown = null;
+          }
+        }, 1000);
       } else {
         this.notFound = true;
       }

@@ -1,22 +1,31 @@
+import { createHandlerBoundToURL, precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
+import { registerRoute, setDefaultHandler, NavigationRoute, } from 'workbox-routing';
+import { NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies';
+import { clientsClaim } from 'workbox-core';
+
 // eslint-disable-next-line no-undef
-if (workbox) {
+try {
   console.log('Workbox is loaded');
   // eslint-disable-next-line no-restricted-globals
   self.skipWaiting();
-
+  clientsClaim();
   // eslint-disable-next-line no-undef,no-restricted-globals,no-underscore-dangle
-  workbox.precaching.precacheAndRoute(self.__precacheManifest);
-
+  precacheAndRoute(self.__WB_MANIFEST);
+  registerRoute(new NavigationRoute(
+    createHandlerBoundToURL('index.html'),
+  ))
+  cleanupOutdatedCaches();
   // eslint-disable-next-line no-undef,no-restricted-globals,no-underscore-dangle
-  workbox.routing.registerNavigationRoute(workbox.precaching.getCacheKeyForURL('index.html'));
+  //registerNavigationRoute(getCacheKeyForURL('index.html'));
   // eslint-disable-next-line no-undef
-  workbox.routing.registerRoute(
+  registerRoute(
     new RegExp(/\.(?:jpg|webp|mp4|woff2|jpeg|png|gif|ico|css|html|md)$/),
     // eslint-disable-next-line no-undef
-    new workbox.strategies.StaleWhileRevalidate(),
+    new StaleWhileRevalidate(),
   );
   // eslint-disable-next-line no-undef
-  workbox.routing.setDefaultHandler(new workbox.strategies.NetworkFirst());
-} else {
+  setDefaultHandler(new NetworkFirst());
+} catch (e) {
+  console.log(e);
   console.log('Workbox didn\'t load');
 }

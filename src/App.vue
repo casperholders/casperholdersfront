@@ -51,7 +51,7 @@
         </p>
         <p class="mb-0 text-center text-caption">
           Hosted by OVH - 2 rue Kellermann - 59100 Roubaix - France - 1077 (+33 9
-          72 10 10 07) - Powered by CoinGecko - <a href="/privacy">Privacy</a>
+          72 10 10 07) - Powered by CoinGecko - <router-link to="/privacy">Privacy</router-link>
         </p>
       </div>
     </v-footer>
@@ -202,7 +202,7 @@ export default {
       top: 0;
       left: 0;
       background-color: #00126b;
-      background-image: url("~@/assets/images/background.svg");
+      background-image: url("@/assets/images/background.svg");
       mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.2));
       background-size: cover;
       will-change: transform;

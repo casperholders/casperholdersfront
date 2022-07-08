@@ -9,19 +9,49 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - name: Cypress run
-        uses: cypress-io/github-action@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v3
         with:
-          build: yarn build
-          start: yarn serve
+          node-version: 16
+
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          install: false
+          build: pnpm vite build --config vite.e2e.config.js
+          start: pnpm vite preview --port 8080
           wait-on: http://localhost:8080
           browser: chrome
         env:
-          VUE_APP_FAKE_KEY: ${{ secrets.VUE_APP_FAKE_KEY }}
-          VUE_APP_FAKE_VALIDATOR_KEY: ${{ secrets.VUE_APP_FAKE_VALIDATOR_KEY }}
-          VUE_APP_FAKE_MULTISIG_KEY: ${{ secrets.VUE_APP_FAKE_MULTISIG_KEY }}
-          VUE_APP_FAKE_SECOND_MULTISIG_KEY: ${{ secrets.VUE_APP_FAKE_SECOND_MULTISIG_KEY }}
-          VUE_APP_E2E: true
+          VITE_APP_FAKE_KEY: ${{ secrets.VUE_APP_FAKE_KEY }}
+          VITE_APP_FAKE_VALIDATOR_KEY: ${{ secrets.VUE_APP_FAKE_VALIDATOR_KEY }}
+          VITE_APP_FAKE_MULTISIG_KEY: ${{ secrets.VUE_APP_FAKE_MULTISIG_KEY }}
+          VITE_APP_FAKE_SECOND_MULTISIG_KEY: ${{ secrets.VUE_APP_FAKE_SECOND_MULTISIG_KEY }}
+          VITE_APP_E2E: true
+          VITE_COVERAGE: true
+          NODE_OPTIONS: --max-old-space-size=8192
       - uses: actions/upload-artifact@v2
         if: failure()
         with:

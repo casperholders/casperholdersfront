@@ -15,7 +15,7 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
-const debug = process.env.NODE_ENV !== 'production';
+const debug = !import.meta.env.PROD;
 
 let randomKey;
 let validatorKey;
@@ -49,12 +49,12 @@ export const torusOptions = {
  * If we run the app in End to End test mode we override the signer with
  * a LocalSigner and set fake keys to be used in the options sent to the signer.
  */
-if (process.env.VUE_APP_E2E === 'true') {
-  randomKey = generateAsymmetricKey(process.env.VUE_APP_FAKE_KEY);
-  validatorKey = generateAsymmetricKey(process.env.VUE_APP_FAKE_VALIDATOR_KEY);
+if (import.meta.env.VITE_APP_E2E === 'true') {
+  randomKey = generateAsymmetricKey(import.meta.env.VITE_APP_FAKE_KEY);
+  validatorKey = generateAsymmetricKey(import.meta.env.VITE_APP_FAKE_VALIDATOR_KEY);
   multiSigKeys = {
-    firstKey: generateAsymmetricKey(process.env.VUE_APP_FAKE_MULTISIG_KEY),
-    secondKey: generateAsymmetricKey(process.env.VUE_APP_FAKE_SECOND_MULTISIG_KEY),
+    firstKey: generateAsymmetricKey(import.meta.env.VITE_APP_FAKE_MULTISIG_KEY),
+    secondKey: generateAsymmetricKey(import.meta.env.VITE_APP_FAKE_SECOND_MULTISIG_KEY),
   };
 }
 
@@ -137,12 +137,12 @@ const SIGNER_OPTIONS_FACTORIES = {
  */
 const initialState = () => ({
   signer: {
-    connected: process.env.VUE_APP_E2E === 'true',
+    connected: import.meta.env.VITE_APP_E2E === 'true',
     lock: false,
     activeKey: null,
     version: '',
   },
-  signerType: process.env.VUE_APP_E2E === 'true' ? LOCAL_SIGNER : '',
+  signerType: import.meta.env.VITE_APP_E2E === 'true' ? LOCAL_SIGNER : '',
   operations: [],
   offlineDeploys: [],
   weightedDeploys: [],
@@ -176,7 +176,7 @@ const mutations = {
     if (multisig) {
       state.multisig = multisig;
     }
-    state.signerType = process.env.VUE_APP_E2E === 'true' ? LOCAL_SIGNER : CASPER_SIGNER;
+    state.signerType = import.meta.env.VITE_APP_E2E === 'true' ? LOCAL_SIGNER : CASPER_SIGNER;
   },
   updateLedger(state, { options }) {
     state.signer.activeKey = options.activeKey.key;
