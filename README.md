@@ -9,12 +9,14 @@
 ## The first third party UI to interact with the Casper Blockchain.
 
 Built with :
+- [pnpm](https://pnpm.io/)
+- [Vite](https://vitejs.dev/)
 - [VueJS](https://v2.vuejs.org/)
 - [Vuetify](https://vuetifyjs.com/en/)
 - [Vuex](https://vuex.vuejs.org/)
 - [Cypress](https://www.cypress.io/)
 
-We plan to refactor a lot of things in the next release. (Vue3 / Vite / Vuetify 3 / Pinia etc.)
+We plan to refactor a lot of things in the next release. (Vue3 / ~~Vite~~ / Vuetify 3 / Pinia etc.)
 
 ### CasperHolders is not affiliated with CasperNetwork / CasperAssociation.This is a project from a community member.
 
@@ -36,9 +38,11 @@ This project contains the sources files for the CasperHolders website.
 
 ## Local dev
 
+If you don't have pnpm you can use this documentation : https://pnpm.io/installation
+
 ```bash
-yarn install
-yarn serve
+pnmp install
+pnmp dev
 ```
 
 ## Local tests
@@ -65,7 +69,8 @@ Only the positive path for sending smart contract is not tested. See issue #10
 
 ### Run tests
 ```bash
-yarn test:e2e
+pnpm vite --port 8080
+pnmp test:e2e
 ```
 
 ## Production build for TestNet
@@ -73,7 +78,7 @@ yarn test:e2e
 Will use the .env.testnet file
 
 ```bash
-yarn build-testnet
+pnmp build-testnet
 ```
 
 ## Production build for MainNet
@@ -81,7 +86,7 @@ yarn build-testnet
 Will use the .env.testnet file
 
 ```bash
-yarn build-mainnet
+pnmp build-mainnet
 ```
 
 ## Docker build
