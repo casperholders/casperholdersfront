@@ -10,6 +10,10 @@
     submit-title="Send Transaction"
     title="Transfer"
   >
+    <token-input
+      v-model="token"
+      return-object
+    />
     <v-text-field
       id="address"
       v-model="address"
@@ -20,17 +24,20 @@
       prepend-icon="mdi-account"
       required
     />
-    <v-text-field
-      id="transferID"
-      v-model="transferID"
-      :rules="transferIDRules"
-      :value="transferID"
-      color="white"
-      hint="Set to 0 if not known"
-      label="Transfer ID"
-      prepend-icon="mdi-music-accidental-sharp"
-      required
-    />
+    <v-slide-y-transition leave-absolute>
+      <v-text-field
+        v-if="tokenGroupHasTransferID"
+        id="transferID"
+        v-model="transferID"
+        :rules="transferIDRules"
+        :value="transferID"
+        color="white"
+        hint="Set to 0 if not known"
+        label="Transfer ID"
+        prepend-icon="mdi-music-accidental-sharp"
+        required
+      />
+    </v-slide-y-transition>
     <Amount
       :balance="balance"
       :fee="transferFee"
@@ -124,14 +131,16 @@
 <script>
 import Amount from '@/components/operations/Amount';
 import Operation from '@/components/operations/Operation';
+import TokenInput from '@/components/operations/TokenInput';
 import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
 import exchanges from '@/helpers/exchanges';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
+import findTokenGroup from '@/services/tokens/findTokenGroup';
 import {
-  TransferDeployParameters,
   InsufficientFunds,
   NoActiveKeyError,
+  TransferDeployParameters,
   TransferResult,
 } from '@casperholders/core';
 import { CLPublicKey } from 'casper-js-sdk';
@@ -146,7 +155,7 @@ import { mapGetters, mapState } from 'vuex';
  */
 export default {
   name: 'Transfer',
-  components: { Amount, Operation },
+  components: { TokenInput, Amount, Operation },
   data() {
     return {
       addressRules: [
@@ -165,6 +174,7 @@ export default {
         (a) => !!a || 'Transfer ID is required',
         (a) => /^[0-9]+$/.test(a) || 'Transfer ID must be a number',
       ],
+      token: undefined,
       address: '',
       transferID: '0',
       minimumCSPRTransfer: 2.5,
@@ -215,6 +225,12 @@ export default {
         }
       });
       return result;
+    },
+    tokenGroup() {
+      return this.token && findTokenGroup(this.token.groupId);
+    },
+    tokenGroupHasTransferID() {
+      return !this.tokenGroup || this.tokenGroup.features.transfer.transferID;
     },
   },
   watch: {
