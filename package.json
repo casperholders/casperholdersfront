@@ -26,6 +26,7 @@
     "chart.js": "^3.8.0",
     "core-js": "^3.21.1",
     "lodash.clonedeep": "^4.5.0",
+    "lodash.sortby": "^4.7.0",
     "parse-duration": "^1.0.2",
     "qrcode.vue": "^1.0.0",
     "toformat": "^2.0.0",
