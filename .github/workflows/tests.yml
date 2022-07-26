@@ -36,6 +36,8 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+      - name: Code style
+        run: pnpm lint
       - name: Cypress run
         uses: cypress-io/github-action@v4
         with:
