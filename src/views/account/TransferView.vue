@@ -26,7 +26,7 @@
     />
     <v-slide-y-transition leave-absolute>
       <v-text-field
-        v-if="tokenGroupHasTransferID"
+        v-if="tokenGroup.features.transfer.transferID"
         id="transferID"
         v-model="transferID"
         :rules="transferIDRules"
@@ -108,16 +108,11 @@ import OperationCard from '@/components/operations/OperationCard';
 import OperationSummary from '@/components/operations/OperationSummary';
 import TokenInput from '@/components/operations/TokenInput';
 import balanceService from '@/helpers/balanceService';
-import { NETWORK } from '@/helpers/env';
 import exchanges from '@/helpers/exchanges';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import findTokenGroup from '@/services/tokens/findTokenGroup';
-import {
-  InsufficientFunds,
-  NoActiveKeyError,
-  TransferDeployParameters,
-  TransferResult,
-} from '@casperholders/core';
+import nativeToken from '@/services/tokens/nativeToken';
+import { InsufficientFunds, NoActiveKeyError, TransferResult } from '@casperholders/core';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 
@@ -149,7 +144,7 @@ export default {
         (a) => !!a || 'Transfer ID is required',
         (a) => /^[0-9]+$/.test(a) || 'Transfer ID must be a number',
       ],
-      token: undefined,
+      token: nativeToken,
       address: '',
       transferID: '0',
       minimumCSPRTransfer: 2.5,
@@ -202,10 +197,7 @@ export default {
       return result;
     },
     tokenGroup() {
-      return this.token && findTokenGroup(this.token.groupId);
-    },
-    tokenGroupHasTransferID() {
-      return !this.tokenGroup || this.tokenGroup.features.transfer.transferID;
+      return findTokenGroup(this.token.groupId);
     },
   },
   watch: {
@@ -246,13 +238,13 @@ export default {
      * Update the store with a deploy result containing the deployhash of the deploy sent
      */
     async sendDeploy() {
-      const deployParameter = new TransferDeployParameters(
-        this.activeKey,
-        NETWORK,
-        this.amount,
-        this.address,
-        this.transferID,
-      );
+      const deployParameter = this.tokenGroup.features.transfer.makeDeployParameters({
+        token: this.token,
+        activeKey: this.activeKey,
+        amount: this.amount,
+        address: this.address,
+        transferID: this.transferID,
+      });
       const options = this.signerOptionsFactory.getOptionsForTransfer(this.address);
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
