@@ -114,7 +114,7 @@ import { mapState } from 'vuex';
  *   of the type set in the prop "type"
  */
 export default {
-  name: 'Operation',
+  name: 'OperationCard',
   components: { OperationPendingWeight, OperationPending, OperationDialog, OperationResult },
   props: {
     /**

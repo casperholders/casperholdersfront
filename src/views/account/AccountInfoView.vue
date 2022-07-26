@@ -1,5 +1,5 @@
 <template>
-  <operation
+  <operation-card
     :amount="amount"
     :fee="accountInfoFee"
     :loading-sign-and-deploy="loadingSignAndDeploy"
@@ -32,41 +32,12 @@
       prepend-icon="mdi-link"
       required
     />
-    <div class="mx-n1">
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Account info fee</v-col>
-        <v-col class="text-right cspr">
-          {{ accountInfoFee }} CSPR
-        </v-col>
-      </v-row>
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Balance</v-col>
-        <v-col class="text-right cspr">
-          <template v-if="loadingBalance">
-            Loading balance ...
-            <v-progress-circular
-              class="ml-3"
-              color="white"
-              indeterminate
-              size="14"
-            />
-          </template>
-          <template v-else>
-            {{ balance }} CSPR
-          </template>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>Balance after operation</v-col>
-        <v-col class="text-right cspr">
-          {{ remainingBalance }} CSPR
-        </v-col>
-      </v-row>
-    </div>
+    <operation-summary
+      :balance-loading="loadingBalance"
+      :balance="balance"
+      :fee="accountInfoFee"
+      class="mx-n1"
+    />
     <v-alert
       v-if="errorBalance"
       class="mt-5"
@@ -100,20 +71,21 @@
     >
       {{ errorDeploy.message }}
     </v-alert>
-  </operation>
+  </operation-card>
 </template>
 
 <script>
-import Operation from '@/components/operations/Operation';
+import OperationCard from '@/components/operations/OperationCard';
+import OperationSummary from '@/components/operations/OperationSummary';
 import balanceService from '@/helpers/balanceService';
 import clientCasper from '@/helpers/clientCasper';
 import { ACCOUNT_INFO_HASH, NETWORK } from '@/helpers/env';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import {
   AccountInfo,
+  AccountInfoResult,
   InsufficientFunds,
   NoActiveKeyError,
-  AccountInfoResult,
   Validators,
 } from '@casperholders/core';
 import { mapGetters, mapState } from 'vuex';
@@ -124,8 +96,8 @@ import { mapGetters, mapState } from 'vuex';
  * - Url to set in the Account Info smart contract. See https://github.com/make-software/casper-account-info-standard#how-does-it-work
  */
 export default {
-  name: 'AccountInfo',
-  components: { Operation },
+  name: 'AccountInfoView',
+  components: { OperationSummary, OperationCard },
   data() {
     return {
       url: '',
@@ -184,7 +156,7 @@ export default {
      * @param {string} url
      */
     isUrl(url) {
-      const regex = new RegExp('^(http:\\/\\/|https:\\/\\/)([a-zA-Z0-9-_]+\\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\\.[a-zA-Z]{2,11}?$', 'g');
+      const regex = /^(http:\/\/|https:\/\/)([a-zA-Z0-9-_]+\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\.[a-zA-Z]{2,11}?$/g;
       return regex.test(url);
     },
     /**

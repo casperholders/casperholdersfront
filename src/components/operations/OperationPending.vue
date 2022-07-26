@@ -153,7 +153,9 @@ export default {
     },
     async retrySendingDeploy(index) {
       this.retryDeploy = true;
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => {
+        setTimeout(resolve, 2000);
+      });
       await this.$store.dispatch('retrySendingDeploy', index);
       this.retryDeploy = false;
     },

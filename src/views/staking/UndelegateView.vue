@@ -1,70 +1,35 @@
 <template>
-  <operation
+  <operation-card
     :amount="amount"
-    :fee="delegationFee"
+    :fee="undelegateFee"
     :loading-sign-and-deploy="loadingSignAndDeploy"
     :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"
     :type="type"
-    icon="mdi-safe"
-    submit-title="Stake"
-    title="Stake"
+    icon="mdi-lock-open"
+    submit-title="Unstake"
+    title="Unstake"
   >
-    <Validators
+    <ValidatorInput
       v-model="validator"
-      :undelegate="false"
+      :undelegate="true"
     />
-    <Amount
-      :balance="balance"
-      :fee="delegationFee"
-      :min="minimumCSPRStake"
+    <AmountInput
+      :balance="stakingBalance"
+      :fee="Number(0)"
+      :min="minimumCSPRUnstake"
       :value="amount"
       class="mb-4"
       @input="amount = $event"
     />
-    <div class="mx-n1">
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Staking operation fee</v-col>
-        <v-col class="text-right cspr">
-          {{ delegationFee }} CSPR
-        </v-col>
-      </v-row>
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Balance</v-col>
-        <v-col class="text-right cspr">
-          <template v-if="loadingBalance">
-            Loading balance ...
-            <v-progress-circular
-              class="ml-3"
-              color="white"
-              indeterminate
-              size="14"
-            />
-          </template>
-          <template v-else>
-            {{ balance }} CSPR
-          </template>
-        </v-col>
-      </v-row>
-      <v-row class="white-bottom-border">
-        <v-col>Remaining funds after staking</v-col>
-        <v-col class="text-right cspr">
-          {{ remainingBalance }} CSPR
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col class="py-0">
-          <reward-calculator-panel
-            :validator="validator"
-            :amount="amount"
-          />
-        </v-col>
-      </v-row>
-    </div>
+    <operation-summary
+      :prepend-values="[{ name: 'Staking balance', value: stakingBalance }]"
+      :balance-loading="loadingBalance"
+      :balance="balance"
+      :fee="undelegateFee"
+      :amount="amount"
+      class="mx-n1"
+    />
     <v-alert
       v-if="errorBalance"
       class="mt-5"
@@ -98,39 +63,46 @@
     >
       {{ errorDeploy.message }}
     </v-alert>
-  </operation>
+  </operation-card>
 </template>
 
 <script>
-import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
-import Amount from '@/components/operations/Amount';
-import Operation from '@/components/operations/Operation';
-import Validators from '@/components/operations/Validators';
+import AmountInput from '@/components/operations/Amountinput';
+import OperationCard from '@/components/operations/OperationCard';
+import OperationSummary from '@/components/operations/OperationSummary';
+import ValidatorInput from '@/components/operations/ValidatorInput';
 import balanceService from '@/helpers/balanceService';
 import { AUCTION_MANAGER_HASH, NETWORK } from '@/helpers/env';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
-import { Delegate, InsufficientFunds, NoActiveKeyError, DelegateResult } from '@casperholders/core';
+import {
+  InsufficientFunds,
+  NoActiveKeyError,
+  Undelegate,
+  UndelegateResult,
+} from '@casperholders/core';
+import Big from 'big.js';
 import { mapGetters, mapState } from 'vuex';
 
 /**
- * Delegate view
+ * Undelegate view
  * Contains one fields
- * - Amount to delegate to the node set in the .env file
+ * - Amount to undelegate to the node set in the .env file
  */
 export default {
-  name: 'Delegate',
-  components: { RewardCalculatorPanel, Validators, Amount, Operation },
+  name: 'UndelegateView',
+  components: { OperationSummary, ValidatorInput, AmountInput, OperationCard },
   data() {
     return {
-      minimumCSPRStake: 1,
-      delegationFee: 2.5,
+      minimumCSPRUnstake: 1,
+      undelegateFee: 0.00001,
       amount: '1',
       errorBalance: null,
       balance: '0',
+      stakingBalance: '0',
       loadingSignAndDeploy: false,
       errorDeploy: null,
       loadingBalance: false,
-      type: DelegateResult.getName(),
+      type: UndelegateResult.getName(),
       validator: undefined,
     };
   },
@@ -145,11 +117,11 @@ export default {
       'activeKey',
     ]),
     remainingBalance() {
-      const result = this.balance - this.amount - this.delegationFee;
-      return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
+      const result = Big(this.balance).plus(this.amount).minus(this.undelegateFee);
+      return result.gte(0) ? Big(result.toFixed(5)).toNumber() : 0;
     },
     minimumFundsNeeded() {
-      return this.minimumCSPRStake + this.delegationFee;
+      return this.undelegateFee;
     },
     isInstanceOfNoActiveKeyError() {
       return this.errorBalance instanceof NoActiveKeyError;
@@ -162,7 +134,7 @@ export default {
         await this.getBalance();
       }
     },
-    validator: 'setMinStake',
+    validator: 'getBalance',
   },
   async mounted() {
     await this.getBalance();
@@ -172,32 +144,24 @@ export default {
   },
   methods: {
     /**
-     * Get the user balance
-     */
-    async setMinStake() {
-      try {
-        const userStake = await balanceService.fetchAllStakeBalance();
-        const alreadyStake = userStake.some(
-          (stake) => stake.validator.toLowerCase() === this.validator.publicKey.toLowerCase(),
-        );
-        this.minimumCSPRStake = alreadyStake ? 1 : 500;
-      } catch (e) {
-        this.minimumCSPRStake = 500;
-      }
-    },
-    /**
-     * Get the user balance
+     * Get the user balance and staking balance
      */
     async getBalance() {
       this.loadingBalance = true;
       this.errorBalance = null;
       this.balance = '0';
+      this.stakingBalance = '0';
       try {
         this.balance = await balanceService.fetchBalance();
+        if (this.validator) {
+          this.stakingBalance = await balanceService
+            .fetchStakeBalance(this.validator.publicKey);
+        }
         if (this.balance <= this.minimumFundsNeeded && this.internet) {
           throw new InsufficientFunds(this.minimumFundsNeeded);
         }
       } catch (e) {
+        console.log(e);
         this.errorBalance = e;
       }
       this.loadingBalance = false;
@@ -208,7 +172,7 @@ export default {
      * Update the store with a deploy result containing the deployhash of the deploy sent
      */
     async sendDeploy() {
-      const deployParameter = new Delegate(
+      const deployParameter = new Undelegate(
         this.amount,
         this.activeKey,
         this.validator.publicKey,
@@ -216,7 +180,6 @@ export default {
         AUCTION_MANAGER_HASH,
       );
       const options = this.signerOptionsFactory.getOptionsForOperations();
-
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
       const result = await genericSendDeploy(
@@ -226,7 +189,7 @@ export default {
         this.signerObject,
         deployParameter,
         options,
-        this.delegationFee,
+        this.undelegateFee,
         this.amount,
       );
       if (result.error) {
@@ -245,15 +208,3 @@ export default {
   },
 };
 </script>
-
-<style
-  lang="scss"
-  scoped
->
-  ::v-deep .reward-calculator-panel {
-    .v-expansion-panel-header, .v-expansion-panel-content__wrap {
-      padding-left: 0 !important;
-      padding-right: 0 !important;
-    }
-  }
-</style>

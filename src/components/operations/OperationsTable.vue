@@ -207,7 +207,7 @@ import { mapState } from 'vuex';
  * Operations component. List all operations of a user
  */
 export default {
-  name: 'Operations',
+  name: 'OperationsTable',
   data() {
     return {
       operationHeaders: [

@@ -17,12 +17,15 @@
     <v-toolbar-title
       class="mr-auto"
     >
-      <router-link class="text-decoration-none" to="/">
+      <router-link
+        class="text-decoration-none"
+        to="/"
+      >
         Casper Holders {{ titleNetwork }}
       </router-link>
     </v-toolbar-title>
-    <connect v-if="displayConnect" />
-    <Account v-if="signer.activeKey" />
+    <connect-dialog v-if="displayConnect" />
+    <AccountPopup v-if="signer.activeKey" />
     <v-menu
       left
       offset-y
@@ -153,8 +156,8 @@
 </template>
 
 <script>
-import Account from '@/components/layout/AccountPopup';
-import Connect from '@/components/layout/Connect';
+import AccountPopup from '@/components/layout/AccountPopup';
+import ConnectDialog from '@/components/layout/ConnectDialog';
 import { CSPR_LIVE_URL, HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
 import { DeployResult } from '@casperholders/core';
 import { mapGetters, mapState } from 'vuex';
@@ -166,7 +169,7 @@ import { mapGetters, mapState } from 'vuex';
  */
 export default {
   name: 'AppBar',
-  components: { Account, Connect },
+  components: { AccountPopup, ConnectDialog },
   props: {
     links: {
       type: Object,

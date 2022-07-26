@@ -1,5 +1,5 @@
 <template>
-  <operation
+  <operation-card
     :amount="amount"
     :fee="keyManagementFee"
     :loading-sign-and-deploy="loadingSignAndDeploy"
@@ -323,124 +323,92 @@
         </v-slide-y-transition>
       </v-card-text>
     </v-card>
-    <v-card>
-      <v-card-text>
-        <div class="mx-n1">
-          <v-row
-            class="white-bottom-border"
+    <operation-summary
+      :balance-loading="loadingBalance"
+      :balance="balance"
+      :fee="keyManagementFee"
+      class="mx-n1"
+    />
+    <v-alert
+      v-if="errorBalance && errorKey === null"
+      class="mt-5"
+      dense
+      prominent
+      type="error"
+    >
+      <v-row align="center">
+        <v-col class="grow">
+          {{ errorBalance.message }}
+        </v-col>
+        <v-col class="shrink">
+          <v-btn
+            v-if="isInstanceOfNoActiveKeyError"
+            color="primary"
+            @click="connectionRequest"
           >
-            <v-col>Key management fee</v-col>
-            <v-col class="text-right cspr">
-              {{ keyManagementFee }} CSPR
-            </v-col>
-          </v-row>
-          <v-row
-            class="white-bottom-border"
-          >
-            <v-col>Balance</v-col>
-            <v-col class="text-right cspr">
-              <template v-if="loadingBalance">
-                Loading balance ...
-                <v-progress-circular
-                  class="ml-3"
-                  color="white"
-                  indeterminate
-                  size="14"
-                />
-              </template>
-              <template v-else>
-                {{ balance }} CSPR
-              </template>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>Balance after operation</v-col>
-            <v-col class="text-right cspr">
-              {{ remainingBalance }} CSPR
-            </v-col>
-          </v-row>
-        </div>
-        <v-alert
-          v-if="errorBalance && errorKey === null"
-          class="mt-5"
-          dense
-          prominent
-          type="error"
-        >
-          <v-row align="center">
-            <v-col class="grow">
-              {{ errorBalance.message }}
-            </v-col>
-            <v-col class="shrink">
-              <v-btn
-                v-if="isInstanceOfNoActiveKeyError"
-                color="primary"
-                @click="connectionRequest"
-              >
-                <v-icon left>
-                  mdi-account-circle
-                </v-icon>
-                Connect
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-alert>
-        <v-alert
-          v-if="errorKey"
-          class="mt-5"
-          dense
-          prominent
-          type="error"
-        >
-          <v-row align="center">
-            <v-col class="grow">
-              {{
-                errorKey.message.includes('ValueNotFound')
-                  ? 'Error: Account not found.' : errorKey.message
-              }}
-            </v-col>
-          </v-row>
-        </v-alert>
-        <v-alert
-          v-if="errorDeploy"
-          class="mt-5"
-          dense
-          type="error"
-        >
-          {{ errorDeploy.message }}
-        </v-alert>
-      </v-card-text>
-    </v-card>
-  </operation>
+            <v-icon left>
+              mdi-account-circle
+            </v-icon>
+            Connect
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-alert>
+    <v-alert
+      v-if="errorKey"
+      class="mt-5"
+      dense
+      prominent
+      type="error"
+    >
+      <v-row align="center">
+        <v-col class="grow">
+          {{
+            errorKey.message.includes('ValueNotFound')
+              ? 'Error: Account not found.' : errorKey.message
+          }}
+        </v-col>
+      </v-row>
+    </v-alert>
+    <v-alert
+      v-if="errorDeploy"
+      class="mt-5"
+      dense
+      type="error"
+    >
+      {{ errorDeploy.message }}
+    </v-alert>
+  </operation-card>
 </template>
 
 <script>
 
-import Operation from '@/components/operations/Operation';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import KeyManagerWasm from '@/assets/smartcontracts/keys-manager.wasm?url';
+import AuthorizedKeyInput from '@/components/operations/AuthorizedKeyInput';
+import OperationCard from '@/components/operations/OperationCard';
+import OperationSummary from '@/components/operations/OperationSummary';
 import balanceService from '@/helpers/balanceService';
 import clientCasper from '@/helpers/clientCasper';
 import { NETWORK } from '@/helpers/env';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import {
-  KeyManagement,
   InsufficientFunds,
-  NoActiveKeyError,
+  KeyManagement,
   KeyManagementResult,
+  NoActiveKeyError,
 } from '@casperholders/core';
 import Big from 'big.js';
+import { Buffer } from 'buffer';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
-import AuthorizedKeyInput from '@/components/operations/AuthorizedKeyInput';
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import KeyManagerWasm from '@/assets/smartcontracts/keys-manager.wasm?url';
-import { Buffer } from 'buffer';
 
 /**
  * Security view
  */
 export default {
-  name: 'Security',
-  components: { Operation, AuthorizedKeyInput },
+  name: 'SecurityView',
+  components: { OperationSummary, OperationCard, AuthorizedKeyInput },
   data() {
     return {
       keyManagementThreshold: '',

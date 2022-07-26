@@ -72,7 +72,7 @@
         :validator="validator"
         :amount="totalStaked.toString()"
       />
-      <operations />
+      <operations-table />
     </v-card-text>
     <v-divider />
     <v-card-actions class="pa-5">
@@ -169,7 +169,7 @@
 <script>
 import DoughnutChart from '@/components/chart/DoughnutChart';
 import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
-import Operations from '@/components/operations/Operations';
+import OperationsTable from '@/components/operations/OperationsTable';
 import balanceService from '@/helpers/balanceService';
 import { API } from '@/helpers/env';
 import Big from 'big.js';
@@ -181,8 +181,8 @@ import { mapState } from 'vuex';
  * configured in the env file
  */
 export default {
-  name: 'Balance',
-  components: { Operations, RewardCalculatorPanel, DoughnutChart },
+  name: 'BalanceView',
+  components: { OperationsTable, RewardCalculatorPanel, DoughnutChart },
   data() {
     return {
       loading: true,

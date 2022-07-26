@@ -102,7 +102,7 @@ import { mapState } from 'vuex';
  * Validator component display the list of validators
  */
 export default {
-  name: 'Validators',
+  name: 'ValidatorInput',
   props: {
     /**
      * Validator

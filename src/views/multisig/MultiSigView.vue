@@ -258,7 +258,7 @@ import 'vue-json-pretty/lib/styles.css';
  * Multi-sig View
  */
 export default {
-  name: 'MultiSig',
+  name: 'MultiSigView',
   components: {
     VueJsonPretty,
     OperationPendingWeight,
@@ -371,7 +371,6 @@ export default {
         const ttl = parse(this.deploy.deploy.deploy.header.ttl);
         const timestamp = Date.parse(this.deploy.deploy.deploy.header.timestamp);
         const countdownID = setInterval(() => {
-
           // Get today's date and time
           const now = new Date().getTime();
 
@@ -384,8 +383,8 @@ export default {
           const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
           const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-          this.countdown = days + 'd ' + hours + 'h '
-            + minutes + 'm ' + seconds + 's ';
+          this.countdown = `${days}d ${hours}h ${
+            minutes}m ${seconds}s `;
           // If the count-down is finished, write some text
           if (distance === 0) {
             clearInterval(countdownID);

@@ -80,6 +80,6 @@
  * FAQ View
  */
 export default {
-  name: 'FAQ',
+  name: 'FAQView',
 };
 </script>

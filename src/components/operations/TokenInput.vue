@@ -12,7 +12,7 @@
     chips
     v-bind="$attrs"
   >
-    <template #selection="{ item, select, selected }">
+    <template #selection="{ item, select }">
       <v-chip
         color="primary"
         @click="select"
@@ -27,7 +27,7 @@
         {{ item.name || item.id }}
       </v-chip>
     </template>
-    <template #item="{ item, attrs, on }">
+    <template #item="{ item }">
       <v-list-item-avatar
         v-if="item.logo"
         color="white"
@@ -54,7 +54,8 @@ import nativeToken from '@/services/tokens/nativeToken';
 import tokensGroups from '@/services/tokens/tokensGroups';
 
 /**
- * Component to choose a token (native CSPR, ERC20 contracts, etc.) for different deploys purpose (transfers, etc.).
+ * Component to choose a token (native CSPR, ERC20 contracts, etc.)
+ * for different deploys purpose (transfers, etc.).
  */
 export default {
   name: 'TokenInput',
@@ -121,7 +122,7 @@ export default {
           if (groupTokens.length) {
             this.tokens.push(
               { divider: true },
-              { header: 'ERC20' },
+              { header: group.name },
               ...groupTokens,
             );
           }

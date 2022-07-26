@@ -13,6 +13,8 @@ import { CLPublicKey, Keys, Signer } from 'casper-js-sdk';
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+/* eslint no-param-reassign: ["error", { "ignorePropertyModificationsFor": ["state"] }] */
+
 Vue.use(Vuex);
 
 const debug = !import.meta.env.PROD;

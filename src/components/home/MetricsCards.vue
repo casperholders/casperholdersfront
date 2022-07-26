@@ -68,7 +68,7 @@ import colors from 'vuetify/lib/util/colors';
  * api and parse them to be displayed in the chart
  */
 export default {
-  name: 'Metrics',
+  name: 'MetricsCards',
   components: { LineChart },
   data() {
     return {

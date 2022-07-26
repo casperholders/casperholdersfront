@@ -1,70 +1,63 @@
 <template>
-  <operation
+  <operation-card
     :amount="amount"
-    :fee="undelegateFee"
+    :fee="bidFee"
     :loading-sign-and-deploy="loadingSignAndDeploy"
     :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"
     :type="type"
-    icon="mdi-lock-open"
-    submit-title="Unstake"
-    title="Unstake"
+    icon="mdi-gavel"
+    submit-title="Add bid"
+    title="Add bid"
   >
-    <Validators
-      v-model="validator"
-      :undelegate="true"
-    />
-    <Amount
-      :balance="stakingBalance"
-      :fee="Number(0)"
-      :min="minimumCSPRUnstake"
+    <p class="text-body-1">
+      Here's your validator :
+      <a
+        :href="validatorUrl"
+        target="_blank"
+        rel="noopener"
+      >
+        {{ signer.activeKey }}
+        <v-icon x-small>mdi-open-in-new</v-icon>
+      </a>
+      <br>
+      <br>
+      Actually there's a commission rate of {{ commission }}%.
+      (Applies on the staking rewards only.)
+      <br>
+      Example : if your delegators receive 100 CSPR rewards from staking,
+      you will received {{ commission }} CSPR and they will
+      get {{ 100 - commission }} CSPR.
+    </p>
+    <AmountInput
+      :balance="balance"
+      :fee="bidFee"
+      :min="minBid"
       :value="amount"
-      class="mb-4"
+      class="mb-14"
       @input="amount = $event"
     />
-    <div class="mx-n1">
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Undelegation fee</v-col>
-        <v-col class="text-right cspr">
-          {{ undelegateFee }} CSPR
-        </v-col>
-      </v-row>
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Staking balance</v-col>
-        <v-col class="text-right cspr">
-          {{ stakingBalance }} CSPR
-        </v-col>
-      </v-row>
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Balance</v-col>
-        <v-col class="text-right cspr">
-          <template v-if="loadingBalance">
-            Loading balance ...
-            <v-progress-circular
-              class="ml-3"
-              color="white"
-              indeterminate
-              size="14"
-            />
-          </template>
-          <template v-else>
-            {{ balance }} CSPR
-          </template>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>Balance after unstake</v-col>
-        <v-col class="text-right cspr">
-          {{ remainingBalance }} CSPR
-        </v-col>
-      </v-row>
-    </div>
+    <v-slider
+      v-model="commission"
+      color="white"
+      label="Commission rate"
+      thumb-color="quaternary"
+      thumb-label="always"
+      track-color="white"
+      track-fill-color="white"
+    />
+    <operation-summary
+      :prepend-values="[{
+        name: 'Validator bid',
+        value: validatorBalance,
+        loading: loadingBalance
+      }]"
+      :balance-loading="loadingBalance"
+      :balance="balance"
+      :fee="bidFee"
+      :amount="`-${amount}`"
+      class="mx-n1"
+    />
     <v-alert
       v-if="errorBalance"
       class="mt-5"
@@ -98,46 +91,41 @@
     >
       {{ errorDeploy.message }}
     </v-alert>
-  </operation>
+  </operation-card>
 </template>
 
 <script>
-import Amount from '@/components/operations/Amount';
-import Operation from '@/components/operations/Operation';
-import Validators from '@/components/operations/Validators';
+import AmountInput from '@/components/operations/Amountinput';
+import OperationCard from '@/components/operations/OperationCard';
+import OperationSummary from '@/components/operations/OperationSummary';
 import balanceService from '@/helpers/balanceService';
-import { AUCTION_MANAGER_HASH, NETWORK } from '@/helpers/env';
+import { AUCTION_MANAGER_HASH, CSPR_LIVE_URL, NETWORK } from '@/helpers/env';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
-import {
-  Undelegate,
-  InsufficientFunds,
-  NoActiveKeyError,
-  UndelegateResult,
-} from '@casperholders/core';
-import Big from 'big.js';
+import { AddBid, AddBidResult, InsufficientFunds, NoActiveKeyError } from '@casperholders/core';
 import { mapGetters, mapState } from 'vuex';
 
 /**
- * Undelegate view
- * Contains one fields
- * - Amount to undelegate to the node set in the .env file
+ * AddBid view
+ * Contains two fields
+ * - Amount to add to the bid of the validator
+ * - Slider to adjust the commission rate of the validator
  */
 export default {
-  name: 'Undelegate',
-  components: { Validators, Amount, Operation },
+  name: 'AddBidView',
+  components: { OperationSummary, AmountInput, OperationCard },
   data() {
     return {
-      minimumCSPRUnstake: 1,
-      undelegateFee: 0.00001,
+      minBid: 1,
+      bidFee: 2.50001,
       amount: '1',
-      errorBalance: null,
       balance: '0',
-      stakingBalance: '0',
+      validatorBalance: '0',
+      commission: 0,
+      errorBalance: null,
       loadingSignAndDeploy: false,
       errorDeploy: null,
       loadingBalance: false,
-      type: UndelegateResult.getName(),
-      validator: undefined,
+      type: AddBidResult.getName(),
     };
   },
   computed: {
@@ -151,11 +139,14 @@ export default {
       'activeKey',
     ]),
     remainingBalance() {
-      const result = Big(this.balance).plus(this.amount).minus(this.undelegateFee);
-      return result.gte(0) ? Big(result.toFixed(5)).toNumber() : 0;
+      const result = this.balance - this.amount - this.bidFee;
+      return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
+    },
+    validatorUrl() {
+      return `${CSPR_LIVE_URL}validator/${this.activeKey}`;
     },
     minimumFundsNeeded() {
-      return this.undelegateFee;
+      return this.minBid + this.bidFee;
     },
     isInstanceOfNoActiveKeyError() {
       return this.errorBalance instanceof NoActiveKeyError;
@@ -168,7 +159,6 @@ export default {
         await this.getBalance();
       }
     },
-    validator: 'getBalance',
   },
   async mounted() {
     await this.getBalance();
@@ -178,24 +168,23 @@ export default {
   },
   methods: {
     /**
-     * Get the user balance and staking balance
+     * Get the user balance and the validator balance
      */
     async getBalance() {
       this.loadingBalance = true;
       this.errorBalance = null;
       this.balance = '0';
-      this.stakingBalance = '0';
+      this.validatorBalance = '0';
+      this.commission = 0;
       try {
         this.balance = await balanceService.fetchBalance();
-        if (this.validator) {
-          this.stakingBalance = await balanceService
-            .fetchStakeBalance(this.validator.publicKey);
-        }
+        const validatorInfos = await balanceService.fetchValidatorBalance();
+        this.validatorBalance = validatorInfos.balance;
+        this.commission = validatorInfos.commission;
         if (this.balance <= this.minimumFundsNeeded && this.internet) {
           throw new InsufficientFunds(this.minimumFundsNeeded);
         }
       } catch (e) {
-        console.log(e);
         this.errorBalance = e;
       }
       this.loadingBalance = false;
@@ -206,14 +195,15 @@ export default {
      * Update the store with a deploy result containing the deployhash of the deploy sent
      */
     async sendDeploy() {
-      const deployParameter = new Undelegate(
+      const deployParameter = new AddBid(
         this.amount,
         this.activeKey,
-        this.validator.publicKey,
+        this.commission,
         NETWORK,
         AUCTION_MANAGER_HASH,
       );
-      const options = this.signerOptionsFactory.getOptionsForOperations();
+      const options = this.signerOptionsFactory.getOptionsForValidatorOperations();
+
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
       const result = await genericSendDeploy(
@@ -223,7 +213,7 @@ export default {
         this.signerObject,
         deployParameter,
         options,
-        this.undelegateFee,
+        this.bidFee,
         this.amount,
       );
       if (result.error) {

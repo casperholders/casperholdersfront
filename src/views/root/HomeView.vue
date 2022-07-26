@@ -266,9 +266,9 @@
       </v-dialog>
     </div>
 
-    <Features />
-    <Roadmap />
-    <Metrics />
+    <FeaturesCards />
+    <RoadmapCard />
+    <MetricsCards />
     <v-btn
       class="mb-3 mt-10 mx-auto"
       color="tertiary"
@@ -308,9 +308,9 @@
 
 <script>
 
-import Features from '@/components/home/Features';
-import Metrics from '@/components/home/Metrics';
-import Roadmap from '@/components/home/Roadmap';
+import FeaturesCards from '@/components/home/FeaturesCards';
+import MetricsCards from '@/components/home/MetricsCards';
+import RoadmapCard from '@/components/home/RoadmapCard';
 import { NETWORK } from '@/helpers/env';
 import { mapState } from 'vuex';
 import logoSvg from '@/assets/images/logo.svg';
@@ -321,8 +321,8 @@ import logoSvg from '@/assets/images/logo.svg';
  * & The Metrics / Roadmap / Features components
  */
 export default {
-  name: 'Home',
-  components: { Metrics, Roadmap, Features },
+  name: 'HomeView',
+  components: { MetricsCards, RoadmapCard, FeaturesCards },
   data: () => ({
     logoSvg,
     carousel: 0,

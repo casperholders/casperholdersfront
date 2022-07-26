@@ -115,7 +115,7 @@
           identifiable information may include, but is not limited to:
         </p>
         <ul>
-          <li>Usage Data - only on the Native Mobile application (Expo includes some libraries that access the Device ID see : <a href="https://docs.expo.dev/distribution/app-stores/#privacy-policy">here</a>) </li>
+          <li>Usage Data - only on the Native Mobile application (Expo includes some libraries that access the Device ID see : <a href="https://docs.expo.dev/distribution/app-stores/PrivacyView.vue">here</a>) </li>
           <li>None on the website</li>
         </ul>
         <h3>Usage Data</h3>
@@ -361,6 +361,6 @@
  * Privacy view
  */
 export default {
-  name: 'Privacy',
+  name: 'PrivacyView',
 };
 </script>

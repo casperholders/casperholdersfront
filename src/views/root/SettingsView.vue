@@ -220,7 +220,7 @@ import { CLPublicKey } from 'casper-js-sdk';
 import { mapState } from 'vuex';
 
 export default {
-  name: 'Settings',
+  name: 'SettingsView',
   data: () => ({
     keyManagementThreshold: '',
     deployThreshold: '',

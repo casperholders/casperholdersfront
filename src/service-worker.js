@@ -1,5 +1,5 @@
 import { createHandlerBoundToURL, precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
-import { registerRoute, setDefaultHandler, NavigationRoute, } from 'workbox-routing';
+import { registerRoute, setDefaultHandler, NavigationRoute } from 'workbox-routing';
 import { NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies';
 import { clientsClaim } from 'workbox-core';
 
@@ -13,13 +13,13 @@ try {
   precacheAndRoute(self.__WB_MANIFEST);
   registerRoute(new NavigationRoute(
     createHandlerBoundToURL('index.html'),
-  ))
+  ));
   cleanupOutdatedCaches();
   // eslint-disable-next-line no-undef,no-restricted-globals,no-underscore-dangle
-  //registerNavigationRoute(getCacheKeyForURL('index.html'));
+  // registerNavigationRoute(getCacheKeyForURL('index.html'));
   // eslint-disable-next-line no-undef
   registerRoute(
-    new RegExp(/\.(?:jpg|webp|mp4|woff2|jpeg|png|gif|ico|css|html|md)$/),
+    /\.(?:jpg|webp|mp4|woff2|jpeg|png|gif|ico|css|html|md)$/,
     // eslint-disable-next-line no-undef
     new StaleWhileRevalidate(),
   );

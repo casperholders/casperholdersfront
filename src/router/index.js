@@ -9,77 +9,77 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: () => import('@/views/root/Home'),
+    component: () => import('@/views/root/HomeView'),
   },
   {
     path: '/settings',
     name: 'settings',
-    component: () => import('@/views/root/Settings'),
+    component: () => import('@/views/root/SettingsView'),
   },
   {
     path: '/balance',
     name: 'Balance',
-    component: () => import('@/views/account/Balance'),
+    component: () => import('@/views/account/BalanceView'),
   },
   {
     path: '/security',
     name: 'Security',
-    component: () => import('@/views/account/Security'),
+    component: () => import('@/views/account/SecurityView'),
   },
   {
     path: '/multisig/:deployHash',
     name: 'Multisig',
-    component: () => import('@/views/multisig/MultiSig'),
+    component: () => import('@/views/multisig/MultiSigView'),
   },
   {
     path: '/transfer',
     name: 'Transfer',
-    component: () => import('@/views/account/Transfer'),
+    component: () => import('@/views/account/TransferView'),
   },
   {
     path: '/account',
     name: 'Account Info',
-    component: () => import('@/views/account/AccountInfo'),
+    component: () => import('@/views/account/AccountInfoView'),
   },
   {
     path: '/stake',
     name: 'Stake',
-    component: () => import('@/views/staking/Delegate'),
+    component: () => import('@/views/staking/DelegateView'),
   },
   {
     path: '/unstake',
     name: 'Unstake',
-    component: () => import('@/views/staking/Undelegate'),
+    component: () => import('@/views/staking/UndelegateView'),
   },
   {
     path: '/addbid',
     name: 'Add Bid',
-    component: () => import('@/views/validators/AddBid'),
+    component: () => import('@/views/validators/AddBidView'),
   },
   {
     path: '/withdrawbid',
     name: 'Withdraw Bid',
-    component: () => import('@/views/validators/WithdrawBid'),
+    component: () => import('@/views/validators/WithdrawBidView'),
   },
   {
     path: '/smartcontract',
     name: 'Send smart contract',
-    component: () => import('@/views/developers/SmartContract'),
+    component: () => import('@/views/developers/SmartContractView'),
   },
   {
     path: '/faq',
     name: 'FAQ',
-    component: () => import('@/views/others/FAQ'),
+    component: () => import('@/views/others/FAQView'),
   },
   {
     path: '/contact',
     name: 'contact',
-    component: () => import('@/views/others/Contact'),
+    component: () => import('@/views/others/ContactView'),
   },
   {
     path: '/privacy',
     name: 'privacy',
-    component: () => import('@/views/root/Privacy'),
+    component: () => import('@/views/root/PrivacyView'),
   },
 ];
 

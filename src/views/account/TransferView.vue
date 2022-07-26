@@ -1,5 +1,5 @@
 <template>
-  <operation
+  <operation-card
     :amount="amount"
     :fee="transferFee"
     :loading-sign-and-deploy="loadingSignAndDeploy"
@@ -38,7 +38,7 @@
         required
       />
     </v-slide-y-transition>
-    <Amount
+    <AmountInput
       :balance="balance"
       :fee="transferFee"
       :min="minimumCSPRTransfer"
@@ -46,41 +46,15 @@
       class="mb-4"
       @input="amount = $event"
     />
-    <div class="mx-n1">
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Transfer Fee</v-col>
-        <v-col class="text-right cspr">
-          {{ transferFee }} CSPR
-        </v-col>
-      </v-row>
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Balance</v-col>
-        <v-col class="text-right cspr">
-          <template v-if="loadingBalance">
-            Loading balance ...
-            <v-progress-circular
-              class="ml-3"
-              color="white"
-              indeterminate
-              size="14"
-            />
-          </template>
-          <template v-else>
-            {{ balance }} CSPR
-          </template>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>Balance after operation</v-col>
-        <v-col class="text-right cspr">
-          {{ remainingBalance }} CSPR
-        </v-col>
-      </v-row>
-    </div>
+    <operation-summary
+      :balance-loading="loadingBalance"
+      :balance="balance"
+      :token-balance="'0'"
+      :token="token"
+      :fee="transferFee"
+      :amount="`-${amount}`"
+      class="mx-n1"
+    />
     <v-alert
       v-if="errorBalance"
       class="mt-5"
@@ -125,12 +99,13 @@
       Verify your <strong>transfer ID</strong>
       and make sure it's correct <strong>BEFORE</strong> signing the deploy.
     </v-alert>
-  </operation>
+  </operation-card>
 </template>
 
 <script>
-import Amount from '@/components/operations/Amount';
-import Operation from '@/components/operations/Operation';
+import AmountInput from '@/components/operations/Amountinput';
+import OperationCard from '@/components/operations/OperationCard';
+import OperationSummary from '@/components/operations/OperationSummary';
 import TokenInput from '@/components/operations/TokenInput';
 import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
@@ -154,8 +129,8 @@ import { mapGetters, mapState } from 'vuex';
  * - Amount to transfer
  */
 export default {
-  name: 'Transfer',
-  components: { TokenInput, Amount, Operation },
+  name: 'TransferView',
+  components: { OperationSummary, TokenInput, AmountInput, OperationCard },
   data() {
     return {
       addressRules: [
@@ -272,7 +247,11 @@ export default {
      */
     async sendDeploy() {
       const deployParameter = new TransferDeployParameters(
-        this.activeKey, NETWORK, this.amount, this.address, this.transferID,
+        this.activeKey,
+        NETWORK,
+        this.amount,
+        this.address,
+        this.transferID,
       );
       const options = this.signerOptionsFactory.getOptionsForTransfer(this.address);
       this.errorDeploy = null;

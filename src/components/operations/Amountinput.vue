@@ -3,7 +3,7 @@
     <v-text-field
       id="amount"
       v-model.number="amount"
-      :hint="`Minimum CSPR needed : ${min} CSPR`"
+      :hint="`Minimum amount: ${min}`"
       :max="max"
       :min="min"
       :rules="amountRules"
@@ -11,7 +11,7 @@
       maxlength="10"
       append-outer-icon="mdi-plus"
       color="white"
-      label="Number of CSPR"
+      label="Amount"
       persistent-hint
       prepend-icon="mdi-minus"
       required
@@ -80,7 +80,7 @@ import Big from 'big.js';
 import { mapState } from 'vuex';
 
 export default {
-  name: 'Amount',
+  name: 'AmountInput',
   props: {
     /**
      * Amount

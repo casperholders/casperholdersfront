@@ -448,12 +448,12 @@
 
 <script>
 import casper from '@/assets/images/casper_logo.svg';
-import torus from '@/assets/images/torus.svg';
 import ledger from '@/assets/images/ledger_logo.png';
+import torus from '@/assets/images/torus.svg';
 import balanceService from '@/helpers/balanceService';
-import TransportWebBLE from '@ledgerhq/hw-transport-web-ble';
 import getTorusNetwork from '@/helpers/getTorusNetwork';
 import { ledgerOptions, torusOptions } from '@/store';
+import TransportWebBLE from '@ledgerhq/hw-transport-web-ble';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import Torus from '@toruslabs/casper-embed';
 import CasperApp from '@zondax/ledger-casper';
@@ -465,7 +465,7 @@ import { mapState } from 'vuex';
  * Connect Component used to help the user connect to CasperSigner or Ledger
  */
 export default {
-  name: 'Connect',
+  name: 'ConnectDialog',
   data: () => ({
     loading: false,
     connected: false,
@@ -604,7 +604,7 @@ export default {
           showTorusButton: false,
           network: getTorusNetwork(),
         });
-        const publicKey = (await torusInstance?.login())[0];
+        const publicKey = (await torusInstance?.login())?.[0];
         await this.$store.dispatch('updateFromTorusEvent', publicKey);
         torusOptions.torusInstance = torusInstance;
       } catch (e) {

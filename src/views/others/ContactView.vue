@@ -89,6 +89,6 @@
  * Contact view
  */
 export default {
-  name: 'Contact',
+  name: 'ContactView',
 };
 </script>

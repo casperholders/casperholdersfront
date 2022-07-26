@@ -1,4 +1,5 @@
 import App from '@/App';
+import '@/plugins/big';
 import vuetify from '@/plugins/vuetify';
 import router from '@/router';
 import store from '@/store';

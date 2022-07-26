@@ -1,5 +1,5 @@
 <template>
-  <operation
+  <operation-card
     :amount="amount"
     :fee="bidFee"
     :loading-sign-and-deploy="loadingSignAndDeploy"
@@ -28,7 +28,7 @@
       you will received {{ commission }} CSPR and they will get
       {{ 100 - commission }} CSPR.
     </p>
-    <Amount
+    <AmountInput
       :balance="validatorBalance"
       :fee="bidFee"
       :min="minBid"
@@ -36,60 +36,18 @@
       class="mb-4"
       @input="amount = $event"
     />
-    <div class="mx-n1">
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Withdraw bid operation fee</v-col>
-        <v-col class="text-right cspr">
-          {{ bidFee }} CSPR
-        </v-col>
-      </v-row>
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Balance</v-col>
-        <v-col class="text-right cspr">
-          <template v-if="loadingBalance">
-            Loading balance ...
-            <v-progress-circular
-              class="ml-3"
-              color="white"
-              indeterminate
-              size="14"
-            />
-          </template>
-          <template v-else>
-            {{ balance }} CSPR
-          </template>
-        </v-col>
-      </v-row>
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Validator bid</v-col>
-        <v-col class="text-right cspr">
-          <template v-if="loadingBalance">
-            Loading balance ...
-            <v-progress-circular
-              class="ml-3"
-              color="white"
-              indeterminate
-              size="14"
-            />
-          </template>
-          <template v-else>
-            {{ validatorBalance }} CSPR
-          </template>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>Balance after operation</v-col>
-        <v-col class="text-right cspr">
-          {{ remainingBalance }} CSPR
-        </v-col>
-      </v-row>
-    </div>
+    <operation-summary
+      :prepend-values="[{
+        name: 'Validator bid',
+        value: validatorBalance,
+        loading: loadingBalance,
+      }]"
+      :balance-loading="loadingBalance"
+      :balance="balance"
+      :fee="bidFee"
+      :amount="amount"
+      class="mx-n1"
+    />
     <v-alert
       v-if="errorBalance"
       class="mt-5"
@@ -123,19 +81,20 @@
     >
       {{ errorDeploy.message }}
     </v-alert>
-  </operation>
+  </operation-card>
 </template>
 
 <script>
-import Amount from '@/components/operations/Amount';
-import Operation from '@/components/operations/Operation';
+import AmountInput from '@/components/operations/Amountinput';
+import OperationCard from '@/components/operations/OperationCard';
+import OperationSummary from '@/components/operations/OperationSummary';
 import balanceService from '@/helpers/balanceService';
 import { AUCTION_MANAGER_HASH, CSPR_LIVE_URL, NETWORK } from '@/helpers/env';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import {
-  WithdrawBid,
   InsufficientFunds,
   NoActiveKeyError,
+  WithdrawBid,
   WithdrawBidResult,
 } from '@casperholders/core';
 import { mapGetters, mapState } from 'vuex';
@@ -146,8 +105,8 @@ import { mapGetters, mapState } from 'vuex';
  * - Amount to withdraw to the bid of the validator
  */
 export default {
-  name: 'WithdrawBid',
-  components: { Amount, Operation },
+  name: 'WithdrawBidView',
+  components: { OperationSummary, AmountInput, OperationCard },
   data() {
     return {
       minBid: 1,

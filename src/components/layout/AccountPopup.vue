@@ -102,14 +102,14 @@
 <script>
 import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER, TORUS_SIGNER } from '@/helpers/signers';
 import { torusOptions } from '@/store';
-import { mapState } from 'vuex';
 import QrcodeVue from 'qrcode.vue';
+import { mapState } from 'vuex';
 
 /**
  * Connect Component used to help the user connect to CasperSigner or Ledger
  */
 export default {
-  name: 'Account',
+  name: 'AccountPopup',
   components: {
     QrcodeVue,
   },

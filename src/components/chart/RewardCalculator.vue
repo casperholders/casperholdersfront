@@ -102,9 +102,6 @@
 import LineChart from '@/components/chart/LineChart';
 import { API } from '@/helpers/env';
 import Big from 'big.js';
-import toFormat from 'toformat';
-
-toFormat(Big);
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July',
