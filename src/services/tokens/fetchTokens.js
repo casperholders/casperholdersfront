@@ -11,7 +11,7 @@ import sortBy from 'lodash.sortby';
  */
 const mapTokens = (dataTokens) => dataTokens.map((dataToken) => ({
   groupId: dataToken.metadata_type,
-  id: dataToken.hash,
+  id: dataToken.metadata.contract_hash,
   name: dataToken.metadata.name,
   shortName: dataToken.metadata.symbol,
 }));
@@ -48,9 +48,7 @@ export default async (options = {}) => {
 
   if (options.search) {
     query.set('or', `(${[
-      `hash.ilike.*${options.search}*`,
-      `metadata->>symbol.ilike.*${options.search}*`,
-      `metadata->>name.ilike.*${options.search}*`,
+      `metadata->>contract_hash.ilike.*${options.search}*`,
     ].join(',')})`);
   }
 

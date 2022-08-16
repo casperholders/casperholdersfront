@@ -1,3 +1,4 @@
+import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
 import { Erc20Transfer, TransferDeployParameters } from '@casperholders/core';
 
@@ -9,6 +10,9 @@ export default {
     id: 'native',
     name: 'Native',
     features: {
+      balance: {
+        fetchBalance: () => balanceService.fetchBalance(),
+      },
       transfer: {
         transferID: true,
         makeDeployParameters: (
@@ -26,8 +30,10 @@ export default {
   erc20: {
     id: 'erc20',
     name: 'ERC20',
-    // TODO Features.
     features: {
+      balance: {
+        fetchBalance: (token) => balanceService.fetchBalanceOfErc20(token.id.replace('hash-', '')),
+      },
       transfer: {
         transferID: false,
         makeDeployParameters: (
@@ -39,17 +45,6 @@ export default {
           address,
           token.id,
         ),
-      },
-    },
-  },
-  // TODO Remove this useless group.
-  other: {
-    id: 'other',
-    name: 'Other',
-    features: {
-      transfer: {
-        transferID: true,
-        makeDeployParameters: undefined,
       },
     },
   },

@@ -107,7 +107,6 @@ import AmountInput from '@/components/operations/Amountinput';
 import OperationCard from '@/components/operations/OperationCard';
 import OperationSummary from '@/components/operations/OperationSummary';
 import TokenInput from '@/components/operations/TokenInput';
-import balanceService from '@/helpers/balanceService';
 import exchanges from '@/helpers/exchanges';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import findTokenGroup from '@/services/tokens/findTokenGroup';
@@ -201,6 +200,7 @@ export default {
     },
   },
   watch: {
+    token: 'getBalance',
     'signer.activeKey': 'getBalance',
     async internet(val) {
       if (val) {
@@ -223,7 +223,7 @@ export default {
       this.errorBalance = null;
       this.balance = '0';
       try {
-        this.balance = await balanceService.fetchBalance();
+        this.balance = await this.tokenGroup.features.balance.fetchBalance(this.token);
         if (this.balance <= this.minimumFundsNeeded && this.internet) {
           throw new InsufficientFunds(this.minimumFundsNeeded);
         }
