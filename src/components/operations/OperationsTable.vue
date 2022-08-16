@@ -200,6 +200,7 @@
 <script>
 
 import { CSPR_LIVE_URL, DATA_API } from '@/helpers/env';
+import parseContentRange from '@/helpers/parseContentRange';
 import { CurrencyUtils } from '@casperholders/core';
 import { mapState } from 'vuex';
 
@@ -305,7 +306,7 @@ export default {
           Prefer: 'count=exact',
         }),
       });
-      this.totalOperations = Number(response.headers.get('content-range').replace(/^.*\//, ''));
+      this.totalOperations = parseContentRange(response.headers.get('content-range')).size;
       this.operations = await response.json();
       this.loading = false;
     },

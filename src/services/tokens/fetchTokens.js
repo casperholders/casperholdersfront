@@ -1,38 +1,20 @@
+import { DATA_API } from '@/helpers/env';
+import parseContentRange from '@/helpers/parseContentRange';
 import sortBy from 'lodash.sortby';
 
-// TODO Remove those hardcoded debug lines.
-const TOKENS = [
-  {
-    groupId: 'erc20',
-    id: 'abc',
-    name: 'Wrapped Casper',
-    shortName: 'WCSPR',
-  },
-  {
-    groupId: 'other',
-    id: 'foobar',
-    shortName: 'FOOBAR',
-  },
-  {
-    groupId: 'erc20',
-    id: 'foo',
-    name: 'Foo ERC20',
-    shortName: 'FCSPR',
-    logo: 'https://node.casperholders.com/.well-known/casper/logo.svg',
-  },
-  {
-    groupId: 'erc20',
-    id: 'bar',
-    name: 'Bar ERC20',
-    shortName: 'BCSPR',
-    logo: 'https://www.emergingte.ch/wp-content/uploads/2021/02/cropped-ETA-Logo-20-2-1-32x32.png',
-  },
-  {
-    groupId: 'erc20',
-    id: 'baz',
-    shortName: 'BCSPR',
-  },
-];
+/**
+ * Map the data API tokens to unified token object.
+ *
+ * @param {Array} dataTokens
+ *
+ * @returns {Array}
+ */
+const mapTokens = (dataTokens) => dataTokens.map((dataToken) => ({
+  groupId: dataToken.metadata_type,
+  id: dataToken.hash,
+  name: dataToken.metadata.name,
+  shortName: dataToken.metadata.symbol,
+}));
 
 /**
  * Sort the tokens by group and logo/name/short name availability.
@@ -49,20 +31,40 @@ const sortTokens = (tokens) => sortBy(tokens, [
 ]);
 
 /**
- * Already fetched tokens, will avoid fetching multiple times during a session.
- */
-let tokens;
-
-/**
  * Fetch the available tokens.
+ *
+ * @param {object} options Optional options to query tokens.
+ * @param {string|undefined} [options.search] Textual search on tokens names.
  *
  * @returns {Promise<Array>}
  */
-export default async () => {
-  if (tokens === undefined) {
-    // TODO Fetch tokens from CasperData API.
-    tokens = sortTokens(TOKENS);
+export default async (options = {}) => {
+  const query = new URLSearchParams();
+
+  // Currently, we only retrieve the ERC20 tokens.
+  query.set('metadata_type', 'eq.erc20');
+  query.set('limit', '10');
+  query.set('order', 'timestamp.desc');
+
+  if (options.search) {
+    query.set('or', `(${[
+      `hash.ilike.*${options.search}*`,
+      `metadata->>symbol.ilike.*${options.search}*`,
+      `metadata->>name.ilike.*${options.search}*`,
+    ].join(',')})`);
   }
 
-  return tokens;
+  const response = await fetch(`${DATA_API}/deploys?${query.toString()}`, {
+    headers: new Headers({
+      Prefer: 'count=exact',
+      'Range-Unit': 'items',
+    }),
+  });
+
+  const contentRange = parseContentRange(response.headers.get('Content-Range'));
+
+  return {
+    contentRange,
+    data: sortTokens(mapTokens(await response.json())),
+  };
 };

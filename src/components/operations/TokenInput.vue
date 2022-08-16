@@ -1,13 +1,15 @@
 <template>
   <v-autocomplete
     v-model="lazyValue"
+    :search-input.sync="search"
     :loading="loading"
     :items="tokens"
-    :clearable="clearable"
+    :clearable="!isNativeToken"
+    :filter="filter"
     prepend-icon="mdi-circle-multiple-outline"
     label="Token"
-    item-value="id"
     color="white"
+    item-value="id"
     filled
     chips
     v-bind="$attrs"
@@ -45,6 +47,23 @@
         </v-list-item-subtitle>
       </v-list-item-content>
     </template>
+    <template
+      v-if="search && !loading"
+      #prepend-item
+    >
+      <v-list-item>
+        <v-list-item-content>
+          <v-list-item-title class="text-body-2">
+            <template v-if="tokensSize">
+              Displaying {{ tokensSize }} tokens of {{ tokensTotalSize }} matching.
+            </template>
+            <template v-else>
+              No matching token.
+            </template>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </template>
   </v-autocomplete>
 </template>
 
@@ -52,6 +71,7 @@
 import fetchTokens from '@/services/tokens/fetchTokens';
 import nativeToken from '@/services/tokens/nativeToken';
 import tokensGroups from '@/services/tokens/tokensGroups';
+import { debounce } from 'chart.js/helpers';
 
 /**
  * Component to choose a token (native CSPR, ERC20 contracts, etc.)
@@ -69,41 +89,66 @@ export default {
       default: undefined,
     },
   },
-  data: () => ({
-    /**
-     * Loading state for tokens fetching.
-     */
-    loading: true,
-    /**
-     * Internal value for the component state (ID of a token, defaults to native CSPR).
-     */
-    lazyValue: undefined,
-    /**
-     * The available tokens to select.
-     */
-    tokens: [nativeToken, { header: 'Fetching other tokens...' }],
-  }),
+  data() {
+    return {
+      /**
+       * Loading state for tokens fetching.
+       */
+      loading: true,
+      /**
+       * Textual search to filter tokens retrieved from data API.
+       */
+      search: '',
+      /**
+       * Internal value for the component state (ID of a token, always defaults to native CSPR).
+       */
+      lazyValue: this.value || nativeToken,
+      /**
+       * The available tokens to select.
+       */
+      tokens: [nativeToken, { header: 'Fetching other tokens...' }],
+      /**
+       * The size of displayed tokens from search.
+       */
+      tokensSize: 0,
+      /**
+       * The size of total matching tokens from search.
+       */
+      tokensTotalSize: 0,
+      /**
+       * Debounced version of fetchTokens function.
+       */
+      debouncedFetchTokens: debounce(this.fetchTokens, 250),
+    };
+  },
   computed: {
     /**
-     * Tells if the input can be cleared (only when using a non-native CSPR token).
+     * Tells if the native token is selected.
      *
      * @returns {boolean}
      */
-    clearable() {
-      return !!this.lazyValue;
+    isNativeToken() {
+      return !this.lazyValue || this.lazyValue.id === nativeToken.id;
     },
   },
   watch: {
+    search: 'onSearch',
     lazyValue: 'onLazyValue',
-    value: {
-      handler: 'onValue',
-      immediate: true,
-    },
+    value: 'onValue',
   },
   mounted() {
-    this.fetchTokens();
+    this.debouncedFetchTokens();
   },
   methods: {
+    /**
+     * Filter item for VAutocomplete textual search.
+     * Since items are already filtered when fetching from API, this function always returns true.
+     *
+     * @returns {boolean}
+     */
+    filter() {
+      return true;
+    },
     /**
      * Fetch the tokens and add them to the select inside groups.
      *
@@ -113,12 +158,15 @@ export default {
       this.loading = true;
 
       try {
-        const tokens = await fetchTokens();
+        const { data, contentRange } = await fetchTokens({ search: this.search });
 
         this.tokens = [nativeToken];
+        if (this.lazyValue && !this.isNativeToken) {
+          this.tokens.push(this.lazyValue);
+        }
 
         Object.values(tokensGroups).forEach((group) => {
-          const groupTokens = tokens.filter(({ groupId }) => groupId === group.id);
+          const groupTokens = data.filter(({ groupId }) => groupId === group.id);
           if (groupTokens.length) {
             this.tokens.push(
               { divider: true },
@@ -127,6 +175,9 @@ export default {
             );
           }
         });
+
+        this.tokensTotalSize = contentRange.size;
+        this.tokensSize = data.length;
       } catch (error) {
         this.tokens = [nativeToken, { header: `Fetching tokens failed: ${error.message}` }];
       } finally {
@@ -134,20 +185,28 @@ export default {
       }
     },
     /**
+     * Trigger a new tokens fetching on search each update (debounced).
+     */
+    onSearch() {
+      this.loading = true;
+
+      this.debouncedFetchTokens();
+    },
+    /**
      * Emit an update to parent when internal value changes.
      *
-     * @param {string|Object} lazyValue
+     * @param {object} lazyValue
      */
     onLazyValue(lazyValue) {
-      this.$emit('input', lazyValue || undefined);
+      this.$emit('input', lazyValue || nativeToken);
     },
     /**
      * Update the internal value when the value is changed by parent component.
      *
-     * @param {string|Object} value
+     * @param {object} value
      */
     onValue(value) {
-      this.lazyValue = value || null;
+      this.lazyValue = value || nativeToken;
     },
   },
 };
