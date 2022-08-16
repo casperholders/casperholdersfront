@@ -81,13 +81,16 @@
         </a>
       </template>
       <template #[`item.type`]="{ item }">
-        {{ capitalizeFirstLetter(item.type) }}
+        {{ capitalizeFirstLetter(item.metadata_type) }}
       </template>
       <template
         #expanded-item="{ headers, item }"
       >
         <td :colspan="headers.length">
-          <v-simple-table>
+          <v-card-title v-if="item.metadata">
+            Metadata
+          </v-card-title>
+          <v-simple-table v-if="item.metadata">
             <template #default>
               <tbody>
                 <tr>
@@ -98,7 +101,7 @@
                     Value
                   </th>
                 </tr>
-                <template v-for="[key, value] in Object.entries(item.data)">
+                <template v-for="[key, value] in Object.entries(item.metadata)">
                   <tr :key="key">
                     <td>
                       {{ capitalizeFirstLetter(key) }}
@@ -133,6 +136,13 @@
                         {{ value.toString() }}
                       </a>
                     </td>
+                    <td v-else-if="typeof value === 'object'">
+                      <template v-for="[key, value] in Object.entries(value)">
+                        <div>
+                          {{key}} : {{value}}
+                        </div>
+                      </template>
+                    </td>
                     <td v-else>
                       {{ value.toString() }}
                     </td>
@@ -141,6 +151,46 @@
               </tbody>
             </template>
           </v-simple-table>
+          <v-card-title v-else>
+            No metadata
+          </v-card-title>
+          <template v-if="item.events">
+            <v-card-title>
+              Events
+            </v-card-title>
+            <v-expansion-panels>
+              <template v-for="[eventName, event] in Object.entries(item.events)">
+                <v-expansion-panel>
+                  <v-expansion-panel-header>
+                    {{ eventName }}
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-simple-table>
+                      <template #default>
+                        <tbody>
+                          <tr>
+                            <th scope="col">
+                              Argument
+                            </th>
+                            <th scope="col">
+                              Value
+                            </th>
+                          </tr>
+                          <template v-for="[eventArgName, eventArgValue] in Object.entries(event)">
+                            <tr>
+                              <td>{{eventArgName}}</td>
+                              <td>{{eventArgValue}}</td>
+                            </tr>
+                          </template>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </template>
+            </v-expansion-panels>
+          </template>
+
         </td>
       </template>
     </v-data-table>
@@ -246,7 +296,7 @@ export default {
       }
       let where = '';
       if (this.typesSelected.length > 0) {
-        where = `&type=in.("${this.typesSelected.join('","')}")`;
+        where = `&metadata_type=in.("${this.typesSelected.join('","')}")`;
       }
       const response = await fetch(`${DATA_API}/deploys?from=ilike.${this.signer.activeKey}&limit=${limit}&offset=${offset}${order}${where}`, {
         method: 'GET',
