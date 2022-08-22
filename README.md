@@ -41,8 +41,8 @@ This project contains the sources files for the CasperHolders website.
 If you don't have pnpm you can use this documentation : https://pnpm.io/installation
 
 ```bash
-pnmp install
-pnmp dev
+pnpm install
+pnpm dev
 ```
 
 ## Local tests
@@ -70,7 +70,7 @@ Only the positive path for sending smart contract is not tested. See issue #10
 ### Run tests
 ```bash
 pnpm vite --port 8080
-pnmp test:e2e
+pnpm test:e2e
 ```
 
 ## Production build for TestNet
@@ -78,7 +78,7 @@ pnmp test:e2e
 Will use the .env.testnet file
 
 ```bash
-pnmp build-testnet
+pnpm build-testnet
 ```
 
 ## Production build for MainNet
@@ -86,7 +86,7 @@ pnmp build-testnet
 Will use the .env.testnet file
 
 ```bash
-pnmp build-mainnet
+pnpm build-mainnet
 ```
 
 ## Docker build
