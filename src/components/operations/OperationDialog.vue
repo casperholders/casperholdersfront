@@ -31,10 +31,16 @@
       <v-card-subtitle>
         Please confirm the following information before signing and sending the operation.
       </v-card-subtitle>
-      <v-card-text class="text-body-1">
-        Amount : {{ amount }} CSPR<br>
-        Fee : {{ fee }} CSPR<br>
-        Remaining funds after operation : {{ remainingBalance }} CSPR<br>
+      <v-card-text class="text-body-1 px-3">
+        <operation-summary
+          :balance="balance"
+          :token-balance="tokenBalance"
+          :token="token"
+          :fee="fee"
+          :amount="amount"
+          :prepend-values="prependValues"
+          :append-values="appendValues"
+        />
       </v-card-text>
       <v-card-actions class="pa-5">
         <v-btn
@@ -60,7 +66,9 @@
 </template>
 
 <script>
+import OperationSummary from '@/components/operations/OperationSummary';
 import { TORUS_SIGNER } from '@/helpers/signers';
+import nativeToken from '@/services/tokens/nativeToken';
 import { mapState } from 'vuex';
 
 /**
@@ -68,6 +76,7 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'OperationDialog',
+  components: { OperationSummary },
   props: {
     /**
      * Icon of the dialog
@@ -117,28 +126,54 @@ export default {
       default: false,
     },
     /**
-     * Amount to be displayed
+     * Current native balance.
      */
-    amount: {
+    balance: {
       required: true,
-      type: String,
-      default: '0',
+      type: [String, Number, Object],
     },
     /**
-     * Amount to be displayed
+     * Current token balance, if applicable.
+     */
+    tokenBalance: {
+      type: [String, Number, Object],
+      default: undefined,
+    },
+    /**
+     * Currently used token.
+     */
+    token: {
+      type: Object,
+      default: () => nativeToken,
+    },
+    /**
+     * Applicable fee for operation.
      */
     fee: {
       required: true,
-      type: Number,
+      type: [String, Number, Object],
       default: 0,
     },
     /**
-     * Remaining balance to be displayed
+     * Applicable fee for operation.
      */
-    remainingBalance: {
+    amount: {
       required: true,
-      type: Number,
-      default: 0,
+      type: [String, Number, Object],
+    },
+    /**
+     * Prepends confirmation values.
+     */
+    prependValues: {
+      type: Array,
+      default: () => [],
+    },
+    /**
+     * Appends confirmation values.
+     */
+    appendValues: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {

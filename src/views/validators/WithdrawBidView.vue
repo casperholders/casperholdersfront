@@ -1,11 +1,17 @@
 <template>
   <operation-card
-    :amount="amount"
-    :fee="bidFee"
     :loading-sign-and-deploy="loadingSignAndDeploy"
-    :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"
     :type="type"
+    :prepend-values="[{
+      name: 'Validator bid',
+      value: validatorBalance,
+      loading: loadingBalance,
+    }]"
+    :balance-loading="loadingBalance"
+    :balance="balance"
+    :fee="bidFee"
+    :amount="amount"
     icon="mdi-connection"
     submit-title="Withdraw bid"
     title="Withdraw bid"
@@ -132,10 +138,6 @@ export default {
       'signerOptionsFactory',
       'activeKey',
     ]),
-    remainingBalance() {
-      const result = this.balance + this.amount - this.bidFee;
-      return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
-    },
     validatorUrl() {
       return `${CSPR_LIVE_URL}validator/${this.activeKey}`;
     },

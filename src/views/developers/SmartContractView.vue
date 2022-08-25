@@ -1,11 +1,10 @@
 <template>
   <operation-card
-    :amount="amount"
-    :fee="0"
     :loading-sign-and-deploy="loadingSignAndDeploy"
-    :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"
     :type="type"
+    :balance="balance"
+    :fee="amount"
     icon="mdi-file-document-edit"
     submit-title="Deploy"
     title="Send smart contract"
@@ -124,10 +123,6 @@ export default {
       'signerOptionsFactory',
       'activeKey',
     ]),
-    remainingBalance() {
-      const result = this.balance - this.amount;
-      return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
-    },
     isInstanceOfNoActiveKeyError() {
       return this.errorBalance instanceof NoActiveKeyError;
     },

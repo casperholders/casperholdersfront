@@ -1,11 +1,10 @@
 <template>
   <operation-card
-    :amount="amount"
-    :fee="keyManagementFee"
     :loading-sign-and-deploy="loadingSignAndDeploy"
-    :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"
     :type="type"
+    :balance="balance"
+    :fee="keyManagementFee"
     icon="mdi-key"
     submit-title="Set security settings"
     title="Security"
@@ -444,10 +443,6 @@ export default {
       'signerOptionsFactory',
       'activeKey',
     ]),
-    remainingBalance() {
-      const result = this.balance - this.keyManagementFee;
-      return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
-    },
     minimumFundsNeeded() {
       return this.keyManagementFee;
     },

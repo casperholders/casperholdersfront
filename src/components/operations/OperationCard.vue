@@ -72,15 +72,19 @@
 
         <v-card-actions class="pa-4">
           <OperationDialog
-            :amount="amount"
-            :fee="fee"
             :icon="icon"
             :loading-sign-and-deploy="loadingSignAndDeploy"
             :open-popup="openPopup"
             :operation-on-going="operationOnGoing"
-            :remaining-balance="remainingBalance"
             :send-deploy="sendDeploy"
             :title="submitTitle"
+            :balance="balance"
+            :token-balance="tokenBalance"
+            :token="token"
+            :fee="fee"
+            :amount="amount"
+            :prepend-values="prependValues"
+            :append-values="appendValues"
             @operationCanceled="operationOnGoing = false"
           />
         </v-card-actions>
@@ -102,6 +106,7 @@ import OperationPending from '@/components/operations/OperationPending';
 import OperationPendingWeight from '@/components/operations/OperationPendingWeight';
 import OperationResult from '@/components/operations/OperationResult';
 import { TORUS_SIGNER } from '@/helpers/signers';
+import nativeToken from '@/services/tokens/nativeToken';
 import { mapState } from 'vuex';
 
 /**
@@ -165,27 +170,54 @@ export default {
       default: false,
     },
     /**
-     * Amount to be displayed in the OperationDialog
+     * Current native balance.
      */
-    amount: {
-      type: String,
+    balance: {
       required: true,
+      type: [String, Number, Object],
     },
     /**
-     * Fee to be displayed in the OperationDialog
+     * Current token balance, if applicable.
+     */
+    tokenBalance: {
+      type: [String, Number, Object],
+      default: undefined,
+    },
+    /**
+     * Currently used token.
+     */
+    token: {
+      type: Object,
+      default: () => nativeToken,
+    },
+    /**
+     * Applicable fee for operation.
      */
     fee: {
       required: true,
-      type: Number,
+      type: [String, Number, Object],
       default: 0,
     },
     /**
-     * Remaining balance to be displayed in the OperationDialog
+     * Applicable fee for operation.
      */
-    remainingBalance: {
-      required: true,
-      type: Number,
-      default: 0,
+    amount: {
+      type: [String, Number, Object],
+      default: undefined,
+    },
+    /**
+     * Prepends confirmation values.
+     */
+    prependValues: {
+      type: Array,
+      default: () => [],
+    },
+    /**
+     * Appends confirmation values.
+     */
+    appendValues: {
+      type: Array,
+      default: () => [],
     },
     beta: {
       required: false,

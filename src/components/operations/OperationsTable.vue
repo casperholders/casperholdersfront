@@ -14,12 +14,6 @@
       }"
     >
       <template #top>
-        <v-toolbar
-          flat
-          rounded
-        >
-          <v-toolbar-title>Operations</v-toolbar-title>
-        </v-toolbar>
         <v-container>
           <v-autocomplete
             v-model="typesSelected"
@@ -137,9 +131,9 @@
                       </a>
                     </td>
                     <td v-else-if="typeof value === 'object'">
-                      <template v-for="[key, value] in Object.entries(value)">
-                        <div>
-                          {{key}} : {{value}}
+                      <template v-for="[subKey, subValue] in Object.entries(value)">
+                        <div :key="`${key}-${subKey}`">
+                          {{ subKey }} : {{ subValue }}
                         </div>
                       </template>
                     </td>
@@ -160,7 +154,7 @@
             </v-card-title>
             <v-expansion-panels>
               <template v-for="[eventName, event] in Object.entries(item.events)">
-                <v-expansion-panel>
+                <v-expansion-panel :key="eventName">
                   <v-expansion-panel-header>
                     {{ eventName }}
                   </v-expansion-panel-header>
@@ -177,9 +171,9 @@
                             </th>
                           </tr>
                           <template v-for="[eventArgName, eventArgValue] in Object.entries(event)">
-                            <tr>
-                              <td>{{eventArgName}}</td>
-                              <td>{{eventArgValue}}</td>
+                            <tr :key="`${eventName}-${eventArgName}`">
+                              <td>{{ eventArgName }}</td>
+                              <td>{{ eventArgValue }}</td>
                             </tr>
                           </template>
                         </tbody>
@@ -190,7 +184,6 @@
               </template>
             </v-expansion-panels>
           </template>
-
         </td>
       </template>
     </v-data-table>

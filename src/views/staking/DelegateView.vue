@@ -1,11 +1,11 @@
 <template>
   <operation-card
-    :amount="amount"
-    :fee="delegationFee"
     :loading-sign-and-deploy="loadingSignAndDeploy"
-    :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"
     :type="type"
+    :balance="balance"
+    :fee="delegationFee"
+    :amount="`-${amount}`"
     icon="mdi-safe"
     submit-title="Stake"
     title="Stake"
@@ -119,10 +119,6 @@ export default {
       'signerOptionsFactory',
       'activeKey',
     ]),
-    remainingBalance() {
-      const result = this.balance - this.amount - this.delegationFee;
-      return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
-    },
     minimumFundsNeeded() {
       return this.minimumCSPRStake + this.delegationFee;
     },

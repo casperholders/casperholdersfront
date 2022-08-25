@@ -1,11 +1,10 @@
 <template>
   <operation-card
-    :amount="amount"
-    :fee="accountInfoFee"
     :loading-sign-and-deploy="loadingSignAndDeploy"
-    :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"
     :type="type"
+    :balance="balance"
+    :fee="accountInfoFee"
     icon="mdi-account"
     submit-title="Set url"
     title="Account info"
@@ -125,10 +124,6 @@ export default {
       'signerOptionsFactory',
       'activeKey',
     ]),
-    remainingBalance() {
-      const result = this.balance - this.accountInfoFee;
-      return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
-    },
     minimumFundsNeeded() {
       return this.accountInfoFee;
     },

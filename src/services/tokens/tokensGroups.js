@@ -14,6 +14,7 @@ export default {
         fetchBalance: () => balanceService.fetchBalance(),
       },
       transfer: {
+        minimumAmount: () => 2.5,
         transferID: true,
         makeDeployParameters: (
           { activeKey, amount, address, transferID },
@@ -32,17 +33,18 @@ export default {
     name: 'ERC20',
     features: {
       balance: {
-        fetchBalance: (token) => balanceService.fetchBalanceOfErc20(token.id.replace('hash-', '')),
+        fetchBalance: (token) => balanceService.fetchBalanceOfErc20(token.id),
       },
       transfer: {
+        minimumAmount: (token) => (1 / (token.decimals ? (10 ** token.decimals) : 1)),
         transferID: false,
         makeDeployParameters: (
           { activeKey, amount, address, token },
         ) => new Erc20Transfer(
           activeKey,
-          NETWORK,
           amount,
           address,
+          NETWORK,
           token.id,
         ),
       },

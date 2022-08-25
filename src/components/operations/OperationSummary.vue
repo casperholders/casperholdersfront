@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row
-      v-for="({ name, value, loading, isAmount }, index) in items"
+      v-for="({ name, loading, ...tokenAmount }, index) in items"
       :key="`rows-${index}`"
       :class="{ 'white-top-border': index !== 0 }"
     >
@@ -29,11 +29,10 @@
             />
             Loading...
           </span>
-          <span
+          <token-amount
             v-else
             key="value"
-            :class="{ 'cspr': isAmount }"
-            v-text="value"
+            :amount="tokenAmount"
           />
         </v-slide-y-transition>
       </v-col>
@@ -42,11 +41,14 @@
 </template>
 
 <script>
+import TokenAmount from '@/components/account/TokenAmount';
+import computeFormattedTokenValue from '@/services/tokens/computeFormattedTokenValue';
 import nativeToken from '@/services/tokens/nativeToken';
 import Big from 'big.js';
 
 export default {
   name: 'OperationSummary',
+  components: { TokenAmount },
   props: {
     balanceLoading: {
       type: Boolean,
@@ -85,16 +87,21 @@ export default {
     isNativeToken() {
       return this.token.id === nativeToken.id;
     },
+    isAmountDefined() {
+      return this.amount !== undefined
+        && this.amount !== ''
+        && this.amount !== '-';
+    },
     balanceAfterOperation() {
       const balance = Big(this.balance).minus(this.fee);
-      if (this.isNativeToken && this.amount !== undefined) {
+      if (this.isNativeToken && this.isAmountDefined) {
         return balance.plus(this.amount);
       }
 
       return balance;
     },
     tokenBalanceAfterOperation() {
-      return this.amount !== undefined
+      return this.isAmountDefined
         ? Big(this.tokenBalance).plus(this.amount)
         : this.tokenBalance;
     },
@@ -128,43 +135,8 @@ export default {
         ...this.values,
         ...this.appendValues,
       ].map(({ value, token, ...other }) => ({
-        ...this.computeAndFormatValue(value, token), ...other,
+        ...computeFormattedTokenValue(value, token), ...other,
       }));
-    },
-  },
-  methods: {
-    computeAndFormatValue(value, token) {
-      const data = this.computeValueData(value);
-      if (data.isAmount) {
-        const valueWithUnit = token
-          ? `${data.value} ${token.shortName}`
-          : `${data.value} ${nativeToken.shortName}`;
-
-        return {
-          value: valueWithUnit, isAmount: data.isAmount,
-        };
-      }
-
-      return data;
-    },
-    computeValueData(value) {
-      if (value === undefined || value === null || value === '') {
-        return { value: '-', isAmount: false };
-      }
-
-      if (typeof value === 'object') {
-        return { value: value.toFormat(5), isAmount: true };
-      }
-
-      if (typeof value === 'number') {
-        return { value: value.toFixed(5), isAmount: true };
-      }
-
-      if (typeof value === 'string' && !Number.isNaN(Number(value))) {
-        return { value: Big(value).toFormat(5), isAmount: true };
-      }
-
-      return { value, isAmount: false };
     },
   },
 };

@@ -1,11 +1,12 @@
 <template>
   <operation-card
-    :amount="amount"
-    :fee="undelegateFee"
     :loading-sign-and-deploy="loadingSignAndDeploy"
-    :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"
     :type="type"
+    :prepend-values="[{ name: 'Staking balance', value: stakingBalance }]"
+    :balance="balance"
+    :fee="undelegateFee"
+    :amount="amount"
     icon="mdi-lock-open"
     submit-title="Unstake"
     title="Unstake"
@@ -80,7 +81,6 @@ import {
   Undelegate,
   UndelegateResult,
 } from '@casperholders/core';
-import Big from 'big.js';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -116,10 +116,6 @@ export default {
       'signerOptionsFactory',
       'activeKey',
     ]),
-    remainingBalance() {
-      const result = Big(this.balance).plus(this.amount).minus(this.undelegateFee);
-      return result.gte(0) ? Big(result.toFixed(5)).toNumber() : 0;
-    },
     minimumFundsNeeded() {
       return this.undelegateFee;
     },
