@@ -25,15 +25,39 @@
         >
           <v-img :src="logo" />
         </v-avatar>
+        <v-avatar
+          v-else
+          color="secondary"
+          size="32"
+          class="my-1 mr-3"
+        >
+          <v-icon dark>
+            mdi-help
+          </v-icon>
+        </v-avatar>
         <span class="text-truncate">
-          {{ title }}
+          <template v-if="csprLivePathUrl !== ''">
+            <a
+              :href="csprLiveUrl(csprLivePathUrl)"
+              target="_blank"
+              rel="noopener"
+            >
+              {{ title }}
+              <v-icon x-small>mdi-open-in-new</v-icon>
+            </a>
+          </template>
+          <template v-else>
+            {{ title }}
+          </template>
         </span>
       </div>
     </v-card-text>
+    <slot name="actions"/>
   </v-card>
 </template>
 
 <script>
+import { CSPR_LIVE_URL } from '@/helpers/env';
 import TokenAmount from '@/components/account/TokenAmount';
 import computeFormattedTokenValue from '@/services/tokens/computeFormattedTokenValue';
 import nativeToken from '@/services/tokens/nativeToken';
@@ -47,6 +71,10 @@ export default {
       default: undefined,
     },
     title: {
+      type: String,
+      default: '',
+    },
+    csprLivePathUrl: {
       type: String,
       default: '',
     },
@@ -68,15 +96,10 @@ export default {
       return computeFormattedTokenValue(this.amount, this.token);
     },
   },
+  methods: {
+    csprLiveUrl(csprLivePathUrl) {
+      return `${CSPR_LIVE_URL}${csprLivePathUrl}`;
+    },
+  },
 };
 </script>
-
-<style
-  lang="scss"
-  scoped
->
-  .balance-amount-card {
-    min-width: 200px;
-    width: 200px;
-  }
-</style>

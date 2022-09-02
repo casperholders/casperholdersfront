@@ -52,6 +52,16 @@ const routes = [
     component: () => import('@/views/staking/UndelegateView'),
   },
   {
+    path: '/stake/:validator',
+    name: 'Stake',
+    component: () => import('@/views/staking/DelegateView'),
+  },
+  {
+    path: '/unstake/:validator',
+    name: 'Unstake',
+    component: () => import('@/views/staking/UndelegateView'),
+  },
+  {
     path: '/addbid',
     name: 'Add Bid',
     component: () => import('@/views/validators/AddBidView'),

@@ -116,6 +116,11 @@ export default {
       type: Boolean,
       default: false,
     },
+    initialValidator: {
+      required: false,
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -170,6 +175,14 @@ export default {
   },
   async mounted() {
     await this.getValidators();
+    if (this.initialValidator) {
+      this.validator = this.validators.find((item) => {
+        if (item.publicKey === this.initialValidator && !item.disabled) {
+          return item;
+        }
+        return undefined;
+      });
+    }
   },
   methods: {
     // eslint-disable-next-line no-unused-vars

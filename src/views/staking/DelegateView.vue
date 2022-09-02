@@ -13,6 +13,7 @@
     <ValidatorInput
       v-model="validator"
       :undelegate="false"
+      :initial-validator="validatorParam"
     />
     <AmountInput
       :balance="balance"
@@ -124,6 +125,9 @@ export default {
     },
     isInstanceOfNoActiveKeyError() {
       return this.errorBalance instanceof NoActiveKeyError;
+    },
+    validatorParam() {
+      return this.$route.params.validator;
     },
   },
   watch: {

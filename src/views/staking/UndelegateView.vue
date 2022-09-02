@@ -14,6 +14,7 @@
     <ValidatorInput
       v-model="validator"
       :undelegate="true"
+      :initial-validator="validatorParam"
     />
     <AmountInput
       :balance="stakingBalance"
@@ -121,6 +122,9 @@ export default {
     },
     isInstanceOfNoActiveKeyError() {
       return this.errorBalance instanceof NoActiveKeyError;
+    },
+    validatorParam() {
+      return this.$route.params.validator;
     },
   },
   watch: {

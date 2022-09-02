@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 8080",
     "build": "vite build",
     "serve": "vite preview --port 8080",
     "test:e2e": "cypress run --headed --browser chrome",
