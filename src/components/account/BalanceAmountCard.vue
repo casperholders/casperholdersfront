@@ -13,7 +13,7 @@
     <v-card-text v-else>
       <token-amount
         :amount="tokenAmount"
-        class="white--text"
+        class="white--text amount"
         style="font-size: 1.10rem"
       />
       <div class="d-flex align-center text-overline">

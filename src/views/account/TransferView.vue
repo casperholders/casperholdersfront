@@ -172,7 +172,7 @@ export default {
       'activeKey',
     ]),
     minimumFundsNeeded() {
-      if (this.token) {
+      if (this.token !== nativeToken) {
         return this.transferFee;
       }
 

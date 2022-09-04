@@ -23,13 +23,18 @@ describe('Balance', () => {
     });
     cy.get('#balance-not-connected', { timeout: 5000 })
       .should('not.exist');
-    cy.get('#balance-no-liquidity')
-      .should('not.exist');
-    cy.get('#balance-chart', { timeout: 10000 })
+    cy.get('#balance-total-staked .amount')
       .should('be.visible')
-      .and((chart) => {
-        expect(chart.height()).to.be.equals(400);
-      });
+      .should('not.contain', '0.00000 CSPR')
+      .contains(/^\d+\.\d{5} CSPR$/);
+    cy.get('#balance-total-available .amount')
+      .should('be.visible')
+      .should('not.contain', '0.00000 CSPR')
+      .contains(/^\d+\.\d{5} CSPR$/);
+    cy.get('#balance-total-staked .amount')
+      .should('be.visible')
+      .should('not.contain', '0.00000 CSPR')
+      .contains(/^\d+\.\d{5} CSPR$/);
 
     cy.get('.reward-calculator-panel-header').click();
     cy.get('.reward-calculator').should('be.visible');
@@ -42,10 +47,14 @@ describe('Balance', () => {
 
     cy.get('#balance-not-connected')
       .should('not.exist');
-    cy.get('#balance-no-liquidity')
+    cy.get('#balance-total-staked .amount')
       .should('be.visible')
-      .should('contain', 'No liquidity available');
-    cy.get('#balance-chart')
-      .should('not.exist');
+      .should('contain', '0.00000 CSPR')
+    cy.get('#balance-total-available .amount')
+      .should('be.visible')
+      .should('contain', '0.00000 CSPR')
+    cy.get('#balance-total .amount')
+      .should('be.visible')
+      .should('contain', '0.00000 CSPR')
   });
 });
