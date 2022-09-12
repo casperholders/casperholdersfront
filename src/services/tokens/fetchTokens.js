@@ -2,6 +2,29 @@ import { DATA_API } from '@/helpers/env';
 import parseContentRange from '@/helpers/parseContentRange';
 import sortBy from 'lodash.sortby';
 
+const findNamedKey = (namedKeys, name, value) => namedKeys.find(
+  (namedKey) => namedKey[name] === value,
+);
+
+const filterTokens = (dataTokens) => dataTokens.filter((token) => {
+  const name = findNamedKey(token.data.Contract.named_keys, 'name', 'name')?.initial_value;
+  const shortName = findNamedKey(token.data.Contract.named_keys, 'name', 'symbol')?.initial_value;
+  if (name === undefined || shortName === undefined) {
+    return false;
+  }
+  const transferEntrypoint = token.data.Contract.entry_points.find((entryPoint) => entryPoint.name === 'transfer');
+  if (transferEntrypoint !== undefined) {
+    if (transferEntrypoint.args.length === 2) {
+      const amountArg = transferEntrypoint.args.find((arg) => arg.name === 'amount');
+      const recipientArg = transferEntrypoint.args.find((arg) => arg.name === 'recipient');
+      if (amountArg.cl_type === 'U256' && recipientArg.cl_type === 'Key') {
+        return true;
+      }
+    }
+  }
+  return false;
+});
+
 /**
  * Map the data API tokens to unified token object.
  *
@@ -10,11 +33,11 @@ import sortBy from 'lodash.sortby';
  * @returns {Array}
  */
 const mapTokens = (dataTokens) => dataTokens.map((dataToken) => ({
-  groupId: dataToken.metadata_type,
-  id: dataToken.metadata.contract_hash.replace(/^hash-/, ''),
-  name: dataToken.metadata.name,
-  shortName: dataToken.metadata.symbol,
-  decimals: dataToken.metadata.decimals || 0,
+  groupId: dataToken.type,
+  id: dataToken.hash,
+  name: findNamedKey(dataToken.data.Contract.named_keys, 'name', 'name')?.initial_value,
+  shortName: findNamedKey(dataToken.data.Contract.named_keys, 'name', 'symbol')?.initial_value,
+  decimals: findNamedKey(dataToken.data.Contract.named_keys, 'name', 'decimals')?.initial_value || 0,
 }));
 
 /**
@@ -43,19 +66,16 @@ export default async (options = {}) => {
   const query = new URLSearchParams();
 
   // Currently, we only retrieve the ERC20 tokens.
-  query.set('result', 'is.true');
-  query.set('metadata_type', 'eq.erc20');
-  query.set('metadata->>contract_hash', 'not.is.null');
+  query.set('type', 'eq.erc20');
   query.set('limit', '10');
-  query.set('order', 'timestamp.desc');
 
   if (options.search) {
     query.set('or', `(${[
-      `metadata->>contract_hash.ilike.*${options.search}*`,
+      `hash.ilike.*${options.search}*`,
     ].join(',')})`);
   }
 
-  const response = await fetch(`${DATA_API}/deploys?${query.toString()}`, {
+  const response = await fetch(`${DATA_API}/contracts?${query.toString()}`, {
     headers: new Headers({
       Prefer: 'count=exact',
       'Range-Unit': 'items',
@@ -66,6 +86,6 @@ export default async (options = {}) => {
 
   return {
     contentRange,
-    data: sortTokens(mapTokens(await response.json())),
+    data: sortTokens(mapTokens(filterTokens(await response.json()))),
   };
 };

@@ -15,17 +15,10 @@
     >
       <template #top>
         <v-container>
-          <v-autocomplete
-            v-model="typesSelected"
-            item-color="white"
-            :items="types"
-            item-text="text"
-            item-value="value"
-            chips
-            label="Deploy types"
+          <v-text-field
+            v-model="search"
+            label="Search on types"
             color="white"
-            multiple
-            deletable-chips
           />
         </v-container>
       </template>
@@ -172,7 +165,7 @@
                           </tr>
                           <template v-for="[eventArgName, eventArgValue] in Object.entries(event)">
                             <tr :key="`${eventName}-${eventArgName}`">
-                              <td>{{ eventArgName }}</td>
+                              <td>{{ capitalizeFirstLetter(eventArgName) }}</td>
                               <td>{{ eventArgValue }}</td>
                             </tr>
                           </template>
@@ -195,6 +188,7 @@
 import { CSPR_LIVE_URL, DATA_API } from '@/helpers/env';
 import parseContentRange from '@/helpers/parseContentRange';
 import { CurrencyUtils } from '@casperholders/core';
+import { debounce } from 'chart.js/helpers';
 import { mapState } from 'vuex';
 
 /**
@@ -214,24 +208,6 @@ export default {
         { text: 'Type', value: 'type' },
         { text: '', value: 'data-table-expand', sortable: false },
       ],
-      types: [
-        { text: 'Transfer', value: 'transfer' },
-        { text: 'Simple Transfer', value: 'simpleTransfer' },
-        { text: 'Add Bid', value: 'addBid' },
-        { text: 'Withdraw Bid', value: 'withdrawBid' },
-        { text: 'Delegate', value: 'delegate' },
-        { text: 'Undelegate', value: 'undelegate' },
-        { text: 'Unknown', value: 'unknown' },
-        { text: 'Activate Bid', value: 'activateBid' },
-        { text: 'Account Info', value: 'accountInfo' },
-        { text: 'Wasm Deploy', value: 'wasmDeploy' },
-        { text: 'Key Management', value: 'keyManagement' },
-        { text: 'Key Weight', value: 'keyWeight' },
-        { text: 'Key Management Threshold', value: 'keyManagementThreshold' },
-        { text: 'CasperSign Contract', value: 'casperSignContract' },
-        { text: 'ERC20', value: 'ERC20' },
-        { text: 'Faucet', value: 'faucet' },
-      ],
       operations: [],
       options: {
         sortBy: ['timestamp'],
@@ -239,7 +215,8 @@ export default {
       },
       loading: true,
       totalOperations: 0,
-      typesSelected: [],
+      search: '',
+      debouncedGetDataApi: debounce(this.getDataFromApi, 250),
     };
   },
   computed: {
@@ -257,12 +234,12 @@ export default {
     },
     options: {
       async handler() {
-        await this.getDataFromApi();
+        this.debouncedGetDataApi();
       },
     },
-    typesSelected: {
+    search: {
       async handler() {
-        await this.getDataFromApi();
+        this.debouncedGetDataApi();
       },
     },
   },
@@ -273,14 +250,14 @@ export default {
         return;
       }
       this.loading = true;
-      let { page, limit } = this.options;
-      if (!limit) {
-        limit = 10;
+      let { page, itemsPerPage } = this.options;
+      if (!itemsPerPage) {
+        itemsPerPage = 10;
       }
       if (!page) {
         page = 1;
       }
-      const offset = (page - 1) * limit;
+      const offset = (page - 1) * itemsPerPage;
       let order = '';
       if (this.options.sortBy[0]) {
         order = `&order=${this.options.sortBy[0]}`;
@@ -289,10 +266,10 @@ export default {
         }
       }
       let where = '';
-      if (this.typesSelected.length > 0) {
-        where = `&metadata_type=in.("${this.typesSelected.join('","')}")`;
+      if (this.search !== '') {
+        where = `&entrypoint=ilike.%${this.search}%`;
       }
-      const response = await fetch(`${DATA_API}/deploys?from=ilike.${this.signer.activeKey}&limit=${limit}&offset=${offset}${order}${where}`, {
+      const response = await fetch(`${DATA_API}/deploys?from=eq.${this.signer.activeKey}&limit=${itemsPerPage}&offset=${offset}${order}${where}`, {
         method: 'GET',
         headers: new Headers({
           'Range-Unit': 'items',
@@ -328,11 +305,7 @@ export default {
       return `${CurrencyUtils.convertMotesToCasper(amount)} CSPR`;
     },
     capitalizeFirstLetter(string) {
-      return string.charAt(0).toUpperCase() + string.slice(1);
-    },
-    remove(item) {
-      const index = this.typesSelected.indexOf(item.name);
-      if (index >= 0) this.typesSelected.splice(index, 1);
+      return string.charAt(0).toUpperCase() + string.slice(1).replaceAll('_', ' ');
     },
     validatorUrl(value) {
       return `${CSPR_LIVE_URL}validator/${value}`;
