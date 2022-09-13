@@ -6,6 +6,7 @@
     :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"
     :type="type"
+    :balance="balance"
     icon="mdi-file-document-edit"
     submit-title="Deploy"
     title="Send smart contract"
@@ -26,7 +27,12 @@
         {{ text }}
       </template>
     </v-file-input>
-    <Argument index="1" />
+    <Argument
+      index="1"
+      arg-name="test"
+      cl-type="list"
+      @value="argValue = $event"
+    />
     <Amount
       :balance="balance"
       :fee="Number(0)"
@@ -150,6 +156,7 @@ export default {
       loadingBalance: false,
       type: SmartContractResult.getName(),
       buffer: null,
+      argValue: null,
     };
   },
   computed: {

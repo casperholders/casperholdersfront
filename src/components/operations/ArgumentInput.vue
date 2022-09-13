@@ -7,39 +7,15 @@
   >
     <v-col
       cols="12"
-      md="2"
-    >
-      <v-autocomplete
-        :id="`${index}-type`"
-        v-model="type"
-        :items="types"
-        item-text="name"
-        item-value="type"
-        color="white"
-        label="Type"
-        required
-        @input="$emit('update', {type: $event})"
-      >
-        <template #prepend>
-          <v-icon>
-            mdi-weight
-          </v-icon>
-        </template>
-      </v-autocomplete>
-    </v-col>
-    <v-col
-      cols="12"
-      md="2"
     >
       <v-text-field
-        :id="`${index}-name`"
         v-model="name"
         hint="Name of the argument"
         type="string"
         color="white"
         label="Name"
         required
-        @input="$emit('update', {name: $event})"
+        :disabled="argName !== ''"
       >
         <template #prepend>
           <v-icon>
@@ -48,32 +24,14 @@
         </template>
       </v-text-field>
     </v-col>
-    <v-col
-      cols="12"
-      md="7"
-    >
-      <v-text-field
-        :id="`${index}-value`"
-        v-model="rawValue"
-        hint="Value of the argument"
-        type="string"
-        color="white"
-        label="Value"
-        :rules="weightRules"
-        required
-        :disabled="type === 'unit'"
-        @input="$emit('update', {value: $event})"
-      >
-        <template #prepend>
-          <v-icon>
-            mdi-weight
-          </v-icon>
-        </template>
-      </v-text-field>
+    <v-col cols="12">
+      <CLValueInput
+        :cl-type="clType"
+        @value="$emit('value', test($event))"
+      />
     </v-col>
     <v-col cols="1">
       <v-btn
-        :id="`${index}-delete`"
         class="rounded-xl"
         color="primary"
         fab
@@ -90,30 +48,21 @@
 </template>
 
 <script>
-import { Buffer } from 'buffer';
-import {
-  CLURef,
-  CLValueBuilder, decodeBase16,
-} from 'casper-js-sdk';
+import CLValueInput from '@/components/operations/CLValueInput';
+import buildCLValue from '@/helpers/genericCLValueBuilder';
 
 export default {
   name: 'ArgumentInput',
+  components: { CLValueInput },
   props: {
-    /**
-     type: {
-      required: true,
-      type: CLType,
-    },
-     name: {
-      required: true,
+    clType: {
+      required: false,
+      default: null,
       type: String,
     },
-     rawValue: {
-      required: true,
-      type: CLValue,
-    },* */
-    index: {
-      required: true,
+    argName: {
+      required: false,
+      default: '',
       type: String,
     },
   },
@@ -134,16 +83,13 @@ export default {
         { name: 'Key', type: 'key' },
         { name: 'URef', type: 'uref' },
         { name: 'List', type: 'list' },
-        { name: 'Tuple1', type: 'tuple1' },
-        { name: 'Tuple2', type: 'tuple2' },
-        { name: 'Tuple3', type: 'tuple3' },
+        { name: 'Tuple', type: 'tuple' },
         { name: 'Option', type: 'option' },
         { name: 'Map', type: 'map' },
         { name: 'PublicKey', type: 'publicKey' },
         { name: 'ByteArray', type: 'byteArray' },
       ],
-      type: null,
-      name: 'Arg',
+      type: this.clType,
       rawValue: '',
       /**
        * Rules for the Account Hash text field
@@ -160,7 +106,7 @@ export default {
         // eslint-disable-next-line new-cap
         () => {
           try {
-            const builtCLVValue = this.buildCLValue();
+            const builtCLVValue = buildCLValue(this.type, this.rawValue);
             console.log(builtCLVValue);
             return typeof builtCLVValue === 'string'
               ? builtCLVValue : builtCLVValue.isCLValue;
@@ -171,62 +117,33 @@ export default {
       ],
     };
   },
-  computed: {},
+  computed: {
+    name: {
+      get() {
+        return this.argName;
+      },
+      set(val) {
+        this.$emit('name', val);
+      },
+    },
+    isSimpleValue() {
+      return !['unit', 'option', 'tuple', 'list', 'map'].includes(this.type);
+    },
+  },
   watch: {
     type() {
       this.rawValue = '';
     },
+    rawValue() {
+      this.$emit('value', buildCLValue(this.type, this.rawValue));
+    },
   },
   methods: {
-    buildCLValue() {
-      console.log((!(this.rawValue === '0' || this.rawValue === 'false')));
-      let keyParameter = null;
-      switch (this.type) {
-        case 'bool':
-          return CLValueBuilder[this.type]((!(this.rawValue === '0' || this.rawValue === 'false')));
-        case 'u8':
-        case 'u32':
-        case 'i32':
-        case 'u64':
-        case 'i64':
-        case 'u128':
-        case 'u256':
-        case 'u512':
-        case 'unit':
-        case 'string':
-          return CLValueBuilder[this.type](this.rawValue);
-        case 'uref':
-          return CLURef.fromFormattedStr(this.rawValue);
-        case 'key':
-          if (this.rawValue.startsWith('uref-')) {
-            keyParameter = CLURef.fromFormattedStr(this.rawValue);
-          } else if (this.rawValue.startsWith('01') || this.rawValue.startsWith('02')) {
-            keyParameter = CLValueBuilder.publicKey(
-              decodeBase16(this.rawValue).subarray(1),
-              decodeBase16(this.rawValue)[0],
-            );
-          } else {
-            keyParameter = CLValueBuilder.byteArray(Buffer.from(this.rawValue));
-          }
-          return CLValueBuilder.key(keyParameter);
-        case 'list':
-        case 'tuple1':
-        case 'tuple2':
-        case 'tuple3':
-        case 'option':
-        case 'map':
-          return 'Not supported';
-        case 'publicKey':
-          return CLValueBuilder[this.type](
-            decodeBase16(this.rawValue).subarray(1),
-            decodeBase16(this.rawValue)[0],
-          );
-        case 'byteArray':
-          return CLValueBuilder[this.type](Buffer.from(this.rawValue));
-        default:
-          return 'Select a type';
-      }
-    },
+    test(v) {
+      console.log('ARG V');
+      console.log(v);
+      return v;
+    }
   },
 };
 </script>

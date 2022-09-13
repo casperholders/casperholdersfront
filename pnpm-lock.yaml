@@ -31,6 +31,7 @@ specifiers:
   rollup-plugin-polyfill-node: ^0.10.0
   sass: ~1.32.6
   toformat: ^2.0.0
+  ts-results: ^3.3.0
   unplugin-vue-components: ^0.21.1
   vite: ^2.9.13
   vite-compatible-readable-stream: ^3.6.1
@@ -67,9 +68,10 @@ dependencies:
   parse-duration: 1.0.2
   qrcode.vue: 1.7.0_vue@2.7.3
   toformat: 2.0.0
+  ts-results: 3.3.0
   vue: 2.7.3
   vue-json-pretty: 1.8.3
-  vue-router: 3.5.4
+  vue-router: 3.5.4_vue@2.7.3
   vuetify: 2.6.7_vue@2.7.3
   vuex: 3.6.2_vue@2.7.3
   workbox-core: 6.5.3
@@ -7086,8 +7088,12 @@ packages:
     engines: {node: '>= 10.0.0', npm: '>= 5.0.0'}
     dev: false
 
-  /vue-router/3.5.4:
+  /vue-router/3.5.4_vue@2.7.3:
     resolution: {integrity: sha512-x+/DLAJZv2mcQ7glH2oV9ze8uPwcI+H+GgTgTmb5I55bCgY3+vXWIsqbYUzbBSZnwFHEJku4eoaH/x98veyymQ==}
+    peerDependencies:
+      vue: ^2
+    dependencies:
+      vue: 2.7.3
     dev: false
 
   /vue-template-babel-compiler/1.2.0_appvqikbbk2al7kujhrakyrcai:
