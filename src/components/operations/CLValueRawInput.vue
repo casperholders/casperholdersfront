@@ -1,7 +1,6 @@
 <template>
   <v-text-field
     v-model="rawValue"
-    hint="Value of the argument"
     type="string"
     color="white"
     label="Value"

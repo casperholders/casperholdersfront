@@ -1,191 +1,83 @@
 <template>
-  <v-row
-    align="center"
-    justify="center"
-  >
-    <v-col
-      v-if="!hideType"
-      cols="12"
-    >
-      <CLTypeInput
-        :cl-type="clType"
-        @cltype="type = $event"
-      />
-    </v-col>
-    <v-col
-      v-if="isSimpleValue"
-      cols="12"
-    >
-      <CLValueRawInput
-        :cl-type="type ? type : clType"
-        @value="$emit('value', $event)"
-      />
-    </v-col>
+  <div>
     <v-row
-      v-if="type === 'list'"
       align="center"
       justify="center"
-      class="rounded mb-7 mx-1"
-      style="border: thin solid rgba(255, 255, 255, 0.12); width: 100%"
     >
-      <v-col cols="12">
+      <v-col
+        v-if="!hideType"
+        cols="12"
+      >
         <CLTypeInput
-          :cl-type="listType"
-          @cltype="listValues = []; listValuesType = $event;"
+          :cl-type="clType"
+          :type-prefix="typePrefix"
+          @cltype="type = $event"
         />
       </v-col>
       <v-col
-        v-for="index in listValues.length"
-        :key="index"
+        v-if="isSimpleValue"
         cols="12"
       >
-        <v-row>
-          <v-col cols="11">
-            <CLValueInput
-              :cl-type="listValuesType"
-              :hide-type="true"
-              @value="listValues[index-1] = $event; $emit('value', build(listValues))"
-            />
-          </v-col>
-          <v-col cols="1">
-            <v-btn
-              class="rounded-xl"
-              color="primary"
-              fab
-              dark
-              small
-              @click="listValues.splice((index - 1), 1);"
-            >
-              <v-icon>
-                mdi-minus
-              </v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
+        <CLValueRawInput
+          :cl-type="type ? type : clType"
+          @value="$emit('value', $event)"
+        />
       </v-col>
-      <template v-if="isList">
-        <v-col cols="1">
-          <v-btn
-            class="rounded-xl"
-            color="primary"
-            fab
-            dark
-            small
-            @click="listValues.push('')"
-          >
-            <v-icon>
-              mdi-plus
-            </v-icon>
-          </v-btn>
-        </v-col>
-      </template>
     </v-row>
-    <v-row
+    <CLValueListInput
+      v-if="type === 'list'"
+      @value="$emit('value', build($event))"
+    />
+    <CLValueTupleInput
       v-if="type === 'tuple'"
-      align="center"
-      justify="center"
-      class="rounded mb-7 mx-1"
-      style="border: thin solid rgba(255, 255, 255, 0.12); width: 100%"
-    >
-      <v-col
-        v-for="index in tupleValues.length"
-        :key="index"
-        cols="12"
-      >
-        <v-row>
-          <v-col cols="11">
-            <CLValueInput
-              @value="tupleValues[index-1] = $event; $emit('value', build(tupleValues))"
-            />
-          </v-col>
-          <v-col cols="1">
-            <v-btn
-              class="rounded-xl"
-              color="primary"
-              fab
-              dark
-              small
-              :disabled="tupleValues.length === 1"
-              @click="removeTuple(index - 1)"
-            >
-              <v-icon>
-                mdi-minus
-              </v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-col>
-      <v-col cols="1">
-        <v-btn
-          class="rounded-xl"
-          color="primary"
-          fab
-          dark
-          small
-          :disabled="tupleValues.length === 3"
-          @click="addTupleValue()"
-        >
-          <v-icon>
-            mdi-plus
-          </v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
-    <v-row
+      @value="$emit('value', build($event))"
+    />
+    <CLValueOptionInput
       v-if="type === 'option'"
-      align="center"
-      justify="center"
-      class="rounded mb-7 mx-1"
-      style="border: thin solid rgba(255, 255, 255, 0.12); width: 100%"
-    >
-      <v-col
-        cols="12"
-      >
-        <v-row>
-          <v-col cols="2">
-            <CLTypeInput
-              @cltype="optionType = $event;"
-            />
-          </v-col>
-          <v-col cols="2">
-            <v-checkbox
-              v-model="isNone"
-              color="white"
-              label="Is none ?"
-              @click="isNone ? $emit('value', build(null)) : false"
-            />
-          </v-col>
-          <v-col
-            v-if="!isNone"
-            cols="8"
-          >
-            <CLValueInput
-              :cl-type="optionType"
-              :hide-type="true"
-              :disabled="true"
-              @value="$emit('value', build($event))"
-            />
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-  </v-row>
+      :cl-type="optionType"
+      @value="$emit('value', build($event))"
+      @none="$emit('value', build($event, true))"
+    />
+    <CLValueMapInput
+      v-if="type === 'map'"
+      @value="$emit('value', build($event))"
+    />
+  </div>
 </template>
 
 <script>
 import CLTypeInput from '@/components/operations/CLTypeInput';
+import CLValueListInput from '@/components/operations/CLValueListInput';
+import CLValueMapInput from '@/components/operations/CLValueMapInput';
+import CLValueOptionInput from '@/components/operations/CLValueOptionInput';
 import CLValueRawInput from '@/components/operations/CLValueRawInput';
+import CLValueTupleInput from '@/components/operations/CLValueTupleInput';
 import buildCLValue from '@/helpers/genericCLValueBuilder';
-import { CLBool, CLOption, CLString, CLValueBuilder } from 'casper-js-sdk';
-import { Some } from 'ts-results';
 
 export default {
   name: 'CLValueInput',
-  components: { CLValueRawInput, CLTypeInput },
+  components: {
+    CLValueMapInput,
+    CLValueOptionInput,
+    CLValueTupleInput,
+    CLValueListInput,
+    CLValueRawInput,
+    CLTypeInput,
+  },
   props: {
     clType: {
       required: false,
       default: null,
+      type: String,
+    },
+    innerOptionType: {
+      required: false,
+      default: null,
+      type: String,
+    },
+    typePrefix: {
+      required: false,
+      default: '',
       type: String,
     },
     hideType: {
@@ -219,65 +111,31 @@ export default {
       ],
       type: this.clType,
       listType: null,
-      listValuesType: null,
-      listValues: [],
-      tupleValues: [''],
-      optionType: null,
-      isNone: false,
+      optionType: this.innerOptionType,
     };
   },
   computed: {
     isSimpleValue() {
       return !['unit', 'option', 'tuple', 'list', 'map'].includes(this.type);
     },
-    isList() {
-      return this.type === 'list';
-    },
   },
   watch: {
     type() {
       this.rawValue = '';
     },
+    clType() {
+      this.type = this.clType;
+    },
+    innerOptionType() {
+      this.optionType = this.innerOptionType;
+    },
   },
   methods: {
-    build(value) {
-      console.log('BUILD');
-      console.log(this.type);
-      const boolOpt = new CLOption(Some(new CLBool(false)));
-      const stringOpt = new CLOption(Some(new CLString('test')));
-      const listBoolOpt = CLValueBuilder.list([boolOpt]);
-      const listStringOpt = CLValueBuilder.list([stringOpt]);
-      console.log(listBoolOpt);
-      console.log(listStringOpt);
-      try {
-        const listBoolStringOpt = CLValueBuilder.list([boolOpt, stringOpt]);
-        console.log(listBoolStringOpt);
-      } catch (e) {
-        console.log('Failed to create Option multi type list');
-        console.log(e);
-      }
-      if (Array.isArray(value)) {
-        const refType = value[0].clType();
-        value.every((i) => {
-          console.log(i.clType().toString());
-          console.log(i.clType().toString() === refType.toString());
-          return i.clType().toString() === refType.toString();
-        });
-      }
-      if (value === null && this.isNone && this.clType === 'option') {
-        return buildCLValue(this.type, value, this.optionType);
+    build(value, none = false) {
+      if (none) {
+        return buildCLValue(this.type, null, value);
       }
       return buildCLValue(this.type, value);
-    },
-    addTupleValue() {
-      if (this.tupleValues.length < 3) {
-        this.tupleValues.push('');
-      }
-    },
-    removeTuple(index) {
-      if (this.tupleValues.length > 1) {
-        this.tupleValues.splice(index, 1);
-      }
     },
   },
 };

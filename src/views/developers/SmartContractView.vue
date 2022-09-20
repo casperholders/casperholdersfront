@@ -30,7 +30,6 @@
     <Argument
       index="1"
       arg-name="test"
-      cl-type="list"
       @value="argValue = $event"
     />
     <Amount

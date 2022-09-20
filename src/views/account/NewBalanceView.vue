@@ -107,6 +107,7 @@
       >
         <v-card
           v-if="getERC20.length === 0"
+          style="height: 147px"
           class="validator-cards text-center"
           color="primary"
         >
@@ -127,34 +128,6 @@
           </div>
         </v-card>
         <!-- TODO ERC20 Balance from ERC20 Hashes in the localstorage -->
-        <balance-amount-card
-          v-for="(validator, index) in validators"
-          :key="`validators-${index}`"
-          class="validator-cards"
-          :amount="validator.amount"
-          :logo="validator.logo"
-          :title="validator.name"
-          :cspr-live-path-url="'validator/'+validator.publicKey"
-        >
-          <template #actions>
-            <v-card-actions>
-              <v-btn
-                class="rounded-xl flex-grow-1 flex-shrink-1 "
-                color="secondary"
-                :to="'/stake/'+validator.publicKey"
-              >
-                Transfer
-              </v-btn>
-              <v-btn
-                class="rounded-xl flex-grow-1 flex-shrink-1 "
-                color="secondary"
-                disabled
-              >
-                Swap
-              </v-btn>
-            </v-card-actions>
-          </template>
-        </balance-amount-card>
       </card-horizontal-list>
     </template>
     <v-divider />

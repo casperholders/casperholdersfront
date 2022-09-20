@@ -5,7 +5,7 @@
     item-text="name"
     item-value="type"
     color="white"
-    label="Type"
+    :label="typePrefix+'Type'"
     required
     :disabled="clType !== null"
   >
@@ -24,6 +24,11 @@ export default {
     clType: {
       required: false,
       default: null,
+      type: String,
+    },
+    typePrefix: {
+      required: false,
+      default: '',
       type: String,
     },
   },
