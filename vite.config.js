@@ -5,7 +5,7 @@ import nodePolyfills from 'rollup-plugin-polyfill-node';
 import { VuetifyResolver } from 'unplugin-vue-components/resolvers';
 import createComponentsPlugin from 'unplugin-vue-components/vite';
 import { defineConfig } from 'vite';
-import mkcert from 'vite-plugin-mkcert'
+import mkcert from 'vite-plugin-mkcert';
 import { VitePWA } from 'vite-plugin-pwa';
 import { createVuePlugin as vue } from 'vite-plugin-vue2';
 
@@ -15,7 +15,7 @@ export default defineConfig({
     global: 'globalThis',
   },
   server: {
-    https: false
+    https: false,
   },
   open: true,
   port: 3001,
@@ -41,28 +41,28 @@ export default defineConfig({
           {
             src: 'img/icons/pwa-192x192.png',
             sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: 'img/icons/pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
           },
           {
             src: 'img/icons/pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable'
-          }
-        ]
-      }
+          },
+          {
+            src: 'img/icons/pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable',
+          },
+        ],
+      },
     }),
     mkcert(),
   ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      "readable-stream": "vite-compatible-readable-stream"
+      'readable-stream': 'vite-compatible-readable-stream',
     },
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
   },

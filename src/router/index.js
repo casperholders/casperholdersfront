@@ -42,22 +42,12 @@ const routes = [
     component: () => import('@/views/account/AccountInfoView'),
   },
   {
-    path: '/stake',
+    path: '/stake/:validator?',
     name: 'Stake',
     component: () => import('@/views/staking/DelegateView'),
   },
   {
-    path: '/unstake',
-    name: 'Unstake',
-    component: () => import('@/views/staking/UndelegateView'),
-  },
-  {
-    path: '/stake/:validator',
-    name: 'Stake',
-    component: () => import('@/views/staking/DelegateView'),
-  },
-  {
-    path: '/unstake/:validator',
+    path: '/unstake/:validator?',
     name: 'Unstake',
     component: () => import('@/views/staking/UndelegateView'),
   },
