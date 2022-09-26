@@ -93,7 +93,7 @@
 import balanceService from '@/helpers/balanceService';
 import clientCasper from '@/helpers/clientCasper';
 import { API } from '@/helpers/env';
-import { NoActiveKeyError, CurrencyUtils, NoStakeBalanceError } from '@casperholders/core';
+import { CurrencyUtils, NoActiveKeyError, NoStakeBalanceError } from '@casperholders/core';
 import Big from 'big.js';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapState } from 'vuex';
@@ -172,19 +172,23 @@ export default {
   },
   watch: {
     'signer.activeKey': 'getValidators',
+    initialValidator: 'onInitialValidator',
   },
   async mounted() {
     await this.getValidators();
-    if (this.initialValidator) {
-      this.validator = this.validators.find((item) => {
-        if (item.publicKey === this.initialValidator && !item.disabled) {
-          return item;
-        }
-        return undefined;
-      });
-    }
+
+    this.onInitialValidator(this.initialValidator);
   },
   methods: {
+    onInitialValidator(validatorId) {
+      this.validator = validatorId
+        ? this.validators.find((validator) => (
+          validator.publicKey === this.initialValidator && !validator.disabled
+            ? validator
+            : undefined
+        ))
+        : undefined;
+    },
     // eslint-disable-next-line no-unused-vars
     filterObject(item, queryText, itemText) {
       if (item.name || item.publicKey) {

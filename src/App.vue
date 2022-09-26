@@ -51,7 +51,8 @@
         </p>
         <p class="mb-0 text-center text-caption">
           Hosted by OVH - 2 rue Kellermann - 59100 Roubaix - France - 1077 (+33 9
-          72 10 10 07) - Powered by CoinGecko - <router-link to="/privacy">
+          72 10 10 07) - Powered by CoinGecko -
+          <router-link to="/privacy">
             Privacy
           </router-link>
         </p>
@@ -121,7 +122,13 @@ export default {
           },
         ],
         Staking: [
-          { title: 'Stake', icon: 'mdi-safe', route: 'stake', disabled: false, subtitle: null },
+          {
+            title: 'Stake',
+            icon: 'mdi-safe',
+            route: '/stake',
+            disabled: false,
+            subtitle: null,
+          },
           {
             title: 'Unstake',
             icon: 'mdi-lock-open',
@@ -157,7 +164,13 @@ export default {
         ],
         Others: [
           { title: 'FAQ', icon: 'mdi-help', route: '/faq', disabled: false, subtitle: null },
-          { title: 'Contact', icon: 'mdi-mail', route: '/contact', disabled: false, subtitle: null },
+          {
+            title: 'Contact',
+            icon: 'mdi-mail',
+            route: '/contact',
+            disabled: false,
+            subtitle: null,
+          },
         ],
       };
     },
@@ -196,6 +209,7 @@ export default {
     font-family: "Roboto", Helvetica, Arial, sans-serif;
 
     background-color: #00126b;
+
     &::before {
       content: " ";
       position: fixed;
@@ -205,7 +219,7 @@ export default {
       left: 0;
       background-color: #00126b;
       background-image: url("@/assets/images/background.svg");
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.2));
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.2));
       background-size: cover;
       will-change: transform;
     }
