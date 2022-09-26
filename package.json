@@ -54,6 +54,7 @@
     "sass": "~1.32.6",
     "unplugin-vue-components": "^0.21.1",
     "vite": "^2.9.13",
+    "vite-compatible-readable-stream": "^3.6.1",
     "vite-plugin-istanbul": "^2.8.0",
     "vite-plugin-mkcert": "^1.7.2",
     "vite-plugin-pwa": "^0.12.2",

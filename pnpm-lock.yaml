@@ -33,6 +33,7 @@ specifiers:
   toformat: ^2.0.0
   unplugin-vue-components: ^0.21.1
   vite: ^2.9.13
+  vite-compatible-readable-stream: ^3.6.1
   vite-plugin-istanbul: ^2.8.0
   vite-plugin-mkcert: ^1.7.2
   vite-plugin-pwa: ^0.12.2
@@ -91,6 +92,7 @@ devDependencies:
   sass: 1.32.13
   unplugin-vue-components: 0.21.1_vite@2.9.13+vue@2.7.3
   vite: 2.9.13_sass@1.32.13
+  vite-compatible-readable-stream: 3.6.1
   vite-plugin-istanbul: 2.8.0
   vite-plugin-mkcert: 1.7.2_sass@1.32.13
   vite-plugin-pwa: 0.12.2_vite@2.9.13
@@ -6601,7 +6603,6 @@ packages:
     resolution: {integrity: sha512-hkRX8U1WjJFd8LsDJ2yQ/wWWxaopEsABU1XfkM8A+j0+85JAGppt16cr1Whg6KIbb4okU6Mql6BOj+uup/wKeA==}
     dependencies:
       safe-buffer: 5.2.1
-    dev: false
 
   /stringify-object/3.3.0:
     resolution: {integrity: sha512-rHqiFh1elqCQ9WPLIC8I0Q/g/wj5J1eMkyoiD6eoQApWHP0FtlK7rqnhmabL5VUY9JQCcqwwvlOaSuutekgyrw==}
@@ -7016,6 +7017,15 @@ packages:
       assert-plus: 1.0.0
       core-util-is: 1.0.2
       extsprintf: 1.4.1
+    dev: true
+
+  /vite-compatible-readable-stream/3.6.1:
+    resolution: {integrity: sha512-t20zYkrSf868+j/p31cRIGN28Phrjm3nRSLR2fyc2tiWi4cZGVdv68yNlwnIINTkMTmPoMiSlc0OadaO7DXZaQ==}
+    engines: {node: '>= 6'}
+    dependencies:
+      inherits: 2.0.4
+      string_decoder: 1.3.0
+      util-deprecate: 1.0.2
     dev: true
 
   /vite-plugin-istanbul/2.8.0:
