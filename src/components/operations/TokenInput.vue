@@ -10,6 +10,7 @@
     label="Token"
     color="white"
     item-value="id"
+    return-object
     filled
     chips
     v-bind="$attrs"
@@ -47,19 +48,26 @@
         </v-list-item-subtitle>
       </v-list-item-content>
     </template>
+    <template #no-data>
+      <v-list-item>
+        <v-list-item-content class="text-body-2">
+          <v-list-item-title v-if="loading">
+            Loading tokens...
+          </v-list-item-title>
+          <v-list-item-title v-else>
+            No matching token no data.
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </template>
     <template
-      v-if="search && !loading"
+      v-if="search && !loading && tokensSize"
       #prepend-item
     >
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title class="text-body-2">
-            <template v-if="tokensSize">
-              Displaying {{ tokensSize }} tokens of {{ tokensTotalSize }} matching.
-            </template>
-            <template v-else>
-              No matching token.
-            </template>
+            Displaying {{ tokensSize }} tokens of {{ tokensTotalSize }} matching.
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
@@ -82,11 +90,32 @@ export default {
   inheritAttrs: false,
   props: {
     /**
+     * The token ID to fetch and select automatically.
+     */
+    initialToken: {
+      type: String,
+      default: undefined,
+    },
+    /**
      * The token (smart contract) hash to use, defaults to native CSPR.
      */
     value: {
-      type: [String, Object],
+      type: Object,
       default: undefined,
+    },
+    /**
+     * Filter displayed tokens by group ID.
+     */
+    onlyGroups: {
+      type: Array,
+      default: () => [],
+    },
+    /**
+     * Tells the input to not default to native token when empty.
+     */
+    noDefault: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -102,11 +131,11 @@ export default {
       /**
        * Internal value for the component state (ID of a token, always defaults to native CSPR).
        */
-      lazyValue: this.value || nativeToken,
+      lazyValue: this.tokenOrDefault(this.value),
       /**
        * The available tokens to select.
        */
-      tokens: [nativeToken, { header: 'Fetching other tokens...' }],
+      tokens: [],
       /**
        * The size of displayed tokens from search.
        */
@@ -132,12 +161,15 @@ export default {
     },
   },
   watch: {
+    initialToken: 'onInitialToken',
     search: 'onSearch',
     lazyValue: 'onLazyValue',
     value: 'onValue',
   },
   mounted() {
     this.debouncedFetchTokens();
+
+    this.onInitialToken(this.initialToken);
   },
   methods: {
     /**
@@ -150,6 +182,16 @@ export default {
       return true;
     },
     /**
+     * Tells if the given group should be listed.
+     *
+     * @param {string} groupId
+     *
+     * @returns {boolean}
+     */
+    shouldDisplayGroup(groupId) {
+      return this.onlyGroups.length === 0 || this.onlyGroups.indexOf(groupId) !== -1;
+    },
+    /**
      * Fetch the tokens and add them to the select inside groups.
      *
      * @returns {Promise<void>}
@@ -157,31 +199,72 @@ export default {
     async fetchTokens() {
       this.loading = true;
 
-      try {
-        const { data, contentRange } = await fetchTokens({ search: this.search });
+      this.tokens = [];
 
-        this.tokens = [nativeToken];
-        if (this.lazyValue && !this.isNativeToken) {
+      if (this.shouldDisplayGroup(nativeToken.groupId)) {
+        this.tokens.push(nativeToken);
+      }
+
+      try {
+        const { data, contentRange } = await fetchTokens({
+          search: this.search, limit: '10',
+        });
+
+        if (this.lazyValue
+          && !this.isNativeToken
+          && this.shouldDisplayGroup(this.lazyValue.groupId)
+        ) {
           this.tokens.push(this.lazyValue);
         }
 
         Object.values(tokensGroups).forEach((group) => {
-          const groupTokens = data.filter(({ groupId }) => groupId === group.id);
-          if (groupTokens.length) {
-            this.tokens.push(
-              { divider: true },
-              { header: group.name },
-              ...groupTokens,
-            );
+          if (this.shouldDisplayGroup(group.id)) {
+            const groupTokens = data.filter(({ groupId }) => groupId === group.id);
+            if (groupTokens.length) {
+              this.tokens.push(
+                ...(
+                  this.tokens.length ? [{ divider: true }, { header: group.name }] : []
+                ),
+                ...groupTokens,
+              );
+            }
           }
         });
 
         this.tokensTotalSize = contentRange.size;
         this.tokensSize = data.length;
       } catch (error) {
-        this.tokens = [nativeToken, { header: `Fetching tokens failed: ${error.message}` }];
+        this.tokens.push({ header: `Fetching tokens failed: ${error.message}` });
       } finally {
         this.loading = false;
+      }
+    },
+    /**
+     * Get the token if defined or no default to native.
+     *
+     * @param {object|undefined} token
+     *
+     * @returns {object}
+     */
+    tokenOrDefault(token) {
+      return token || this.noDefault
+        ? token
+        : nativeToken;
+    },
+    /**
+     * Select the token when it changes.
+     *
+     * @param {string} tokenId
+     *
+     * @returns Promise<void>
+     */
+    async onInitialToken(tokenId) {
+      if (tokenId) {
+        const { data } = await fetchTokens({ ids: [tokenId], limit: 1 });
+
+        this.lazyValue = this.tokenOrDefault(data[0]);
+      } else {
+        this.lazyValue = this.tokenOrDefault(undefined);
       }
     },
     /**
@@ -198,7 +281,7 @@ export default {
      * @param {object} lazyValue
      */
     onLazyValue(lazyValue) {
-      this.$emit('input', lazyValue || nativeToken);
+      this.$emit('input', this.tokenOrDefault(lazyValue));
     },
     /**
      * Update the internal value when the value is changed by parent component.
@@ -206,7 +289,7 @@ export default {
      * @param {object} value
      */
     onValue(value) {
-      this.lazyValue = value || nativeToken;
+      this.lazyValue = this.tokenOrDefault(value);
     },
   },
 };

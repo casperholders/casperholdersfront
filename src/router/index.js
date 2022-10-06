@@ -32,7 +32,7 @@ const routes = [
     component: () => import('@/views/multisig/MultiSigView'),
   },
   {
-    path: '/transfer',
+    path: '/transfer/:token?',
     name: 'Transfer',
     component: () => import('@/views/account/TransferView'),
   },

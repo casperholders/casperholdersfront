@@ -1,8 +1,11 @@
 <template>
-  <div class="text-overline px-6 py-4">
-    <v-icon v-text="icon" />
+  <div class="d-flex align-center text-overline px-6 py-4">
+    <v-icon
+      left
+      v-text="icon"
+    />
     {{ title }}
-    <slot name="action"/>
+    <slot name="action" />
   </div>
 </template>
 

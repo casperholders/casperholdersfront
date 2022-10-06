@@ -67,12 +67,17 @@ export default async (options = {}) => {
 
   // Currently, we only retrieve the ERC20 tokens.
   query.set('type', 'eq.erc20');
-  query.set('limit', '10');
+
+  if (options.limit) {
+    query.set('limit', options.limit);
+  }
 
   if (options.search) {
-    query.set('or', `(${[
-      `hash.ilike.*${options.search}*`,
-    ].join(',')})`);
+    query.set('hash', `ilike.*${options.search}*`);
+  }
+
+  if (options.ids) {
+    query.set('hash', `in.(${options.ids.map((id) => `"${id}"`).join(',')})`);
   }
 
   const response = await fetch(`${DATA_API}/contracts?${query.toString()}`, {

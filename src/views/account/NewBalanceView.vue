@@ -19,7 +19,7 @@
       title="Balance"
     />
     <v-card-text v-if="errored">
-      <not-connected-alert id="balance-not-connected"/>
+      <not-connected-alert id="balance-not-connected" />
     </v-card-text>
     <template v-else>
       <div class="d-flex px-4 pb-2 flex-wrap">
@@ -87,48 +87,7 @@
         </balance-amount-card>
       </card-horizontal-list>
       <v-divider />
-      <card-section-title
-        icon="mdi-chart-arc"
-        title="ERC 20"
-        class="d-flex"
-      >
-        <template #action>
-          <v-spacer />
-          <v-btn icon>
-            <v-icon>
-              mdi-plus
-            </v-icon>
-          </v-btn>
-        </template>
-      </card-section-title>
-      <card-horizontal-list
-        v-if="validators.length > 0"
-        class="px-6 pb-4"
-      >
-        <v-card
-          v-if="getERC20.length === 0"
-          style="height: 147px"
-          class="validator-cards text-center"
-          color="primary"
-        >
-          <div class="fill-height pa-2 d-flex flex-column">
-            <v-spacer />
-            <div>
-              <v-btn
-                color="secondary"
-                class="rounded-xl"
-              >
-                <v-icon left>
-                  mdi-plus
-                </v-icon>
-                Add ERC20 token
-              </v-btn>
-            </div>
-            <v-spacer />
-          </div>
-        </v-card>
-        <!-- TODO ERC20 Balance from ERC20 Hashes in the localstorage -->
-      </card-horizontal-list>
+      <erc20-tokens-balance />
     </template>
     <v-divider />
     <reward-calculator-panel
@@ -187,6 +146,7 @@ import BalanceAmountCard from '@/components/account/BalanceAmountCard';
 import CardHorizontalList from '@/components/account/CardHorizontalList';
 import CardQuickLink from '@/components/account/CardQuickLink';
 import CardSectionTitle from '@/components/account/CardSectionTitle';
+import Erc20TokensBalance from '@/components/account/erc20/Erc20TokensBalance';
 import NotConnectedAlert from '@/components/account/NotConnectedAlert';
 import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
 import OperationsTable from '@/components/operations/OperationsTable';
@@ -204,6 +164,7 @@ import { mapState } from 'vuex';
 export default {
   name: 'BalanceView',
   components: {
+    Erc20TokensBalance,
     NotConnectedAlert,
     BalanceAmountCard,
     CardHorizontalList,
@@ -341,7 +302,7 @@ export default {
           totalValidatorsFees += validator.delegation_rate;
           validatorsFees.push(validator.delegation_rate);
         });
-        this.validators.sort((a, b) => Big(b.amount) - Big(a.amount));
+        this.validators.sort((a, b) => Big(b.amount).cmp(Big(a.amount)));
 
         this.mergedValidator = {
           delegation_rate: (totalValidatorsFees / validatorsFees.length) > 0
@@ -375,7 +336,8 @@ export default {
   lang="scss"
   scoped
 >
-  .validator-cards {
+  ::v-deep .validator-cards {
+    min-height: 150px;
     min-width: 250px;
     width: 250px;
   }

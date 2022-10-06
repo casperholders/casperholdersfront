@@ -14,7 +14,7 @@
   >
     <token-input
       v-model="token"
-      return-object
+      :initial-token="$route.params.token"
     />
     <v-text-field
       id="address"
