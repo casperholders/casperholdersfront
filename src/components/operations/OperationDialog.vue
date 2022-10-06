@@ -158,8 +158,8 @@ export default {
      * Applicable fee for operation.
      */
     amount: {
-      required: true,
       type: [String, Number, Object],
+      default: undefined,
     },
     /**
      * Prepends confirmation values.
