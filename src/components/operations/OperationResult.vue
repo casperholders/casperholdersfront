@@ -159,8 +159,8 @@
                     <v-col class="text-left">
                       Amount
                     </v-col>
-                    <v-col class="text-right cspr">
-                      {{ deployResult.amount }} CSPR
+                    <v-col class="text-right">
+                      <token-amount :amount="displayedDeployAmount" />
                     </v-col>
                   </v-row>
                   <v-row>
@@ -168,7 +168,7 @@
                       Cost
                     </v-col>
                     <v-col class="text-right cspr">
-                      {{ deployResult.cost }} CSPR
+                      <token-amount :amount="displayedDeployCost" />
                     </v-col>
                   </v-row>
                 </div>
@@ -227,8 +227,11 @@
 </template>
 
 <script>
+import TokenAmount from '@/components/account/TokenAmount';
 import deployManager from '@/helpers/deployManager';
 import { CSPR_LIVE_URL } from '@/helpers/env';
+import computeFormattedTokenValue from '@/services/tokens/computeFormattedTokenValue';
+import nativeToken from '@/services/tokens/nativeToken';
 import { DeployResult } from '@casperholders/core';
 import { mapGetters } from 'vuex';
 
@@ -237,6 +240,7 @@ import { mapGetters } from 'vuex';
  */
 export default {
   name: 'OperationResult',
+  components: { TokenAmount },
   props: {
     /**
      * DeployHash of a deployment
@@ -245,6 +249,13 @@ export default {
       required: true,
       type: String,
       default: '',
+    },
+    /**
+     * Currently used token.
+     */
+    token: {
+      type: Object,
+      default: () => nativeToken,
     },
   },
   data() {
@@ -260,6 +271,12 @@ export default {
   },
   computed: {
     ...mapGetters(['getOperation']),
+    displayedDeployAmount() {
+      return computeFormattedTokenValue(this.deployResult.amount, this.token);
+    },
+    displayedDeployCost() {
+      return computeFormattedTokenValue(this.deployResult.cost, nativeToken);
+    },
   },
   /**
    * When the component is created we retrieve the corresponding DeployResult

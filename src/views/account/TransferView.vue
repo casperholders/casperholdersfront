@@ -2,7 +2,7 @@
   <operation-card
     :loading-sign-and-deploy="loadingSignAndDeploy"
     :send-deploy="sendDeploy"
-    :type="type"
+    :type="operationType"
     :balance="balance"
     :token-balance="tokenBalance"
     :token="token"
@@ -14,6 +14,7 @@
   >
     <token-input
       v-model="token"
+      data-cy="token-input"
       :initial-token="$route.params.token"
     />
     <v-text-field
@@ -114,7 +115,7 @@ import exchanges from '@/helpers/exchanges';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import findTokenGroup from '@/services/tokens/findTokenGroup';
 import nativeToken from '@/services/tokens/nativeToken';
-import { InsufficientFunds, NoActiveKeyError, TransferResult } from '@casperholders/core';
+import { InsufficientFunds, NoActiveKeyError } from '@casperholders/core';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 
@@ -158,7 +159,6 @@ export default {
       loadingSignAndDeploy: false,
       errorDeploy: null,
       loadingBalance: false,
-      type: TransferResult.getName(),
     };
   },
   computed: {
@@ -201,6 +201,9 @@ export default {
     },
     tokenGroup() {
       return findTokenGroup(this.token.groupId);
+    },
+    operationType() {
+      return this.tokenGroup.features.transfer.transferResult.getName();
     },
     tokenMinimumAmount() {
       return this.tokenGroup.features.transfer.minimumAmount(this.token);
@@ -268,13 +271,6 @@ export default {
      * Update the store with a deploy result containing the deployhash of the deploy sent
      */
     async sendDeploy() {
-      console.log({
-        token: this.token,
-        activeKey: this.activeKey,
-        amount: this.amount,
-        address: this.address,
-        transferID: this.transferID,
-      });
       const deployParameter = this.tokenGroup.features.transfer.makeDeployParameters({
         token: this.token,
         activeKey: this.activeKey,
