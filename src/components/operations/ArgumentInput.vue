@@ -50,7 +50,6 @@
 
 <script>
 import CLValueInput from '@/components/operations/CLValueInput';
-import buildCLValue from '@/helpers/genericCLValueBuilder';
 
 export default {
   name: 'ArgumentInput',

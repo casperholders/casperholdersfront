@@ -28,6 +28,7 @@
       </template>
     </v-file-input>
     <Argument
+      v-if="false"
       index="1"
       arg-name="test"
       @value="argValue = $event"

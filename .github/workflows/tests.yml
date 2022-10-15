@@ -58,7 +58,7 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: tests/e2e/screenshots
+          path: cypress/screenshots
       - uses: codecov/codecov-action@v2
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master

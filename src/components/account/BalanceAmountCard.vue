@@ -52,7 +52,7 @@
         </span>
       </div>
     </v-card-text>
-    <slot name="actions"/>
+    <slot name="actions" />
   </v-card>
 </template>
 
