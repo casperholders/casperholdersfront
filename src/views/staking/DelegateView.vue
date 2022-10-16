@@ -72,7 +72,7 @@
 
 <script>
 import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
-import AmountInput from '@/components/operations/Amountinput';
+import AmountInput from '@/components/operations/AmountInput';
 import OperationCard from '@/components/operations/OperationCard';
 import OperationSummary from '@/components/operations/OperationSummary';
 import ValidatorInput from '@/components/operations/ValidatorInput';

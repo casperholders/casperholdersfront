@@ -177,7 +177,7 @@
 </template>
 
 <script>
-import Amount from '@/components/operations/Amountinput';
+import Amount from '@/components/operations/AmountInput';
 import Argument from '@/components/operations/ArgumentInput';
 import Operation from '@/components/operations/OperationCard';
 import ManageStepper from '@/components/smartcontract/ManageStepper';

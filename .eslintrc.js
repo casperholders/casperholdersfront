@@ -19,5 +19,9 @@ module.exports = {
     'class-methods-use-this': ['off'],
     'object-curly-newline': ['off'],
     'no-plusplus': ['off'],
+    'vue/match-component-file-name': ['error', {
+      extensions: ['vue'],
+      shouldMatchCase: true,
+    }],
   },
 };

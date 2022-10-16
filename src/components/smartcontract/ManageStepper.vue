@@ -11,7 +11,7 @@
         Select contract
       </v-stepper-step>
 
-      <v-divider></v-divider>
+      <v-divider />
 
       <v-stepper-step
         :complete="e1 > 2"
@@ -20,7 +20,7 @@
         Select entrypoint
       </v-stepper-step>
 
-      <v-divider></v-divider>
+      <v-divider />
 
       <v-stepper-step step="3">
         Send deploy
