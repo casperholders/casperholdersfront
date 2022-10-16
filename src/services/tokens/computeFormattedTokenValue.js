@@ -13,8 +13,8 @@ export default function computeFormattedTokenValue(value, token) {
   const data = computeTokenValue(value);
   if (data.isAmount) {
     const valueWithUnit = token
-      ? `${data.value} ${token.shortName}`
-      : `${data.value} ${nativeToken.shortName}`;
+      ? `${data.value}\xa0${token.shortName}`
+      : `${data.value}\xa0${nativeToken.shortName}`;
 
     return {
       value: valueWithUnit, isAmount: data.isAmount,
