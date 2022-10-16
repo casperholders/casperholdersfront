@@ -19,7 +19,7 @@ const routes = [
   {
     path: '/balance',
     name: 'Balance',
-    component: () => import('@/views/account/NewBalanceView'),
+    component: () => import('@/views/account/BalanceView'),
   },
   {
     path: '/security',

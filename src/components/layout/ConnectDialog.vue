@@ -453,6 +453,7 @@ import ledger from '@/assets/images/ledger_logo.png';
 import torus from '@/assets/images/torus.svg';
 import balanceService from '@/helpers/balanceService';
 import getTorusNetwork from '@/helpers/getTorusNetwork';
+import truncate from '@/helpers/strings/truncate';
 import { ledgerOptions, torusOptions } from '@/store';
 import TransportWebBLE from '@ledgerhq/hw-transport-web-ble';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
@@ -615,7 +616,7 @@ export default {
       }
     },
     truncateText(str) {
-      return `${str.substring(0, 10)}...${str.substring(str.length - 10)}`;
+      return truncate(str, { size: 23 });
     },
     async closeDialog() {
       await this.$store.dispatch('closeConnectDialog');

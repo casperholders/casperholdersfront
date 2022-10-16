@@ -167,6 +167,7 @@
 import AccountPopup from '@/components/layout/AccountPopup';
 import ConnectDialog from '@/components/layout/ConnectDialog';
 import { CSPR_LIVE_URL, HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
+import truncate from '@/helpers/strings/truncate';
 import { DeployResult } from '@casperholders/core';
 import { mapGetters, mapState } from 'vuex';
 
@@ -276,7 +277,7 @@ export default {
       return `${CSPR_LIVE_URL}deploy/${operation.hash}`;
     },
     truncateText(str) {
-      return `${str.substring(0, 6)}...${str.substring(str.length - 6)}`;
+      return truncate(str, { size: 15 });
     },
     removeDeployResult(operation) {
       this.$store.dispatch('removeDeployResult', operation);
@@ -291,7 +292,7 @@ export default {
     }
 
     .appbar {
-        background: linear-gradient(90deg, #00012A, #00126b, #ff473e)
+        background: linear-gradient(90deg, #00012a, #00126b, #ff473e)
     }
 
     .notification-badge ::v-deep .v-badge__badge .v-icon {

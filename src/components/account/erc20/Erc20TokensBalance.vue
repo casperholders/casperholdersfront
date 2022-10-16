@@ -102,6 +102,9 @@ import fetchTokens from '@/services/tokens/fetchTokens';
 import findTokenGroup from '@/services/tokens/findTokenGroup';
 import Big from 'big.js';
 
+/**
+ * Component to display ERC20 balance per tokens.
+ */
 export default {
   name: 'Erc20TokensBalance',
   components: { BalanceAmountCard, CardHorizontalList, AddErc20TokenDialog, CardSectionTitle },
@@ -120,10 +123,25 @@ export default {
      */
     tokensBalances: {},
   }),
-  mounted() {
-    this.fetchTokensFromStore();
+  watch: {
+    /**
+     * Watch the state of the active key. In case of an update, re-fetch the data.
+     */
+    'signer.activeKey': {
+      handler: 'onActiveKeyChange',
+      immediate: true,
+    },
   },
   methods: {
+    /**
+     * On active key init or change.
+     */
+    onActiveKeyChange() {
+      this.tokensBalancesLoading = {};
+      this.tokensBalances = {};
+
+      this.fetchTokensFromStore();
+    },
     /**
      * Fetch already tracked tokens from the local storage.
      *

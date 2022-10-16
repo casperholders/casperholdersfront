@@ -187,6 +187,7 @@
 
 import { CSPR_LIVE_URL, DATA_API } from '@/helpers/env';
 import parseContentRange from '@/helpers/parseContentRange';
+import truncate from '@/helpers/strings/truncate';
 import { CurrencyUtils } from '@casperholders/core';
 import { debounce } from 'chart.js/helpers';
 import { mapState } from 'vuex';
@@ -281,17 +282,7 @@ export default {
       this.loading = false;
     },
     truncate(fullStr) {
-      const strLen = 15;
-      const separator = '...';
-
-      if (fullStr.length <= strLen) return fullStr;
-
-      const sepLen = separator.length;
-      const charsToShow = strLen - sepLen;
-      const frontChars = Math.ceil(charsToShow / 2);
-      const backChars = Math.floor(charsToShow / 2);
-
-      return fullStr.substr(0, frontChars) + separator + fullStr.substr(fullStr.length - backChars);
+      return truncate(fullStr, { size: 15 });
     },
     parseData(data) {
       let parsed = '';

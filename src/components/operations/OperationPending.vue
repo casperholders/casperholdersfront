@@ -110,6 +110,7 @@
 </template>
 
 <script>
+import truncate from '@/helpers/strings/truncate';
 import { DeployUtil } from 'casper-js-sdk';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
@@ -139,17 +140,7 @@ export default {
       return DeployUtil.deployToJson(deploy);
     },
     truncate(fullStr) {
-      const strLen = 15;
-      const separator = '...';
-
-      if (fullStr.length <= strLen) return fullStr;
-
-      const sepLen = separator.length;
-      const charsToShow = strLen - sepLen;
-      const frontChars = Math.ceil(charsToShow / 2);
-      const backChars = Math.floor(charsToShow / 2);
-
-      return fullStr.substr(0, frontChars) + separator + fullStr.substr(fullStr.length - backChars);
+      return truncate(fullStr, { size: 15 });
     },
     async retrySendingDeploy(index) {
       this.retryDeploy = true;

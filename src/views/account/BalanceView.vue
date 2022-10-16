@@ -13,67 +13,55 @@
       </v-avatar>
       Balance
     </v-card-title>
-    <v-card-text class="text-body-1">
-      <v-fade-transition
-        tag="div"
-        leave-absolute
-        group
-      >
-        <v-layout
-          v-if="loading || errored || csprTotal === 0"
-          key="loader"
-          align-center
-          justify-center
-          style="height: 400px"
-        >
-          <v-progress-circular
-            v-if="loading"
-            color="primary"
-            size="128"
-            width="10"
-            indeterminate
-          />
-          <v-alert
-            v-else-if="errored"
-            id="balance-not-connected"
-            type="error"
-            prominent
-          >
-            Not connected.
-            <v-btn
-              color="secondary"
-              class="ml-2"
-              @click="connectionRequest"
-            >
-              <v-icon left>
-                mdi-account-circle
-              </v-icon>
-              {{ signer.lock ? 'Unlock' : 'Connect' }}
-            </v-btn>
-          </v-alert>
-          <div
-            v-else
-            id="balance-no-liquidity"
-            class="text-overline"
-          >
-            No liquidity available
-          </div>
-        </v-layout>
-        <doughnut-chart
-          v-else
-          id="balance-chart"
-          key="chart"
-          :chart-data="chartData"
-          :chart-options="chartOptions"
-          style="max-width: 100%;max-height: 400px;"
-        />
-      </v-fade-transition>
-      <reward-calculator-panel
-        :validator="validator"
-        :amount="totalStaked.toString()"
-      />
-      <operations-table />
+    <v-divider />
+    <card-section-title
+      icon="mdi-chart-arc"
+      title="Balance"
+    />
+    <v-card-text v-if="errored">
+      <not-connected-alert id="balance-not-connected" />
     </v-card-text>
+    <template v-else>
+      <div class="d-flex px-4 pb-2 flex-wrap">
+        <balance-amount-card
+          id="balance-total-staked"
+          class="flex-grow-1 balance-cards mx-2 mb-2"
+          style="flex-basis: 0;"
+          :loading="totalStakedLoading"
+          :amount="totalStaked"
+          :logo="casperLogo"
+          title="Total staked"
+        />
+        <balance-amount-card
+          id="balance-total-available"
+          class="flex-grow-1 balance-cards mx-2 mb-2"
+          style="flex-basis: 0;"
+          :loading="loading"
+          :amount="totalAvailable"
+          :logo="casperLogo"
+          title="Total available"
+        />
+        <balance-amount-card
+          id="balance-total"
+          class="flex-grow-1 balance-cards mx-2 mb-2"
+          style="flex-basis: 0;"
+          :loading="loading || totalStakedLoading"
+          :amount="total"
+          :logo="casperLogo"
+          title="Total"
+        />
+      </div>
+      <v-divider />
+      <validators-balance @total-state-change="onTotalStackedStateChange" />
+      <v-divider />
+      <erc20-tokens-balance />
+    </template>
+    <v-divider />
+    <card-section-title
+      icon="mdi-swap-horizontal"
+      title="Operations"
+    />
+    <operations-table />
     <v-divider />
     <v-card-actions class="pa-5">
       <v-row>
@@ -81,85 +69,34 @@
           cols="12"
           md="4"
         >
-          <v-sheet
-            color="white"
-            large
-            outlined
-            rounded
-            style="background-color: transparent!important;"
-          >
-            <v-list-item to="/transfer">
-              <v-list-item-icon>
-                <v-icon>
-                  mdi-send
-                </v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>
-                  Transfer
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  Transfer funds
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-sheet>
+          <card-quick-link
+            to="/transfer"
+            icon="mdi-send"
+            title="Transfer"
+            subtitle="Transfer funds"
+          />
         </v-col>
         <v-col
           cols="12"
           md="4"
         >
-          <v-sheet
-            color="white"
-            large
-            outlined
-            rounded
-            style="background-color: transparent!important;"
-          >
-            <v-list-item to="stake">
-              <v-list-item-icon>
-                <v-icon>
-                  mdi-safe
-                </v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>
-                  Stake
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  Stake your tokens
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-sheet>
+          <card-quick-link
+            to="/stake"
+            icon="mdi-safe"
+            title="Stake"
+            subtitle="Stake your tokens"
+          />
         </v-col>
         <v-col
           cols="12"
           md="4"
         >
-          <v-sheet
-            color="white"
-            large
-            outlined
-            rounded
-            style="background-color: transparent!important;"
-          >
-            <v-list-item to="unstake">
-              <v-list-item-icon>
-                <v-icon>
-                  mdi-wallet
-                </v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>
-                  Unstake
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  Unstake your tokens
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-sheet>
+          <card-quick-link
+            to="/unstake"
+            icon="mdi-wallet"
+            title="Unstake"
+            subtitle="Unstake your tokens"
+          />
         </v-col>
       </v-row>
     </v-card-actions>
@@ -167,11 +104,15 @@
 </template>
 
 <script>
-import DoughnutChart from '@/components/chart/DoughnutChart';
-import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
+import BalanceAmountCard from '@/components/account/BalanceAmountCard';
+import CardQuickLink from '@/components/account/CardQuickLink';
+import CardSectionTitle from '@/components/account/CardSectionTitle';
+import Erc20TokensBalance from '@/components/account/erc20/Erc20TokensBalance';
+import NotConnectedAlert from '@/components/account/NotConnectedAlert';
+import ValidatorsBalance from '@/components/account/validators/ValidatorsBalance';
 import OperationsTable from '@/components/operations/OperationsTable';
 import balanceService from '@/helpers/balanceService';
-import { API } from '@/helpers/env';
+import nativeToken from '@/services/tokens/nativeToken';
 import Big from 'big.js';
 import { mapState } from 'vuex';
 
@@ -182,70 +123,31 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'BalanceView',
-  components: { OperationsTable, RewardCalculatorPanel, DoughnutChart },
+  components: {
+    ValidatorsBalance,
+    Erc20TokensBalance,
+    NotConnectedAlert,
+    BalanceAmountCard,
+    CardSectionTitle,
+    CardQuickLink,
+    OperationsTable,
+  },
   data() {
     return {
+      casperLogo: nativeToken.logo,
       loading: true,
       errored: false,
-      chartData: undefined,
-      validator: undefined,
+      totalAvailable: Big(0),
       totalStaked: Big(0),
-      balance: Big(0),
+      totalStakedLoading: false,
+      mergedValidator: undefined,
+      validators: [],
     };
   },
   computed: {
     ...mapState(['signer']),
-    csprTotal() {
-      return this.chartData.datasets[0].data.reduce((a, b) => Number(a) + Number(b), 0);
-    },
-    /**
-     * Calculate the percentage of staked tokens over the tokens available
-     */
-    csprPercentage() {
-      const total = this.csprTotal === 0 ? 1 : this.csprTotal;
-
-      return (index) => {
-        const value = this.chartData.datasets[0].data[index];
-        return Number((value / total) * 100).toFixed(2);
-      };
-    },
-    chartOptions() {
-      return {
-        cutout: '90%',
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-          legend: {
-            position: this.$vuetify.breakpoint.smAndDown ? 'bottom' : 'right',
-            labels: {
-              filter: (legendItem, { datasets }) => {
-                if (this.errored) {
-                  return true;
-                }
-
-                const rawValue = datasets[0].data[legendItem.index];
-                if (legendItem.text.includes('Total')) {
-                  // eslint-disable-next-line no-param-reassign
-                  legendItem.text = `${legendItem.text}`;
-                } else {
-                  // eslint-disable-next-line no-param-reassign
-                  legendItem.text = `${legendItem.text}: ${rawValue} CSPR (${this.csprPercentage(legendItem.index)}%)`;
-                }
-
-                return true;
-              },
-            },
-          },
-          tooltip: {
-            callbacks: {
-              title: ([{ label }]) => (this.errored ? undefined : label),
-              label: ({ label, raw, dataIndex }) => (
-                this.errored ? label : [`${raw} CSPR`, `${this.csprPercentage(dataIndex)}%`]
-              ),
-            },
-          },
-        },
-      };
+    total() {
+      return this.totalStaked.plus(this.totalAvailable);
     },
   },
   watch: {
@@ -253,93 +155,49 @@ export default {
      * Watch the state of the active key. In case of an update, re-fetch the balance data
      */
     'signer.activeKey': {
-      async handler() {
-        await this.fetchBalances();
-      },
+      handler: 'onActiveKeyChange',
       immediate: true,
     },
   },
   methods: {
     /**
-     * Fetch the balances of the current user and update the Donut chart
+     * On active key init or change.
      */
-    async fetchBalances() {
+    onActiveKeyChange() {
+      this.fetchAvailableBalance();
+    },
+    onTotalStackedStateChange({ loading, totalStaked }) {
+      this.totalStaked = totalStaked;
+      this.totalStakedLoading = loading;
+    },
+    async fetchAvailableBalance() {
       this.loading = true;
       this.errored = false;
-      this.chartData = undefined;
-      this.totalStaked = Big(0);
-      this.balance = Big(0);
+      this.totalAvailable = Big(0);
 
-      const { primary } = this.$vuetify.theme.currentTheme;
-      const newChartData = {
-        datasets: [{ backgroundColor: [primary], borderWidth: 0 }],
-      };
       try {
-        this.balance = await balanceService.fetchBalance();
-        newChartData.labels = ['Available'];
-        newChartData.datasets[0].data = [this.balance];
-      } catch (error) {
+        this.totalAvailable = await balanceService.fetchBalance();
+      } catch {
         this.errored = true;
+      } finally {
         this.loading = false;
-        return;
       }
-
-      try {
-        let validatorsData = [];
-        try {
-          validatorsData = await (await fetch(`${API}/validators/accountinfos`)).json();
-        } catch (e) {
-          console.log('Unable to retrieve validators info.');
-        }
-        const validators = await balanceService.fetchAllStakeBalance();
-        const fees = [];
-        validators.forEach((validator, index) => {
-          const validatorData = validatorsData.filter((v) => v.publicKey === validator.validator);
-          if (validatorData.length > 0) {
-            newChartData.labels.push(`Validator ${this.truncate(validatorData[0].name)}`);
-          } else {
-            newChartData.labels.push(`Validator ${this.truncate(validator.validator)}`);
-          }
-          newChartData.datasets[0].data.push(validator.stakedTokens);
-          newChartData.datasets[0].backgroundColor.push(this.getRandomColor(index));
-          this.totalStaked = this.totalStaked.plus(Big(validator.stakedTokens));
-          fees.push(validator.delegation_rate);
-        });
-        const totalFees = fees.reduce((previous, current) => previous + current, 0);
-        this.validator = {
-          delegation_rate: totalFees / fees.length > 0 ? fees.length : 1,
-        };
-      } catch (error) {
-        console.log(error);
-      }
-      newChartData.labels.push(`Total: ${this.totalStaked.plus(this.balance)} CSPR`);
-      newChartData.datasets[0].data.push(0);
-      newChartData.datasets[0].backgroundColor.push('grey');
-      this.chartData = newChartData;
-      this.loading = false;
-    },
-    getRandomColor(index) {
-      const { tertiary, quaternary, quinary, senary } = this.$vuetify.theme.currentTheme;
-      const availableColors = [tertiary, quaternary, quinary, senary];
-
-      return availableColors[index % availableColors.length];
-    },
-    truncate(fullStr) {
-      const strLen = 15;
-      const separator = '...';
-
-      if (fullStr.length <= strLen) return fullStr;
-
-      const sepLen = separator.length;
-      const charsToShow = strLen - sepLen;
-      const frontChars = Math.ceil(charsToShow / 2);
-      const backChars = Math.floor(charsToShow / 2);
-
-      return fullStr.substr(0, frontChars) + separator + fullStr.substr(fullStr.length - backChars);
-    },
-    async connectionRequest() {
-      await this.$store.dispatch('openConnectDialog');
     },
   },
 };
 </script>
+
+<style
+  lang="scss"
+  scoped
+>
+  ::v-deep .validator-cards {
+    min-height: 150px;
+    min-width: 250px;
+    width: 250px;
+  }
+
+  .balance-cards {
+    min-width: 220px;
+  }
+</style>
