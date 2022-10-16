@@ -33,7 +33,13 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/Cypress
+          key: cypress-cache-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            cypress-cache-${{ runner.os }}-
       - name: Install dependencies
         run: pnpm install
       - name: Code style
@@ -41,7 +47,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v4
         with:
-          install: true
+          install: false
           build: pnpm vite build --config vite.e2e.config.js
           start: pnpm vite preview --port 8080
           wait-on: http://localhost:8080

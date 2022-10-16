@@ -78,7 +78,6 @@
 import wavesSvg from '@/assets/images/waves.svg';
 import AppBar from '@/components/layout/AppBar';
 import NavigationDrawer from '@/components/layout/NavigationDrawer';
-import { LEDGER_SIGNER } from '@/helpers/signers';
 import { mapState } from 'vuex';
 
 /**
@@ -104,29 +103,21 @@ export default {
           title: 'Account info',
           icon: 'mdi-account',
           route: '/account',
-          disabled: this.signerType === LEDGER_SIGNER,
-          subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
         },
         {
           title: 'Add Bid',
           icon: 'mdi-gavel',
           route: '/addbid',
-          disabled: this.signerType === LEDGER_SIGNER,
-          subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
         },
         {
           title: 'Withdraw Bid',
           icon: 'mdi-connection',
           route: '/withdrawbid',
-          disabled: this.signerType === LEDGER_SIGNER,
-          subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
         },
         {
           title: 'Send smart contract',
           icon: 'mdi-file-document-edit',
           route: '/smartcontract',
-          disabled: this.signerType === LEDGER_SIGNER,
-          subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
         },
       ];
     },
@@ -154,8 +145,6 @@ export default {
             title: 'Security',
             icon: 'mdi-key',
             route: '/security',
-            disabled: this.signerType === LEDGER_SIGNER,
-            subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
             chip: {
               icon: 'mdi-fire',
               text: 'Beta',

@@ -61,6 +61,7 @@ import balanceService from '@/helpers/balanceService';
 import { API } from '@/helpers/env';
 import truncate from '@/helpers/strings/truncate';
 import Big from 'big.js';
+import { mapState } from 'vuex';
 
 /**
  * Component to display validator balance per validators.
@@ -83,6 +84,9 @@ export default {
      */
     totalStaked: Big(0),
   }),
+  computed: {
+    ...mapState(['signer']),
+  },
   watch: {
     /**
      * Watch the state of the active key. In case of an update, re-fetch the data.
@@ -96,8 +100,8 @@ export default {
     /**
      * On active key init or change.
      */
-    onActiveKeyChange() {
-      this.fetchValidators();
+    async onActiveKeyChange() {
+      await this.fetchValidators();
     },
     /**
      * Fetch all validators where active key have stacked tokens.

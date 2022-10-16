@@ -9,7 +9,7 @@ specifiers:
   '@ledgerhq/hw-transport-webusb': ^6.27.1
   '@toruslabs/casper-embed': ^2.0.0
   '@vitejs/plugin-vue': ^2.3.3
-  '@zondax/ledger-casper': ^2.4.3
+  '@zondax/ledger-casper': ^2.5.3
   big.js: ^6.2.0
   binary-loader: ^0.0.1
   buffer: ^6.0.3
@@ -56,7 +56,7 @@ dependencies:
   '@ledgerhq/hw-transport-web-ble': 6.27.1
   '@ledgerhq/hw-transport-webusb': 6.27.1
   '@toruslabs/casper-embed': 2.0.0
-  '@zondax/ledger-casper': 2.4.3
+  '@zondax/ledger-casper': 2.5.3
   big.js: 6.2.0
   buffer: 6.0.3
   casper-js-sdk: 2.9.1_eslint@8.19.0
@@ -2375,8 +2375,8 @@ packages:
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
     dev: false
 
-  /@zondax/ledger-casper/2.4.3:
-    resolution: {integrity: sha512-t4AnHVYVu9TVSIz347Yar9xsKb5rmnDuRIBQ6gSoU2vGcmUWthAcFtyjyAFc6H7Tg0j+H8TCAWuGBzTGtxsVzA==}
+  /@zondax/ledger-casper/2.5.3:
+    resolution: {integrity: sha512-FuMwid4K0ClyY+0mRGKN9XVamr8yBZjtjSkqjy6Cx0CYeFe1LWyCM/xWJGws+v6arYt02DnT7ORwoH5YVynm+A==}
     dependencies:
       '@babel/runtime': 7.18.6
       '@ledgerhq/hw-transport': 6.27.1

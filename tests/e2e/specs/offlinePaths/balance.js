@@ -25,16 +25,16 @@ describe('Balance', () => {
       .should('not.exist');
     cy.get('#balance-total-staked .amount')
       .should('be.visible')
-      .should('not.contain', '0.00000 CSPR')
-      .contains(/^\d+\.\d{5} CSPR$/);
+      .should('not.contain', '0.00000\xa0CSPR')
+      .contains(/^\d*,*\d+\.\d{5} CSPR$/);
     cy.get('#balance-total-available .amount')
       .should('be.visible')
-      .should('not.contain', '0.00000 CSPR')
-      .contains(/^\d+\.\d{5} CSPR$/);
+      .should('not.contain', '0.00000\xa0CSPR')
+      .contains(/^\d*,*\d+\.\d{5} CSPR$/);
     cy.get('#balance-total-staked .amount')
       .should('be.visible')
-      .should('not.contain', '0.00000 CSPR')
-      .contains(/^\d+\.\d{5} CSPR$/);
+      .should('not.contain', '0.00000\xa0CSPR')
+      .contains(/^\d*,*\d+\.\d{5} CSPR$/);
 
     cy.get('.reward-calculator-panel-header').click();
     cy.get('.reward-calculator').should('be.visible');
@@ -49,12 +49,12 @@ describe('Balance', () => {
       .should('not.exist');
     cy.get('#balance-total-staked .amount')
       .should('be.visible')
-      .should('contain', '0.00000 CSPR')
+      .should('contain', '0.00000\xa0CSPR')
     cy.get('#balance-total-available .amount')
       .should('be.visible')
-      .should('contain', '0.00000 CSPR')
+      .should('contain', '0.00000\xa0CSPR')
     cy.get('#balance-total .amount')
       .should('be.visible')
-      .should('contain', '0.00000 CSPR')
+      .should('contain', '0.00000\xa0CSPR')
   });
 });

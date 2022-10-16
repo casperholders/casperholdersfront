@@ -19,7 +19,7 @@
     "@ledgerhq/hw-transport-web-ble": "^6.27.1",
     "@ledgerhq/hw-transport-webusb": "^6.27.1",
     "@toruslabs/casper-embed": "^2.0.0",
-    "@zondax/ledger-casper": "^2.4.3",
+    "@zondax/ledger-casper": "^2.5.3",
     "big.js": "^6.2.0",
     "buffer": "^6.0.3",
     "casper-js-sdk": "^2.9.1",
