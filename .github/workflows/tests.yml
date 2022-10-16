@@ -41,7 +41,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v4
         with:
-          install: false
+          install: true
           build: pnpm vite build --config vite.e2e.config.js
           start: pnpm vite preview --port 8080
           wait-on: http://localhost:8080
