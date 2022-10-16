@@ -17,6 +17,7 @@
         <v-card-text>
           <token-input
             v-model="token"
+            data-cy="token-input"
             :only-groups="['erc20']"
             no-default
             hide-details
@@ -31,6 +32,7 @@
             Cancel
           </v-btn>
           <v-btn
+            data-cy="erc20-add-submit"
             type="submit"
             color="primary"
             rounded

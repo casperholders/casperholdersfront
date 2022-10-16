@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-cy="erc20-balance">
     <card-section-title
       icon="mdi-chart-arc"
       title="ERC 20"
@@ -8,6 +8,7 @@
         <add-erc20-token-dialog @add="onAddErc20Token">
           <template #activator="{ attrs, on }">
             <v-btn
+              data-cy="erc20-add-button"
               :disabled="loading"
               title="Track new ERC20 token"
               class="ml-auto"
@@ -38,6 +39,7 @@
       >
         <template #activator="{ attrs, on }">
           <v-card
+            data-cy="erc20-add-card"
             class="validator-cards d-flex align-center justify-center"
             color="primary"
             v-bind="attrs"
@@ -58,6 +60,7 @@
       <balance-amount-card
         v-for="(token, index) in tokens"
         :key="`token-${index}`"
+        :data-cy="`erc20-balance-${token.id}`"
         class="validator-cards"
         :amount="tokensBalances[token.id]"
         :token="token"
