@@ -45,6 +45,8 @@ jobs:
         run: pnpm install
       - name: Code style
         run: pnpm lint
+      - name: Install cypress
+        run: ./node_modules/.bin/cypress install --force
       - name: Cypress run
         uses: cypress-io/github-action@v4
         with:
