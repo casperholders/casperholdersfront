@@ -134,8 +134,8 @@
 </template>
 
 <script>
-import Amount from '@/components/operations/AmountInput';
-import Argument from '@/components/operations/ArgumentInput';
+import Amount from '@/components/forms/inputs/AmountInput';
+import Argument from '@/components/forms/inputs/ArgumentInput';
 import Operation from '@/components/operations/OperationCard';
 import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';

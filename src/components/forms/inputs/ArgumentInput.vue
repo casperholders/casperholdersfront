@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import CLValueInput from '@/components/operations/clvalues/CLValueInput';
+import CLValueInput from '@/components/forms/inputs/clvalues/CLValueInput';
 
 export default {
   name: 'ArgumentInput',

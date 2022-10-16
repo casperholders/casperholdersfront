@@ -1,6 +1,6 @@
 import App from '@/App';
 import '@/plugins/big';
-import CLValueInput from '@/components/operations/clvalues/CLValueInput';
+import CLValueInput from '@/components/forms/inputs/clvalues/CLValueInput';
 import vuetify from '@/plugins/vuetify';
 import router from '@/router';
 import store from '@/store';

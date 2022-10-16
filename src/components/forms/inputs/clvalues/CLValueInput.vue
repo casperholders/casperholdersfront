@@ -46,12 +46,12 @@
 </template>
 
 <script>
-import CLTypeInput from '@/components/operations/clvalues/CLTypeInput';
-import CLValueListInput from '@/components/operations/clvalues/CLValueListInput';
-import CLValueMapInput from '@/components/operations/clvalues/CLValueMapInput';
-import CLValueOptionInput from '@/components/operations/clvalues/CLValueOptionInput';
-import CLValueRawInput from '@/components/operations/clvalues/CLValueRawInput';
-import CLValueTupleInput from '@/components/operations/clvalues/CLValueTupleInput';
+import CLTypeInput from '@/components/forms/inputs/clvalues/CLTypeInput';
+import CLValueListInput from '@/components/forms/inputs/clvalues/CLValueListInput';
+import CLValueMapInput from '@/components/forms/inputs/clvalues/CLValueMapInput';
+import CLValueOptionInput from '@/components/forms/inputs/clvalues/CLValueOptionInput';
+import CLValueRawInput from '@/components/forms/inputs/clvalues/CLValueRawInput';
+import CLValueTupleInput from '@/components/forms/inputs/clvalues/CLValueTupleInput';
 import buildCLValue from '@/helpers/genericCLValueBuilder';
 
 const types = [

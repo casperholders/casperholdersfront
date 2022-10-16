@@ -106,10 +106,10 @@
 </template>
 
 <script>
-import AmountInput from '@/components/operations/AmountInput';
+import AmountInput from '@/components/forms/inputs/AmountInput';
 import OperationCard from '@/components/operations/OperationCard';
 import OperationSummary from '@/components/operations/OperationSummary';
-import TokenInput from '@/components/operations/TokenInput';
+import TokenInput from '@/components/forms/inputs/TokenInput';
 import balanceService from '@/helpers/balanceService';
 import exchanges from '@/helpers/exchanges';
 import genericSendDeploy from '@/helpers/genericSendDeploy';

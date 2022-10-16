@@ -384,7 +384,7 @@
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import KeyManagerWasm from '@/assets/smartcontracts/keys-manager.wasm?url';
-import AuthorizedKeyInput from '@/components/operations/AuthorizedKeyInput';
+import AuthorizedKeyInput from '@/components/forms/inputs/AuthorizedKeyInput';
 import OperationCard from '@/components/operations/OperationCard';
 import OperationSummary from '@/components/operations/OperationSummary';
 import balanceService from '@/helpers/balanceService';

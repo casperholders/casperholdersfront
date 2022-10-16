@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import CLTypeInput from '@/components/operations/clvalues/CLTypeInput';
+import CLTypeInput from '@/components/forms/inputs/clvalues/CLTypeInput';
 
 export default {
   name: 'CLValueOptionInput',

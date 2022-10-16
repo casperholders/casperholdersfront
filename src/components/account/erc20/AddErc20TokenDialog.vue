@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import TokenInput from '@/components/operations/TokenInput';
+import TokenInput from '@/components/forms/inputs/TokenInput';
 
 export default {
   name: 'AddErc20TokenDialog',
