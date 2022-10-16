@@ -60,6 +60,7 @@
         :key="`token-${index}`"
         class="validator-cards"
         :amount="tokensBalances[token.id]"
+        :token="token"
         :logo="token.logo"
         :title="token.name"
         :cspr-live-path-url="`contract/${token.id}`"
