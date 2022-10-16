@@ -27,7 +27,7 @@
           outlined
           small
           width="100%"
-          @click="amount=min"
+          @click="onMin"
         >
           Min
         </v-btn>
@@ -39,7 +39,7 @@
           outlined
           small
           width="100%"
-          @click="amount=Math.trunc(balance*0.25)"
+          @click="onPercent(0.25)"
         >
           25%
         </v-btn>
@@ -51,7 +51,7 @@
           outlined
           small
           width="100%"
-          @click="amount=Math.trunc(balance*0.5)"
+          @click="onPercent(0.50)"
         >
           50%
         </v-btn>
@@ -64,7 +64,7 @@
           outlined
           small
           width="100%"
-          @click="amount=max"
+          @click="onMax"
         >
           Max
         </v-btn>
@@ -73,12 +73,13 @@
   </div>
 </template>
 
-<script>/**
- * Generic amount component to allow the user to choose an "amount"
- */
+<script>
 import Big from 'big.js';
 import { mapState } from 'vuex';
 
+/**
+ * Generic amount component to allow the user to choose an "amount"
+ */
 export default {
   name: 'AmountInput',
   props: {
@@ -157,8 +158,8 @@ export default {
      */
     max() {
       return Big(this.balance).minus(this.fee).gt(0)
-        ? Math.trunc(Big(this.balance).minus(this.fee).toString())
-        : Math.trunc(Big(this.min).toString());
+        ? Big(this.balance).minus(this.fee)
+        : Big(this.min);
     },
   },
   methods: {
@@ -177,8 +178,9 @@ export default {
         return true;
       }
       try {
-        return Big(val).lte(this.max) ? true : `Amount must equal or bellow ${this.max}`;
+        return Big(val).lte(this.max) ? true : `Amount must equal or bellow ${this.max.toNumber()}`;
       } catch (e) {
+        console.log(e);
         return 'Amount must be a number';
       }
     },
@@ -215,6 +217,15 @@ export default {
           this.amount = Big(this.min).toString();
         }
       }
+    },
+    onMin() {
+      this.amount = this.min;
+    },
+    onPercent(percent) {
+      this.amount = Big(percent).times(this.balance).toString();
+    },
+    onMax() {
+      this.amount = this.max.toString();
     },
   },
 };
