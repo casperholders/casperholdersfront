@@ -38,7 +38,7 @@ describe('Impersonation', () => {
     cy.get('#accountAuthorization').should('contain', 'Account authorized.');
     cy.wait(1000);
     cy.get('#toggleDrawer').click();
-    cy.get('#nav-group-Account-items-2').click();
+    cy.get('#nav-group-Account-items-1').click();
     cy.window().then((win) => {
       win.dispatchEvent(event);
     });
