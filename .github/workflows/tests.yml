@@ -34,6 +34,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       - uses: actions/cache@v3
+        name: Setup cypress cache
         with:
           path: |
             ~/.cache/Cypress
