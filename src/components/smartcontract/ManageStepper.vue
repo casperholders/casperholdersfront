@@ -87,6 +87,9 @@
         >
           <generic-deploy-operation
             v-if="selectedContract !== undefined && selectedEntrypoint !== undefined"
+            :contract-hash="contracts[selectedContract].hash"
+            :entrypoint="
+              contracts[selectedContract].data.Contract.entry_points[selectedEntrypoint].name"
             :args="contracts[selectedContract].data.Contract.entry_points[selectedEntrypoint].args"
           />
         </v-card>

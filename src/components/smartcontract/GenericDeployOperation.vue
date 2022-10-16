@@ -11,6 +11,22 @@
     submit-title="Deploy"
     title="Send smart contract"
   >
+    <v-text-field
+      color="white"
+      label="Contract Hash"
+      type="text"
+      :value="contractHash"
+      :readonly="true"
+      required
+    />
+    <v-text-field
+      color="white"
+      label="Entrypoint"
+      type="text"
+      :value="entrypoint"
+      :readonly="true"
+      required
+    />
     <v-expansion-panels>
       <v-expansion-panel
         v-for="(item,i) in deployArgs"
@@ -141,9 +157,9 @@ import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import {
+  GenericContractDeployParameters,
   InsufficientFunds,
   NoActiveKeyError,
-  SmartContractDeployParameters,
   SmartContractResult,
 } from '@casperholders/core';
 import { mapGetters, mapState } from 'vuex';
@@ -160,6 +176,14 @@ export default {
   name: 'GenericDeployOperation',
   components: { Argument, Amount, Operation },
   props: {
+    contractHash: {
+      type: String,
+      required: true,
+    },
+    entrypoint: {
+      type: String,
+      required: true,
+    },
     args: {
       type: Array,
       default: () => ([]),
@@ -255,11 +279,17 @@ export default {
      * Update the store with a deploy result containing the deployhash of the deploy sent
      */
     async sendDeploy() {
-      const deployParameter = new SmartContractDeployParameters(
+      const args = {};
+      this.deployArgs.forEach((a) => {
+        args[a.name] = a.value;
+      });
+      const deployParameter = new GenericContractDeployParameters(
         this.activeKey,
         NETWORK,
-        this.buffer,
+        this.contractHash,
+        this.entrypoint,
         this.amount,
+        args,
       );
       const options = this.signerOptionsFactory.getOptionsForOperations();
       this.errorDeploy = null;

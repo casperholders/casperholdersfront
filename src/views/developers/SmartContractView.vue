@@ -1,136 +1,193 @@
 <template>
-  <operation
-    :amount="amount"
-    :fee="0"
-    :loading-sign-and-deploy="loadingSignAndDeploy"
-    :remaining-balance="remainingBalance"
-    :send-deploy="sendDeploy"
-    :type="type"
-    :balance="balance"
-    icon="mdi-file-document-edit"
-    submit-title="Deploy"
-    title="Send smart contract"
-  >
-    <v-file-input
-      id="smartContractFile"
-      v-model="contract"
-      :show-size="1000"
-      accept=".wasm"
+  <v-card>
+    <v-card-title>
+      Smart Contract Operations
+    </v-card-title>
+
+    <v-tabs
+      v-model="tab"
+      background-color="transparent"
+      grow
       color="white"
-      counter
-      label="Smart Contracts"
-      outlined
-      placeholder="Select your contracts"
-      prepend-icon="mdi-paperclip"
     >
-      <template #selection="{ text }">
-        {{ text }}
-      </template>
-    </v-file-input>
-    <Argument
-      v-if="false"
-      index="1"
-      arg-name="test"
-      @value="argValue = $event"
-    />
-    <Amount
-      :balance="balance"
-      :fee="Number(0)"
-      :min="minPayment"
-      :value="amount"
-      class="mb-4"
-      @input="amount = $event"
-    />
-    <div class="mx-n1">
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Payment amount for the smart contract</v-col>
-        <v-col class="text-right cspr">
-          {{ amount }} CSPR
-        </v-col>
-      </v-row>
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Balance</v-col>
-        <v-col class="text-right cspr">
-          <template v-if="loadingBalance">
-            Loading balance ...
-            <v-progress-circular
-              class="ml-3"
-              color="white"
-              indeterminate
-              size="14"
-            />
-          </template>
-          <template v-else>
-            {{ balance }} CSPR
-          </template>
-        </v-col>
-      </v-row>
-      <v-row
-        class="white-bottom-border"
-      >
-        <v-col>Total cost</v-col>
-        <v-col class="text-right cspr">
-          {{ amount }} CSPR
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>Balance after operation</v-col>
-        <v-col class="text-right cspr">
-          {{ remainingBalance }} CSPR
-        </v-col>
-      </v-row>
-    </div>
-    <v-alert
-      v-if="errorBalance"
-      class="mt-5"
-      dense
-      prominent
-      type="error"
-    >
-      <v-row align="center">
-        <v-col class="grow">
-          {{ errorBalance.message }}
-        </v-col>
-        <v-col class="shrink">
-          <v-btn
-            v-if="isInstanceOfNoActiveKeyError"
-            color="primary"
-            @click="connectionRequest"
+      <v-tab>
+        New Smart Contract
+      </v-tab>
+      <v-tab>
+        Manage smart contract
+      </v-tab>
+    </v-tabs>
+
+    <v-tabs-items v-model="tab">
+      <v-tab-item>
+        <operation
+          :amount="amount"
+          :fee="0"
+          :loading-sign-and-deploy="loadingSignAndDeploy"
+          :remaining-balance="remainingBalance"
+          :send-deploy="sendDeploy"
+          :type="type"
+          :balance="balance"
+          icon="mdi-file-document-edit"
+          submit-title="Deploy"
+          title="Send smart contract"
+        >
+          <v-file-input
+            id="smartContractFile"
+            v-model="contract"
+            :show-size="1000"
+            accept=".wasm"
+            color="white"
+            counter
+            label="Smart Contracts"
+            outlined
+            placeholder="Select your contracts"
+            prepend-icon="mdi-paperclip"
           >
-            <v-icon left>
-              mdi-account-circle
-            </v-icon>
-            Connect
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-alert>
-    <v-alert
-      v-if="errorDeploy"
-      class="mt-5"
-      dense
-      type="error"
-    >
-      {{ errorDeploy.message }}
-    </v-alert>
-  </operation>
+            <template #selection="{ text }">
+              {{ text }}
+            </template>
+          </v-file-input>
+          <v-expansion-panels>
+            <v-expansion-panel
+              v-for="(item,i) in args"
+              :key="i"
+              class="mt-2"
+              style="border: thin solid rgba(255, 255, 255, 0.12)"
+            >
+              <v-expansion-panel-header>Argument {{ item.name || i + 1 }}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <Argument
+                  :arg-name="item.name"
+                  :cl-type="item.type"
+                  @value="item.value = $event"
+                  @name="item.name = $event"
+                />
+                <v-btn
+                  color="error"
+                  rounded
+                  @click="args.splice(i, 1);"
+                >
+                  Delete argument
+                </v-btn>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+          <div class="text-center">
+            <v-btn
+              color="primary"
+              class="mt-5"
+              rounded
+              @click="args.push({})"
+            >
+              Add argument
+            </v-btn>
+          </div>
+          <Amount
+            :balance="balance"
+            :fee="Number(0)"
+            :min="minPayment"
+            :value="amount"
+            class="mb-4"
+            @input="amount = $event"
+          />
+          <div class="mx-n1">
+            <v-row
+              class="white-bottom-border"
+            >
+              <v-col>Payment amount for the smart contract</v-col>
+              <v-col class="text-right cspr">
+                {{ amount }} CSPR
+              </v-col>
+            </v-row>
+            <v-row
+              class="white-bottom-border"
+            >
+              <v-col>Balance</v-col>
+              <v-col class="text-right cspr">
+                <template v-if="loadingBalance">
+                  Loading balance ...
+                  <v-progress-circular
+                    class="ml-3"
+                    color="white"
+                    indeterminate
+                    size="14"
+                  />
+                </template>
+                <template v-else>
+                  {{ balance }} CSPR
+                </template>
+              </v-col>
+            </v-row>
+            <v-row
+              class="white-bottom-border"
+            >
+              <v-col>Total cost</v-col>
+              <v-col class="text-right cspr">
+                {{ amount }} CSPR
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>Balance after operation</v-col>
+              <v-col class="text-right cspr">
+                {{ remainingBalance }} CSPR
+              </v-col>
+            </v-row>
+          </div>
+          <v-alert
+            v-if="errorBalance"
+            class="mt-5"
+            dense
+            prominent
+            type="error"
+          >
+            <v-row align="center">
+              <v-col class="grow">
+                {{ errorBalance.message }}
+              </v-col>
+              <v-col class="shrink">
+                <v-btn
+                  v-if="isInstanceOfNoActiveKeyError"
+                  color="primary"
+                  @click="connectionRequest"
+                >
+                  <v-icon left>
+                    mdi-account-circle
+                  </v-icon>
+                  Connect
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-alert>
+          <v-alert
+            v-if="errorDeploy"
+            class="mt-5"
+            dense
+            type="error"
+          >
+            {{ errorDeploy.message }}
+          </v-alert>
+        </operation>
+      </v-tab-item>
+      <v-tab-item>
+        <manage-stepper />
+      </v-tab-item>
+    </v-tabs-items>
+  </v-card>
 </template>
 
 <script>
 import Amount from '@/components/forms/inputs/AmountInput';
 import Argument from '@/components/forms/inputs/ArgumentInput';
 import Operation from '@/components/operations/OperationCard';
+import ManageStepper from '@/components/smartcontract/ManageStepper';
 import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import {
-  SmartContractDeployParameters,
   InsufficientFunds,
   NoActiveKeyError,
+  SmartContractDeployParameters,
   SmartContractResult,
 } from '@casperholders/core';
 import { mapGetters, mapState } from 'vuex';
@@ -142,8 +199,8 @@ import { mapGetters, mapState } from 'vuex';
  * - File input for the wasm smart contract
  */
 export default {
-  name: 'SmartContract',
-  components: { Argument, Amount, Operation },
+  name: 'SmartContractView',
+  components: { ManageStepper, Argument, Amount, Operation },
   data() {
     return {
       minPayment: 1,
@@ -156,7 +213,8 @@ export default {
       loadingBalance: false,
       type: SmartContractResult.getName(),
       buffer: null,
-      argValue: null,
+      tab: 0,
+      args: [],
     };
   },
   computed: {
@@ -231,11 +289,16 @@ export default {
      * Update the store with a deploy result containing the deployhash of the deploy sent
      */
     async sendDeploy() {
+      const args = {};
+      this.args.forEach((a) => {
+        args[a.name] = a.value;
+      });
       const deployParameter = new SmartContractDeployParameters(
         this.activeKey,
         NETWORK,
         this.buffer,
         this.amount,
+        args,
       );
       const options = this.signerOptionsFactory.getOptionsForOperations();
       this.errorDeploy = null;
