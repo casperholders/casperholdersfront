@@ -289,11 +289,16 @@ export default {
      * Update the store with a deploy result containing the deployhash of the deploy sent
      */
     async sendDeploy() {
+      const args = {};
+      this.args.forEach((a) => {
+        args[a.name] = a.value;
+      });
       const deployParameter = new SmartContractDeployParameters(
         this.activeKey,
         NETWORK,
         this.buffer,
         this.amount,
+        args,
       );
       const options = this.signerOptionsFactory.getOptionsForOperations();
       this.errorDeploy = null;
