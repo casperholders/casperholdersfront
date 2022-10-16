@@ -15,14 +15,22 @@
     />
 
     <v-toolbar-title
-      class="mr-auto"
+      class="mr-auto align-center d-flex pl-0"
     >
       <router-link
         class="text-decoration-none"
         to="/"
       >
-        Casper Holders {{ titleNetwork }}
+        Casper Holders
       </router-link>
+      <v-chip
+        small
+        class="ml-2"
+        label
+        color="info"
+      >
+        {{ titleNetwork }}
+      </v-chip>
     </v-toolbar-title>
     <connect-dialog v-if="displayConnect" />
     <AccountPopup v-if="signer.activeKey" />

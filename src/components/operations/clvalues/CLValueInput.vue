@@ -9,7 +9,7 @@
         cols="12"
       >
         <CLTypeInput
-          :cl-type="clType"
+          :cl-type="findType(clType)"
           :type-prefix="typePrefix"
           @cltype="type = $event"
         />
@@ -19,7 +19,7 @@
         cols="12"
       >
         <CLValueRawInput
-          :cl-type="type ? type : clType"
+          :cl-type="type ? type : findType(clType)"
           @value="$emit('value', $event)"
         />
       </v-col>
@@ -46,13 +46,35 @@
 </template>
 
 <script>
-import CLTypeInput from '@/components/operations/CLTypeInput';
-import CLValueListInput from '@/components/operations/CLValueListInput';
-import CLValueMapInput from '@/components/operations/CLValueMapInput';
-import CLValueOptionInput from '@/components/operations/CLValueOptionInput';
-import CLValueRawInput from '@/components/operations/CLValueRawInput';
-import CLValueTupleInput from '@/components/operations/CLValueTupleInput';
+import CLTypeInput from '@/components/operations/clvalues/CLTypeInput';
+import CLValueListInput from '@/components/operations/clvalues/CLValueListInput';
+import CLValueMapInput from '@/components/operations/clvalues/CLValueMapInput';
+import CLValueOptionInput from '@/components/operations/clvalues/CLValueOptionInput';
+import CLValueRawInput from '@/components/operations/clvalues/CLValueRawInput';
+import CLValueTupleInput from '@/components/operations/clvalues/CLValueTupleInput';
 import buildCLValue from '@/helpers/genericCLValueBuilder';
+
+const types = [
+  { name: 'Bool', type: 'bool' },
+  { name: 'U8', type: 'u8' },
+  { name: 'U32', type: 'u32' },
+  { name: 'I32', type: 'i32' },
+  { name: 'U64', type: 'u64' },
+  { name: 'I64', type: 'i64' },
+  { name: 'U128', type: 'u128' },
+  { name: 'U256', type: 'u256' },
+  { name: 'U512', type: 'u512' },
+  { name: 'Unit', type: 'unit' },
+  { name: 'String', type: 'string' },
+  { name: 'Key', type: 'key' },
+  { name: 'URef', type: 'uref' },
+  { name: 'List', type: 'list' },
+  { name: 'Tuple', type: 'tuple' },
+  { name: 'Option', type: 'option' },
+  { name: 'Map', type: 'map' },
+  { name: 'PublicKey', type: 'publicKey' },
+  { name: 'ByteArray', type: 'byteArray' },
+];
 
 export default {
   name: 'CLValueInput',
@@ -88,28 +110,7 @@ export default {
   },
   data() {
     return {
-      types: [
-        { name: 'Bool', type: 'bool' },
-        { name: 'U8', type: 'u8' },
-        { name: 'U32', type: 'u32' },
-        { name: 'I32', type: 'i32' },
-        { name: 'U64', type: 'u64' },
-        { name: 'I64', type: 'i64' },
-        { name: 'U128', type: 'u128' },
-        { name: 'U256', type: 'u256' },
-        { name: 'U512', type: 'u512' },
-        { name: 'Unit', type: 'unit' },
-        { name: 'String', type: 'string' },
-        { name: 'Key', type: 'key' },
-        { name: 'URef', type: 'uref' },
-        { name: 'List', type: 'list' },
-        { name: 'Tuple', type: 'tuple' },
-        { name: 'Option', type: 'option' },
-        { name: 'Map', type: 'map' },
-        { name: 'PublicKey', type: 'publicKey' },
-        { name: 'ByteArray', type: 'byteArray' },
-      ],
-      type: this.clType,
+      type: this.findType(this.clType),
       listType: null,
       optionType: this.innerOptionType,
     };
@@ -124,7 +125,7 @@ export default {
       this.rawValue = '';
     },
     clType() {
-      this.type = this.clType;
+      this.type = this.findType(this.clType);
     },
     innerOptionType() {
       this.optionType = this.innerOptionType;
@@ -136,6 +137,11 @@ export default {
         return buildCLValue(this.type, null, value);
       }
       return buildCLValue(this.type, value);
+    },
+    findType(searchType) {
+      console.log(types.find((type) => type.type.toLowerCase() === searchType.toLowerCase()));
+      return types.find((type) => type.type.toLowerCase() === searchType.toLowerCase())?.type
+        || null;
     },
   },
 };

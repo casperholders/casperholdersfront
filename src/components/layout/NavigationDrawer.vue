@@ -84,16 +84,16 @@
             />
           </v-list-item-content>
           <v-list-item-action
-            v-if="item.beta"
+            v-if="item.chip"
           >
             <v-chip
               outlined
               small
             >
               <v-icon left>
-                mdi-fire
+                {{ item.chip.icon }}
               </v-icon>
-              Beta
+              {{ item.chip.text }}
             </v-chip>
           </v-list-item-action>
         </navigation-drawer-list-item>
@@ -101,46 +101,59 @@
     </template>
 
     <v-divider role="presentation" />
-    <navigation-drawer-list-header :minified="minified">
-      Statuses
-    </navigation-drawer-list-header>
     <navigation-drawer-list>
-      <navigation-drawer-list-item
-        :minified="minified"
-        :tooltip="`${signer.connected ? 'connected' : 'disconnected'}!`"
+      <v-tooltip
+        :disabled="!minified"
+        right
       >
-        <v-list-item-icon>
-          <v-avatar
-            :color="signer.connected ? 'green' : 'red'"
-            size="24"
+        <template #activator="{ attrs, on }">
+          <v-list-group
+            v-bind="attrs"
+            prepend-icon="mdi-hammer-wrench"
+            v-on="on"
           >
-            <v-icon
-              size="16"
-              v-text="signer.connected ? 'mdi-puzzle-check' : 'mdi-puzzle-remove'"
-            />
-          </v-avatar>
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title>
-            Casper Signer Status
-          </v-list-item-title>
-          <v-list-item-subtitle v-text="`Version ${signer.version || 'unknown'}`" />
-        </v-list-item-content>
-      </navigation-drawer-list-item>
-      <navigation-drawer-list-item
-        :minified="minified"
-        :tooltip="`Connected to ${HUMAN_READABLE_NETWORK}`"
-      >
-        <v-list-item-icon>
-          <v-icon>
-            mdi-lan
-          </v-icon>
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title>Casper Network</v-list-item-title>
-          <v-list-item-subtitle v-text="HUMAN_READABLE_NETWORK" />
-        </v-list-item-content>
-      </navigation-drawer-list-item>
+            <template #activator>
+              <v-list-item-title>Advanced</v-list-item-title>
+            </template>
+            <navigation-drawer-list-item
+              v-for="(item, index) in advanced"
+              :id="`nav-group-advanced-items-${index}`"
+              :key="`nav-group-advanced-items-${index}`"
+              :minified="minified"
+              :tooltip="item.title"
+              :to="item.route"
+              link
+              exact
+              :disabled="item.disabled"
+            >
+              <v-list-item-icon>
+                <v-icon v-text="item.icon" />
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title v-text="item.title" />
+                <v-list-item-subtitle
+                  v-if="item.subtitle !== null"
+                  v-text="item.subtitle"
+                />
+              </v-list-item-content>
+              <v-list-item-action
+                v-if="item.beta"
+              >
+                <v-chip
+                  outlined
+                  small
+                >
+                  <v-icon left>
+                    mdi-fire
+                  </v-icon>
+                  Beta
+                </v-chip>
+              </v-list-item-action>
+            </navigation-drawer-list-item>
+          </v-list-group>
+        </template>
+        <span>Advanced</span>
+      </v-tooltip>
     </navigation-drawer-list>
   </v-navigation-drawer>
 </template>
@@ -150,7 +163,6 @@ import NavigationDrawerList from '@/components/layout/NavigationDrawerList';
 import NavigationDrawerListHeader from '@/components/layout/NavigationDrawerListHeader';
 import NavigationDrawerListItem from '@/components/layout/NavigationDrawerListItem';
 import { HUMAN_READABLE_NETWORK } from '@/helpers/env';
-import { mapState } from 'vuex';
 
 /**
  * NavigationDrawer component
@@ -163,6 +175,10 @@ export default {
       type: Object,
       required: true,
     },
+    advanced: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
@@ -170,11 +186,6 @@ export default {
       drawer: !this.$vuetify.breakpoint.mobile,
       HUMAN_READABLE_NETWORK,
     };
-  },
-  computed: {
-    ...mapState([
-      'signer',
-    ]),
   },
   mounted() {
     this.$root.$on('toggleDrawer', () => {
@@ -191,14 +202,17 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-    ::v-deep .v-list-item__icon {
-        margin: auto 12px auto 0 !important;
-    }
+<style
+  scoped
+  lang="scss"
+>
+  ::v-deep .v-list-item__icon {
+    margin: auto 12px auto 0 !important;
+  }
 
-    ::v-deep .v-list-item__title {
-        font-weight: bold !important;
-        font-size: 0.890rem !important;
-        letter-spacing: 0.1rem;
-    }
+  ::v-deep .v-list-item__title {
+    font-weight: bold !important;
+    font-size: 0.890rem !important;
+    letter-spacing: 0.1rem;
+  }
 </style>

@@ -86,7 +86,8 @@
                   class="mr-3"
                 >
                 <div>
-                  <span class="text-body-1">Casper Signer</span>
+                  <span class="text-body-1">Casper
+                    Signer{{ signer.version ? ' - v' + signer.version : '' }}</span>
                   <div>Native wallet for the Casper Network</div>
                 </div>
                 <v-icon class="ml-auto">

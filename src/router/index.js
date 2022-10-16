@@ -64,7 +64,7 @@ const routes = [
   {
     path: '/smartcontract',
     name: 'Send smart contract',
-    component: () => import('@/views/developers/SmartContractView'),
+    component: () => import('@/views/developers/SmartContractViewNew'),
   },
   {
     path: '/faq',

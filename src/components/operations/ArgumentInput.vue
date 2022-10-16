@@ -3,7 +3,6 @@
     align="center"
     justify="center"
     class="rounded mb-7 mx-1"
-    style="border: thin solid rgba(255, 255, 255, 0.12)"
   >
     <v-col
       cols="12"
@@ -31,25 +30,11 @@
         @value="$emit('value', test($event))"
       />
     </v-col>
-    <v-col cols="1">
-      <v-btn
-        class="rounded-xl"
-        color="primary"
-        fab
-        dark
-        small
-        @click="$emit('delete')"
-      >
-        <v-icon>
-          mdi-delete
-        </v-icon>
-      </v-btn>
-    </v-col>
   </v-row>
 </template>
 
 <script>
-import CLValueInput from '@/components/operations/CLValueInput';
+import CLValueInput from '@/components/operations/clvalues/CLValueInput';
 
 export default {
   name: 'ArgumentInput',

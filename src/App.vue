@@ -1,6 +1,9 @@
 <template>
   <v-app>
-    <NavigationDrawer :links="links" />
+    <NavigationDrawer
+      :links="links"
+      :advanced="advanced"
+    />
     <AppBar :links="links" />
     <v-main>
       <div id="wave">
@@ -51,9 +54,19 @@
         </p>
         <p class="mb-0 text-center text-caption">
           Hosted by OVH - 2 rue Kellermann - 59100 Roubaix - France - 1077 (+33 9
-          72 10 10 07) - Powered by CoinGecko -
+          72 10 10 07) - Powered by CoinGecko
+        </p>
+        <p class="mb-0 text-center text-caption">
           <router-link to="/privacy">
             Privacy
+          </router-link>
+          -
+          <router-link to="/privacy">
+            FAQ
+          </router-link>
+          -
+          <router-link to="/privacy">
+            Contact
           </router-link>
         </p>
       </div>
@@ -85,6 +98,38 @@ export default {
   }),
   computed: {
     ...mapState(['signerType', 'impersonatePublicKey']),
+    advanced() {
+      return [
+        {
+          title: 'Account info',
+          icon: 'mdi-account',
+          route: '/account',
+          disabled: this.signerType === LEDGER_SIGNER,
+          subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
+        },
+        {
+          title: 'Add Bid',
+          icon: 'mdi-gavel',
+          route: '/addbid',
+          disabled: this.signerType === LEDGER_SIGNER,
+          subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
+        },
+        {
+          title: 'Withdraw Bid',
+          icon: 'mdi-connection',
+          route: '/withdrawbid',
+          disabled: this.signerType === LEDGER_SIGNER,
+          subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
+        },
+        {
+          title: 'Send smart contract',
+          icon: 'mdi-file-document-edit',
+          route: '/smartcontract',
+          disabled: this.signerType === LEDGER_SIGNER,
+          subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
+        },
+      ];
+    },
     /**
      * Return the links available. Dynamically adjusted until ledger support any operations.
      */
@@ -104,7 +149,10 @@ export default {
             route: '/security',
             disabled: this.signerType === LEDGER_SIGNER,
             subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
-            beta: true,
+            chip: {
+              icon: 'mdi-fire',
+              text: 'Beta',
+            },
           },
           {
             title: 'Transfer',
@@ -114,11 +162,15 @@ export default {
             subtitle: null,
           },
           {
-            title: 'Account info',
-            icon: 'mdi-account',
-            route: '/account',
-            disabled: this.signerType === LEDGER_SIGNER,
-            subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
+            title: 'NFTs',
+            icon: 'mdi-image-frame',
+            route: '/nft',
+            disabled: true,
+            subtitle: null,
+            chip: {
+              icon: 'mdi-lightning-bolt',
+              text: 'Coming soon...',
+            },
           },
         ],
         Staking: [
@@ -133,41 +185,6 @@ export default {
             title: 'Unstake',
             icon: 'mdi-lock-open',
             route: '/unstake',
-            disabled: false,
-            subtitle: null,
-          },
-        ],
-        Validators: [
-          {
-            title: 'Add Bid',
-            icon: 'mdi-gavel',
-            route: '/addbid',
-            disabled: this.signerType === LEDGER_SIGNER,
-            subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
-          },
-          {
-            title: 'Withdraw Bid',
-            icon: 'mdi-connection',
-            route: '/withdrawbid',
-            disabled: this.signerType === LEDGER_SIGNER,
-            subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
-          },
-        ],
-        Developers: [
-          {
-            title: 'Send smart contract',
-            icon: 'mdi-file-document-edit',
-            route: '/smartcontract',
-            disabled: this.signerType === LEDGER_SIGNER,
-            subtitle: this.signerType === LEDGER_SIGNER ? 'Currently not supported on Ledger' : null,
-          },
-        ],
-        Others: [
-          { title: 'FAQ', icon: 'mdi-help', route: '/faq', disabled: false, subtitle: null },
-          {
-            title: 'Contact',
-            icon: 'mdi-mail',
-            route: '/contact',
             disabled: false,
             subtitle: null,
           },
