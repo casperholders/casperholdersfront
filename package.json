@@ -15,7 +15,7 @@
     "testnet": "vite preview --mode testnet"
   },
   "dependencies": {
-    "@casperholders/core": "^3.2.0",
+    "@casperholders/core": "^3.4.0",
     "@ledgerhq/hw-transport-web-ble": "^6.27.1",
     "@ledgerhq/hw-transport-webusb": "^6.27.1",
     "@toruslabs/casper-embed": "^2.0.0",

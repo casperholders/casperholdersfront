@@ -139,9 +139,11 @@ export default {
       return buildCLValue(this.type, value);
     },
     findType(searchType) {
-      console.log(types.find((type) => type.type.toLowerCase() === searchType.toLowerCase()));
-      return types.find((type) => type.type.toLowerCase() === searchType.toLowerCase())?.type
-        || null;
+      if (searchType) {
+        return types.find((type) => type.type.toLowerCase() === searchType.toLowerCase())?.type
+          || null;
+      }
+      return null;
     },
   },
 };

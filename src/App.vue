@@ -144,6 +144,13 @@ export default {
             subtitle: null,
           },
           {
+            title: 'Transfer',
+            icon: 'mdi-send',
+            route: '/transfer',
+            disabled: false,
+            subtitle: null,
+          },
+          {
             title: 'Security',
             icon: 'mdi-key',
             route: '/security',
@@ -153,13 +160,6 @@ export default {
               icon: 'mdi-fire',
               text: 'Beta',
             },
-          },
-          {
-            title: 'Transfer',
-            icon: 'mdi-send',
-            route: '/transfer',
-            disabled: false,
-            subtitle: null,
           },
           {
             title: 'NFTs',
