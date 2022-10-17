@@ -17,7 +17,7 @@ const filterTokens = (dataTokens) => dataTokens.filter((token) => {
     if (transferEntrypoint.args.length === 2) {
       const amountArg = transferEntrypoint.args.find((arg) => arg.name === 'amount');
       const recipientArg = transferEntrypoint.args.find((arg) => arg.name === 'recipient');
-      if (amountArg.cl_type === 'U256' && recipientArg.cl_type === 'Key') {
+      if (amountArg?.cl_type === 'U256' && recipientArg?.cl_type === 'Key') {
         return true;
       }
     }
@@ -65,8 +65,12 @@ const sortTokens = (tokens) => sortBy(tokens, [
 export default async (options = {}) => {
   const query = new URLSearchParams();
 
-  // Currently, we only retrieve the ERC20 tokens.
-  query.set('type', 'eq.erc20');
+  const tokenTypes = [
+    'type.eq.uniswaperc20',
+    'type.eq.erc20',
+  ];
+
+  query.set('order', 'score.desc');
 
   if (options.limit) {
     query.set('limit', options.limit);
@@ -80,7 +84,7 @@ export default async (options = {}) => {
     query.set('hash', `in.(${options.ids.map((id) => `"${id}"`).join(',')})`);
   }
 
-  const response = await fetch(`${DATA_API}/contracts?${query.toString()}`, {
+  const response = await fetch(`${DATA_API}/contracts?or(${tokenTypes.join(',')})&${query.toString()}`, {
     headers: new Headers({
       Prefer: 'count=exact',
       'Range-Unit': 'items',

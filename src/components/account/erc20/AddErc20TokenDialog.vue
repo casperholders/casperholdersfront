@@ -18,7 +18,7 @@
           <token-input
             v-model="token"
             data-cy="token-input"
-            :only-groups="['erc20']"
+            :only-groups="['erc20', 'uniswaperc20']"
             no-default
             hide-details
           />

@@ -3,14 +3,22 @@
     <v-card-title>
       Smart Contract Operations
     </v-card-title>
-
+    <v-alert
+      v-if="isLedgerConnected"
+      color="warning"
+      dense
+      icon="mdi-alert"
+      class="mx-5"
+    >
+      You're connected with ledger. You can't deploy new smart contract.
+    </v-alert>
     <v-tabs
       v-model="tab"
-      background-color="transparent"
       grow
+      background-color="transparent"
       color="white"
     >
-      <v-tab>
+      <v-tab :disabled="isLedgerConnected">
         New Smart Contract
       </v-tab>
       <v-tab>
@@ -184,6 +192,7 @@ import ManageStepper from '@/components/smartcontract/ManageStepper';
 import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
+import { LEDGER_SIGNER } from '@/helpers/signers';
 import {
   InsufficientFunds,
   NoActiveKeyError,
@@ -221,12 +230,16 @@ export default {
     ...mapState([
       'signer',
       'internet',
+      'signerType',
     ]),
     ...mapGetters([
       'signerObject',
       'signerOptionsFactory',
       'activeKey',
     ]),
+    isLedgerConnected() {
+      return this.signerType === LEDGER_SIGNER;
+    },
     remainingBalance() {
       const result = this.balance - this.amount;
       return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
@@ -236,6 +249,11 @@ export default {
     },
   },
   watch: {
+    signerType() {
+      if (this.signerType === LEDGER_SIGNER) {
+        this.tab = 1;
+      }
+    },
     'signer.activeKey': 'getBalance',
     async internet(val) {
       if (val) {
@@ -260,6 +278,9 @@ export default {
     },
   },
   async mounted() {
+    if (this.signerType === LEDGER_SIGNER) {
+      this.tab = 1;
+    }
     await this.getBalance();
     this.$root.$on('operationOnGoing', () => {
       this.errorDeploy = null;
@@ -329,3 +350,9 @@ export default {
   },
 };
 </script>
+
+<style>
+    .v-slide-group__next--disabled, .v-slide-group__prev--disabled {
+        display: none!important;
+    }
+</style>

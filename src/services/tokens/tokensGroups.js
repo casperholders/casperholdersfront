@@ -72,4 +72,27 @@ export default {
       },
     },
   },
+  uniswaperc20: {
+    id: 'uniswaperc20',
+    name: 'Uniswap ERC20',
+    features: {
+      balance: {
+        fetchBalance: (token) => balanceService.fetchBalanceOfErc20(token.id),
+      },
+      transfer: {
+        transferResult: Erc20TransferResult,
+        minimumAmount: (token) => (1 / (token.decimals ? (10 ** token.decimals) : 1)),
+        transferID: false,
+        makeDeployParameters: (
+          { activeKey, amount, address, token },
+        ) => new Erc20Transfer(
+          activeKey,
+          convertErc20AmountToMotes(token, amount),
+          address,
+          NETWORK,
+          token.id,
+        ),
+      },
+    },
+  },
 };
