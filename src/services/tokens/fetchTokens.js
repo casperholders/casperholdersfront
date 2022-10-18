@@ -7,8 +7,8 @@ const findNamedKey = (namedKeys, name, value) => namedKeys.find(
 );
 
 const filterTokens = (dataTokens) => dataTokens.filter((token) => {
-  const name = findNamedKey(token.data.Contract.named_keys, 'name', 'name')?.initial_value;
-  const shortName = findNamedKey(token.data.Contract.named_keys, 'name', 'symbol')?.initial_value;
+  const name = findNamedKey(token.named_keys, 'name', 'name')?.initial_value;
+  const shortName = findNamedKey(token.named_keys, 'name', 'symbol')?.initial_value;
   if (name === undefined || shortName === undefined) {
     return false;
   }
@@ -35,9 +35,9 @@ const filterTokens = (dataTokens) => dataTokens.filter((token) => {
 const mapTokens = (dataTokens) => dataTokens.map((dataToken) => ({
   groupId: dataToken.type,
   id: dataToken.hash,
-  name: findNamedKey(dataToken.data.Contract.named_keys, 'name', 'name')?.initial_value,
-  shortName: findNamedKey(dataToken.data.Contract.named_keys, 'name', 'symbol')?.initial_value,
-  decimals: findNamedKey(dataToken.data.Contract.named_keys, 'name', 'decimals')?.initial_value || 0,
+  name: findNamedKey(dataToken.named_keys, 'name', 'name')?.initial_value,
+  shortName: findNamedKey(dataToken.named_keys, 'name', 'symbol')?.initial_value,
+  decimals: findNamedKey(dataToken.named_keys, 'name', 'decimals')?.initial_value || 0,
 }));
 
 /**
@@ -71,6 +71,7 @@ export default async (options = {}) => {
   ];
 
   query.set('order', 'score.desc');
+  query.set('select', '*,named_keys(*)');
 
   if (options.limit) {
     query.set('limit', options.limit);

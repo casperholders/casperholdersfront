@@ -135,7 +135,7 @@ export default {
       return string.charAt(0).toUpperCase() + string.slice(1).replaceAll('_', ' ');
     },
     getContractName(contract) {
-      const name = contract.data.Contract.named_keys.filter((n) => n.name.includes('name'))[0]?.initial_value;
+      const name = contract.named_keys.filter((n) => n.name.includes('name'))[0]?.initial_value;
       return name || contract.hash;
     },
     /**
@@ -151,6 +151,7 @@ export default {
       const query = new URLSearchParams();
       const keys = account.Account.namedKeys.filter((n) => n.key.includes('hash-'));
       query.set('hash', `in.(${keys.map((n) => `"${n.key.replace('hash-', '')}"`).join(',')})`);
+      query.set('select', '*,named_keys(*)');
       this.contracts = await (await fetch(`${DATA_API}/contracts?${query.toString()}`)).json();
     },
   },
