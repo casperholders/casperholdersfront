@@ -1,7 +1,7 @@
 <template>
   <operation
-    :amount="amount"
-    :fee="0"
+    :amount="0"
+    :fee="amount"
     :loading-sign-and-deploy="loadingSignAndDeploy"
     :remaining-balance="remainingBalance"
     :send-deploy="sendDeploy"

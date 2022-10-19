@@ -28,9 +28,44 @@
 
     <v-tabs-items v-model="tab">
       <v-tab-item>
+        <card-horizontal-list class="pa-4">
+          <contract-card
+            v-for="(c, i) in contracts"
+            :key="i"
+            :title="c.title"
+            :description="c.description"
+            :github-url="c.githubUrl"
+            :icon="c.icon"
+          >
+            <template #actions>
+              <v-card-actions class="mt-auto">
+                <a
+                  :href="c.downloadUrl"
+                  download
+                >
+                  <v-btn
+                    class="flex-grow-1 flex-shrink-1"
+                    color="secondary"
+                    rounded
+                  >
+                    Download
+                  </v-btn>
+                </a>
+                <v-btn
+                  class="flex-grow-1 flex-shrink-1"
+                  color="secondary"
+                  rounded
+                  @click="args = c.args"
+                >
+                  Set arguments
+                </v-btn>
+              </v-card-actions>
+            </template>
+          </contract-card>
+        </card-horizontal-list>
         <operation
-          :amount="amount"
-          :fee="0"
+          :amount="0"
+          :fee="amount"
           :loading-sign-and-deploy="loadingSignAndDeploy"
           :remaining-balance="remainingBalance"
           :send-deploy="sendDeploy"
@@ -185,6 +220,8 @@
 </template>
 
 <script>
+import CardHorizontalList from '@/components/account/CardHorizontalList';
+import ContractCard from '@/components/account/ContractCard';
 import Amount from '@/components/forms/inputs/AmountInput';
 import Argument from '@/components/forms/inputs/ArgumentInput';
 import Operation from '@/components/operations/OperationCard';
@@ -209,7 +246,7 @@ import { mapGetters, mapState } from 'vuex';
  */
 export default {
   name: 'SmartContractView',
-  components: { ManageStepper, Argument, Amount, Operation },
+  components: { CardHorizontalList, ContractCard, ManageStepper, Argument, Amount, Operation },
   data() {
     return {
       minPayment: 1,
@@ -224,6 +261,136 @@ export default {
       buffer: null,
       tab: 0,
       args: [],
+      contracts: [
+        {
+          title: 'ERC20',
+          githubUrl: 'https://github.com/casper-ecosystem/erc20',
+          description: 'Casper Fungible Tokens (ERC-20 Standard)',
+          icon: 'mdi-circle-multiple',
+          downloadUrl: '/contracts/erc20_token.wasm',
+          args: [
+            {
+              name: 'name',
+              type: 'string',
+            },
+            {
+              name: 'symbol',
+              type: 'string',
+            },
+            {
+              name: 'decimals',
+              type: 'u8',
+            },
+            {
+              name: 'total_supply',
+              type: 'u512',
+            },
+          ],
+        },
+        {
+          title: 'Uniswap ERC20',
+          githubUrl: 'https://github.com/Rengo-Labs/CasperLabs-UniswapV2-Core/tree/main/erc20',
+          description: 'ERC20 Implementation by Rengo Labs on Casper Network.',
+          icon: 'mdi-circle-multiple',
+          downloadUrl: '/contracts/uniswap_erc20_token.wasm',
+          args: [
+            {
+              name: 'public_key',
+              type: 'publicKey',
+            },
+            {
+              name: 'name',
+              type: 'string',
+            },
+            {
+              name: 'symbol',
+              type: 'string',
+            },
+            {
+              name: 'decimals',
+              type: 'u8',
+            },
+            {
+              name: 'initial_supply',
+              type: 'u256',
+            },
+            {
+              name: 'contract_name',
+              type: 'string',
+            },
+          ],
+        },
+        {
+          title: 'NFT CEP47',
+          githubUrl: 'https://github.com/casper-ecosystem/casper-nft-cep47',
+          description: 'CEP-47 is the NFT standard for the Casper blockchain. The equivalent NFT standard on Ethereum is ERC-721.',
+          icon: 'mdi-image',
+          downloadUrl: '/contracts/cep47_token.wasm',
+          args: [
+            {
+              name: 'name',
+              type: 'string',
+            },
+            {
+              name: 'symbol',
+              type: 'string',
+            },
+            {
+              name: 'meta',
+              type: 'map',
+            },
+            {
+              name: 'contract_name',
+              type: 'string',
+            },
+          ],
+        },
+        {
+          title: 'Enhanced NFT CEP78',
+          githubUrl: 'https://github.com/casper-ecosystem/cep-78-enhanced-nft',
+          description: 'CEP-78: Enhanced NFT standard',
+          icon: 'mdi-image-frame',
+          downloadUrl: '/contracts/cep78_token.wasm',
+          args: [
+            {
+              name: 'collection_name',
+              type: 'string',
+            },
+            {
+              name: 'collection_symbol',
+              type: 'string',
+            },
+            {
+              name: 'total_token_supply',
+              type: 'u64',
+            },
+            {
+              name: 'ownership_mode',
+              type: 'u8',
+            },
+            {
+              name: 'nft_kind',
+              type: 'u8',
+            },
+            {
+              name: 'nft_metadata_kind',
+              type: 'u8',
+            },
+            {
+              name: 'json_schema',
+              type: 'string',
+            },
+            {
+              name: 'identifier_mode',
+              type: 'u8',
+            },
+            {
+              name: 'metadata_mutability',
+              type: 'u8',
+            },
+          ],
+        },
+      ],
     };
   },
   computed: {
@@ -353,6 +520,11 @@ export default {
 
 <style>
     .v-slide-group__next--disabled, .v-slide-group__prev--disabled {
-        display: none!important;
+        display: none !important;
+    }
+
+    .card-actions {
+        position: absolute;
+        bottom: 0;
     }
 </style>

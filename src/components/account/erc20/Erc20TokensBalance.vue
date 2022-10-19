@@ -105,6 +105,7 @@ import erc20TrackedTokens from '@/services/tokens/erc20TrackedTokens';
 import fetchTokens from '@/services/tokens/fetchTokens';
 import findTokenGroup from '@/services/tokens/findTokenGroup';
 import Big from 'big.js';
+import { mapState } from 'vuex';
 
 /**
  * Component to display ERC20 balance per tokens.
@@ -127,6 +128,11 @@ export default {
      */
     tokensBalances: {},
   }),
+  computed: {
+    ...mapState([
+      'signer',
+    ]),
+  },
   watch: {
     /**
      * Watch the state of the active key. In case of an update, re-fetch the data.
@@ -162,7 +168,7 @@ export default {
 
         this.loading = false;
 
-        this.fetchTokensBalances();
+        await this.fetchTokensBalances();
       }
     },
     /**
