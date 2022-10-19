@@ -79,10 +79,13 @@
 </template>
 
 <script>
+import { DATA_API } from '@/helpers/env';
 import fetchTokens from '@/services/tokens/fetchTokens';
 import nativeToken from '@/services/tokens/nativeToken';
 import tokensGroups from '@/services/tokens/tokensGroups';
+import { CLPublicKey } from 'casper-js-sdk';
 import { debounce } from 'chart.js/helpers';
+import { mapGetters } from 'vuex';
 
 /**
  * Component to choose a token (native CSPR, ERC20 contracts, etc.)
@@ -136,6 +139,10 @@ export default {
        */
       lazyValue: this.tokenOrDefault(this.value),
       /**
+       * The available account tokens to select.
+       */
+      accountTokens: [],
+      /**
        * The available tokens to select.
        */
       tokens: [],
@@ -154,6 +161,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters([
+      'activeKey',
+    ]),
     /**
      * Tells if the native token is selected.
      *
@@ -206,6 +216,25 @@ export default {
 
       if (this.shouldDisplayGroup(nativeToken.groupId)) {
         this.tokens.push(nativeToken);
+      }
+
+      /** TODO Refactor this part to integrate it correctly with the fetchTokens function
+       * and maybe remove already tracked tokens + add multiselect.
+       * */
+      if (!this.search) {
+        const erc20Account = (await (await fetch(`${DATA_API}/rpc/account_ercs20?publickey=${this.activeKey}&accounthash=${CLPublicKey.fromHex(this.activeKey).toAccountHashStr()}`)).json()).map((contractHash) => contractHash.contract_hash);
+        const accountTokens = await fetchTokens({
+          ids: erc20Account,
+        });
+        console.log(accountTokens);
+        if (accountTokens.data.length > 0) {
+          this.tokens.push(
+            ...(
+              [{ divider: true }, { header: 'Account tokens' }]
+            ),
+            ...accountTokens.data,
+          );
+        }
       }
 
       try {
