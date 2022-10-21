@@ -30,7 +30,23 @@
     <v-stepper-items>
       <v-stepper-content step="1">
         <v-card>
+          <v-autocomplete
+            v-model="selectedSearchContract"
+            :items="foundContracts"
+            :loading="loadingContracts"
+            :search-input.sync="searchContract"
+            color="white"
+            hide-no-data
+            hide-selected
+            item-text="hash"
+            item-value="hash"
+            label="Contracts"
+            placeholder="Start typing to Search"
+            prepend-icon="mdi-database-search"
+            return-object
+          ></v-autocomplete>
           <v-list>
+            <v-subheader>Account Contracts</v-subheader>
             <v-list-item-group v-model="selectedContract">
               <v-list-item
                 v-for="(contract, i) in contracts"
@@ -52,33 +68,62 @@
       </v-stepper-content>
 
       <v-stepper-content step="2">
-        <v-card class="mb-5">
-          <v-list v-if="selectedContract !== undefined">
-            <v-list-item-group v-model="selectedEntrypoint">
-              <v-list-item
-                v-for="(entrypoint, i) in contracts[selectedContract].data.Contract.entry_points"
-                :key="i"
-                @click="e1 = 3; selectedEntrypoint = i;"
-              >
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ capitalizeFirstLetter(entrypoint.name) }}
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    Access: {{ entrypoint.access }} Type: {{ entrypoint.entry_point_type }}
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-card>
-
-        <v-btn
-          text
-          @click="e1 = 1"
-        >
-          Cancel
-        </v-btn>
+        <template v-if="selectedContract !== undefined">
+          <v-card class="mb-5">
+            <v-list>
+              <v-list-item-group v-model="selectedEntrypoint">
+                <v-list-item
+                  v-for="(entrypoint, i) in contracts[selectedContract].data.Contract.entry_points"
+                  :key="i"
+                  @click="e1 = 3; selectedEntrypoint = i;"
+                >
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      {{ capitalizeFirstLetter(entrypoint.name) }}
+                    </v-list-item-title>
+                    <v-list-item-subtitle>
+                      Access: {{ entrypoint.access }} Type: {{ entrypoint.entry_point_type }}
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-card>
+          <v-btn
+            text
+            @click="e1 = 1; selectedContract = undefined;"
+          >
+            Cancel
+          </v-btn>
+        </template>
+        <template v-if="selectedSearchContract !== undefined">
+          <v-card class="mb-5">
+            <v-list>
+              <v-list-item-group v-model="selectedEntrypoint">
+                <v-list-item
+                  v-for="(entrypoint, i) in selectedSearchContract.data.Contract.entry_points"
+                  :key="i"
+                  @click="e1 = 3; selectedEntrypoint = i;"
+                >
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      {{ capitalizeFirstLetter(entrypoint.name) }}
+                    </v-list-item-title>
+                    <v-list-item-subtitle>
+                      Access: {{ entrypoint.access }} Type: {{ entrypoint.entry_point_type }}
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-card>
+          <v-btn
+            text
+            @click="e1 = 1; selectedSearchContract = undefined;"
+          >
+            Cancel
+          </v-btn>
+        </template>
       </v-stepper-content>
 
       <v-stepper-content step="3">
@@ -92,10 +137,17 @@
               contracts[selectedContract].data.Contract.entry_points[selectedEntrypoint].name"
             :args="contracts[selectedContract].data.Contract.entry_points[selectedEntrypoint].args"
           />
+          <generic-deploy-operation
+            v-if="selectedSearchContract !== undefined && selectedEntrypoint !== undefined"
+            :contract-hash="selectedSearchContract.hash"
+            :entrypoint="
+              selectedSearchContract.data.Contract.entry_points[selectedEntrypoint].name"
+            :args="selectedSearchContract.data.Contract.entry_points[selectedEntrypoint].args"
+          />
         </v-card>
         <v-btn
           text
-          @click="e1 = 2"
+          @click="e1 = 2; selectedEntrypoint = undefined;"
         >
           Cancel
         </v-btn>
@@ -120,12 +172,34 @@ export default {
       contracts: [],
       selectedContract: undefined,
       selectedEntrypoint: undefined,
+      selectedSearchContract: undefined,
+      foundContracts: [],
+      loadingContracts: false,
+      searchContract: null,
     };
   },
   computed: {
     ...mapGetters([
       'activeKey',
     ]),
+  },
+  watch: {
+    async searchContract(val) {
+      this.isLoading = true;
+      const query = new URLSearchParams();
+
+      query.set('hash', `ilike.*${val}*`);
+      // Lazily load input items
+      this.foundContracts = await (await fetch(`${DATA_API}/contracts?${query.toString()}&limit=10`)).json();
+
+      this.isLoading = false;
+    },
+    selectedSearchContract(val) {
+      console.log(val);
+      if (val) {
+        this.e1 = 2;
+      }
+    },
   },
   async mounted() {
     await this.getAccountContracts();

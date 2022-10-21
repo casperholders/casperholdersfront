@@ -178,6 +178,7 @@ export default {
     search: 'onSearch',
     lazyValue: 'onLazyValue',
     value: 'onValue',
+    activeKey: 'debouncedFetchTokens',
   },
   mounted() {
     this.debouncedFetchTokens();
