@@ -52,6 +52,11 @@ const routes = [
     component: () => import('@/views/staking/UndelegateView'),
   },
   {
+    path: '/nft',
+    name: 'NFTs',
+    component: () => import('@/views/account/NFTView'),
+  },
+  {
     path: '/addbid',
     name: 'Add Bid',
     component: () => import('@/views/validators/AddBidView'),

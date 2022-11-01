@@ -123,6 +123,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * Tells the input to not default to native token when empty.
+     */
+    nfts: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -222,7 +229,7 @@ export default {
       /** TODO Refactor this part to integrate it correctly with the fetchTokens function
        * and maybe remove already tracked tokens + add multiselect.
        * */
-      if (!this.search) {
+      if (!this.search && !this.nfts) {
         const erc20Account = (await (await fetch(`${DATA_API}/rpc/account_ercs20?publickey=${this.activeKey}&accounthash=${CLPublicKey.fromHex(this.activeKey).toAccountHashStr()}`)).json()).map((contractHash) => contractHash.contract_hash);
         const accountTokens = await fetchTokens({
           ids: erc20Account,
@@ -239,9 +246,13 @@ export default {
       }
 
       try {
+        console.log(this.onlyGroups);
         const { data, contentRange } = await fetchTokens({
-          search: this.search, limit: '10',
+          search: this.search,
+          limit: '10',
+          tokenTypes: this.onlyGroups,
         });
+        console.log(data);
 
         if (this.lazyValue
           && !this.isNativeToken

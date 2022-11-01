@@ -154,12 +154,8 @@ export default {
             title: 'NFTs',
             icon: 'mdi-image-frame',
             route: '/nft',
-            disabled: true,
+            disabled: false,
             subtitle: null,
-            chip: {
-              icon: 'mdi-lightning-bolt',
-              text: 'Coming soon...',
-            },
           },
         ],
         Staking: [

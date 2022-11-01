@@ -7,22 +7,9 @@ const findNamedKey = (namedKeys, name, value) => namedKeys.find(
 );
 
 const filterTokens = (dataTokens) => dataTokens.filter((token) => {
-  const name = findNamedKey(token.named_keys, 'name', 'name')?.initial_value;
-  const shortName = findNamedKey(token.named_keys, 'name', 'symbol')?.initial_value;
-  if (name === undefined || shortName === undefined) {
-    return false;
-  }
-  const transferEntrypoint = token.data.Contract.entry_points.find((entryPoint) => entryPoint.name === 'transfer');
-  if (transferEntrypoint !== undefined) {
-    if (transferEntrypoint.args.length === 2) {
-      const amountArg = transferEntrypoint.args.find((arg) => arg.name === 'amount');
-      const recipientArg = transferEntrypoint.args.find((arg) => arg.name === 'recipient');
-      if (amountArg?.cl_type === 'U256' && recipientArg?.cl_type === 'Key') {
-        return true;
-      }
-    }
-  }
-  return false;
+  const name = findNamedKey(token.named_keys, 'name', 'name')?.initial_value || findNamedKey(token.named_keys, 'name', 'collection_name')?.initial_value;
+  const shortName = findNamedKey(token.named_keys, 'name', 'symbol')?.initial_value || findNamedKey(token.named_keys, 'name', 'collection_symbol')?.initial_value;
+  return !(name === undefined || shortName === undefined);
 });
 
 /**
@@ -32,13 +19,46 @@ const filterTokens = (dataTokens) => dataTokens.filter((token) => {
  *
  * @returns {Array}
  */
-const mapTokens = (dataTokens) => dataTokens.map((dataToken) => ({
-  groupId: dataToken.type,
-  id: dataToken.hash,
-  name: findNamedKey(dataToken.named_keys, 'name', 'name')?.initial_value,
-  shortName: findNamedKey(dataToken.named_keys, 'name', 'symbol')?.initial_value,
-  decimals: findNamedKey(dataToken.named_keys, 'name', 'decimals')?.initial_value || 0,
-}));
+const mapTokens = (dataTokens) => dataTokens.map((dataToken) => {
+  const token = {
+    groupId: dataToken.type,
+    id: dataToken.hash,
+    name: findNamedKey(dataToken.named_keys, 'name', 'name')?.initial_value || findNamedKey(dataToken.named_keys, 'name', 'collection_name')?.initial_value,
+    shortName: findNamedKey(dataToken.named_keys, 'name', 'symbol')?.initial_value || findNamedKey(dataToken.named_keys, 'name', 'collection_symbol')?.initial_value,
+  };
+  if (token.groupId.includes('erc')) {
+    token.decimals = findNamedKey(dataToken.named_keys, 'name', 'decimals')?.initial_value || 0;
+  }
+  if (token.groupId.includes('nft')) {
+    token.namedKeys = dataToken.named_keys;
+    if (token.groupId.includes('nftcep47')) {
+      token.metadata = findNamedKey(dataToken.named_keys, 'name', 'metadata')?.uref;
+    }
+    if (token.groupId.includes('nftcep78')) {
+      const metadataKind = findNamedKey(dataToken.named_keys, 'name', 'nft_metadata_kind')?.initial_value;
+      let metadataNamedKey = '';
+      switch (metadataKind) {
+        case 0:
+          metadataNamedKey = 'metadata_cep78';
+          break;
+        case 1:
+          metadataNamedKey = 'metadata_nft721';
+          break;
+        case 2:
+          metadataNamedKey = 'metadata_raw';
+          break;
+        case 3:
+          metadataNamedKey = 'metadata_custom_validated';
+          break;
+        default:
+          metadataNamedKey = '';
+          break;
+      }
+      token.metadata = findNamedKey(dataToken.named_keys, 'name', metadataNamedKey)?.uref;
+    }
+  }
+  return token;
+});
 
 /**
  * Sort the tokens by group and logo/name/short name availability.
@@ -65,10 +85,7 @@ const sortTokens = (tokens) => sortBy(tokens, [
 export default async (options = {}) => {
   const query = new URLSearchParams();
 
-  const tokenTypes = [
-    'type.eq.uniswaperc20',
-    'type.eq.erc20',
-  ];
+  const tokenTypes = options.tokenTypes.map((t) => `type.eq.${t}`);
 
   query.set('order', 'score.desc');
   query.set('select', '*,named_keys(*)');
@@ -85,7 +102,7 @@ export default async (options = {}) => {
     query.set('hash', `in.(${options.ids.map((id) => `"${id}"`).join(',')})`);
   }
 
-  const response = await fetch(`${DATA_API}/contracts?or(${tokenTypes.join(',')})&${query.toString()}`, {
+  const response = await fetch(`${DATA_API}/contracts?or=(${tokenTypes.join(',')})&${query.toString()}`, {
     headers: new Headers({
       Prefer: 'count=exact',
       'Range-Unit': 'items',
