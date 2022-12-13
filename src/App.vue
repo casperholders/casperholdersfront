@@ -154,8 +154,8 @@ export default {
             title: 'NFTs',
             icon: 'mdi-image-frame',
             route: '/nft',
-            disabled: false,
-            subtitle: null,
+            disabled: true,
+            subtitle: 'Coming soon',
           },
         ],
         Staking: [

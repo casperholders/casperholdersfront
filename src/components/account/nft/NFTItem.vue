@@ -237,7 +237,6 @@ export default {
   computed: {
     getImage() {
       if (this.nft.loading === false) {
-        console.log(this.nft.metadata?.get('image'));
         if (this.nft.metadata?.get('image')) {
           const image = this.nft.metadata.get('image').replace('ipfs://', 'https://gateway.ipfs.io/ipfs/');
           return image.match(/^http(s)*:\/\//) ? image : `https://gateway.ipfs.io/ipfs/${image}`;

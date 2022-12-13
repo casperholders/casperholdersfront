@@ -79,19 +79,25 @@ const sortTokens = (tokens) => sortBy(tokens, [
  *
  * @param {object} options Optional options to query tokens.
  * @param {string|undefined} [options.search] Textual search on tokens names.
+ * @param {string[]|undefined} [options.tokenTypes] Id's of the token types.
+ * @param {number|undefined} [options.limit] Limit the number of results.
+ * @param {string[]|undefined} [options.ids] Filter the results to a set of ids.
  *
- * @returns {Promise<Array>}
+ * @returns {Promise<Object>}
  */
 export default async (options = {}) => {
   const query = new URLSearchParams();
 
-  const tokenTypes = options.tokenTypes.map((t) => `type.eq.${t}`);
+  if (options.tokenTypes) {
+    const tokenTypes = options.tokenTypes.map((t) => `type.eq.${t}`);
+    query.set('or', `(${tokenTypes.join(',')})`);
+  }
 
   query.set('order', 'score.desc');
   query.set('select', '*,named_keys(*)');
 
   if (options.limit) {
-    query.set('limit', options.limit);
+    query.set('limit', `${options.limit}`);
   }
 
   if (options.search) {
@@ -102,7 +108,7 @@ export default async (options = {}) => {
     query.set('hash', `in.(${options.ids.map((id) => `"${id}"`).join(',')})`);
   }
 
-  const response = await fetch(`${DATA_API}/contracts?or=(${tokenTypes.join(',')})&${query.toString()}`, {
+  const response = await fetch(`${DATA_API}/contracts?${query.toString()}`, {
     headers: new Headers({
       Prefer: 'count=exact',
       'Range-Unit': 'items',

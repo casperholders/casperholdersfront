@@ -92,7 +92,6 @@ export default {
 
       this.totalNFTs = parseContentRange(events.headers.get('content-range')).size;
       const nfts = (await events.json()).map((e) => e.events).flat();
-      console.log(nfts);
       if (this.nfts.length === 0) {
         this.emptyResults = true;
       }

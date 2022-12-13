@@ -15,7 +15,7 @@ describe('Smart Contract', () => {
     cy.wait(5000);
     cy.fixture('counter.wasm', { encoding: null }).as('counter');
     cy.get('#smartContractFile').selectFile('@counter', { force: true });
-    cy.get('#amount').type('{selectall}{del}47');
+    cy.get('#amount').type('{selectall}{del}50');
     cy.wait(5000);
     cy.get('#submitOperation').click();
     cy.get('#agreeAndSign').parents('.v-dialog').should('be.visible');

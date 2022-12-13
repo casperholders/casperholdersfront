@@ -229,12 +229,12 @@ export default {
       /** TODO Refactor this part to integrate it correctly with the fetchTokens function
        * and maybe remove already tracked tokens + add multiselect.
        * */
-      if (!this.search && !this.nfts) {
+      if (!this.search && (this.shouldDisplayGroup('erc20') || this.shouldDisplayGroup('uniswaperc20'))) {
         const erc20Account = (await (await fetch(`${DATA_API}/rpc/account_ercs20?publickey=${this.activeKey}&accounthash=${CLPublicKey.fromHex(this.activeKey).toAccountHashStr()}`)).json()).map((contractHash) => contractHash.contract_hash);
         const accountTokens = await fetchTokens({
           ids: erc20Account,
+          tokenTypes: this.onlyGroups,
         });
-        console.log(accountTokens);
         if (accountTokens.data.length > 0) {
           this.tokens.push(
             ...(
@@ -246,13 +246,11 @@ export default {
       }
 
       try {
-        console.log(this.onlyGroups);
         const { data, contentRange } = await fetchTokens({
           search: this.search,
-          limit: '10',
+          limit: 10,
           tokenTypes: this.onlyGroups,
         });
-        console.log(data);
 
         if (this.lazyValue
           && !this.isNativeToken

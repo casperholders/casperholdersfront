@@ -148,8 +148,6 @@ export default {
       if (ownedTokensDict) {
         const uref = CLPublicKey.fromHex(this.signer.activeKey).toAccountHashStr().slice(13);
         const str = await getStateRootHash();
-        console.log(uref);
-        console.log(ownedTokensDict);
         const ownedTokens = await getDictionaryItemByURef(str, uref, ownedTokensDict);
         if (ownedTokens.result?.stored_value?.CLValue?.parsed) {
           return ownedTokens.result?.stored_value?.CLValue?.parsed;

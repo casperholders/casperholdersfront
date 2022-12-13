@@ -63,7 +63,7 @@ export default function buildCLValue(cltype, rawValue, innerType = null) {
         decodeBase16(rawValue)[0],
       );
     case 'byteArray':
-      return CLValueBuilder[cltype](Buffer.from(rawValue));
+      return CLValueBuilder[cltype](Buffer.concat([Buffer.from(rawValue)], 32));
     default:
       return 'Select a type';
   }

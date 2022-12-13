@@ -47,7 +47,6 @@ export default {
         () => {
           try {
             const builtCLVValue = buildCLValue(this.clType, this.rawValue);
-            console.log(builtCLVValue);
             return typeof builtCLVValue === 'string'
               ? builtCLVValue : builtCLVValue.isCLValue;
           } catch (e) {

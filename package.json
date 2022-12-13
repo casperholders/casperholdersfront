@@ -15,7 +15,7 @@
     "testnet": "vite preview --mode testnet"
   },
   "dependencies": {
-    "@casperholders/core": "^3.5.2",
+    "@casperholders/core": "^3.6.0",
     "@ledgerhq/hw-transport-web-ble": "^6.27.1",
     "@ledgerhq/hw-transport-webusb": "^6.27.1",
     "@toruslabs/casper-embed": "^2.0.0",
@@ -35,7 +35,7 @@
     "vue": "^2.6.11",
     "vue-json-pretty": "^1.8.2",
     "vue-router": "^3.2.0",
-    "vuetify": "^2.6.4",
+    "vuetify": "^2.6.12",
     "vuex": "^3.6.2",
     "workbox-core": "^6.5.3",
     "workbox-precaching": "^6.5.2",

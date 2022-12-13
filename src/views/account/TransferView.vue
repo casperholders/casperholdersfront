@@ -15,6 +15,7 @@
     <token-input
       v-model="token"
       data-cy="token-input"
+      :only-groups="['native', 'erc20', 'uniswaperc20']"
       :initial-token="$route.params.token"
     />
     <v-text-field

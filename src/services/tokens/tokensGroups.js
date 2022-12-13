@@ -99,46 +99,12 @@ export default {
     id: 'nftcep47',
     name: 'Casper Standard NFT',
     features: {
-      balance: {
-        fetchBalance: (token) => balanceService.fetchBalanceOfErc20(token.id),
-      },
-      transfer: {
-        transferResult: Erc20TransferResult,
-        minimumAmount: (token) => (1 / (token.decimals ? (10 ** token.decimals) : 1)),
-        transferID: false,
-        makeDeployParameters: (
-          { activeKey, amount, address, token },
-        ) => new Erc20Transfer(
-          activeKey,
-          convertErc20AmountToMotes(token, amount),
-          address,
-          NETWORK,
-          token.id,
-        ),
-      },
     },
   },
   nftcep78: {
     id: 'nftcep78',
     name: 'Casper Enhanced Standard NFT',
     features: {
-      balance: {
-        fetchBalance: (token) => balanceService.fetchBalanceOfErc20(token.id),
-      },
-      transfer: {
-        transferResult: Erc20TransferResult,
-        minimumAmount: (token) => (1 / (token.decimals ? (10 ** token.decimals) : 1)),
-        transferID: false,
-        makeDeployParameters: (
-          { activeKey, amount, address, token },
-        ) => new Erc20Transfer(
-          activeKey,
-          convertErc20AmountToMotes(token, amount),
-          address,
-          NETWORK,
-          token.id,
-        ),
-      },
     },
   },
 };

@@ -506,13 +506,13 @@ export default {
     keyManagementFee() {
       let fee = Big(0);
       if (this.isKeyManagementThresholdChanged) {
-        fee = fee.plus(Big(0.2));
+        fee = fee.plus(Big(1));
       }
       if (this.isDeployThresholdChanged) {
-        fee = fee.plus(Big(0.2));
+        fee = fee.plus(Big(1));
       }
-      fee = fee.plus(Big(this.keysChanged.length).times(Big(0.2)));
-      fee = fee.plus(Big(this.keysAdded.length).times(Big(0.2)));
+      fee = fee.plus(Big(this.keysChanged.length).times(Big(1)));
+      fee = fee.plus(Big(this.keysAdded.length).times(Big(1)));
       return fee.toNumber();
     },
   },

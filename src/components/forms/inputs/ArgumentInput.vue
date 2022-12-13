@@ -73,8 +73,6 @@ export default {
   },
   methods: {
     test(v) {
-      console.log('ARG V');
-      console.log(v);
       this.rawValue = v;
       return v;
     },
