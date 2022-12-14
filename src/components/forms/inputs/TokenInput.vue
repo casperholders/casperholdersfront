@@ -238,9 +238,6 @@ export default {
         this.tokens.push(nativeToken);
       }
 
-      /** TODO Refactor this part to integrate it correctly with the fetchTokens function
-       * and maybe remove already tracked tokens + add multiselect.
-       * */
       if (!this.search && (this.shouldDisplayGroup('erc20') || this.shouldDisplayGroup('uniswaperc20'))) {
         const erc20Account = (await (await fetch(`${DATA_API}/rpc/account_ercs20?publickey=${this.activeKey}&accounthash=${CLPublicKey.fromHex(this.activeKey).toAccountHashStr()}`)).json()).map((contractHash) => contractHash.contract_hash);
         const accountTokens = await fetchTokens({

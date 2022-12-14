@@ -101,9 +101,9 @@ import BalanceAmountCard from '@/components/account/BalanceAmountCard';
 import CardHorizontalList from '@/components/account/CardHorizontalList';
 import CardSectionTitle from '@/components/account/CardSectionTitle';
 import AddErc20TokenDialog from '@/components/account/erc20/AddErc20TokenDialog';
-import erc20TrackedTokens from '@/services/tokens/erc20TrackedTokens';
 import fetchTokens from '@/services/tokens/fetchTokens';
 import findTokenGroup from '@/services/tokens/findTokenGroup';
+import useErc20TrackedTokens from '@/services/tokens/useErc20TrackedTokens';
 import Big from 'big.js';
 import { mapState } from 'vuex';
 
@@ -158,7 +158,7 @@ export default {
      * @returns {Promise<void>}
      */
     async fetchTokensFromStore() {
-      const tokensIds = erc20TrackedTokens.get() || [];
+      const tokensIds = useErc20TrackedTokens(this.signer.activeKey).get() || [];
       if (tokensIds.length) {
         this.loading = true;
 
@@ -202,7 +202,7 @@ export default {
      * Save the tokens state to store.
      */
     saveTokensToStore() {
-      erc20TrackedTokens.set(this.tokens.map(({ id }) => id));
+      useErc20TrackedTokens(this.signer.activeKey).set(this.tokens.map(({ id }) => id));
     },
     /**
      * Handle an addition of a token and fetch its balance.
