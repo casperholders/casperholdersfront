@@ -19,7 +19,6 @@
             v-model="token"
             data-cy="token-input"
             :only-groups="['nftcep78', 'nftcep47']"
-            :nfts="true"
             no-default
             hide-details
           />
@@ -54,20 +53,20 @@ export default {
   components: { TokenInput },
   data: () => ({
     dialog: false,
-    token: undefined,
+    token: [],
   }),
   methods: {
     onSubmit() {
-      if (this.token) {
+      if (this.token.length) {
         this.$emit('add', this.token);
       }
 
       this.dialog = false;
-      this.token = undefined;
+      this.token = [];
     },
     onCancel() {
       this.dialog = false;
-      this.token = undefined;
+      this.token = [];
     },
   },
 };

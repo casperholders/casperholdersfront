@@ -21,6 +21,7 @@
             :only-groups="['erc20', 'uniswaperc20']"
             no-default
             hide-details
+            multiple
           />
         </v-card-text>
         <v-card-actions class="justify-space-between">
@@ -53,20 +54,20 @@ export default {
   components: { TokenInput },
   data: () => ({
     dialog: false,
-    token: undefined,
+    token: [],
   }),
   methods: {
     onSubmit() {
-      if (this.token) {
+      if (this.token.length) {
         this.$emit('add', this.token);
       }
 
       this.dialog = false;
-      this.token = undefined;
+      this.token = [];
     },
     onCancel() {
       this.dialog = false;
-      this.token = undefined;
+      this.token = [];
     },
   },
 };

@@ -1,11 +1,13 @@
 <template>
   <v-autocomplete
-    v-model="lazyValue"
+    ref="tokenInput"
+    :value="multiple ? lazyValue : lazyValue[0]"
     :search-input.sync="search"
     :loading="loading"
     :items="tokens"
-    :clearable="!isNativeToken"
+    :clearable="!isOnlyNativeToken"
     :filter="filter"
+    :multiple="multiple"
     prepend-icon="mdi-circle-multiple-outline"
     label="Token"
     color="white"
@@ -14,6 +16,8 @@
     filled
     chips
     v-bind="$attrs"
+    @input="onInputValue"
+    @change="onClearSearch"
   >
     <template #selection="{ item, select }">
       <v-chip
@@ -30,7 +34,15 @@
         {{ item.name || item.id }}
       </v-chip>
     </template>
-    <template #item="{ item }">
+    <template #item="{ parent, item }">
+      <v-list-item-action v-if="parent.action && !parent.hideSelected && parent.items.length > 0">
+        <v-simple-checkbox
+          :color="parent.color"
+          :value="parent.hasItem(item)"
+          :ripple="false"
+          @input="parent.$emit('select', item)"
+        />
+      </v-list-item-action>
       <v-list-item-avatar
         v-if="item.logo"
         color="white"
@@ -106,7 +118,7 @@ export default {
      * The token (smart contract) hash to use, defaults to native CSPR.
      */
     value: {
-      type: Object,
+      type: [Object, Array],
       default: undefined,
     },
     /**
@@ -124,9 +136,9 @@ export default {
       default: false,
     },
     /**
-     * Tells the input to not default to native token when empty.
+     * Tells the input to handle multiple selection.
      */
-    nfts: {
+    multiple: {
       type: Boolean,
       default: false,
     },
@@ -144,7 +156,7 @@ export default {
       /**
        * Internal value for the component state (ID of a token, always defaults to native CSPR).
        */
-      lazyValue: this.tokenOrDefault(this.value),
+      lazyValue: this.wrapTokenInArray(this.tokenOrDefault(this.value)),
       /**
        * The available account tokens to select.
        */
@@ -176,8 +188,8 @@ export default {
      *
      * @returns {boolean}
      */
-    isNativeToken() {
-      return !this.lazyValue || this.lazyValue.id === nativeToken.id;
+    isOnlyNativeToken() {
+      return this.lazyValue.length === 1 && this.lazyValue[0].id === nativeToken.id;
     },
   },
   watch: {
@@ -252,11 +264,8 @@ export default {
           tokenTypes: this.onlyGroups,
         });
 
-        if (this.lazyValue
-          && !this.isNativeToken
-          && this.shouldDisplayGroup(this.lazyValue.groupId)
-        ) {
-          this.tokens.push(this.lazyValue);
+        if (this.lazyValue.length && !this.isOnlyNativeToken) {
+          this.tokens.push(...this.lazyValue.filter((t) => t.id !== nativeToken.id));
         }
 
         Object.values(tokensGroups).forEach((group) => {
@@ -289,9 +298,21 @@ export default {
      * @returns {object}
      */
     tokenOrDefault(token) {
-      return token || this.noDefault
-        ? token
-        : nativeToken;
+      return token || this.noDefault ? token : nativeToken;
+    },
+    /**
+     * Wrap a token into an array of token.
+     *
+     * @param {object[]|object|undefined} token
+     *
+     * @returns {object[]}
+     */
+    wrapTokenInArray(token) {
+      if (Array.isArray(token)) {
+        return token;
+      }
+
+      return token ? [token] : [];
     },
     /**
      * Select the token when it changes.
@@ -304,9 +325,9 @@ export default {
       if (tokenId) {
         const { data } = await fetchTokens({ ids: [tokenId], limit: 1 });
 
-        this.lazyValue = this.tokenOrDefault(data[0]);
+        this.lazyValue = this.wrapTokenInArray(this.tokenOrDefault(data[0]));
       } else {
-        this.lazyValue = this.tokenOrDefault(undefined);
+        this.lazyValue = this.wrapTokenInArray(this.tokenOrDefault(undefined));
       }
     },
     /**
@@ -320,18 +341,34 @@ export default {
     /**
      * Emit an update to parent when internal value changes.
      *
-     * @param {object} lazyValue
+     * @param {object[]|object} value
+     */
+    onInputValue(value) {
+      this.lazyValue = this.wrapTokenInArray(this.tokenOrDefault(value));
+    },
+    /**
+     * Emit an update to parent when internal value changes.
+     *
+     * @param {object[]} lazyValue
      */
     onLazyValue(lazyValue) {
-      this.$emit('input', this.tokenOrDefault(lazyValue));
+      const arrayValue = this.wrapTokenInArray(this.tokenOrDefault(lazyValue));
+
+      this.$emit('input', this.multiple ? arrayValue : arrayValue[0]);
     },
     /**
      * Update the internal value when the value is changed by parent component.
      *
-     * @param {object} value
+     * @param {object[]|object} value
      */
     onValue(value) {
-      this.lazyValue = this.tokenOrDefault(value);
+      this.lazyValue = this.wrapTokenInArray(this.tokenOrDefault(value));
+    },
+    /**
+     * Clear the autocomplete search on selection.
+     */
+    onClearSearch() {
+      this.$refs.tokenInput.lazySearch = '';
     },
   },
 };

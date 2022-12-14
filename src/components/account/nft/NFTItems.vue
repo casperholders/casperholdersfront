@@ -153,11 +153,12 @@ export default {
     /**
      * Handle an addition of a token and fetch its balance.
      *
-     * @param {object} token
+     * @param {object[]} tokens
      */
-    onAddNft(token) {
-      if (!this.tokens.some(({ id }) => id === token.id)) {
-        this.tokens.push(token);
+    onAddNft(tokens) {
+      const filteredTokens = tokens.filter((t) => !this.tokens.some(({ id }) => id === t.id));
+      if (filteredTokens.length) {
+        this.tokens.push(...filteredTokens);
 
         this.saveTokensToStore();
       }
