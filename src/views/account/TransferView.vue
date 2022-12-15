@@ -44,7 +44,7 @@
     </v-slide-y-transition>
     <AmountInput
       :balance="token ? tokenBalance : balance"
-      :fee="token ? 0 : transferFee"
+      :fee="token ? transferFee : 0"
       :min="tokenMinimumAmount"
       :value="amount"
       class="mb-4"
