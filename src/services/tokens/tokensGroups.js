@@ -2,6 +2,7 @@ import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
 import {
   Erc20Transfer,
+  UniswapErc20Transfer,
   Erc20TransferResult,
   TransferDeployParameters,
   TransferResult,
@@ -34,6 +35,7 @@ export default {
         fetchBalance: () => balanceService.fetchBalance(),
       },
       transfer: {
+        transferFee: 0.1,
         transferResult: TransferResult,
         minimumAmount: () => 2.5,
         transferID: true,
@@ -57,6 +59,7 @@ export default {
         fetchBalance: (token) => balanceService.fetchBalanceOfErc20(token.id),
       },
       transfer: {
+        transferFee: 0.5,
         transferResult: Erc20TransferResult,
         minimumAmount: (token) => (1 / (token.decimals ? (10 ** token.decimals) : 1)),
         transferID: false,
@@ -80,12 +83,13 @@ export default {
         fetchBalance: (token) => balanceService.fetchBalanceOfErc20(token.id),
       },
       transfer: {
+        transferFee: 4,
         transferResult: Erc20TransferResult,
         minimumAmount: (token) => (1 / (token.decimals ? (10 ** token.decimals) : 1)),
         transferID: false,
         makeDeployParameters: (
           { activeKey, amount, address, token },
-        ) => new Erc20Transfer(
+        ) => new UniswapErc20Transfer(
           activeKey,
           convertErc20AmountToMotes(token, amount),
           address,
