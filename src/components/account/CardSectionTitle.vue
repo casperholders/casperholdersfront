@@ -2,8 +2,9 @@
   <div class="d-flex align-center text-overline px-6 py-4">
     <v-icon
       left
-      v-text="icon"
-    />
+    >
+      {{ icon }}
+    </v-icon>
     {{ title }}
     <slot name="action" />
   </div>

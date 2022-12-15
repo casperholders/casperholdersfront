@@ -15,10 +15,14 @@
         @click="toggleMinified"
       >
         <v-list-item-icon>
-          <v-icon v-text="minified ? 'mdi-chevron-right' : 'mdi-chevron-left'" />
+          <v-icon>
+            {{ minified ? 'mdi-chevron-right' : 'mdi-chevron-left' }}
+          </v-icon>
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title v-text="minified ? 'Expand' : 'Minimize'" />
+          <v-list-item-title>
+            {{ minified ? 'Expand' : 'Minimize' }}
+          </v-list-item-title>
         </v-list-item-content>
       </navigation-drawer-list-item>
       <navigation-drawer-list-item
@@ -75,8 +79,9 @@
       <navigation-drawer-list-header
         :key="`nav-group-${name}-header`"
         :minified="minified"
-        v-text="name"
-      />
+      >
+        {{ name }}
+      </navigation-drawer-list-header>
       <navigation-drawer-list :key="`nav-group-${name}-items`">
         <navigation-drawer-list-item
           v-for="(item, index) in items"
@@ -90,14 +95,19 @@
           :disabled="item.disabled"
         >
           <v-list-item-icon>
-            <v-icon v-text="item.icon" />
+            <v-icon>
+              {{ item.icon }}
+            </v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
+            <v-list-item-title>
+              {{ item.title }}
+            </v-list-item-title>
             <v-list-item-subtitle
               v-if="item.subtitle !== null"
-              v-text="item.subtitle"
-            />
+            >
+              {{ item.subtitle }}
+            </v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action
             v-if="item.chip"
@@ -143,14 +153,19 @@
               :disabled="item.disabled"
             >
               <v-list-item-icon>
-                <v-icon v-text="item.icon" />
+                <v-icon>
+                  {{ item.icon }}
+                </v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title v-text="item.title" />
+                <v-list-item-title>
+                  {{ item.title }}
+                </v-list-item-title>
                 <v-list-item-subtitle
                   v-if="item.subtitle !== null"
-                  v-text="item.subtitle"
-                />
+                >
+                  {{ item.subtitle }}
+                </v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action
                 v-if="item.beta"
@@ -185,14 +200,6 @@ import { HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
  */
 export default {
   name: 'NavigationDrawer',
-  computed: {
-    swapCasperHoldersUrl() {
-      return NETWORK === 'casper' ? 'https://testnet.casperholders.io' : 'https://casperholders.io';
-    },
-    swapNetworkName() {
-      return NETWORK === 'casper' ? 'Testnet' : 'Mainnet';
-    },
-  },
   components: { NavigationDrawerListHeader, NavigationDrawerListItem, NavigationDrawerList },
   props: {
     links: {
@@ -210,6 +217,14 @@ export default {
       drawer: !this.$vuetify.breakpoint.mobile,
       HUMAN_READABLE_NETWORK,
     };
+  },
+  computed: {
+    swapCasperHoldersUrl() {
+      return NETWORK === 'casper' ? 'https://testnet.casperholders.io' : 'https://casperholders.io';
+    },
+    swapNetworkName() {
+      return NETWORK === 'casper' ? 'Testnet' : 'Mainnet';
+    },
   },
   mounted() {
     this.$root.$on('toggleDrawer', () => {

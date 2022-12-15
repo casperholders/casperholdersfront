@@ -53,8 +53,9 @@
       <v-list-item-content>
         <v-list-item-title
           :data-cy="`token-contract-${item.id}`"
-          v-text="item.name || item.id"
-        />
+        >
+          {{ item.name || item.id }}
+        </v-list-item-title>
         <v-list-item-subtitle v-if="item.shortName">
           <span
             class="cspr"

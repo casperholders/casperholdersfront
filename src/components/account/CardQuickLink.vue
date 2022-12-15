@@ -8,11 +8,17 @@
   >
     <v-list-item :to="to">
       <v-list-item-icon>
-        <v-icon v-text="icon" />
+        <v-icon>
+          {{ icon }}
+        </v-icon>
       </v-list-item-icon>
       <v-list-item-content>
-        <v-list-item-title v-text="title" />
-        <v-list-item-subtitle v-text="subtitle" />
+        <v-list-item-title>
+          {{ title }}
+        </v-list-item-title>
+        <v-list-item-subtitle>
+          {{ subtitle }}
+        </v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
   </v-sheet>

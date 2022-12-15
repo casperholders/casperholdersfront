@@ -44,7 +44,7 @@
             placeholder="Start typing to Search"
             prepend-icon="mdi-database-search"
             return-object
-          ></v-autocomplete>
+          />
           <v-list>
             <v-subheader>Account Contracts</v-subheader>
             <v-list-item-group v-model="selectedContract">
