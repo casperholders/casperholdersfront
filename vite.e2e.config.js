@@ -1,20 +1,35 @@
 // vite.config.js
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
+import vue from '@vitejs/plugin-vue2';
 import path from 'path';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 import { VuetifyResolver } from 'unplugin-vue-components/resolvers';
 import createComponentsPlugin from 'unplugin-vue-components/vite';
-import { defineConfig } from 'vite';
-import { createVuePlugin as vue } from 'vite-plugin-vue2';
+import { defineConfig, loadEnv } from 'vite';
 import istanbul from 'vite-plugin-istanbul';
 
+/**
+ * Replace env variables in index.html
+ * @see https://github.com/vitejs/vite/issues/3105#issuecomment-939703781
+ * @see https://vitejs.dev/guide/api-plugin.html#transformindexhtml
+ */
+function htmlPlugin(env) {
+  return {
+    name: 'html-transform',
+    transformIndexHtml: {
+      enforce: 'pre',
+      transform: (html) => html.replace(/%(.*?)%/g, (match, p1) => env[p1] ?? match),
+    },
+  };
+}
+
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   define: {
     global: 'globalThis',
   },
   server: {
-    https: false
+    https: false,
   },
   open: true,
   port: 3001,
@@ -28,9 +43,10 @@ export default defineConfig({
     istanbul({
       include: 'src/*',
       exclude: ['node_modules', 'tests/'],
-      extension: [ '.js', '.ts', '.vue' ],
+      extension: ['.js', '.ts', '.vue'],
       forceBuildInstrument: true,
     }),
+    htmlPlugin(loadEnv(mode, '.')),
   ],
   resolve: {
     alias: {
@@ -66,4 +82,4 @@ export default defineConfig({
       sass: { additionalData: '@import "@/scss/variables.scss"\n' },
     },
   },
-});
+}));
