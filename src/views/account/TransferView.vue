@@ -116,6 +116,7 @@ import exchanges from '@/helpers/exchanges';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import findTokenGroup from '@/services/tokens/findTokenGroup';
 import nativeToken from '@/services/tokens/nativeToken';
+import tokensGroups from '@/services/tokens/tokensGroups';
 import { InsufficientFunds, NoActiveKeyError } from '@casperholders/core';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
@@ -152,7 +153,6 @@ export default {
       address: '',
       transferID: '0',
       minimumCSPRTransfer: 2.5,
-      transferFee: 0.1,
       amount: '2.5',
       errorBalance: null,
       balance: '0',
@@ -172,6 +172,9 @@ export default {
       'signerOptionsFactory',
       'activeKey',
     ]),
+    transferFee() {
+      return tokensGroups[this.token.groupId].features.transfer.transferFee;
+    },
     minimumFundsNeeded() {
       if (this.token !== nativeToken) {
         return this.transferFee;
