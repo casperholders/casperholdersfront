@@ -38,8 +38,8 @@ describe('Balance', () => {
       .click();
     cy.get('[data-cy=token-input]').parent().click();
     cy.get('[data-cy=token-input]').type(ERC20_CONTRACT_WITH_TOKENS_KEY);
-    cy.get(`.v-list-item__title[data-cy=token-contract-${ERC20_CONTRACT_WITH_TOKENS_KEY}]`).click();
-    cy.get('[data-cy=erc20-add-submit]').click();
+    cy.get(`.v-list-item__title[data-cy=token-contract-${ERC20_CONTRACT_WITH_TOKENS_KEY}]`).click({force: true});
+    cy.get('[data-cy=erc20-add-submit]').click({force: true});
 
     cy.get('[data-cy=erc20-add-card]')
       .should('not.exist');
@@ -54,8 +54,8 @@ describe('Balance', () => {
       .click();
     cy.get('[data-cy=token-input]').parent().click();
     cy.get('[data-cy=token-input]').type(ERC20_CONTRACT_WITHOUT_TOKENS_KEY);
-    cy.get(`.v-list-item__title[data-cy=token-contract-${ERC20_CONTRACT_WITHOUT_TOKENS_KEY}]`).click();
-    cy.get('[data-cy=erc20-add-submit]').click();
+    cy.get(`.v-list-item__title[data-cy=token-contract-${ERC20_CONTRACT_WITHOUT_TOKENS_KEY}]`).click({force: true});
+    cy.get('[data-cy=erc20-add-submit]').click({force: true});
 
     cy.get('[data-cy=erc20-add-card]')
       .should('not.exist');

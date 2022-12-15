@@ -2,7 +2,7 @@ describe('Home', () => {
   it('It show testnet', () => {
     cy.visit('http://localhost:8080/');
 
-    cy.get('.v-toolbar__title .v-chip__content').should('contain', ' TestNet ');
+    cy.get('.v-toolbar__title .v-chip__content').should('contain', ' Testnet ');
     const msg = {
       detail: {
         isUnlocked: true,
