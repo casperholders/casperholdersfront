@@ -7,4 +7,4 @@ export const NETWORK = import.meta.env.VITE_APP_NETWORK;
 export const API = import.meta.env.VITE_APP_API;
 export const DATA_API = import.meta.env.VITE_APP_DATA_API;
 export const CSPR_LIVE_URL = NETWORK === 'casper' ? 'https://cspr.live/' : 'https://testnet.cspr.live/';
-export const HUMAN_READABLE_NETWORK = NETWORK === 'casper' ? 'MainNet' : 'TestNet';
+export const HUMAN_READABLE_NETWORK = NETWORK === 'casper' ? 'Mainnet' : 'Testnet';

@@ -35,6 +35,22 @@
           <v-list-item-title>Home</v-list-item-title>
         </v-list-item-content>
       </navigation-drawer-list-item>
+      <template v-if="$vuetify.breakpoint.xs">
+        <navigation-drawer-list-item
+          :minified="minified"
+          :tooltip="`Switch to ${swapNetworkName}`"
+          :href="swapCasperHoldersUrl"
+          link
+          exact
+        >
+          <v-list-item-icon>
+            <v-icon>mdi-swap-horizontal</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>Switch to {{ swapNetworkName }}</v-list-item-title>
+          </v-list-item-content>
+        </navigation-drawer-list-item>
+      </template>
       <navigation-drawer-list-item
         :minified="minified"
         tooltip="Settings"
@@ -162,13 +178,21 @@
 import NavigationDrawerList from '@/components/layout/NavigationDrawerList';
 import NavigationDrawerListHeader from '@/components/layout/NavigationDrawerListHeader';
 import NavigationDrawerListItem from '@/components/layout/NavigationDrawerListItem';
-import { HUMAN_READABLE_NETWORK } from '@/helpers/env';
+import { HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
 
 /**
  * NavigationDrawer component
  */
 export default {
   name: 'NavigationDrawer',
+  computed: {
+    swapCasperHoldersUrl() {
+      return NETWORK === 'casper' ? 'https://testnet.casperholders.io' : 'https://casperholders.io';
+    },
+    swapNetworkName() {
+      return NETWORK === 'casper' ? 'Testnet' : 'Mainnet';
+    },
+  },
   components: { NavigationDrawerListHeader, NavigationDrawerListItem, NavigationDrawerList },
   props: {
     links: {

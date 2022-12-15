@@ -23,14 +23,20 @@
       >
         Casper Holders
       </router-link>
-      <v-chip
-        small
-        class="ml-2"
-        label
-        color="info"
-      >
-        {{ titleNetwork }}
-      </v-chip>
+      <template v-if="!$vuetify.breakpoint.xs">
+        <v-chip
+          small
+          class="ml-2"
+          label
+          color="info"
+          :href="swapCasperHoldersUrl"
+        >
+          {{ HUMAN_READABLE_NETWORK }}
+          <v-icon right>
+            mdi-swap-horizontal
+          </v-icon>
+        </v-chip>
+      </template>
     </v-toolbar-title>
     <connect-dialog v-if="displayConnect" />
     <AccountPopup v-if="signer.activeKey" />
@@ -189,6 +195,7 @@ export default {
     isWindowTop: true,
     displayConnect: false,
     copied: false,
+    HUMAN_READABLE_NETWORK,
   }),
   computed: {
     ...mapState(['operations', 'signer', 'signerType', 'offlineDeploys']),
@@ -196,11 +203,11 @@ export default {
       'signerObject',
       'signerOptionsFactory',
     ]),
+    swapCasperHoldersUrl() {
+      return NETWORK === 'casper' ? 'https://testnet.casperholders.io' : 'https://casperholders.io';
+    },
     disabledNotifications() {
       return this.operations.length === 0 && this.offlineDeploys.length === 0;
-    },
-    titleNetwork() {
-      return NETWORK !== 'casper' ? HUMAN_READABLE_NETWORK : '';
     },
     badgeColor() {
       if (

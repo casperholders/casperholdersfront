@@ -4,13 +4,28 @@ import path from 'path';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 import { VuetifyResolver } from 'unplugin-vue-components/resolvers';
 import createComponentsPlugin from 'unplugin-vue-components/vite';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import mkcert from 'vite-plugin-mkcert';
 import { VitePWA } from 'vite-plugin-pwa';
 import { createVuePlugin as vue } from 'vite-plugin-vue2';
 
+/**
+ * Replace env variables in index.html
+ * @see https://github.com/vitejs/vite/issues/3105#issuecomment-939703781
+ * @see https://vitejs.dev/guide/api-plugin.html#transformindexhtml
+ */
+function htmlPlugin(env) {
+  return {
+    name: 'html-transform',
+    transformIndexHtml: {
+      enforce: 'pre',
+      transform: (html) => html.replace(/%(.*?)%/g, (match, p1) => env[p1] ?? match),
+    },
+  };
+}
+
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   define: {
     global: 'globalThis',
   },
@@ -58,6 +73,7 @@ export default defineConfig({
       },
     }),
     mkcert(),
+    htmlPlugin(loadEnv(mode, '.')),
   ],
   resolve: {
     alias: {
@@ -94,4 +110,4 @@ export default defineConfig({
       sass: { additionalData: '@import "@/scss/variables.scss"\n' },
     },
   },
-});
+}));

@@ -335,7 +335,7 @@ export default {
       return this.signer.activeKey;
     },
     swapNetworkName() {
-      return NETWORK === 'casper' ? 'TestNet' : 'MainNet';
+      return NETWORK === 'casper' ? 'Testnet' : 'Mainnet';
     },
     swapCasperHoldersUrl() {
       return NETWORK === 'casper' ? 'https://testnet.casperholders.io' : 'https://casperholders.io';
