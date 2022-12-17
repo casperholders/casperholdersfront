@@ -1,5 +1,6 @@
 import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
+import convertErc20AmountToMotes from '@/services/tokens/convertErc20AmountToMotes';
 import {
   Erc20Transfer,
   UniswapErc20Transfer,
@@ -7,21 +8,6 @@ import {
   TransferDeployParameters,
   TransferResult,
 } from '@casperholders/core';
-import Big from 'big.js';
-
-/**
- * Convert a human readable token amount to real amount using token decimals.
- *
- * @param {object} token
- * @param {string} amount
- *
- * @returns {string}
- */
-const convertErc20AmountToMotes = (token, amount) => (
-  token.decimals
-    ? Big(amount).times(Big(10).pow(Big(token.decimals).toNumber())).toString()
-    : amount
-);
 
 /**
  * The available groups of tokens usable for different operations on app.

@@ -231,8 +231,9 @@ import TokenAmount from '@/components/account/TokenAmount';
 import deployManager from '@/helpers/deployManager';
 import { CSPR_LIVE_URL } from '@/helpers/env';
 import computeFormattedTokenValue from '@/services/tokens/computeFormattedTokenValue';
+import convertErc20MotesToAmount from '@/services/tokens/convertErc20MotesToAmount';
 import nativeToken from '@/services/tokens/nativeToken';
-import { DeployResult } from '@casperholders/core';
+import { CurrencyUtils, DeployResult } from '@casperholders/core';
 import { mapGetters } from 'vuex';
 
 /**
@@ -272,7 +273,16 @@ export default {
   computed: {
     ...mapGetters(['getOperation']),
     displayedDeployAmount() {
-      return computeFormattedTokenValue(this.deployResult.amount, this.token);
+      if (this.token === nativeToken) {
+        return computeFormattedTokenValue(
+          CurrencyUtils.convertMotesToCasper(this.deployResult.amount),
+          this.token,
+        );
+      }
+      return computeFormattedTokenValue(
+        convertErc20MotesToAmount(this.token, this.deployResult.amount),
+        this.token,
+      );
     },
     displayedDeployCost() {
       return computeFormattedTokenValue(this.deployResult.cost, nativeToken);
