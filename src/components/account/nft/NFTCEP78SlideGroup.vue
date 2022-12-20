@@ -14,12 +14,24 @@
     </v-alert>
     <div v-if="identifierMode !== undefined && identifierMode !== 1">
       <v-card>
-        <v-card-title>
-          <v-avatar>
-            <v-icon>mdi-image</v-icon>
-          </v-avatar>
-          NFT Collection
-        </v-card-title>
+        <card-section-title
+          icon="mdi-image"
+          :title="name"
+        >
+          <template #action>
+            <v-btn
+              data-cy="nft-remove-collection"
+              title="Untrack NFT collection"
+              class="ml-auto"
+              icon
+              @click="$emit('delete', contractHash)"
+            >
+              <v-icon>
+                mdi-delete
+              </v-icon>
+            </v-btn>
+          </template>
+        </card-section-title>
         <v-card-text>
           <div class="d-flex  justify-space-around flex-wrap">
             <template v-if="loading === true">
@@ -71,6 +83,14 @@ export default {
   name: 'NFTCEP78SlideGroup',
   components: { PaginationComponent, NFTItem },
   props: {
+    name: {
+      type: String,
+      required: true,
+    },
+    contractHash: {
+      type: Array,
+      required: true,
+    },
     namedKeys: {
       type: Array,
       required: true,

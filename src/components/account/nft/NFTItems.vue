@@ -54,9 +54,12 @@
       >
         <n-f-t-c-e-p78-slide-group
           :key="t.id"
+          :name="t.shortName + ' - ' + t.name"
+          :contract-hash="[t.id]"
           style="width: 100%"
           :metadata-uref="t.metadata"
           :named-keys="t.namedKeys"
+          @delete="onRemoveNft"
         />
       </template>
       <template
@@ -64,9 +67,11 @@
       >
         <n-f-t-slide-group
           :key="t.id"
+          :name="t.shortName + ' - ' + t.name"
           style="width: 100%"
           :metadata-uref="t.metadata"
           :contract-hash="[t.id]"
+          @delete="onRemoveNft"
         />
         <!--
           todo
@@ -86,6 +91,7 @@ import AddNFTDialog from '@/components/account/nft/AddNFTDialog';
 import NFTCEP78SlideGroup from '@/components/account/nft/NFTCEP78SlideGroup';
 import NFTSlideGroup from '@/components/account/nft/NFTSlideGroup';
 import fetchTokens from '@/services/tokens/fetchTokens';
+import useNftTrackedTokens from '@/services/tokens/useNftTrackedTokens';
 import { mapState } from 'vuex';
 
 /**
@@ -125,6 +131,8 @@ export default {
      * On active key init or change.
      */
     onActiveKeyChange() {
+      this.tokens = [];
+
       this.fetchTokensFromStore();
     },
     /**
@@ -133,7 +141,7 @@ export default {
      * @returns {Promise<void>}
      */
     async fetchTokensFromStore() {
-      const tokensIds = [];
+      const tokensIds = useNftTrackedTokens(this.signer.activeKey).get() || [];
       if (tokensIds.length) {
         this.loading = true;
 
@@ -148,7 +156,7 @@ export default {
      * Save the tokens state to store.
      */
     saveTokensToStore() {
-      // erc20TrackedTokens.set(this.tokens.map(({ id }) => id));
+      useNftTrackedTokens(this.signer.activeKey).set(this.tokens.map(({ id }) => id));
     },
     /**
      * Handle an addition of a token and fetch its balance.
@@ -156,6 +164,7 @@ export default {
      * @param {object[]} tokens
      */
     onAddNft(tokens) {
+      console.log(tokens);
       const filteredTokens = tokens.filter((t) => !this.tokens.some(({ id }) => id === t.id));
       if (filteredTokens.length) {
         this.tokens.push(...filteredTokens);
@@ -168,13 +177,14 @@ export default {
      *
      * @param {object} token
      */
-    onRemoveNft(token) {
-      const index = this.tokens.findIndex(({ id }) => id === token.id);
-      if (index !== -1) {
-        this.tokens.splice(index, 1);
-
-        this.saveTokensToStore();
-      }
+    onRemoveNft(tokens) {
+      tokens.forEach((t) => {
+        const index = this.tokens.findIndex(({ id }) => id === t);
+        if (index !== -1) {
+          this.tokens.splice(index, 1);
+        }
+      });
+      this.saveTokensToStore();
     },
   },
 };

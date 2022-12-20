@@ -154,8 +154,12 @@ export default {
             title: 'NFTs',
             icon: 'mdi-image-frame',
             route: '/nft',
-            disabled: true,
-            subtitle: 'Coming soon',
+            disabled: false,
+            subtitle: null,
+            chip: {
+              icon: 'mdi-fire',
+              text: 'Beta',
+            },
           },
         ],
         Staking: [

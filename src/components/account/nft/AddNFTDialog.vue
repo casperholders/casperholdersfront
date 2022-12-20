@@ -17,6 +17,7 @@
         <v-card-text>
           <token-input
             v-model="token"
+            :multiple="true"
             data-cy="token-input"
             :only-groups="['nftcep78', 'nftcep47']"
             no-default
@@ -57,6 +58,7 @@ export default {
   }),
   methods: {
     onSubmit() {
+      console.log(this.token);
       if (this.token.length) {
         this.$emit('add', this.token);
       }
