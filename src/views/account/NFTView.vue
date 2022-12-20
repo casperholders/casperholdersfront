@@ -24,6 +24,9 @@
       <v-btn
         color="primary"
         class="rounded-xl"
+        href="https://dive.casper.dev/"
+        target="_blank"
+        rel="noopener"
       >
         Explore all NFTs on Dive !
       </v-btn>
