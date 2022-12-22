@@ -1,4 +1,5 @@
 import { DATA_API } from '@/helpers/env';
+import isNone from '@/helpers/isNone';
 import parseContentRange from '@/helpers/parseContentRange';
 import sortBy from 'lodash.sortby';
 
@@ -82,6 +83,7 @@ const sortTokens = (tokens) => sortBy(tokens, [
  * @param {string[]|undefined} [options.tokenTypes] Id's of the token types.
  * @param {number|undefined} [options.limit] Limit the number of results.
  * @param {string[]|undefined} [options.ids] Filter the results to a set of ids.
+ * @param {string[]|undefined} [options.notIds] Filter the results to avoid a set of ids.
  *
  * @returns {Promise<Object>}
  */
@@ -100,12 +102,21 @@ export default async (options = {}) => {
     query.set('limit', `${options.limit}`);
   }
 
+  const hashClauses = [];
   if (options.search) {
-    query.set('hash', `ilike.*${options.search}*`);
+    hashClauses.push(`hash.ilike.*${options.search}*`);
   }
 
-  if (options.ids) {
-    query.set('hash', `in.(${options.ids.map((id) => `"${id}"`).join(',')})`);
+  if (!isNone(options.ids)) {
+    hashClauses.push(`hash.in.(${options.ids.map((id) => `"${id}"`).join(',')})`);
+  }
+
+  if (!isNone(options.notIds)) {
+    hashClauses.push(`hash.not.in.(${options.notIds.map((id) => `"${id}"`).join(',')})`);
+  }
+
+  if (hashClauses.length) {
+    query.set('and', `(${hashClauses.join(',')})`);
   }
 
   const response = await fetch(`${DATA_API}/contracts?${query.toString()}`, {

@@ -19,6 +19,7 @@
             v-model="token"
             data-cy="token-input"
             :only-groups="['erc20', 'uniswaperc20']"
+            :hide-tokens="hideTokens"
             no-default
             hide-details
             multiple
@@ -52,10 +53,21 @@ import TokenInput from '@/components/forms/inputs/TokenInput';
 export default {
   name: 'AddErc20TokenDialog',
   components: { TokenInput },
+  props: {
+    tokens: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data: () => ({
     dialog: false,
     token: [],
   }),
+  computed: {
+    hideTokens() {
+      return this.tokens.map(({ id }) => id);
+    },
+  },
   methods: {
     onSubmit() {
       if (this.token.length) {

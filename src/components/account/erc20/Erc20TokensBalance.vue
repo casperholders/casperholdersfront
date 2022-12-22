@@ -5,7 +5,10 @@
       title="ERC 20"
     >
       <template #action>
-        <add-erc20-token-dialog @add="onAddErc20Token">
+        <add-erc20-token-dialog
+          :tokens="tokens"
+          @add="onAddErc20Token"
+        >
           <template #activator="{ attrs, on }">
             <v-btn
               data-cy="erc20-add-button"
@@ -35,6 +38,7 @@
       </template>
       <add-erc20-token-dialog
         v-else-if="tokens.length === 0"
+        :tokens="tokens"
         @add="onAddErc20Token"
       >
         <template #activator="{ attrs, on }">

@@ -130,6 +130,13 @@ export default {
       default: () => [],
     },
     /**
+     * Hide those tokens (IDs) from the displayed tokens.
+     */
+    hideTokens: {
+      type: Array,
+      default: () => [],
+    },
+    /**
      * Tells the input to not default to native token when empty.
      */
     noDefault: {
@@ -241,8 +248,10 @@ export default {
 
       if (!this.search && (this.shouldDisplayGroup('erc20') || this.shouldDisplayGroup('uniswaperc20'))) {
         const erc20Account = (await (await fetch(`${DATA_API}/rpc/account_ercs20?publickey=${this.activeKey}&accounthash=${CLPublicKey.fromHex(this.activeKey).toAccountHashStr()}`)).json()).map((contractHash) => contractHash.contract_hash);
+        console.log(erc20Account);
         const accountTokens = await fetchTokens({
           ids: erc20Account,
+          notIds: this.hideTokens,
           tokenTypes: this.onlyGroups,
         });
         if (accountTokens.data.length > 0) {
@@ -259,6 +268,7 @@ export default {
         const { data, contentRange } = await fetchTokens({
           search: this.search,
           limit: 10,
+          notIds: this.hideTokens,
           tokenTypes: this.onlyGroups,
         });
 
