@@ -54,7 +54,7 @@
       <v-divider />
       <validators-balance @total-state-change="onTotalStackedStateChange" />
       <v-divider />
-      <erc20-tokens-balance />
+      <erc20-tokens-balance :balance="totalAvailable" />
     </template>
     <v-divider />
     <card-section-title
@@ -137,7 +137,7 @@ export default {
       casperLogo: nativeToken.logo,
       loading: true,
       errored: false,
-      totalAvailable: Big(0),
+      totalAvailable: '0',
       totalStaked: Big(0),
       totalStakedLoading: false,
       mergedValidator: undefined,
@@ -173,7 +173,7 @@ export default {
     async fetchAvailableBalance() {
       this.loading = true;
       this.errored = false;
-      this.totalAvailable = Big(0);
+      this.totalAvailable = '0';
 
       try {
         this.totalAvailable = await balanceService.fetchBalance();

@@ -61,41 +61,15 @@
           </v-card>
         </template>
       </add-erc20-token-dialog>
-      <balance-amount-card
+      <erc20-token-balance
         v-for="(token, index) in tokens"
         :key="`token-${index}`"
         :data-cy="`erc20-balance-${token.id}`"
-        class="validator-cards"
-        :amount="tokensBalances[token.id]"
+        :balance="balance"
         :token="token"
-        :logo="token.logo"
-        :title="token.name"
-        :cspr-live-path-url="`contract/${token.id}`"
-      >
-        <template #actions>
-          <v-card-actions>
-            <v-btn
-              :to="`/transfer/${token.id}`"
-              class="flex-grow-1 flex-shrink-1"
-              color="secondary"
-              rounded
-            >
-              Transfer
-            </v-btn>
-            <v-btn
-              title="Untrack"
-              class="flex-grow-1 flex-shrink-1"
-              color="error"
-              rounded
-              @click="onRemoveErc20Token(token)"
-            >
-              <v-icon>
-                mdi-delete-outline
-              </v-icon>
-            </v-btn>
-          </v-card-actions>
-        </template>
-      </balance-amount-card>
+        :amount="tokensBalances[token.id]"
+        @remove="onRemoveErc20Token(token)"
+      />
     </card-horizontal-list>
   </div>
 </template>
@@ -105,6 +79,7 @@ import BalanceAmountCard from '@/components/account/BalanceAmountCard';
 import CardHorizontalList from '@/components/account/CardHorizontalList';
 import CardSectionTitle from '@/components/account/CardSectionTitle';
 import AddErc20TokenDialog from '@/components/account/erc20/AddErc20TokenDialog';
+import Erc20TokenBalance from '@/components/account/erc20/Erc20TokenBalance.vue';
 import fetchTokens from '@/services/tokens/fetchTokens';
 import findTokenGroup from '@/services/tokens/findTokenGroup';
 import useErc20TrackedTokens from '@/services/tokens/useErc20TrackedTokens';
@@ -116,7 +91,22 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'Erc20TokensBalance',
-  components: { BalanceAmountCard, CardHorizontalList, AddErc20TokenDialog, CardSectionTitle },
+  components: {
+    Erc20TokenBalance,
+    BalanceAmountCard,
+    CardHorizontalList,
+    AddErc20TokenDialog,
+    CardSectionTitle,
+  },
+  props: {
+    /**
+     * The current account native token balance.
+     */
+    balance: {
+      required: true,
+      type: String,
+    },
+  },
   data: () => ({
     loading: false,
     /**
