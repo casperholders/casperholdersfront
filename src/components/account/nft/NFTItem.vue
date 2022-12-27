@@ -73,6 +73,39 @@
                       mdi-arrow-expand-all
                     </v-icon>
                   </v-btn>
+                  <v-btn
+                    title="Transfer NFT"
+                    icon
+                    disabled
+                    color="white"
+                    aria-label="transfer"
+                  >
+                    <v-icon>
+                      mdi-send
+                    </v-icon>
+                  </v-btn>
+                  <v-btn
+                    title="Burn NFT"
+                    icon
+                    disabled
+                    color="white"
+                    aria-label="burn"
+                  >
+                    <v-icon>
+                      mdi-fire
+                    </v-icon>
+                  </v-btn>
+                  <v-btn
+                    title="Manage allowance NFT"
+                    icon
+                    disabled
+                    color="white"
+                    aria-label="allowance"
+                  >
+                    <v-icon>
+                      mdi-lock-open-check
+                    </v-icon>
+                  </v-btn>
                 </v-card-actions>
                 <v-spacer />
               </v-sheet>
