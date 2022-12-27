@@ -53,7 +53,7 @@
               Manage allowances
             </v-card-title>
             <v-card-subtitle
-              v-if="!canRevokeAllowance || deployError"
+              v-if="!canRevokeAllowance || deployError || deploySuccess"
               class="pt-4"
             >
               <v-alert
@@ -74,6 +74,14 @@
                 dense
               >
                 {{ deployError.message }}
+              </v-alert>
+              <v-alert
+                v-if="deploySuccess"
+                type="success"
+                class="mb-0"
+                dense
+              >
+                {{ deploySuccess.message }}
               </v-alert>
             </v-card-subtitle>
             <v-card-text class="pa-0">
@@ -100,14 +108,20 @@
                               v-on="on"
                             >
                               <token-amount
-                                :amount="computeFormattedTokenValue(allowance.amount, token)"
+                                :amount="computeFormattedTokenValue(
+                                  convertErc20MotesToAmount(token, allowance.amount),
+                                  token
+                                )"
                                 class="white--text amount"
                               />
                             </v-list-item-subtitle>
                           </template>
                           <span>
                             <token-amount
-                              :amount="computeFormattedTokenValue(allowance.amount, token)"
+                              :amount="computeFormattedTokenValue(
+                                convertErc20MotesToAmount(token, allowance.amount),
+                                token
+                              )"
                               class="white--text amount"
                             />
                           </span>
@@ -125,6 +139,20 @@
                             mdi-lock-remove
                           </v-icon>
                           Revoke
+                        </v-btn>
+                      </v-list-item-action>
+                      <v-list-item-action>
+                        <v-btn
+                          :disabled="!canRevokeAllowance"
+                          :loading="deployLoading"
+                          color="primary"
+                          rounded
+                          @click="onMaximizeAllowance(allowance)"
+                        >
+                          <v-icon left>
+                            mdi-lock-plus
+                          </v-icon>
+                          Set max
                         </v-btn>
                       </v-list-item-action>
                     </v-list-item>
@@ -178,13 +206,15 @@
 import BalanceAmountCard from '@/components/account/BalanceAmountCard.vue';
 import TokenAmount from '@/components/account/TokenAmount.vue';
 import balanceService from '@/helpers/balanceService';
-import { CSPR_LIVE_URL, DATA_API, NETWORK } from '@/helpers/env';
+import { CSPR_LIVE_URL, DATA_API } from '@/helpers/env';
+import buildCLValue from '@/helpers/genericCLValueBuilder';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import parseContentRange from '@/helpers/parseContentRange';
 import truncate from '@/helpers/strings/truncate';
 import computeFormattedTokenValue from '@/services/tokens/computeFormattedTokenValue';
+import convertErc20MotesToAmount from '@/services/tokens/convertErc20MotesToAmount';
+import findTokenGroup from '@/services/tokens/findTokenGroup';
 import nativeToken from '@/services/tokens/nativeToken';
-import { Erc20Approve } from '@casperholders/core';
 import Big from 'big.js';
 import { mapGetters, mapState } from 'vuex';
 
@@ -224,13 +254,13 @@ export default {
     computeFormattedTokenValue,
     allowancesDialog: false,
     allowancesLoading: false,
-    allowancesFee: 0.4,
     allowancesPerPage: 10,
     allowancesTotal: 0,
     allowancesPage: 1,
     allowances: undefined,
     deployLoading: false,
     deployError: null,
+    deploySuccess: null,
   }),
   computed: {
     ...mapState([
@@ -258,11 +288,18 @@ export default {
     allowancesTotalPages() {
       return Math.ceil(this.allowancesTotal / this.allowancesPerPage);
     },
+    tokenGroup() {
+      return findTokenGroup(this.token.groupId);
+    },
+    allowancesFee() {
+      return this.tokenGroup.features.approve.approveFee;
+    },
   },
   watch: {
     allowancesDialog: 'onAllowancesDialog',
   },
   methods: {
+    convertErc20MotesToAmount,
     /**
      * Fetch allowances for current page.
      *
@@ -348,14 +385,16 @@ export default {
      * @returns {Promise<void>}
      */
     async onDeployAllowance(allowance, amount) {
+      this.deployError = null;
+      this.deploySuccess = null;
       this.deployLoading = true;
-      console.log(allowance.spender);
-      const deployParameter = new Erc20Approve(
-        this.activeKey,
-        amount,
-        allowance.spender,
-        NETWORK,
-        this.token.id,
+      const deployParameter = this.tokenGroup.features.approve.makeDeployParameters(
+        {
+          activeKey: this.activeKey,
+          amount,
+          address: buildCLValue('key', allowance.spender),
+          token: this.token,
+        },
       );
       const options = this.signerOptionsFactory.getOptionsForOperations();
       const result = await genericSendDeploy(
@@ -367,16 +406,16 @@ export default {
         options,
         this.allowancesFee,
       );
-
-      this.deployError = null;
       if (result.error) {
-        console.log(result.error);
         this.deployError = result.error;
       } else {
         await this.$store.dispatch(result.event, result.data);
+        this.deploySuccess = {
+          message: 'Deploy sent. Check the deploy result in your notifications.',
+        };
       }
 
-      this.deployLoading = true;
+      this.deployLoading = false;
     },
     /**
      * Close the allowances' dialog.

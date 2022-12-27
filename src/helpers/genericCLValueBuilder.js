@@ -31,7 +31,7 @@ export default function buildCLValue(cltype, rawValue, innerType = null) {
           decodeBase16(rawValue)[0],
         );
       } else {
-        keyParameter = CLValueBuilder.byteArray(Buffer.from(rawValue));
+        keyParameter = CLValueBuilder.byteArray(Buffer.from(rawValue, 'hex'));
       }
       return CLValueBuilder.key(keyParameter);
     case 'list':

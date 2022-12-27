@@ -3,8 +3,11 @@ import { NETWORK } from '@/helpers/env';
 import convertErc20AmountToMotes from '@/services/tokens/convertErc20AmountToMotes';
 import {
   Erc20Transfer,
+  Erc20Approve,
   UniswapErc20Transfer,
+  UniswapErc20Approve,
   Erc20TransferResult,
+  Erc20ApproveResult,
   TransferDeployParameters,
   TransferResult,
 } from '@casperholders/core';
@@ -59,6 +62,19 @@ export default {
           token.id,
         ),
       },
+      approve: {
+        approveFee: 0.4,
+        approveResult: Erc20ApproveResult,
+        makeDeployParameters: (
+          { activeKey, amount, address, token },
+        ) => new Erc20Approve(
+          activeKey,
+          convertErc20AmountToMotes(token, amount),
+          address,
+          NETWORK,
+          token.id,
+        ),
+      },
     },
   },
   uniswaperc20: {
@@ -76,6 +92,19 @@ export default {
         makeDeployParameters: (
           { activeKey, amount, address, token },
         ) => new UniswapErc20Transfer(
+          activeKey,
+          convertErc20AmountToMotes(token, amount),
+          address,
+          NETWORK,
+          token.id,
+        ),
+      },
+      approve: {
+        approveFee: 4,
+        approveResult: Erc20ApproveResult,
+        makeDeployParameters: (
+          { activeKey, amount, address, token },
+        ) => new UniswapErc20Approve(
           activeKey,
           convertErc20AmountToMotes(token, amount),
           address,
