@@ -405,13 +405,16 @@ export default {
         deployParameter,
         options,
         this.allowancesFee,
+        0,
+        false,
+        this.token,
       );
       if (result.error) {
         this.deployError = result.error;
       } else {
         await this.$store.dispatch(result.event, result.data);
         this.deploySuccess = {
-          message: 'Deploy sent. Check the deploy result in your notifications.',
+          message: 'Deploy sent. Check the status in the operation results list at the end of this page.',
         };
       }
 
