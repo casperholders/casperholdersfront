@@ -294,6 +294,8 @@ export default {
         options,
         this.transferFee,
         this.amount,
+        false,
+        this.token,
       );
       if (result.error) {
         console.log(result.error);

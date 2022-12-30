@@ -94,7 +94,7 @@
       v-for="operation in [...filteredOperations].reverse()"
       :key="operation.hash"
       :deploy-hash="operation.hash"
-      :token="token"
+      :token="operation.token"
     />
     <OperationPending v-if="offlineDeploys.length > 0" />
     <OperationPendingWeight v-if="weightedDeploys.length > 0" />

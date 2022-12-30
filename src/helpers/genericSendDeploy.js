@@ -25,6 +25,7 @@ export default async function genericSendDeploy(
   fee = 0,
   amount = 0,
   isKeyManagementDeploy = false,
+  token = undefined,
 ) {
   try {
     if (internet) {
@@ -43,12 +44,13 @@ export default async function genericSendDeploy(
             signerObject,
             options,
           );
-          return { event: 'addDeployResult', data: deployResult };
+          return { event: 'addDeployResult', data: { token, ...deployResult } };
         }
         const signedDeploy = await signerObject
           .sign(deployParameter.makeDeploy, options);
         const { deployResult } = deployParameter;
         const weightDeploy = {
+          token,
           deploy: signedDeploy,
           // eslint-disable-next-line new-cap
           deployResult: new deployResult(
@@ -67,6 +69,7 @@ export default async function genericSendDeploy(
       const signedDeploy = await signerObject.sign(deployParameter.makeDeploy, options);
       const { deployResult } = deployParameter;
       const pendingDeploy = {
+        token,
         deploy: signedDeploy,
         // eslint-disable-next-line new-cap
         deployResult: new deployResult(

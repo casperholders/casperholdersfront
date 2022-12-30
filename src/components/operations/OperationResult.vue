@@ -256,7 +256,7 @@ export default {
      */
     token: {
       type: Object,
-      default: () => nativeToken,
+      default: undefined,
     },
   },
   data() {
@@ -273,10 +273,10 @@ export default {
   computed: {
     ...mapGetters(['getOperation']),
     displayedDeployAmount() {
-      if (this.token === nativeToken) {
+      if (!this.token || this.token === nativeToken) {
         return computeFormattedTokenValue(
           CurrencyUtils.convertMotesToCasper(this.deployResult.amount),
-          this.token,
+          nativeToken,
         );
       }
       return computeFormattedTokenValue(

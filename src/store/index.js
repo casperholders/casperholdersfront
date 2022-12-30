@@ -351,7 +351,7 @@ const actions = {
             pendingDeploy.deploy,
             pendingDeploy.deployResultType,
           );
-          context.commit('addDeployResult', { deployResult });
+          context.commit('addDeployResult', { ...deployResult, token: pendingDeploy.token });
           context.commit('removePendingDeployPop');
         } else {
           const weightDeploy = cloneDeep(pendingDeploy);
@@ -370,7 +370,7 @@ const actions = {
         context.state.offlineDeploys[index].deploy,
         context.state.offlineDeploys[index].deployResultType,
       );
-      context.commit('addDeployResult', { deployResult });
+      context.commit('addDeployResult', { deployResult, token: context.state.offlineDeploys[index] });
       context.commit('removePendingDeploy', { index });
     } catch (e) {
       context.commit('addErrorPendingDeploy', { index, e });
