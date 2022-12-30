@@ -62,8 +62,8 @@
         </template>
       </add-erc20-token-dialog>
       <erc20-token-balance
-        v-for="(token, index) in tokens"
-        :key="`token-${index}`"
+        v-for="token in tokens"
+        :key="`token-${token.id}`"
         :data-cy="`erc20-balance-${token.id}`"
         :balance="balance"
         :token="token"

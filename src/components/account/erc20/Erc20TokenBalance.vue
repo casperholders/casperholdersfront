@@ -36,6 +36,7 @@
         >
           <template #activator="{ attrs, on }">
             <v-btn
+              :data-cy="`erc20-${token.id}-allowance-open`"
               color="secondary"
               rounded
               block
@@ -108,6 +109,7 @@
                               v-on="on"
                             >
                               <token-amount
+                                :data-cy="`erc20-${token.id}-${allowance.spender}-allowance`"
                                 :amount="computeFormattedTokenValue(
                                   convertErc20MotesToAmount(token, allowance.amount),
                                   token
@@ -129,6 +131,7 @@
                       </v-list-item-content>
                       <v-list-item-action>
                         <v-btn
+                          :data-cy="`erc20-${token.id}-${allowance.spender}-allowance-revoke`"
                           :disabled="!canRevokeAllowance"
                           :loading="deployLoading"
                           color="quaternary"
@@ -143,6 +146,7 @@
                       </v-list-item-action>
                       <v-list-item-action>
                         <v-btn
+                          :data-cy="`erc20-${token.id}-${allowance.spender}-allowance-max`"
                           :disabled="!canRevokeAllowance"
                           :loading="deployLoading"
                           color="primary"
@@ -188,6 +192,7 @@
             </v-card-text>
             <v-card-actions>
               <v-btn
+                :data-cy="`erc20-${token.id}-allowance-close`"
                 rounded
                 text
                 @click="onCloseAllowances"
