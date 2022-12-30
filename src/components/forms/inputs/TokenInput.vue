@@ -248,7 +248,6 @@ export default {
 
       if (!this.search && (this.shouldDisplayGroup('erc20') || this.shouldDisplayGroup('uniswaperc20'))) {
         const erc20Account = (await (await fetch(`${DATA_API}/rpc/account_ercs20?publickey=${this.activeKey}&accounthash=${CLPublicKey.fromHex(this.activeKey).toAccountHashStr()}`)).json()).map((contractHash) => contractHash.contract_hash);
-        console.log(erc20Account);
         const accountTokens = await fetchTokens({
           ids: erc20Account,
           notIds: this.hideTokens,
