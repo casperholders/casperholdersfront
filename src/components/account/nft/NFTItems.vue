@@ -54,11 +54,8 @@
       >
         <n-f-t-c-e-p78-slide-group
           :key="t.id"
-          :name="t.shortName + ' - ' + t.name"
-          :contract-hash="[t.id]"
+          :token="t"
           style="width: 100%"
-          :metadata-uref="t.metadata"
-          :named-keys="t.namedKeys"
           @delete="onRemoveNft"
         />
       </template>
@@ -67,10 +64,8 @@
       >
         <n-f-t-slide-group
           :key="t.id"
-          :name="t.shortName + ' - ' + t.name"
+          :token="t"
           style="width: 100%"
-          :metadata-uref="t.metadata"
-          :contract-hash="[t.id]"
           @delete="onRemoveNft"
         />
         <!--

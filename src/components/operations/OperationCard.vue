@@ -87,6 +87,21 @@
             :append-values="appendValues"
             @operationCanceled="operationOnGoing = false"
           />
+          <v-spacer/>
+          <v-btn
+            v-if="cancel"
+            title="Cancel"
+            class="rounded-xl"
+            color="quaternary"
+            dark
+            large
+            @click="$emit('cancelOperationCard')"
+          >
+            <v-icon>
+              mdi-close
+            </v-icon>
+            Cancel
+          </v-btn>
         </v-card-actions>
       </v-form>
     </v-card>
@@ -221,6 +236,11 @@ export default {
       default: () => [],
     },
     beta: {
+      required: false,
+      type: Boolean,
+      default: false,
+    },
+    cancel: {
       required: false,
       type: Boolean,
       default: false,

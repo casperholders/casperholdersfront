@@ -59,13 +59,13 @@
               </template>
             </template>
           </div>
+          <pagination-component
+            v-if="pagination"
+            v-model="page"
+            :max="totalPages"
+          />
         </v-card-text>
       </v-card>
-      <pagination-component
-        v-if="pagination"
-        v-model="page"
-        :max="totalPages"
-      />
     </div>
   </div>
 </template>
@@ -83,20 +83,8 @@ export default {
   name: 'NFTCEP78SlideGroup',
   components: { PaginationComponent, NFTItem },
   props: {
-    name: {
-      type: String,
-      required: true,
-    },
-    contractHash: {
-      type: Array,
-      required: true,
-    },
-    namedKeys: {
-      type: Array,
-      required: true,
-    },
-    metadataUref: {
-      type: String,
+    token: {
+      type: Object,
       required: true,
     },
     pagination: {
@@ -123,6 +111,18 @@ export default {
     getCurrentNFTS() {
       const offset = (this.page - 1) * this.itemsPerPage;
       return this.nfts.slice(offset, offset + this.itemsPerPage);
+    },
+    metadataUref() {
+      return this.token.metadata;
+    },
+    contractHash() {
+      return [this.token.id];
+    },
+    name() {
+      return `${this.token.shortName} - ${this.token.name}`;
+    },
+    namedKeys() {
+      return this.token.namedKeys;
     },
     ...mapState([
       'signer',

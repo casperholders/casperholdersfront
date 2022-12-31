@@ -1,47 +1,92 @@
 <template>
-  <div v-if="totalNFTs > 0">
-    <v-card>
-      <card-section-title
-        icon="mdi-image"
-        :title="name"
-      >
-        <template #action>
-          <v-btn
-            data-cy="nft-remove-collection"
-            title="Untrack NFT collection"
-            class="ml-auto"
-            icon
-            @click="$emit('delete', contractHash)"
-          >
-            <v-icon>
-              mdi-delete
-            </v-icon>
-          </v-btn>
-        </template>
-      </card-section-title>
-      <v-card-text>
-        <div class="d-flex justify-space-evenly flex-wrap">
-          <template
-            v-for="(nft, i) in nfts"
-          >
-            <n-f-t-item
-              :key="i"
-              :nft-data="nft"
-            />
-          </template>
-        </div>
-      </v-card-text>
-    </v-card>
-    <pagination-component
-      v-if="pagination"
-      v-model="page"
-      :max="totalPages"
-    />
-  </div>
+  <v-card>
+    <card-section-title
+      icon="mdi-image"
+      :title="name"
+    >
+      <template #action>
+        <v-btn
+          data-cy="nft-remove-collection"
+          title="Untrack NFT collection"
+          class="ml-auto"
+          icon
+          @click="$emit('delete', contractHash)"
+        >
+          <v-icon>
+            mdi-delete
+          </v-icon>
+        </v-btn>
+      </template>
+    </card-section-title>
+    <template v-if="totalNFTs > 0 && !showSomething">
+      <v-slide-y-transition leave-absolute>
+        <v-card-text>
+          <div class="d-flex justify-space-evenly flex-wrap">
+            <template
+              v-for="(nft, i) in nfts"
+            >
+              <n-f-t-item
+                :key="i"
+                :nft-data="nft"
+                @showDetails="showDetails = true; showDetailsNft = nft;"
+                @showTransfer="showTransfer = true; showTransferNft = nft;"
+                @showBurn="showBurn = true; showBurnNft = nft;"
+                @showAllowance="showAllowance = true; showAllowanceNft = nft;"
+              />
+            </template>
+          </div>
+          <pagination-component
+            v-if="pagination"
+            v-model="page"
+            :max="totalPages"
+          />
+        </v-card-text>
+      </v-slide-y-transition>
+    </template>
+    <v-alert
+      v-else-if="totalNFTs === 0"
+      type="info"
+    >
+      You don't own any nft's in this collection.
+    </v-alert>
+    <v-slide-y-transition hide-on-leave>
+      <n-f-t-details
+        v-if="showDetails"
+        :nft-data="showDetailsNft"
+        @closeDetails="showDetails = false; showDetailsNft = null;"
+      />
+    </v-slide-y-transition>
+    <v-slide-y-transition hide-on-leave>
+      <n-f-t-transfer
+        v-if="showTransfer"
+        :nft-data="showTransferNft"
+        :token="token"
+        @closeTransfer="showTransfer = false; showTransferNft = null;"
+      />
+    </v-slide-y-transition>
+    <v-slide-y-transition hide-on-leave>
+      <n-f-t-burn
+        v-if="showBurn"
+        :nft-data="showBurnNft"
+        @closeBurn="showBurn = false; showBurnNft = null;"
+      />
+    </v-slide-y-transition>
+    <v-slide-y-transition hide-on-leave>
+      <n-f-t-allowance
+        v-if="showAllowance"
+        :nft-data="showAllowanceNft"
+        @closeAllowance="showAllowance = false; showAllowanceNft = null;"
+      />
+    </v-slide-y-transition>
+  </v-card>
 </template>
 
 <script>
+import NFTAllowance from '@/components/account/nft/NFTAllowance.vue';
+import NFTBurn from '@/components/account/nft/NFTBurn.vue';
+import NFTDetails from '@/components/account/nft/NFTDetails.vue';
 import NFTItem from '@/components/account/nft/NFTItem';
+import NFTTransfer from '@/components/account/nft/NFTTransfer.vue';
 import PaginationComponent from '@/components/account/nft/PaginationComponent';
 import { DATA_API } from '@/helpers/env';
 import retrieveNft from '@/helpers/nft/retrieveNft';
@@ -51,18 +96,10 @@ import debounce from 'lodash.debounce';
 
 export default {
   name: 'NFTSlideGroup',
-  components: { PaginationComponent, NFTItem },
+  components: { NFTAllowance, NFTBurn, NFTTransfer, NFTDetails, PaginationComponent, NFTItem },
   props: {
-    name: {
-      type: String,
-      required: true,
-    },
-    contractHash: {
-      type: Array,
-      required: true,
-    },
-    metadataUref: {
-      type: String,
+    token: {
+      type: Object,
       required: true,
     },
     pagination: {
@@ -77,10 +114,30 @@ export default {
     page: 1,
     nfts: [],
     emptyResults: false,
+    showDetails: false,
+    showDetailsNft: null,
+    showTransfer: false,
+    showTransferNft: null,
+    showBurn: false,
+    showBurnNft: null,
+    showAllowance: false,
+    showAllowanceNft: null,
   }),
   computed: {
     totalPages() {
       return Math.ceil(this.totalNFTs / this.itemsPerPage);
+    },
+    showSomething() {
+      return this.showDetails || this.showTransfer || this.showBurn || this.showAllowance;
+    },
+    metadataUref() {
+      return this.token.metadata;
+    },
+    contractHash() {
+      return [this.token.id];
+    },
+    name() {
+      return `${this.token.shortName} - ${this.token.name}`;
     },
   },
   watch: {

@@ -118,12 +118,20 @@ export default {
     id: 'nftcep47',
     name: 'Casper Standard NFT',
     features: {
+      transfer: {
+        transferFee: 4,
+        transferResult: Erc20TransferResult,
+      },
     },
   },
   nftcep78: {
     id: 'nftcep78',
     name: 'Casper Enhanced Standard NFT',
     features: {
+      transfer: {
+        transferFee: 4,
+        transferResult: Erc20TransferResult,
+      },
     },
   },
 };
