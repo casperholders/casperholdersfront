@@ -3,7 +3,6 @@ import { CLTypeBuilder, CLURef, CLValueBuilder, decodeBase16 } from 'casper-js-s
 import { None, Some } from 'ts-results';
 
 export default function buildCLValue(cltype, rawValue, innerType = null) {
-  console.log((!(rawValue === '0' || rawValue === 'false')));
   let keyParameter = null;
   const kvm = [];
   switch (cltype) {
@@ -40,7 +39,6 @@ export default function buildCLValue(cltype, rawValue, innerType = null) {
       return CLValueBuilder[cltype + rawValue.length](rawValue);
     case 'option':
       if (rawValue === null) {
-        console.log(innerType);
         return CLValueBuilder[cltype](None, CLTypeBuilder[innerType]());
       }
       return CLValueBuilder[cltype](Some(rawValue));
@@ -49,10 +47,6 @@ export default function buildCLValue(cltype, rawValue, innerType = null) {
         && rawValue[0].value === undefined
         && rawValue.length === 2
       ) {
-        console.log(rawValue[0]);
-        console.log(rawValue[1]);
-        console.log(CLTypeBuilder[rawValue[0]]());
-        console.log(CLTypeBuilder[rawValue[1]]());
         return CLValueBuilder[cltype]([CLTypeBuilder[rawValue[0]](), CLTypeBuilder[rawValue[1]]()]);
       }
       rawValue.forEach((i) => kvm.push([i.key, i.value]));

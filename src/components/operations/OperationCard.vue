@@ -87,7 +87,7 @@
             :append-values="appendValues"
             @operationCanceled="operationOnGoing = false"
           />
-          <v-spacer/>
+          <v-spacer />
           <v-btn
             v-if="cancel"
             title="Cancel"

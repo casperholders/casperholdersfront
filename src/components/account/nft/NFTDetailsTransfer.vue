@@ -1,6 +1,8 @@
 <template>
-  <v-row no-gutters
-         style="border: thin solid rgba(255, 255, 255, 0.12)">
+  <v-row
+    no-gutters
+    style="border: thin solid rgba(255, 255, 255, 0.12)"
+  >
     <v-col
       cols="12"
       md="3"

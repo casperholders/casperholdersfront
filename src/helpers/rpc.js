@@ -31,11 +31,7 @@ async function getItem(hash, stateRootHash) {
   })).json();
 }
 
-async function getMainPurse(hash, stateRootHash) {
-  return (await getItem(hash, stateRootHash)).result?.stored_value?.Account?.main_purse;
-}
-
-async function getDictionaryItemByURef(stateRootHash, uref, dict) {
+async function getDictionaryItemByURef(stateRootHash, contractKey, uref, dict) {
   return (await fetch(`${import.meta.env.VITE_APP_RPC}`, {
     method: 'POST',
     headers: new Headers({
@@ -48,8 +44,9 @@ async function getDictionaryItemByURef(stateRootHash, uref, dict) {
       params: {
         state_root_hash: stateRootHash,
         dictionary_identifier: {
-          URef: {
-            seed_uref: dict,
+          ContractNamedKey: {
+            key: `hash-${contractKey}`,
+            dictionary_name: dict,
             dictionary_item_key: uref,
           },
         },
@@ -58,22 +55,4 @@ async function getDictionaryItemByURef(stateRootHash, uref, dict) {
   })).json();
 }
 
-async function fetchUrefBalance(hash, stateRootHash) {
-  return (await (await fetch(`${import.meta.env.VITE_APP_RPC}`, {
-    method: 'POST',
-    headers: new Headers({
-      'content-type': 'application/json',
-    }),
-    body: JSON.stringify({
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'state_get_balance',
-      params: [
-        stateRootHash,
-        hash,
-      ],
-    }),
-  })).json()).result?.balance_value;
-}
-
-export { fetchUrefBalance, getStateRootHash, getMainPurse, getItem, getDictionaryItemByURef };
+export { getStateRootHash, getItem, getDictionaryItemByURef };

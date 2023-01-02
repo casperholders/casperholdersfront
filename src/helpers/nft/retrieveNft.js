@@ -22,9 +22,9 @@ async function parseTokenUri(nft, key) {
   return nft.metadata;
 }
 
-export default async function retrieveNft(stateRootHash, uref, metadataUref) {
+export default async function retrieveNft(stateRootHash, contractKey, uref, metadataUref) {
   try {
-    const r = await getDictionaryItemByURef(stateRootHash, uref, metadataUref);
+    const r = await getDictionaryItemByURef(stateRootHash, contractKey, uref, metadataUref);
     if (r.result?.stored_value?.CLValue?.parsed) {
       const nft = {};
       nft.loading = false;

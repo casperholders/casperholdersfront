@@ -33,7 +33,7 @@ const mapTokens = (dataTokens) => dataTokens.map((dataToken) => {
   if (token.groupId.includes('nft')) {
     token.namedKeys = dataToken.named_keys;
     if (token.groupId.includes('nftcep47')) {
-      token.metadata = findNamedKey(dataToken.named_keys, 'name', 'metadata')?.uref;
+      token.metadata = 'metadata';
     }
     if (token.groupId.includes('nftcep78')) {
       const metadataKind = findNamedKey(dataToken.named_keys, 'name', 'nft_metadata_kind')?.initial_value;
@@ -52,10 +52,9 @@ const mapTokens = (dataTokens) => dataTokens.map((dataToken) => {
           metadataNamedKey = 'metadata_custom_validated';
           break;
         default:
-          metadataNamedKey = '';
           break;
       }
-      token.metadata = findNamedKey(dataToken.named_keys, 'name', metadataNamedKey)?.uref;
+      token.metadata = metadataNamedKey;
     }
   }
   return token;

@@ -1,5 +1,8 @@
 <template>
-  <n-f-t-details-base :nft-data="nft" @closeDetailsBase="$emit('closeDetails')">
+  <n-f-t-details-base
+    :nft-data="nft"
+    @closeDetailsBase="$emit('closeDetails')"
+  >
     <v-simple-table
       v-if="getCharacteristics.size > 0"
     >
@@ -19,7 +22,7 @@
           <td>{{ capitalizeFirstLetter(characteristicName) }}</td>
           <td
             v-if="typeof characteristicValue !== 'object'
-                    || Array.isArray(characteristicValue)"
+              || Array.isArray(characteristicValue)"
             class="text-break"
           >
             <template v-if="characteristicValue.toString().match(/^http(s)?:\/\//)">
@@ -36,7 +39,7 @@
           </td>
           <td
             v-else-if="typeof characteristicValue === 'object'
-                    && characteristicValue !== null"
+              && characteristicValue !== null"
             class="text-break"
           >
             <ul>

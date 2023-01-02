@@ -195,7 +195,6 @@ export default {
       this.isLoading = false;
     },
     selectedSearchContract(val) {
-      console.log(val);
       if (val) {
         this.e1 = 2;
       }

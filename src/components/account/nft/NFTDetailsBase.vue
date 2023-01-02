@@ -61,7 +61,7 @@
           </v-btn>
         </v-col>
       </v-row>
-      <slot/>
+      <slot />
     </v-col>
   </v-row>
 </template>

@@ -12,7 +12,7 @@
     title="Transfer NFT"
     @cancelOperationCard="$emit('closeTransfer')"
   >
-    <n-f-t-details-transfer :nft-data="nft"/>
+    <n-f-t-details-transfer :nft-data="nft" />
     <v-text-field
       id="address"
       v-model="address"
@@ -67,13 +67,11 @@
 </template>
 
 <script>
-import NFTDetailsBase from '@/components/account/nft/NFTDetailsBase.vue';
 import NFTDetailsTransfer from '@/components/account/nft/NFTDetailsTransfer.vue';
 import OperationSummary from '@/components/operations/OperationSummary.vue';
 import balanceService from '@/helpers/balanceService';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import findTokenGroup from '@/services/tokens/findTokenGroup';
-import nativeToken from '@/services/tokens/nativeToken';
 import tokensGroups from '@/services/tokens/tokensGroups';
 import { InsufficientFunds, NoActiveKeyError } from '@casperholders/core';
 import { CLPublicKey } from 'casper-js-sdk';
@@ -81,7 +79,7 @@ import { mapGetters, mapState } from 'vuex';
 
 export default {
   name: 'NFTTransfer',
-  components: { NFTDetailsTransfer, OperationSummary, NFTDetailsBase },
+  components: { NFTDetailsTransfer, OperationSummary },
   props: {
     nftData: {
       type: Object,

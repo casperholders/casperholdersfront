@@ -1,5 +1,8 @@
 <template>
-  <n-f-t-details-base :nft-data="nft" @closeDetailsBase="$emit('closeAllowance')">
+  <n-f-t-details-base
+    :nft-data="nft"
+    @closeDetailsBase="$emit('closeAllowance')"
+  >
     Allowance
   </n-f-t-details-base>
 </template>

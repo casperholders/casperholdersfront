@@ -4,6 +4,7 @@ specifiers:
   '@casperholders/core': ^3.11.1
   '@cypress/code-coverage': ^3.10.0
   '@esbuild-plugins/node-globals-polyfill': ^0.1.1
+  '@ethersproject/bytes': ^5.7.0
   '@ledgerhq/hw-transport-web-ble': ^6.27.8
   '@ledgerhq/hw-transport-webusb': ^6.27.8
   '@toruslabs/casper-embed': ^2.0.1
@@ -11,6 +12,7 @@ specifiers:
   '@zondax/ledger-casper': ^2.5.3
   big.js: ^6.2.1
   binary-loader: ^0.0.1
+  blakejs: ^1.2.1
   buffer: ^6.0.3
   casper-js-sdk: ^2.10.0
   chart.js: ^3.9.1
@@ -52,11 +54,13 @@ specifiers:
 
 dependencies:
   '@casperholders/core': 3.11.1_eslint@8.29.0
+  '@ethersproject/bytes': 5.7.0
   '@ledgerhq/hw-transport-web-ble': 6.27.8
   '@ledgerhq/hw-transport-webusb': 6.27.8
   '@toruslabs/casper-embed': 2.0.1
   '@zondax/ledger-casper': 2.5.3
   big.js: 6.2.1
+  blakejs: 1.2.1
   buffer: 6.0.3
   casper-js-sdk: 2.10.0_eslint@8.29.0
   chart.js: 3.9.1

@@ -1,5 +1,8 @@
 <template>
-  <n-f-t-details-base :nft-data="nft" @closeDetailsBase="$emit('closeBurn')">
+  <n-f-t-details-base
+    :nft-data="nft"
+    @closeDetailsBase="$emit('closeBurn')"
+  >
     Burn
   </n-f-t-details-base>
 </template>
