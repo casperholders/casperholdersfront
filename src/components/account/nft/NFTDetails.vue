@@ -3,6 +3,19 @@
     :nft-data="nft"
     @closeDetailsBase="$emit('closeDetails')"
   >
+    <v-btn
+      v-if="nft.burn"
+      title="Burned NFT"
+      text
+      color="red"
+      aria-label="burned"
+      class="disable-events"
+    >
+      <v-icon>
+        mdi-fire
+      </v-icon>
+      Burned
+    </v-btn>
     <v-simple-table
       v-if="getCharacteristics.size > 0"
     >
@@ -135,3 +148,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+    .disable-events {
+        pointer-events: none;
+    }
+</style>

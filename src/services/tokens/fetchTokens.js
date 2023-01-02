@@ -34,6 +34,8 @@ const mapTokens = (dataTokens) => dataTokens.map((dataToken) => {
     token.namedKeys = dataToken.named_keys;
     if (token.groupId.includes('nftcep47')) {
       token.metadata = 'metadata';
+      token.canBeTransferred = true;
+      token.canBeBurned = true;
     }
     if (token.groupId.includes('nftcep78')) {
       const metadataKind = findNamedKey(dataToken.named_keys, 'name', 'nft_metadata_kind')?.initial_value;
@@ -54,6 +56,8 @@ const mapTokens = (dataTokens) => dataTokens.map((dataToken) => {
         default:
           break;
       }
+      token.canBeTransferred = findNamedKey(dataToken.named_keys, 'name', 'ownership_mode')?.initial_value === 2;
+      token.canBeBurned = findNamedKey(dataToken.named_keys, 'name', 'burn_mode')?.initial_value === 0;
       token.metadata = metadataNamedKey;
     }
   }

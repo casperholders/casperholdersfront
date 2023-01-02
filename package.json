@@ -15,7 +15,7 @@
     "testnet": "vite preview --mode testnet"
   },
   "dependencies": {
-    "@casperholders/core": "^3.11.1",
+    "@casperholders/core": "^3.13.0",
     "@ethersproject/bytes": "^5.7.0",
     "@ledgerhq/hw-transport-web-ble": "^6.27.8",
     "@ledgerhq/hw-transport-webusb": "^6.27.8",

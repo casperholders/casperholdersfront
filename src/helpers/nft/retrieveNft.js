@@ -22,11 +22,21 @@ async function parseTokenUri(nft, key) {
   return nft.metadata;
 }
 
-export default async function retrieveNft(stateRootHash, contractKey, uref, metadataUref) {
+export default async function retrieveNft(
+  stateRootHash,
+  contractKey,
+  uref,
+  metadataUref,
+  isCep78 = false,
+) {
   try {
     const r = await getDictionaryItemByURef(stateRootHash, contractKey, uref, metadataUref);
     if (r.result?.stored_value?.CLValue?.parsed) {
       const nft = {};
+      if (isCep78) {
+        const burn = await getDictionaryItemByURef(stateRootHash, contractKey, uref, 'burnt_tokens');
+        nft.burn = burn.result?.stored_value?.CLValue?.cl_type === 'Unit';
+      }
       nft.loading = false;
       const data = r.result?.stored_value?.CLValue?.parsed;
       try {

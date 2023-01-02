@@ -67,6 +67,7 @@
                 </v-icon>
               </v-btn>
               <v-btn
+                v-if="!nft.burn && canBeTransferred"
                 title="Transfer NFT"
                 icon
                 color="white"
@@ -78,17 +79,22 @@
                 </v-icon>
               </v-btn>
               <v-btn
+                v-if="canBeBurned"
                 title="Burn NFT"
-                icon
-                color="white"
+                :icon="!nft.burn"
+                :text="nft.burn"
+                :color="nft.burn ? 'red' : 'white'"
                 aria-label="burn"
+                :class="{'disable-events': nft.burn}"
                 @click="$emit('showBurn')"
               >
                 <v-icon>
                   mdi-fire
                 </v-icon>
+                {{ nft.burn ? 'Burned' : '' }}
               </v-btn>
               <v-btn
+                v-if="!nft.burn && canBeTransferred"
                 title="Manage allowance NFT"
                 icon
                 color="white"
@@ -114,6 +120,14 @@ export default {
   props: {
     nftData: {
       type: Object,
+      required: true,
+    },
+    canBeBurned: {
+      type: Boolean,
+      required: true,
+    },
+    canBeTransferred: {
+      type: Boolean,
       required: true,
     },
   },
@@ -185,3 +199,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+    .disable-events {
+        pointer-events: none;
+    }
+</style>

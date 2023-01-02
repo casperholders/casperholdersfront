@@ -187,11 +187,10 @@ export default {
      */
     async sendDeploy() {
       const deployParameter = this.tokenGroup.features.transfer.makeDeployParameters({
-        token: this.token,
         activeKey: this.activeKey,
-        amount: this.amount,
-        address: this.address,
-        transferID: this.transferID,
+        tokenId: Number(this.nft.token_id),
+        recipient: this.address,
+        token: this.token,
       });
       const options = this.signerOptionsFactory.getOptionsForTransfer(this.address);
       this.errorDeploy = null;

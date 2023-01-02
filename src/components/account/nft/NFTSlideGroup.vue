@@ -43,6 +43,8 @@
                 <n-f-t-item
                   :key="nft.token_id"
                   :nft-data="nft"
+                  :can-be-burned="canBeBurned"
+                  :can-be-transferred="canBeTransferred"
                   @showDetails="showDetails = true; showDetailsNft = nft;"
                   @showTransfer="showTransfer = true; showTransferNft = nft;"
                   @showBurn="showBurn = true; showBurnNft = nft;"
@@ -164,6 +166,12 @@ export default {
     metadataUref() {
       return this.token.metadata;
     },
+    canBeBurned() {
+      return this.token.canBeBurned;
+    },
+    canBeTransferred() {
+      return this.token.canBeTransferred;
+    },
     contractHash() {
       return [this.token.id];
     },
@@ -276,10 +284,16 @@ export default {
         const limit = upperLimit > this.totalNFTs ? this.totalNFTs : upperLimit;
         for (let i = offset; i < limit; i++) {
           promises.push(
-            retrieveNft(srh, this.token.id, `${this.ownedTokens[i]}`, this.tokenGroup === tokensGroups.nftcep47 ? 'metadata' : this.metadataUref).then((nft) => {
+            retrieveNft(
+              srh,
+              this.token.id,
+              `${this.ownedTokens[i]}`,
+              this.tokenGroup === tokensGroups.nftcep47 ? 'metadata' : this.metadataUref,
+              this.tokenGroup !== tokensGroups.nftcep47,
+            ).then((nft) => {
               if (nft) {
                 // eslint-disable-next-line no-param-reassign
-                nft.token_id = nft.token_id || this.ownedTokens[i];
+                nft.token_id = this.ownedTokens[i];
                 return nft;
               }
               return undefined;
