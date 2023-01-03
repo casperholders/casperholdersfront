@@ -183,31 +183,31 @@ export default {
           NETWORK,
           token.id,
         ),
-        burn: {
-          burnFee: 1,
-          burnResult: NftBurnResult,
-          makeDeployParameters: (
-            { activeKey, tokenId, token },
-          ) => new NftCEP78Burn(
-            activeKey,
-            tokenId,
-            NETWORK,
-            token.id,
-          ),
-        },
-        approve: {
-          approveFee: 1,
-          approveResult: NftApproveResult,
-          makeDeployParameters: (
-            { activeKey, tokenId, spender, token },
-          ) => new NftCEP78Approve(
-            activeKey,
-            tokenId,
-            spender,
-            NETWORK,
-            token.id,
-          ),
-        },
+      },
+      burn: {
+        burnFee: 1,
+        burnResult: NftBurnResult,
+        makeDeployParameters: (
+          { activeKey, tokenId, token },
+        ) => new NftCEP78Burn(
+          activeKey,
+          tokenId,
+          NETWORK,
+          token.id,
+        ),
+      },
+      approve: {
+        approveFee: 1,
+        approveResult: NftApproveResult,
+        makeDeployParameters: (
+          { activeKey, tokenId, spender, token },
+        ) => new NftCEP78Approve(
+          activeKey,
+          tokenId,
+          spender,
+          NETWORK,
+          token.id,
+        ),
       },
     },
   },

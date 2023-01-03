@@ -12,7 +12,7 @@
     title="Transfer NFT"
     @cancelOperationCard="$emit('closeTransfer')"
   >
-    <n-f-t-details-transfer :nft-data="nft" />
+    <n-f-t-details-operation :nft-data="nft" />
     <v-text-field
       id="address"
       v-model="address"
@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import NFTDetailsTransfer from '@/components/account/nft/NFTDetailsTransfer.vue';
+import NFTDetailsOperation from '@/components/account/nft/NFTDetailsOperation.vue';
 import OperationSummary from '@/components/operations/OperationSummary.vue';
 import balanceService from '@/helpers/balanceService';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
@@ -79,7 +79,7 @@ import { mapGetters, mapState } from 'vuex';
 
 export default {
   name: 'NFTTransfer',
-  components: { NFTDetailsTransfer, OperationSummary },
+  components: { NFTDetailsOperation, OperationSummary },
   props: {
     nftData: {
       type: Object,
@@ -192,7 +192,7 @@ export default {
         recipient: this.address,
         token: this.token,
       });
-      const options = this.signerOptionsFactory.getOptionsForTransfer(this.address);
+      const options = this.signerOptionsFactory.getOptionsForOperations();
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
       const result = await genericSendDeploy(

@@ -1,6 +1,7 @@
 <template>
   <v-row
     no-gutters
+    class="mb-3"
     style="border: thin solid rgba(255, 255, 255, 0.12)"
   >
     <v-col
@@ -48,7 +49,7 @@
 
 <script>
 export default {
-  name: 'NFTDetailsTransfer',
+  name: 'NFTDetailsOperation',
   props: {
     nftData: {
       type: Object,

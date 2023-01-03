@@ -92,6 +92,7 @@
       <n-f-t-burn
         v-if="showBurn"
         :nft-data="showBurnNft"
+        :token="token"
         @closeBurn="showBurn = false; showBurnNft = null;"
       />
     </v-slide-y-transition>
@@ -99,6 +100,7 @@
       <n-f-t-allowance
         v-if="showAllowance"
         :nft-data="showAllowanceNft"
+        :token="token"
         @closeAllowance="showAllowance = false; showAllowanceNft = null;"
       />
     </v-slide-y-transition>
