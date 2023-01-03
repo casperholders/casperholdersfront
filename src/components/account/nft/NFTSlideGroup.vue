@@ -48,7 +48,6 @@
                   @showDetails="showDetails = true; showDetailsNft = nft;"
                   @showTransfer="showTransfer = true; showTransferNft = nft;"
                   @showBurn="showBurn = true; showBurnNft = nft;"
-                  @showAllowance="showAllowance = true; showAllowanceNft = nft;"
                 />
               </template>
             </template>
@@ -94,14 +93,6 @@
         :nft-data="showBurnNft"
         :token="token"
         @closeBurn="showBurn = false; showBurnNft = null;"
-      />
-    </v-slide-y-transition>
-    <v-slide-y-transition hide-on-leave>
-      <n-f-t-allowance
-        v-if="showAllowance"
-        :nft-data="showAllowanceNft"
-        :token="token"
-        @closeAllowance="showAllowance = false; showAllowanceNft = null;"
       />
     </v-slide-y-transition>
   </v-card>
@@ -151,15 +142,13 @@ export default {
     showTransferNft: null,
     showBurn: false,
     showBurnNft: null,
-    showAllowance: false,
-    showAllowanceNft: null,
   }),
   computed: {
     totalPages() {
       return Math.ceil(this.totalNFTs / this.itemsPerPage);
     },
     showSomething() {
-      return this.showDetails || this.showTransfer || this.showBurn || this.showAllowance;
+      return this.showDetails || this.showTransfer || this.showBurn;
     },
     getCurrentNFTS() {
       const offset = (this.page - 1) * this.itemsPerPage;

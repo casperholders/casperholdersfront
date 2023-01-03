@@ -93,18 +93,6 @@
                 </v-icon>
                 {{ nft.burn ? 'Burned' : '' }}
               </v-btn>
-              <v-btn
-                v-if="!nft.burn && canBeTransferred"
-                title="Manage allowance NFT"
-                icon
-                color="white"
-                aria-label="allowance"
-                @click="$emit('showAllowance')"
-              >
-                <v-icon>
-                  mdi-lock-open-check
-                </v-icon>
-              </v-btn>
             </v-card-actions>
             <v-spacer />
           </v-sheet>
