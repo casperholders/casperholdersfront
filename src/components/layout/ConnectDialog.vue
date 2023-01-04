@@ -6,7 +6,7 @@
     <template #activator="{ on, attrs }">
       <template v-if="$vuetify.breakpoint.mobile">
         <v-btn
-          id="connect"
+          data-cy="connect"
           fab
           small
           color="primary"
@@ -21,7 +21,7 @@
       </template>
       <template v-else>
         <v-btn
-          id="connect"
+          data-cy="connect"
           rounded
           color="primary"
           v-bind="attrs"
@@ -39,7 +39,7 @@
     </template>
 
     <v-card
-      id="connectDialog"
+      data-cy="connectDialog"
       width="100%"
     >
       <v-card-title class="flex-nowrap">
@@ -103,7 +103,7 @@
               @click="ledgerType = true"
             >
               <v-card-text
-                id="connectLedger"
+                data-cy="connectLedger"
                 class="d-flex align-center"
               >
                 <img
@@ -159,7 +159,7 @@
               @click="ledgerConnect(true)"
             >
               <v-card-text
-                id="connectLedgerUSB"
+                data-cy="connectLedgerUSB"
                 class="d-flex align-center"
               >
                 <img
@@ -185,7 +185,7 @@
               @click="ledgerConnect(false)"
             >
               <v-card-text
-                id="connectLedgerBLE"
+                data-cy="connectLedgerBLE"
                 class="d-flex align-center"
               >
                 <img
@@ -259,7 +259,7 @@
                     expand
                     class="secondary"
                   >
-                    <v-expansion-panel-header class="reward-calculator-panel-header">
+                    <v-expansion-panel-header>
                       <div class="d-flex align-center text-overline">
                         <v-icon
                           left
@@ -310,7 +310,7 @@
                     expand
                     class="secondary"
                   >
-                    <v-expansion-panel-header class="reward-calculator-panel-header">
+                    <v-expansion-panel-header>
                       <div class="d-flex align-center text-overline">
                         <v-icon
                           left

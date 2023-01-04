@@ -110,7 +110,7 @@ export default {
       errorBalance: null,
       loadingSignAndDeploy: false,
       errorDeploy: null,
-      loadingBalance: false,
+      loadingBalance: true,
       type: AccountInfoResult.getName(),
     };
   },

@@ -134,51 +134,16 @@
             class="mb-4"
             @input="amount = $event"
           />
-          <div class="mx-n1">
-            <v-row
-              class="white-bottom-border"
-            >
-              <v-col>Payment amount for the smart contract</v-col>
-              <v-col class="text-right cspr">
-                {{ amount }} CSPR
-              </v-col>
-            </v-row>
-            <v-row
-              class="white-bottom-border"
-            >
-              <v-col>Balance</v-col>
-              <v-col class="text-right cspr">
-                <template v-if="loadingBalance">
-                  Loading balance ...
-                  <v-progress-circular
-                    class="ml-3"
-                    color="white"
-                    indeterminate
-                    size="14"
-                  />
-                </template>
-                <template v-else>
-                  {{ balance }} CSPR
-                </template>
-              </v-col>
-            </v-row>
-            <v-row
-              class="white-bottom-border"
-            >
-              <v-col>Total cost</v-col>
-              <v-col class="text-right cspr">
-                {{ amount }} CSPR
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>Balance after operation</v-col>
-              <v-col class="text-right cspr">
-                {{ remainingBalance }} CSPR
-              </v-col>
-            </v-row>
-          </div>
+          <operation-summary
+            :balance-loading="loadingBalance"
+            :balance="balance"
+            :fee="Number(0)"
+            :amount="`-${amount}`"
+            class="mx-n1"
+          />
           <v-alert
             v-if="errorBalance"
+            data-cy="errorBalance"
             class="mt-5"
             dense
             prominent
@@ -256,7 +221,7 @@ export default {
       errorBalance: null,
       loadingSignAndDeploy: false,
       errorDeploy: null,
-      loadingBalance: false,
+      loadingBalance: true,
       type: SmartContractResult.getName(),
       buffer: null,
       tab: 0,

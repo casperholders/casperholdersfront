@@ -40,6 +40,7 @@
             <v-text-field
               v-model="keyManagementThreshold"
               :value="keyManagementThreshold"
+              data-cy="keyManagementThreshold"
               color="white"
               label="Key management threshold"
               type="number"
@@ -69,6 +70,7 @@
             <v-text-field
               v-model="deployThreshold"
               :value="deployThreshold"
+              data-cy="deployThreshold"
               color="white"
               label="Deploy threshold"
               type="number"
@@ -106,7 +108,10 @@
         Authorized keys
       </v-card-title>
       <v-list>
-        <template v-if="loadingKeyInfo">
+        <div
+          v-if="loadingKeyInfo"
+          data-cy="loadingKeyInfo"
+        >
           Loading key info ...
           <v-progress-circular
             class="ml-3"
@@ -114,7 +119,7 @@
             indeterminate
             size="14"
           />
-        </template>
+        </div>
         <v-list-item
           v-for="(authorizedInput, index) in authorizedInputs"
           :key="index"
@@ -421,7 +426,7 @@ export default {
       errorBalance: null,
       loadingSignAndDeploy: false,
       errorDeploy: null,
-      loadingBalance: false,
+      loadingBalance: true,
       type: KeyManagementResult.getName(),
       authorizedInputs: [],
       /**

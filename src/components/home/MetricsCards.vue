@@ -27,7 +27,7 @@
             >
               <v-progress-circular
                 v-if="loading"
-                id="metrics-loading"
+                data-cy="metrics-loading"
                 color="primary"
                 size="128"
                 width="10"
@@ -36,7 +36,7 @@
             </v-layout>
             <line-chart
               v-else-if="chartData"
-              id="metrics-chart"
+              data-cy="metrics-chart"
               key="chart"
               :chart-data="chartData"
               :chart-options="chartOptions"

@@ -1,0 +1,52 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: director-cert
+spec:
+  secretName: director-cert
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: director.test.casperholders.io
+  dnsNames:
+    - director.test.casperholders.io
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cors-anywhere-cert
+spec:
+  secretName: cors-anywhere-cert
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: cors-anywhere.test.casperholders.io
+  dnsNames:
+    - cors-anywhere.test.casperholders.io
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: api-cert
+spec:
+  secretName: api-cert
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: api.test.casperholders.io
+  dnsNames:
+    - api.test.casperholders.io
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: nctl-cert
+spec:
+  secretName: nctl-cert
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: nctl.test.casperholders.io
+  dnsNames:
+    - nctl.test.casperholders.io

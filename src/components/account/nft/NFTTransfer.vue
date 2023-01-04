@@ -14,8 +14,8 @@
   >
     <n-f-t-details-operation :nft-data="nft" />
     <v-text-field
-      id="address"
       v-model="address"
+      data-cy="address"
       :rules="addressRules"
       :value="address"
       color="white"
@@ -111,7 +111,7 @@ export default {
       address: '',
       loadingSignAndDeploy: false,
       errorDeploy: null,
-      loadingBalance: false,
+      loadingBalance: true,
     };
   },
   computed: {

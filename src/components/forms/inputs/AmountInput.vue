@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-text-field
-      id="amount"
+      data-cy="amount"
       v-model.number="amount"
       :hint="`Minimum amount: ${min}`"
       :max="max"
@@ -21,7 +21,7 @@
     <v-row class="pt-2">
       <v-col cols="3">
         <v-btn
-          id="min"
+          data-cy="min"
           class="rounded-xl"
           color="white"
           outlined
@@ -58,7 +58,7 @@
       </v-col>
       <v-col cols="3">
         <v-btn
-          id="max"
+          data-cy="max"
           class="rounded-xl"
           color="white"
           outlined

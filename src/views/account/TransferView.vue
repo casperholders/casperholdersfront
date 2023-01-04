@@ -19,8 +19,8 @@
       :initial-token="$route.params.token"
     />
     <v-text-field
-      id="address"
       v-model="address"
+      data-cy="address"
       :rules="addressRules"
       :value="address"
       color="white"
@@ -31,7 +31,7 @@
     <v-slide-y-transition leave-absolute>
       <v-text-field
         v-if="tokenGroup.features.transfer.transferID"
-        id="transferID"
+        data-cy="transferID"
         v-model="transferID"
         :rules="transferIDRules"
         :value="transferID"
@@ -61,6 +61,7 @@
     />
     <v-alert
       v-if="errorBalance"
+      data-cy="errorBalance"
       class="mt-5"
       dense
       prominent
@@ -159,7 +160,7 @@ export default {
       tokenBalance: '0',
       loadingSignAndDeploy: false,
       errorDeploy: null,
-      loadingBalance: false,
+      loadingBalance: true,
     };
   },
   computed: {

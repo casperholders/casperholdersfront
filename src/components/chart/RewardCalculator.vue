@@ -1,5 +1,5 @@
 <template>
-  <div class="reward-calculator">
+  <div data-cy="reward-calculator">
     <div class="d-flex align-center justify-center flex-wrap body-2 mb-3">
       <v-tooltip bottom>
         <template #activator="{ attrs, on }">

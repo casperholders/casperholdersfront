@@ -1,5 +1,5 @@
 <template>
-  <div class="operations">
+  <div data-cy="operations">
     <v-data-table
       :headers="operationHeaders"
       :items="operations"

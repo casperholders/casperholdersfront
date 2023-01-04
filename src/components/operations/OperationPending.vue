@@ -1,6 +1,7 @@
 <template>
   <v-card
-    class="align-center rounded-xl secondary mt-5 operationResult"
+    data-cy="operationPending"
+    class="align-center rounded-xl secondary mt-5"
     width="100%"
   >
     <v-card-title>

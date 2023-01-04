@@ -17,6 +17,7 @@
           <span
             v-if="loading"
             key="loading"
+            data-cy="loadingBalance"
             class="d-flex align-center justify-end summary__loading"
           >
             <v-progress-circular
@@ -30,6 +31,7 @@
             Loading...
           </span>
           <token-amount
+            data-cy="loadedBalance"
             v-else
             key="value"
             :amount="tokenAmount"

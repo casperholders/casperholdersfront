@@ -1,7 +1,7 @@
 <template>
   <v-alert type="error">
     <div class="d-flex flex-wrap flex-sm-nowrap">
-      <span class="mr-sm-2">
+      <span data-cy="notConnected" class="mr-sm-2">
         Not connected.
       </span>
       <v-btn

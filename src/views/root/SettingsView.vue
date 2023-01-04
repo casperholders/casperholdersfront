@@ -119,7 +119,10 @@
                   </v-col>
                 </v-row>
               </v-alert>
-              <p v-if="accountHashImpersonation !== '' && loadingKeyInfo === true">
+              <p
+                v-if="accountHashImpersonation !== '' && loadingKeyInfo === true"
+                data-cy="loadingKeyInfo"
+              >
                 <v-progress-circular
                   class="ml-3"
                   color="white"

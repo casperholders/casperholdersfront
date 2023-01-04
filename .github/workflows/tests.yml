@@ -3,36 +3,119 @@ name: tests
 on:
   push:
 
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
 jobs:
+  set_network:
+    runs-on: ubuntu-latest
+    outputs:
+      auction: ${{ steps.auction.outputs.auction }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up test namespace
+        uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: apply -k kubernetes/test/
+
+      - name: Production - Update deployment
+        uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: wait deployment -n test-casperholders mynctl --for condition=Available=True --timeout=120s
+
+      - name: Setup network
+        run: ./.github/data/setupNetwork.sh https://nctl.test.casperholders.io
+        env:
+          FAKE_KEY: ${{ secrets.VUE_APP_FAKE_KEY }}
+
+      - name: Store output
+        id: auction
+        run: |
+          echo $VITE_APP_AUCTION_MANAGER_HASH
+          echo "auction=$VITE_APP_AUCTION_MANAGER_HASH" >> $GITHUB_OUTPUT
   build:
     runs-on: ubuntu-latest
+    needs: set_network
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
+      - uses: actions/checkout@v3
 
-      - uses: pnpm/action-setup@v2.0.1
+      - name: Test auction hash
+        run: echo ${{needs.set_network.outputs.auction}}
+
+      - uses: pnpm/action-setup@v2.2.4
         name: Install pnpm
         id: pnpm-install
         with:
           version: 7
           run_install: false
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: |
-          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
-
-      - uses: actions/cache@v3
-        name: Setup pnpm cache
+      - name: Install Node.js
+        uses: actions/setup-node@v3
         with:
-          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          node-version: 16
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Code style
+        run: pnpm lint
+
+      - name: Build
+        run: pnpm vite build --mode e2e --config vite.e2e.config.js
+        env:
+          VITE_APP_FAKE_KEY: ${{ secrets.VUE_APP_FAKE_KEY }}
+          VITE_APP_FAKE_VALIDATOR_KEY: ${{ secrets.VUE_APP_FAKE_VALIDATOR_KEY }}
+          VITE_APP_FAKE_MULTISIG_KEY: ${{ secrets.VUE_APP_FAKE_MULTISIG_KEY }}
+          VITE_APP_FAKE_SECOND_MULTISIG_KEY: ${{ secrets.VUE_APP_FAKE_SECOND_MULTISIG_KEY }}
+          VITE_APP_AUCTION_MANAGER_HASH: ${{needs.set_network.outputs.auction}}
+          VITE_APP_E2E: true
+          VITE_COVERAGE: true
+          NODE_OPTIONS: --max-old-space-size=8192
+
+      - name: Save build folder
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          if-no-files-found: error
+          path: dist
+          retention-days: 1
+  e2e:
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [ 1, 2, 3 ]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download the build
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist
+
+      - uses: pnpm/action-setup@v2.2.4
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
       - uses: actions/cache@v3
         name: Setup cypress cache
         with:
@@ -41,36 +124,87 @@ jobs:
           key: cypress-cache-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             cypress-cache-${{ runner.os }}-
-      - name: Install dependencies
-        run: pnpm install
-      - name: Code style
-        run: pnpm lint
+
       - name: Install cypress
         run: ./node_modules/.bin/cypress install --force
+
       - name: Cypress run
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v5
         with:
           install: false
-          build: pnpm vite build --config vite.e2e.config.js
+          command: pnpm cy2 run --parallel --browser chrome --record --key test --ci-build-id test
           start: pnpm vite preview --port 8080
           wait-on: http://localhost:8080
-          browser: chrome
         env:
-          VITE_APP_FAKE_KEY: ${{ secrets.VUE_APP_FAKE_KEY }}
-          VITE_APP_FAKE_VALIDATOR_KEY: ${{ secrets.VUE_APP_FAKE_VALIDATOR_KEY }}
-          VITE_APP_FAKE_MULTISIG_KEY: ${{ secrets.VUE_APP_FAKE_MULTISIG_KEY }}
-          VITE_APP_FAKE_SECOND_MULTISIG_KEY: ${{ secrets.VUE_APP_FAKE_SECOND_MULTISIG_KEY }}
-          VITE_APP_E2E: true
-          VITE_COVERAGE: true
+          CYPRESS_API_URL: https://director.test.casperholders.io/
           NODE_OPTIONS: --max-old-space-size=8192
-      - uses: actions/upload-artifact@v2
+
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: cypress-screenshots
           path: cypress/screenshots
+
+      - name: Rename coverage file
+        run: mv coverage/coverage-final.json coverage/coverage-final-${{ matrix.containers }}.json
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report-${{ matrix.containers }}
+          path: coverage/coverage-final-${{ matrix.containers }}.json
+
+  coverage:
+    needs: e2e
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v3
+
+      - uses: pnpm/action-setup@v2.2.4
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Merge coverage
+        run: |
+          mkdir multiple-coverage
+          cp code-coverage-report-*/* multiple-coverage
+          pnpm nyc merge multiple-coverage merged-output/merged-coverage.json
+          pnpm nyc report -t merged-output --report-dir coverage --reporter=json --reporter=lcov --reporter=clover --reporter=json-summary
+
       - uses: codecov/codecov-action@v2
+
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  cleanup:
+    needs: e2e
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Delete test namespace
+        uses: steebchen/kubectl@v2.0.0
+        if: ${{ always() }}
+        with:
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: delete -k kubernetes/test/
+

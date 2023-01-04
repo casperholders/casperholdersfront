@@ -5,7 +5,7 @@
   >
     <template #activator="{ on, attrs }">
       <v-btn
-        id="account"
+        data-cy="account"
         v-bind="attrs"
         icon
         aria-label="Account"
@@ -85,7 +85,7 @@
       </v-card-text>
       <v-card-actions class="d-block text-center">
         <v-btn
-          id="logout"
+          data-cy="logout"
           color="primary"
           @click="logout"
         >

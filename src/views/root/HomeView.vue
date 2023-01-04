@@ -41,7 +41,7 @@
       >
         <template #activator="{ on, attrs }">
           <v-btn
-            id="tutorial"
+            data-cy="tutorial"
             class="mb-8 mx-auto"
             color="secondary"
             large
@@ -61,7 +61,7 @@
         </template>
 
         <v-card
-          id="tutorialDialog"
+          data-cy="tutorialDialog"
           class="rounded-xl primary"
         >
           <v-card-title class="text-h5">
@@ -254,7 +254,7 @@
 
           <v-card-actions>
             <v-btn
-              id="closeTutorial"
+              data-cy="closeTutorial"
               color="quaternary"
               rounded
               @click="dialog = false"

@@ -87,7 +87,7 @@ export default {
       tokenBalance: '0',
       loadingSignAndDeploy: false,
       errorDeploy: null,
-      loadingBalance: false,
+      loadingBalance: true,
     };
   },
   computed: {

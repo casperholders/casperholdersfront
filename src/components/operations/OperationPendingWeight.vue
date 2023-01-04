@@ -4,7 +4,8 @@
       v-for="(weightedDeploy,i) in weightedDeploys"
       :id="`pendingWeightedDeploy-${i}`"
       :key="i"
-      class="align-center rounded-xl secondary mt-5 operationResult"
+      data-cy="operationPendingWeight"
+      class="align-center rounded-xl secondary mt-5"
       width="100%"
     >
       <v-card-title>

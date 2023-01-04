@@ -1,6 +1,6 @@
 <template>
   <v-autocomplete
-    id="validator"
+    data-cy="validator"
     v-model="validator"
     :items="validators"
     filled

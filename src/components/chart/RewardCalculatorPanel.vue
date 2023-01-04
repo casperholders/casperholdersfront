@@ -6,7 +6,7 @@
       tile
     >
       <v-expansion-panel class="secondary">
-        <v-expansion-panel-header class="reward-calculator-panel-header">
+        <v-expansion-panel-header data-cy="reward-calculator-panel-header">
           <div class="d-flex align-center text-overline">
             <v-icon
               left

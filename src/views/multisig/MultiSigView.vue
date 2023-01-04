@@ -211,7 +211,7 @@
       </v-card-text>
       <v-card-actions class="pa-4">
         <v-btn
-          id="agreeAndSign"
+          data-cy="agreeAndSign"
           class="rounded-xl"
           color="primary"
           dark

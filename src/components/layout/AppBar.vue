@@ -29,6 +29,7 @@
           class="ml-2"
           label
           color="info"
+          data-cy="humanReadableNetwork"
           :href="swapCasperHoldersUrl"
         >
           {{ HUMAN_READABLE_NETWORK }}

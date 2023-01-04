@@ -36,6 +36,7 @@
     />
     <v-alert
       v-if="errorBalance"
+      data-cy="errorBalance"
       class="mt-5"
       dense
       prominent
@@ -105,7 +106,7 @@ export default {
       balance: '0',
       loadingSignAndDeploy: false,
       errorDeploy: null,
-      loadingBalance: false,
+      loadingBalance: true,
       type: DelegateResult.getName(),
       validator: undefined,
     };

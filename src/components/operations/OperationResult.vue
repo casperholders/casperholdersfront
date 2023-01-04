@@ -1,12 +1,13 @@
 <template>
   <v-card
-    class="align-center rounded-xl secondary mt-5 operationResult"
+    data-cy="operationResult"
+    class="align-center rounded-xl secondary mt-5"
     width="100%"
   >
     <v-card-title>
       Operation result
       <v-btn
-        id="removeDeployResult"
+        data-cy="removeDeployResult"
         class="ml-auto"
         fab
         small
@@ -266,7 +267,7 @@ export default {
       UNKNOWN: DeployResult.STATUS_UNKNOWN,
       OK: DeployResult.STATUS_OK,
       KO: DeployResult.STATUS_KO,
-      eventWatcher: new EventSource(`${import.meta.env.VITE_APP_RPC}/events/?start_from=0`),
+      eventWatcher: new EventSource(`${import.meta.env.VITE_APP_EVENTS}`),
       step: 1,
     };
   },

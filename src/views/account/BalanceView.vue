@@ -20,12 +20,12 @@
         title="Balance"
       />
       <v-card-text v-if="errored">
-        <not-connected-alert id="balance-not-connected" />
+        <not-connected-alert data-cy="balance-not-connected" />
       </v-card-text>
       <template v-else>
         <div class="d-flex px-4 pb-2 flex-wrap">
           <balance-amount-card
-            id="balance-total-staked"
+            data-cy="balance-total-staked"
             class="flex-grow-1 balance-cards mx-2 mb-2"
             style="flex-basis: 0;"
             :loading="totalStakedLoading"
@@ -34,7 +34,7 @@
             title="Total staked"
           />
           <balance-amount-card
-            id="balance-total-available"
+            data-cy="balance-total-available"
             class="flex-grow-1 balance-cards mx-2 mb-2"
             style="flex-basis: 0;"
             :loading="loading"
@@ -43,7 +43,7 @@
             title="Total available"
           />
           <balance-amount-card
-            id="balance-total"
+            data-cy="balance-total"
             class="flex-grow-1 balance-cards mx-2 mb-2"
             style="flex-basis: 0;"
             :loading="loading || totalStakedLoading"

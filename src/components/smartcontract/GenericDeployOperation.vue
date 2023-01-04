@@ -198,7 +198,7 @@ export default {
       errorBalance: null,
       loadingSignAndDeploy: false,
       errorDeploy: null,
-      loadingBalance: false,
+      loadingBalance: true,
       type: SmartContractResult.getName(),
       buffer: null,
       deployArgs: this.args,
