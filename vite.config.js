@@ -1,5 +1,7 @@
 // vite.config.js
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
+import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill';
+import vue from '@vitejs/plugin-vue2';
 import path from 'path';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 import { VuetifyResolver } from 'unplugin-vue-components/resolvers';
@@ -7,7 +9,6 @@ import createComponentsPlugin from 'unplugin-vue-components/vite';
 import { defineConfig, loadEnv } from 'vite';
 import mkcert from 'vite-plugin-mkcert';
 import { VitePWA } from 'vite-plugin-pwa';
-import vue from '@vitejs/plugin-vue2';
 
 /**
  * Replace env variables in index.html
@@ -90,9 +91,19 @@ export default defineConfig(({ mode }) => ({
       },
       // Enable esbuild polyfill plugins
       plugins: [
+        NodeModulesPolyfillPlugin(),
         NodeGlobalsPolyfillPlugin({
           buffer: true,
         }),
+        {
+          name: 'fix-node-globals-polyfill', // FIXME https://github.com/remorses/esbuild-plugins/issues/24
+          setup(build) {
+            build.onResolve(
+              { filter: /(_virtual-process-polyfill_|_buffer)\.js/ },
+              ({ path }) => ({ path }),
+            );
+          },
+        },
       ],
     },
   },

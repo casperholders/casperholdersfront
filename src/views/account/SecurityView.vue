@@ -403,7 +403,7 @@ import {
   NoActiveKeyError,
 } from '@casperholders/core';
 import Big from 'big.js';
-import { Buffer } from 'buffer';
+import { Buffer } from 'buffer/';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 

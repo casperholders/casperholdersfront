@@ -1,4 +1,4 @@
-import { Buffer } from 'buffer';
+import { Buffer } from 'buffer/';
 import { CLTypeBuilder, CLURef, CLValueBuilder, decodeBase16 } from 'casper-js-sdk';
 import { None, Some } from 'ts-results';
 

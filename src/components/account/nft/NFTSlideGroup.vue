@@ -107,7 +107,7 @@ import findTokenGroup from '@/services/tokens/findTokenGroup';
 import tokensGroups from '@/services/tokens/tokensGroups';
 import { concat } from '@ethersproject/bytes';
 import blake from 'blakejs';
-import { Buffer } from 'buffer';
+import { Buffer } from 'buffer/';
 import { CLPublicKey, CLValueBuilder, CLValueParsers } from 'casper-js-sdk';
 import debounce from 'lodash.debounce';
 import { mapState } from 'vuex';
