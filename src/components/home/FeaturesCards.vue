@@ -11,7 +11,7 @@
             color="primary"
             size="52"
           >
-            <v-icon>mdi-wallet</v-icon>
+            <v-icon size="24">{{ mdiWallet }}</v-icon>
           </v-avatar>
           <v-card-title class="pl-4">
             Balance
@@ -43,7 +43,7 @@
             color="primary"
             size="52"
           >
-            <v-icon>mdi-send</v-icon>
+            <v-icon size="24">{{ mdiSend }}</v-icon>
           </v-avatar>
           <v-card-title class="pl-4">
             Transfer
@@ -75,7 +75,7 @@
             color="primary"
             size="52"
           >
-            <v-icon>mdi-safe</v-icon>
+            <v-icon size="24">{{ mdiSafe }}</v-icon>
           </v-avatar>
           <v-card-title class="pl-4">
             Staking
@@ -107,7 +107,7 @@
             color="primary"
             size="52"
           >
-            <v-icon>mdi-lock-open</v-icon>
+            <v-icon size="24">{{ mdiLockOpen }}</v-icon>
           </v-avatar>
           <v-card-title class="pl-4">
             Unstaking
@@ -140,7 +140,7 @@
             color="primary"
             size="52"
           >
-            <v-icon>mdi-gavel</v-icon>
+            <v-icon size="24">{{ mdiGavel }}</v-icon>
           </v-avatar>
           <v-card-title class="pl-4">
             Add bid
@@ -172,7 +172,7 @@
             color="primary"
             size="52"
           >
-            <v-icon>mdi-lock-open</v-icon>
+            <v-icon size="24">{{ mdiLockOpen }}</v-icon>
           </v-avatar>
           <v-card-title class="pl-4">
             Withdraw bid
@@ -205,7 +205,7 @@
             color="primary"
             size="52"
           >
-            <v-icon>mdi-file-document-edit</v-icon>
+            <v-icon size="24">{{ mdiFileDocumentEdit }}</v-icon>
           </v-avatar>
           <v-card-title class="pl-4">
             Smart contracts
@@ -237,7 +237,7 @@
             color="primary"
             size="52"
           >
-            <v-icon>mdi-heart-pulse</v-icon>
+            <v-icon size="24">{{ mdiHeartPulse }}</v-icon>
           </v-avatar>
           <v-card-title class="pl-4">
             Platform Metrics
@@ -254,10 +254,30 @@
 </template>
 
 <script>
+
+import {
+  mdiFileDocumentEdit,
+  mdiGavel,
+  mdiHeartPulse,
+  mdiLockOpen,
+  mdiSafe,
+  mdiSend,
+  mdiWallet,
+} from '@mdi/js';
+
 /**
  * Features component display on the homepage
  */
 export default {
   name: 'FeaturesCards',
+  data: () => ({
+    mdiWallet,
+    mdiSend,
+    mdiSafe,
+    mdiLockOpen,
+    mdiGavel,
+    mdiFileDocumentEdit,
+    mdiHeartPulse,
+  }),
 };
 </script>

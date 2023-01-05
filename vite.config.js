@@ -4,6 +4,7 @@ import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfil
 import vue from '@vitejs/plugin-vue2';
 import path from 'path';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
+import visualizer from 'rollup-plugin-visualizer';
 import { VuetifyResolver } from 'unplugin-vue-components/resolvers';
 import createComponentsPlugin from 'unplugin-vue-components/vite';
 import { defineConfig, loadEnv } from 'vite';
@@ -36,6 +37,7 @@ export default defineConfig(({ mode }) => ({
   open: true,
   port: 3001,
   plugins: [
+    visualizer(),
     vue(),
     createComponentsPlugin({
       resolvers: [

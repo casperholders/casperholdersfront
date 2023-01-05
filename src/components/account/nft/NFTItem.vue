@@ -63,7 +63,7 @@
                 @click="$emit('showDetails')"
               >
                 <v-icon>
-                  mdi-arrow-expand-all
+                  {{ mdiArrowExpandAll }}
                 </v-icon>
               </v-btn>
               <v-btn
@@ -75,7 +75,7 @@
                 @click="$emit('showTransfer')"
               >
                 <v-icon>
-                  mdi-send
+                  {{ mdiSend }}
                 </v-icon>
               </v-btn>
               <v-btn
@@ -89,7 +89,7 @@
                 @click="$emit('showBurn')"
               >
                 <v-icon>
-                  mdi-fire
+                  {{ mdiFire }}
                 </v-icon>
                 {{ nft.burn ? 'Burned' : '' }}
               </v-btn>
@@ -103,6 +103,8 @@
 </template>
 
 <script>
+import { mdiArrowExpandAll, mdiFire, mdiSend } from '@mdi/js';
+
 export default {
   name: 'NFTItem',
   props: {
@@ -121,6 +123,9 @@ export default {
   },
   data() {
     return {
+      mdiArrowExpandAll,
+      mdiSend,
+      mdiFire,
       nft: this.nftData,
     };
   },

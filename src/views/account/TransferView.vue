@@ -8,7 +8,7 @@
     :token="token"
     :fee="transferFee"
     :amount="`-${amount}`"
-    icon="mdi-send"
+    :icon="mdiSend"
     submit-title="Send Transaction"
     title="Transfer"
   >
@@ -25,20 +25,20 @@
       :value="address"
       color="white"
       label="Send to address"
-      prepend-icon="mdi-account"
+      :prepend-icon="mdiAccount"
       required
     />
     <v-slide-y-transition leave-absolute>
       <v-text-field
         v-if="tokenGroup.features.transfer.transferID"
-        data-cy="transferID"
         v-model="transferID"
+        data-cy="transferID"
         :rules="transferIDRules"
         :value="transferID"
         color="white"
         hint="Set to 0 if not known"
         label="Transfer ID"
-        prepend-icon="mdi-music-accidental-sharp"
+        :prepend-icon="mdiMusicAccidentalSharp"
         required
       />
     </v-slide-y-transition>
@@ -78,7 +78,7 @@
             @click="connectionRequest"
           >
             <v-icon left>
-              mdi-account-circle
+              {{ mdiAccountCircle }}
             </v-icon>
             Connect
           </v-btn>
@@ -119,6 +119,7 @@ import findTokenGroup from '@/services/tokens/findTokenGroup';
 import nativeToken from '@/services/tokens/nativeToken';
 import tokensGroups from '@/services/tokens/tokensGroups';
 import { InsufficientFunds, NoActiveKeyError } from '@casperholders/core';
+import { mdiAccount, mdiAccountCircle, mdiMusicAccidentalSharp, mdiSend } from '@mdi/js';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 
@@ -134,6 +135,10 @@ export default {
   components: { OperationSummary, TokenInput, AmountInput, OperationCard },
   data() {
     return {
+      mdiSend,
+      mdiAccount,
+      mdiMusicAccidentalSharp,
+      mdiAccountCircle,
       addressRules: [
         (a) => !!a || 'Address is required',
         (a) => a.length >= 2 || 'Address is too short',

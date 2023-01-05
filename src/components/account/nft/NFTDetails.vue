@@ -12,7 +12,7 @@
       class="disable-events"
     >
       <v-icon>
-        mdi-fire
+        {{ mdiFire }}
       </v-icon>
       Burned
     </v-btn>
@@ -89,6 +89,7 @@
 
 <script>
 import NFTDetailsBase from '@/components/account/nft/NFTDetailsBase.vue';
+import { mdiFire } from '@mdi/js';
 
 export default {
   name: 'NFTDetails',
@@ -101,6 +102,7 @@ export default {
   },
   data() {
     return {
+      mdiFire,
       nft: this.nftData,
     };
   },

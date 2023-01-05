@@ -7,7 +7,7 @@
     :fee="burnFee"
     :amount="0"
     :cancel="true"
-    icon="mdi-fire"
+    :icon="mdiFire"
     submit-title="Burn NFT"
     title="Burn NFT"
     @cancelOperationCard="$emit('closeBurn')"
@@ -38,7 +38,7 @@
             @click="connectionRequest"
           >
             <v-icon left>
-              mdi-account-circle
+              {{ mdiAccountCircle }}
             </v-icon>
             Connect
           </v-btn>
@@ -64,6 +64,7 @@ import genericSendDeploy from '@/helpers/genericSendDeploy';
 import findTokenGroup from '@/services/tokens/findTokenGroup';
 import tokensGroups from '@/services/tokens/tokensGroups';
 import { InsufficientFunds, NoActiveKeyError } from '@casperholders/core';
+import { mdiAccountCircle, mdiFire } from '@mdi/js';
 import { mapGetters, mapState } from 'vuex';
 
 export default {
@@ -81,6 +82,8 @@ export default {
   },
   data() {
     return {
+      mdiFire,
+      mdiAccountCircle,
       nft: this.nftData,
       errorBalance: null,
       balance: '0',

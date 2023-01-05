@@ -7,7 +7,7 @@
       v-if="isLedgerConnected"
       color="warning"
       dense
-      icon="mdi-alert"
+      :icon="mdiAlert"
       class="mx-5"
     >
       You're connected with ledger. You can't deploy new smart contract.
@@ -71,7 +71,7 @@
           :send-deploy="sendDeploy"
           :type="type"
           :balance="balance"
-          icon="mdi-file-document-edit"
+          :icon="mdiFileDocumentEdit"
           submit-title="Deploy"
           title="Send smart contract"
         >
@@ -85,7 +85,7 @@
             label="Smart Contracts"
             outlined
             placeholder="Select your contracts"
-            prepend-icon="mdi-paperclip"
+            :prepend-icon="mdiPaperclip"
           >
             <template #selection="{ text }">
               {{ text }}
@@ -160,7 +160,7 @@
                   @click="connectionRequest"
                 >
                   <v-icon left>
-                    mdi-account-circle
+                    {{ mdiAccountCircle }}
                   </v-icon>
                   Connect
                 </v-btn>
@@ -201,6 +201,13 @@ import {
   SmartContractDeployParameters,
   SmartContractResult,
 } from '@casperholders/core';
+import {
+  mdiAccountCircle,
+  mdiAlert,
+  mdiCircleMultiple,
+  mdiFileDocumentEdit, mdiImage, mdiImageFrame,
+  mdiPaperclip,
+} from '@mdi/js';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -214,6 +221,10 @@ export default {
   components: { CardHorizontalList, ContractCard, ManageStepper, Argument, Amount, Operation },
   data() {
     return {
+      mdiAlert,
+      mdiFileDocumentEdit,
+      mdiPaperclip,
+      mdiAccountCircle,
       minPayment: 1,
       contract: [],
       amount: '1',
@@ -231,7 +242,7 @@ export default {
           title: 'ERC20',
           githubUrl: 'https://github.com/casper-ecosystem/erc20',
           description: 'Casper Fungible Tokens (ERC-20 Standard)',
-          icon: 'mdi-circle-multiple',
+          icon: mdiCircleMultiple,
           downloadUrl: '/contracts/erc20_token.wasm',
           args: [
             {
@@ -256,7 +267,7 @@ export default {
           title: 'Uniswap ERC20',
           githubUrl: 'https://github.com/Rengo-Labs/CasperLabs-UniswapV2-Core/tree/main/erc20',
           description: 'ERC20 Implementation by Rengo Labs on Casper Network.',
-          icon: 'mdi-circle-multiple',
+          icon: mdiCircleMultiple,
           downloadUrl: '/contracts/uniswap_erc20_token.wasm',
           args: [
             {
@@ -289,7 +300,7 @@ export default {
           title: 'NFT CEP47',
           githubUrl: 'https://github.com/casper-ecosystem/casper-nft-cep47',
           description: 'CEP-47 is the NFT standard for the Casper blockchain. The equivalent NFT standard on Ethereum is ERC-721.',
-          icon: 'mdi-image',
+          icon: mdiImage,
           downloadUrl: '/contracts/cep47_token.wasm',
           args: [
             {
@@ -314,7 +325,7 @@ export default {
           title: 'Enhanced NFT CEP78',
           githubUrl: 'https://github.com/casper-ecosystem/cep-78-enhanced-nft',
           description: 'CEP-78: Enhanced NFT standard',
-          icon: 'mdi-image-frame',
+          icon: mdiImageFrame,
           downloadUrl: '/contracts/cep78_token.wasm',
           args: [
             {

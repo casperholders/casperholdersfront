@@ -14,7 +14,7 @@
         @click="removeDeployResult"
       >
         <v-icon>
-          mdi-close
+          {{ mdiClose }}
         </v-icon>
       </v-btn>
     </v-card-title>
@@ -135,7 +135,7 @@
                       rel="noopener"
                     >
                       {{ deployResult.hash }}
-                      <v-icon x-small>mdi-open-in-new</v-icon>
+                      <v-icon x-small>{{ mdiOpenInNew }}</v-icon>
                     </a>
                   </div>
                   <v-row
@@ -150,7 +150,7 @@
                         color="green"
                         right
                       >
-                        mdi-checkbox-marked-circle
+                        {{ mdiCheckboxMarkedCircle }}
                       </v-icon>
                     </v-col>
                   </v-row>
@@ -188,7 +188,7 @@
                       rel="noopener"
                     >
                       {{ deployResult.hash }}
-                      <v-icon x-small>mdi-open-in-new</v-icon>
+                      <v-icon x-small>{{ mdiOpenInNew }}</v-icon>
                     </a>
                   </div>
                   <v-row
@@ -203,7 +203,7 @@
                         color="red"
                         right
                       >
-                        mdi-alert-circle
+                        {{ mdiAlertCircle }}
                       </v-icon>
                     </v-col>
                   </v-row>
@@ -235,6 +235,7 @@ import computeFormattedTokenValue from '@/services/tokens/computeFormattedTokenV
 import convertErc20MotesToAmount from '@/services/tokens/convertErc20MotesToAmount';
 import nativeToken from '@/services/tokens/nativeToken';
 import { CurrencyUtils, DeployResult } from '@casperholders/core';
+import { mdiAlertCircle, mdiCheckboxMarkedCircle, mdiClose, mdiOpenInNew } from '@mdi/js';
 import { mapGetters } from 'vuex';
 
 /**
@@ -262,6 +263,10 @@ export default {
   },
   data() {
     return {
+      mdiClose,
+      mdiOpenInNew,
+      mdiCheckboxMarkedCircle,
+      mdiAlertCircle,
       deployResult: null,
       deployHashUrl: '',
       UNKNOWN: DeployResult.STATUS_UNKNOWN,

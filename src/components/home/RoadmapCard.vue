@@ -12,7 +12,7 @@
             color="primary"
             size="52"
           >
-            <v-icon>mdi-numeric-positive-1</v-icon>
+            <v-icon size="24">{{ mdiNumericPositive1 }}</v-icon>
           </v-avatar>
           Next features
         </v-card-title>
@@ -21,14 +21,14 @@
             color="tertiary"
             left
           >
-            mdi-lock
+            {{ mdiLock }}
           </v-icon>
           High security accounts settings<br>
           <v-icon
             color="tertiary"
             left
           >
-            mdi-laptop
+            {{ mdiLaptop }}
           </v-icon>
           Desktop Wallet & Mobile Wallet
         </v-card-text>
@@ -38,10 +38,18 @@
 </template>
 
 <script>
+
+import { mdiLaptop, mdiLock, mdiNumericPositive1 } from '@mdi/js';
+
 /**
  * Roadmap component displayed on the homepage
  */
 export default {
   name: 'RoadmapCard',
+  data: () => ({
+    mdiLaptop,
+    mdiLock,
+    mdiNumericPositive1,
+  }),
 };
 </script>

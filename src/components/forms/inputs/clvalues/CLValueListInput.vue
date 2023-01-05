@@ -41,7 +41,7 @@
             @click="listValues.splice((index - 1), 1);"
           >
             <v-icon>
-              mdi-minus
+              {{ mdiMinus }}
             </v-icon>
           </v-btn>
         </v-col>
@@ -57,7 +57,7 @@
         @click="listValues.push('')"
       >
         <v-icon>
-          mdi-plus
+          {{ mdiPlus }}
         </v-icon>
       </v-btn>
     </v-col>
@@ -66,6 +66,7 @@
 
 <script>
 import CLTypeInput from '@/components/forms/inputs/clvalues/CLTypeInput';
+import { mdiMinus, mdiPlus } from '@mdi/js';
 
 export default {
   name: 'CLValueListInput',
@@ -79,6 +80,8 @@ export default {
   },
   data() {
     return {
+      mdiMinus,
+      mdiPlus,
       optionType: null,
       listValuesType: null,
       listValues: [],

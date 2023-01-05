@@ -1,19 +1,19 @@
 <template>
   <div>
     <v-text-field
-      data-cy="amount"
       v-model.number="amount"
+      data-cy="amount"
       :hint="`Minimum amount: ${min}`"
       :max="max"
       :min="min"
       :rules="amountRules"
       :value="amount"
       maxlength="10"
-      append-outer-icon="mdi-plus"
+      :append-outer-icon="mdiPlus"
       color="white"
       label="Amount"
       persistent-hint
-      prepend-icon="mdi-minus"
+      :prepend-icon="mdiMinus"
       required
       @click:append-outer="increment"
       @click:prepend="decrement"
@@ -74,6 +74,7 @@
 </template>
 
 <script>
+import { mdiMinus, mdiPlus } from '@mdi/js';
 import Big from 'big.js';
 import { mapState } from 'vuex';
 
@@ -118,6 +119,8 @@ export default {
   },
   data() {
     return {
+      mdiPlus,
+      mdiMinus,
       /**
        * Rules for the amount text field
        */

@@ -11,13 +11,15 @@
   >
     <template #prepend>
       <v-icon>
-        mdi-weight
+        {{ mdiWeight }}
       </v-icon>
     </template>
   </v-autocomplete>
 </template>
 
 <script>
+import { mdiWeight } from '@mdi/js';
+
 export default {
   name: 'CLTypeInput',
   props: {
@@ -34,6 +36,7 @@ export default {
   },
   data() {
     return {
+      mdiWeight,
       types: [
         { name: 'Bool', type: 'bool' },
         { name: 'U8', type: 'u8' },

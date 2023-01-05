@@ -10,7 +10,7 @@
   >
     <template #prepend>
       <v-icon>
-        mdi-weight
+        {{ mdiWeight }}
       </v-icon>
     </template>
   </v-text-field>
@@ -18,6 +18,7 @@
 
 <script>
 import buildCLValue from '@/helpers/genericCLValueBuilder';
+import { mdiWeight } from '@mdi/js';
 
 export default {
   name: 'CLValueRawInput',
@@ -30,6 +31,7 @@ export default {
   },
   data() {
     return {
+      mdiWeight,
       rawValue: '',
       /**
        * Rules for the Account Hash text field

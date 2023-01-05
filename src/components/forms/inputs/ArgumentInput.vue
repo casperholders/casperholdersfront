@@ -18,7 +18,7 @@
       >
         <template #prepend>
           <v-icon>
-            mdi-weight
+            {{ mdiWeight }}
           </v-icon>
         </template>
       </v-text-field>
@@ -35,6 +35,7 @@
 
 <script>
 import CLValueInput from '@/components/forms/inputs/clvalues/CLValueInput';
+import { mdiWeight } from '@mdi/js';
 
 export default {
   name: 'ArgumentInput',
@@ -53,6 +54,7 @@ export default {
   },
   data() {
     return {
+      mdiWeight,
       rawValue: '',
     };
   },

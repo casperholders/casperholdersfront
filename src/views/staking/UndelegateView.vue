@@ -7,7 +7,7 @@
     :balance="balance"
     :fee="undelegateFee"
     :amount="amount"
-    icon="mdi-lock-open"
+    :icon="mdiLockOpen"
     submit-title="Unstake"
     title="Unstake"
   >
@@ -51,7 +51,7 @@
             @click="connectionRequest"
           >
             <v-icon left>
-              mdi-account-circle
+              {{ mdiAccountCircle }}
             </v-icon>
             Connect
           </v-btn>
@@ -83,6 +83,7 @@ import {
   Undelegate,
   UndelegateResult,
 } from '@casperholders/core';
+import { mdiAccountCircle, mdiLockOpen } from '@mdi/js';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -95,6 +96,8 @@ export default {
   components: { OperationSummary, ValidatorInput, AmountInput, OperationCard },
   data() {
     return {
+      mdiLockOpen,
+      mdiAccountCircle,
       minimumCSPRUnstake: 1,
       undelegateFee: 0.00001,
       amount: '1',

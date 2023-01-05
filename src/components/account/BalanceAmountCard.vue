@@ -32,7 +32,7 @@
           class="my-1 mr-3"
         >
           <v-icon dark>
-            mdi-help
+            {{ mdiHelp }}
           </v-icon>
         </v-avatar>
         <span class="text-truncate">
@@ -43,7 +43,7 @@
               rel="noopener"
             >
               {{ title }}
-              <v-icon x-small>mdi-open-in-new</v-icon>
+              <v-icon x-small>{{ mdiOpenInNew }}</v-icon>
             </a>
           </template>
           <template v-else>
@@ -61,6 +61,7 @@ import { CSPR_LIVE_URL } from '@/helpers/env';
 import TokenAmount from '@/components/account/TokenAmount';
 import computeFormattedTokenValue from '@/services/tokens/computeFormattedTokenValue';
 import nativeToken from '@/services/tokens/nativeToken';
+import { mdiHelp, mdiOpenInNew } from '@mdi/js';
 
 export default {
   name: 'BalanceAmountCard',
@@ -91,6 +92,10 @@ export default {
       default: undefined,
     },
   },
+  data: () => ({
+    mdiHelp,
+    mdiOpenInNew,
+  }),
   computed: {
     tokenAmount() {
       return computeFormattedTokenValue(this.amount, this.token);

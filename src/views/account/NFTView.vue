@@ -9,7 +9,7 @@
         color="primary"
         size="52"
       >
-        <v-icon>mdi-image-frame</v-icon>
+        <v-icon size="24">{{ mdiImageFrame }}</v-icon>
       </v-avatar>
       NFTs
     </v-card-title>
@@ -17,7 +17,7 @@
     <NFTItems />
     <v-divider />
     <card-section-title
-      icon="mdi-account"
+      :icon="mdiAccount"
       title="All NFTs"
     />
     <v-card-text class="text-center">
@@ -36,17 +36,24 @@
 
 <script>
 import NFTItems from '@/components/account/nft/NFTItems';
+import { mdiAccount, mdiImageFrame } from '@mdi/js';
 
 export default {
   name: 'NFTView',
   components: { NFTItems },
+  data() {
+    return {
+      mdiAccount,
+      mdiImageFrame,
+    };
+  },
 };
 </script>
 
 <style scoped>
-::v-deep .nft-cards {
-  min-height: 200px;
-  min-width: 200px;
-  width: 200px;
-}
+    ::v-deep .nft-cards {
+        min-height: 200px;
+        min-width: 200px;
+        width: 200px;
+    }
 </style>

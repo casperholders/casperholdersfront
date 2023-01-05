@@ -61,7 +61,7 @@
             @click="mapValues.splice((index - 1), 1);"
           >
             <v-icon>
-              mdi-minus
+              {{ mdiMinus }}
             </v-icon>
           </v-btn>
         </v-col>
@@ -77,7 +77,7 @@
         @click="mapValues.push({key: null, value: null})"
       >
         <v-icon>
-          mdi-plus
+          {{ mdiPlus }}
         </v-icon>
       </v-btn>
     </v-col>
@@ -86,6 +86,7 @@
 
 <script>
 import CLTypeInput from '@/components/forms/inputs/clvalues/CLTypeInput';
+import { mdiMinus, mdiPlus } from '@mdi/js';
 
 export default {
   name: 'CLValueMapInput',
@@ -104,6 +105,8 @@ export default {
   },
   data() {
     return {
+      mdiMinus,
+      mdiPlus,
       optionKeyType: null,
       optionValueType: null,
       mapKeysType: null,

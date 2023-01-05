@@ -6,7 +6,7 @@
     :balance="balance"
     :fee="delegationFee"
     :amount="`-${amount}`"
-    icon="mdi-safe"
+    :icon="mdiSafe"
     submit-title="Stake"
     title="Stake"
   >
@@ -53,7 +53,7 @@
             @click="connectionRequest"
           >
             <v-icon left>
-              mdi-account-circle
+              {{ mdiAccountCircle }}
             </v-icon>
             Connect
           </v-btn>
@@ -81,6 +81,7 @@ import balanceService from '@/helpers/balanceService';
 import { AUCTION_MANAGER_HASH, NETWORK } from '@/helpers/env';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import { Delegate, DelegateResult, InsufficientFunds, NoActiveKeyError } from '@casperholders/core';
+import { mdiAccountCircle, mdiSafe } from '@mdi/js';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -99,6 +100,8 @@ export default {
   },
   data() {
     return {
+      mdiSafe,
+      mdiAccountCircle,
       minimumCSPRStake: 1,
       delegationFee: 2.5,
       amount: '1',

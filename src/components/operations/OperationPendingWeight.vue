@@ -37,7 +37,7 @@
                 color="white"
                 left
               >
-                mdi-link
+                {{ mdiLink }}
               </v-icon>
               Copy link
             </v-btn>
@@ -57,7 +57,7 @@
                 color="white"
                 left
               >
-                mdi-content-copy
+                {{ mdiContentCopy }}
               </v-icon>
               Copy JSON Deploy
             </v-btn>
@@ -77,7 +77,7 @@
                 color="white"
                 left
               >
-                mdi-cancel
+                {{ mdiCancel }}
               </v-icon>
               Cancel
             </v-btn>
@@ -106,6 +106,7 @@
 <script>
 import { API } from '@/helpers/env';
 import truncate from '@/helpers/strings/truncate';
+import { mdiCancel, mdiContentCopy, mdiLink } from '@mdi/js';
 import { DeployUtil } from 'casper-js-sdk';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
@@ -121,6 +122,9 @@ export default {
   },
   data() {
     return {
+      mdiLink,
+      mdiCancel,
+      mdiContentCopy,
       urls: {},
     };
   },

@@ -5,7 +5,7 @@
     :type="type"
     :balance="balance"
     :fee="accountInfoFee"
-    icon="mdi-account"
+    :icon="mdiAccount"
     submit-title="Set url"
     title="Account info"
   >
@@ -28,7 +28,7 @@
       color="white"
       hint="Base domain name"
       label="URL"
-      prepend-icon="mdi-link"
+      :prepend-icon="mdiLink"
       required
     />
     <operation-summary
@@ -55,7 +55,7 @@
             @click="connectionRequest"
           >
             <v-icon left>
-              mdi-account-circle
+              {{ mdiAccountCircle }}
             </v-icon>
             Connect
           </v-btn>
@@ -87,6 +87,7 @@ import {
   NoActiveKeyError,
   Validators,
 } from '@casperholders/core';
+import { mdiAccount, mdiAccountCircle, mdiLink } from '@mdi/js';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -99,6 +100,9 @@ export default {
   components: { OperationSummary, OperationCard },
   data() {
     return {
+      mdiAccount,
+      mdiLink,
+      mdiAccountCircle,
       url: '',
       urlRules: [
         (a) => !!a || 'URL is required',

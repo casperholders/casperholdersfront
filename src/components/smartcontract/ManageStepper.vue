@@ -42,7 +42,7 @@
             item-value="hash"
             label="Contracts"
             placeholder="Start typing to Search"
-            prepend-icon="mdi-database-search"
+            :prepend-icon="mdiDatabaseSearch"
             return-object
           />
           <v-list>
@@ -160,6 +160,7 @@
 import GenericDeployOperation from '@/components/smartcontract/GenericDeployOperation';
 import clientCasper from '@/helpers/clientCasper';
 import { DATA_API } from '@/helpers/env';
+import { mdiDatabaseSearch } from '@mdi/js';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters } from 'vuex';
 
@@ -168,6 +169,7 @@ export default {
   components: { GenericDeployOperation },
   data() {
     return {
+      mdiDatabaseSearch,
       e1: 1,
       contracts: [],
       selectedContract: undefined,

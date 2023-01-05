@@ -7,7 +7,7 @@
     :send-deploy="sendDeploy"
     :type="type"
     :balance="balance"
-    icon="mdi-file-document-edit"
+    :icon="mdiFileDocumentEdit"
     submit-title="Deploy"
     title="Send smart contract"
   >
@@ -131,7 +131,7 @@
             @click="connectionRequest"
           >
             <v-icon left>
-              mdi-account-circle
+              {{ mdiAccountCircle }}
             </v-icon>
             Connect
           </v-btn>
@@ -162,6 +162,7 @@ import {
   NoActiveKeyError,
   SmartContractResult,
 } from '@casperholders/core';
+import { mdiAccountCircle, mdiFileDocumentEdit } from '@mdi/js';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -191,6 +192,8 @@ export default {
   },
   data() {
     return {
+      mdiFileDocumentEdit,
+      mdiAccountCircle,
       minPayment: 1,
       contract: [],
       amount: '1',

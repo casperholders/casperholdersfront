@@ -34,7 +34,7 @@
         >
           {{ HUMAN_READABLE_NETWORK }}
           <v-icon right>
-            mdi-swap-horizontal
+            {{ mdiSwapHorizontal }}
           </v-icon>
         </v-chip>
       </template>
@@ -63,7 +63,7 @@
             overlap
           >
             <v-icon dark>
-              mdi-bell
+              {{ mdiBell }}
             </v-icon>
           </v-badge>
         </v-btn>
@@ -98,7 +98,7 @@
                 x-small
               >
                 <v-icon x-small>
-                  mdi-open-in-new
+                  {{ mdiOpenInNew }}
                 </v-icon>
               </v-btn>
               <v-btn
@@ -108,7 +108,7 @@
                 @click="removeDeployResult(operation)"
               >
                 <v-icon x-small>
-                  mdi-close
+                  {{ mdiClose }}
                 </v-icon>
               </v-btn>
             </v-list-item-action-text>
@@ -120,7 +120,7 @@
         <v-list-item v-if="offlineDeploys.length > 0">
           <v-list-item-icon>
             <v-icon color="white">
-              mdi-clock
+              {{ mdiClock }}
             </v-icon>
           </v-list-item-icon>
           <v-list-item-content>
@@ -159,7 +159,7 @@
                 x-small
               >
                 <v-icon x-small>
-                  mdi-open-in-new
+                  {{ mdiOpenInNew }}
                 </v-icon>
               </v-btn>
             </v-list-item-action-text>
@@ -176,6 +176,13 @@ import ConnectDialog from '@/components/layout/ConnectDialog';
 import { CSPR_LIVE_URL, HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
 import truncate from '@/helpers/strings/truncate';
 import { DeployResult } from '@casperholders/core';
+import {
+  mdiAlertCircle,
+  mdiBell,
+  mdiCheckboxMarkedCircle, mdiClock, mdiClose,
+  mdiHelpCircle, mdiOpenInNew,
+  mdiSwapHorizontal,
+} from '@mdi/js';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -193,6 +200,11 @@ export default {
     },
   },
   data: () => ({
+    mdiSwapHorizontal,
+    mdiBell,
+    mdiOpenInNew,
+    mdiClose,
+    mdiClock,
     isWindowTop: true,
     displayConnect: false,
     copied: false,
@@ -271,9 +283,9 @@ export default {
     },
     operationIcon(operation) {
       if (operation.status === DeployResult.STATUS_UNKNOWN) {
-        return 'mdi-help-circle';
+        return mdiHelpCircle;
       }
-      return operation.status === DeployResult.STATUS_OK ? 'mdi-checkbox-marked-circle' : 'mdi-alert-circle';
+      return operation.status === DeployResult.STATUS_OK ? mdiCheckboxMarkedCircle : mdiAlertCircle;
     },
     operationIconColor(operation) {
       if (operation.status === DeployResult.STATUS_UNKNOWN) {

@@ -31,9 +31,9 @@
             Loading...
           </span>
           <token-amount
-            data-cy="loadedBalance"
             v-else
             key="value"
+            data-cy="loadedBalance"
             :amount="tokenAmount"
           />
         </v-slide-y-transition>

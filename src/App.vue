@@ -61,11 +61,11 @@
             Privacy
           </router-link>
           -
-          <router-link to="/privacy">
+          <router-link to="/faq">
             FAQ
           </router-link>
           -
-          <router-link to="/privacy">
+          <router-link to="/contact">
             Contact
           </router-link>
         </p>
@@ -78,6 +78,7 @@
 import wavesSvg from '@/assets/images/waves.svg';
 import AppBar from '@/components/layout/AppBar';
 import NavigationDrawer from '@/components/layout/NavigationDrawer';
+import { mdiAccount, mdiConnection, mdiFileDocumentEdit, mdiGavel, mdiWallet, mdiSend, mdiKey, mdiImageFrame, mdiSafe, mdiLockOpen, mdiFire } from '@mdi/js';
 import { mapState } from 'vuex';
 
 /**
@@ -101,22 +102,22 @@ export default {
       return [
         {
           title: 'Account info',
-          icon: 'mdi-account',
+          icon: mdiAccount,
           route: '/account',
         },
         {
           title: 'Add Bid',
-          icon: 'mdi-gavel',
+          icon: mdiGavel,
           route: '/addbid',
         },
         {
           title: 'Withdraw Bid',
-          icon: 'mdi-connection',
+          icon: mdiConnection,
           route: '/withdrawbid',
         },
         {
           title: 'Send smart contract',
-          icon: 'mdi-file-document-edit',
+          icon: mdiFileDocumentEdit,
           route: '/smartcontract',
         },
       ];
@@ -129,35 +130,35 @@ export default {
         Account: [
           {
             title: 'Balance',
-            icon: 'mdi-wallet',
+            icon: mdiWallet,
             route: '/balance',
             disabled: false,
             subtitle: null,
           },
           {
             title: 'Transfer',
-            icon: 'mdi-send',
+            icon: mdiSend,
             route: '/transfer',
             disabled: false,
             subtitle: null,
           },
           {
             title: 'Security',
-            icon: 'mdi-key',
+            icon: mdiKey,
             route: '/security',
             chip: {
-              icon: 'mdi-fire',
+              icon: mdiFire,
               text: 'Beta',
             },
           },
           {
             title: 'NFTs',
-            icon: 'mdi-image-frame',
+            icon: mdiImageFrame,
             route: '/nft',
             disabled: false,
             subtitle: null,
             chip: {
-              icon: 'mdi-fire',
+              icon: mdiFire,
               text: 'Beta',
             },
           },
@@ -165,14 +166,14 @@ export default {
         Staking: [
           {
             title: 'Stake',
-            icon: 'mdi-safe',
+            icon: mdiSafe,
             route: '/stake',
             disabled: false,
             subtitle: null,
           },
           {
             title: 'Unstake',
-            icon: 'mdi-lock-open',
+            icon: mdiLockOpen,
             route: '/unstake',
             disabled: false,
             subtitle: null,

@@ -12,7 +12,9 @@
           color="primary"
           size="52"
         >
-          <v-icon>{{ icon }}</v-icon>
+          <v-icon size="24">
+            {{ icon }}
+          </v-icon>
         </v-avatar>
         {{ title }}
         <v-chip
@@ -21,7 +23,7 @@
           class="ma-2"
         >
           <v-icon left>
-            mdi-fire
+            {{ mdiFire }}
           </v-icon>
           Beta
         </v-chip>
@@ -98,7 +100,7 @@
             @click="$emit('cancelOperationCard')"
           >
             <v-icon>
-              mdi-close
+              {{ mdiClose }}
             </v-icon>
             Cancel
           </v-btn>
@@ -123,6 +125,7 @@ import OperationPendingWeight from '@/components/operations/OperationPendingWeig
 import OperationResult from '@/components/operations/OperationResult';
 import { TORUS_SIGNER } from '@/helpers/signers';
 import nativeToken from '@/services/tokens/nativeToken';
+import { mdiClose, mdiFire } from '@mdi/js';
 import { mapState } from 'vuex';
 
 /**
@@ -248,6 +251,8 @@ export default {
   },
   data() {
     return {
+      mdiFire,
+      mdiClose,
       operationOnGoing: false,
       TORUS_SIGNER,
     };

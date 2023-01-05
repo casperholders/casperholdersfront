@@ -10,13 +10,13 @@
           color="primary"
           size="52"
         >
-          <v-icon>mdi-wallet</v-icon>
+          <v-icon size="24">{{ mdiWallet }}</v-icon>
         </v-avatar>
         Balance
       </v-card-title>
       <v-divider />
       <card-section-title
-        icon="mdi-chart-arc"
+        :icon="mdiChartArc"
         title="Balance"
       />
       <v-card-text v-if="errored">
@@ -59,7 +59,7 @@
       </template>
       <v-divider />
       <card-section-title
-        icon="mdi-swap-horizontal"
+        :icon="mdiSwapHorizontal"
         title="Operations"
       />
       <operations-table />
@@ -72,7 +72,7 @@
           >
             <card-quick-link
               to="/transfer"
-              icon="mdi-send"
+              :icon="mdiSend"
               title="Transfer"
               subtitle="Transfer funds"
             />
@@ -83,7 +83,7 @@
           >
             <card-quick-link
               to="/stake"
-              icon="mdi-safe"
+              :icon="mdiSafe"
               title="Stake"
               subtitle="Stake your tokens"
             />
@@ -94,7 +94,7 @@
           >
             <card-quick-link
               to="/unstake"
-              icon="mdi-wallet"
+              :icon="mdiWallet"
               title="Unstake"
               subtitle="Unstake your tokens"
             />
@@ -123,6 +123,7 @@ import OperationsTable from '@/components/operations/OperationsTable';
 import balanceService from '@/helpers/balanceService';
 import nativeToken from '@/services/tokens/nativeToken';
 import { Erc20ApproveResult } from '@casperholders/core';
+import { mdiChartArc, mdiSafe, mdiSend, mdiSwapHorizontal, mdiWallet } from '@mdi/js';
 import Big from 'big.js';
 import { mapState } from 'vuex';
 
@@ -145,6 +146,11 @@ export default {
   },
   data() {
     return {
+      mdiWallet,
+      mdiChartArc,
+      mdiSwapHorizontal,
+      mdiSend,
+      mdiSafe,
       casperLogo: nativeToken.logo,
       loading: true,
       errored: false,

@@ -11,7 +11,7 @@
             <v-icon
               left
             >
-              mdi-calculator
+              {{ mdiCalculator }}
             </v-icon>
             Rewards calculator
           </div>
@@ -29,6 +29,7 @@
 
 <script>
 import RewardCalculator from '@/components/chart/RewardCalculator';
+import { mdiCalculator } from '@mdi/js';
 
 /**
  * RewardCalculatorPanel wrapper for the RewardCalculator component
@@ -46,5 +47,8 @@ export default {
       default: undefined,
     },
   },
+  data: () => ({
+    mdiCalculator,
+  }),
 };
 </script>

@@ -8,7 +8,7 @@
         color="primary"
         size="52"
       >
-        <v-icon>mdi-cog</v-icon>
+        <v-icon size="24">{{ mdiCog }}</v-icon>
       </v-avatar>
       <v-card-title
         class="pl-4"
@@ -25,7 +25,7 @@
       >
         <v-card-title>
           <v-icon left>
-            mdi-wifi
+            {{ mdiWifi }}
           </v-icon>
           Internet settings
         </v-card-title>
@@ -61,7 +61,7 @@
       >
         <v-card-title>
           <v-icon left>
-            mdi-account
+            {{ mdiAccount }}
           </v-icon>
           Multi-sig - Impersonate key
         </v-card-title>
@@ -112,7 +112,7 @@
                       @click="connectionRequest"
                     >
                       <v-icon left>
-                        mdi-account-circle
+                        {{ mdiAccountCircle }}
                       </v-icon>
                       Connect
                     </v-btn>
@@ -138,7 +138,7 @@
                       color="success"
                       left
                     >
-                      mdi-checkbox-marked-circle
+                      {{ mdiCheckboxMarkedCircle }}
                     </v-icon>
                     Account authorized. Current weight : {{ currentWeight }}.
                   </template>
@@ -147,7 +147,7 @@
                       color="error"
                       left
                     >
-                      mdi-alert-circle
+                      {{ mdiAlertCircle }}
                     </v-icon>
                     Account not authorized.
                   </template>
@@ -160,7 +160,7 @@
                       color="success"
                       left
                     >
-                      mdi-checkbox-marked-circle
+                      {{ mdiCheckboxMarkedCircle }}
                     </v-icon>
                     Account authorized to make deploy.
                   </template>
@@ -169,7 +169,7 @@
                       color="error"
                       left
                     >
-                      mdi-alert-circle
+                      {{ mdiAlertCircle }}
                     </v-icon>
                     Account not authorized to make deploy.
                   </template>
@@ -182,7 +182,7 @@
                       color="success"
                       left
                     >
-                      mdi-checkbox-marked-circle
+                      {{ mdiCheckboxMarkedCircle }}
                     </v-icon>
                     Account authorized to manage keys.
                   </template>
@@ -191,7 +191,7 @@
                       color="error"
                       left
                     >
-                      mdi-alert-circle
+                      {{ mdiAlertCircle }}
                     </v-icon>
                     Account not authorized to manage keys.
                   </template>
@@ -215,6 +215,14 @@
 
 <script>
 import clientCasper from '@/helpers/clientCasper';
+import {
+  mdiAccount,
+  mdiAccountCircle,
+  mdiAlertCircle,
+  mdiCheckboxMarkedCircle,
+  mdiCog,
+  mdiWifi,
+} from '@mdi/js';
 
 /**
  * Settings View
@@ -225,6 +233,12 @@ import { mapState } from 'vuex';
 export default {
   name: 'SettingsView',
   data: () => ({
+    mdiCog,
+    mdiAlertCircle,
+    mdiCheckboxMarkedCircle,
+    mdiWifi,
+    mdiAccount,
+    mdiAccountCircle,
     keyManagementThreshold: '',
     deployThreshold: '',
     loadingKeyInfo: false,

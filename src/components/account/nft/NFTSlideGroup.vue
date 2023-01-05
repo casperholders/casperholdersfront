@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <card-section-title
-      icon="mdi-image"
+      :icon="mdiImage"
       :title="name"
     >
       <template #action>
@@ -13,7 +13,7 @@
           @click="$emit('delete', contractHash)"
         >
           <v-icon>
-            mdi-delete
+            {{ mdiDelete }}
           </v-icon>
         </v-btn>
       </template>
@@ -106,6 +106,7 @@ import { getDictionaryItemByURef, getItem, getStateRootHash } from '@/helpers/rp
 import findTokenGroup from '@/services/tokens/findTokenGroup';
 import tokensGroups from '@/services/tokens/tokensGroups';
 import { concat } from '@ethersproject/bytes';
+import { mdiDelete, mdiImage } from '@mdi/js';
 import blake from 'blakejs';
 import { Buffer } from 'buffer/';
 import { CLPublicKey, CLValueBuilder, CLValueParsers } from 'casper-js-sdk';
@@ -126,6 +127,8 @@ export default {
     },
   },
   data: () => ({
+    mdiImage,
+    mdiDelete,
     dialogs: {},
     totalNFTs: 0,
     itemsPerPage: 10,

@@ -36,7 +36,7 @@
                 v-on="on"
               >
                 <v-icon>
-                  mdi-open-in-new
+                  {{ mdiOpenInNew }}
                 </v-icon>
               </v-btn>
             </template>
@@ -64,7 +64,7 @@
       >
         <template #prepend>
           <v-icon>
-            mdi-weight
+            {{ mdiWeight }}
           </v-icon>
         </template>
       </v-text-field>
@@ -80,7 +80,7 @@
         @click="$emit('delete')"
       >
         <v-icon>
-          mdi-delete
+          {{ mdiDelete }}
         </v-icon>
       </v-btn>
     </v-col>
@@ -100,6 +100,7 @@
 
 <script>
 import { CSPR_LIVE_URL } from '@/helpers/env';
+import { mdiDelete, mdiOpenInNew, mdiWeight } from '@mdi/js';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters } from 'vuex';
 
@@ -117,6 +118,9 @@ export default {
   },
   data() {
     return {
+      mdiOpenInNew,
+      mdiDelete,
+      mdiWeight,
       /**
        * Rules for the Account Hash text field
        */

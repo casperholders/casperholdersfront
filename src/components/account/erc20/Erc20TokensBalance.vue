@@ -1,7 +1,7 @@
 <template>
   <div data-cy="erc20-balance">
     <card-section-title
-      icon="mdi-chart-arc"
+      :icon="mdiChartArc"
       title="ERC 20"
     >
       <template #action>
@@ -20,7 +20,7 @@
               v-on="on"
             >
               <v-icon>
-                mdi-plus
+                {{ mdiPlus }}
               </v-icon>
             </v-btn>
           </template>
@@ -54,7 +54,7 @@
               class="rounded-xl"
             >
               <v-icon left>
-                mdi-plus
+                {{ mdiPlus }}
               </v-icon>
               Add ERC20 token
             </v-btn>
@@ -83,6 +83,7 @@ import Erc20TokenBalance from '@/components/account/erc20/Erc20TokenBalance.vue'
 import fetchTokens from '@/services/tokens/fetchTokens';
 import findTokenGroup from '@/services/tokens/findTokenGroup';
 import useErc20TrackedTokens from '@/services/tokens/useErc20TrackedTokens';
+import { mdiChartArc, mdiPlus } from '@mdi/js';
 import Big from 'big.js';
 import { mapState } from 'vuex';
 
@@ -108,6 +109,8 @@ export default {
     },
   },
   data: () => ({
+    mdiChartArc,
+    mdiPlus,
     loading: false,
     /**
      * The currently tracked tokens.

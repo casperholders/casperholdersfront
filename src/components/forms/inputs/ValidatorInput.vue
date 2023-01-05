@@ -1,7 +1,7 @@
 <template>
   <v-autocomplete
-    data-cy="validator"
     v-model="validator"
+    data-cy="validator"
     :items="validators"
     filled
     chips
@@ -38,12 +38,12 @@
         <v-avatar left>
           <template v-if="data.item.group === 'Inactive'">
             <v-icon color="red">
-              mdi-alert
+              {{ mdiAlert }}
             </v-icon>
           </template>
           <template v-else>
             <v-icon color="green">
-              mdi-checkbox-marked-circle
+              {{ mdiCheckboxMarkedCircle }}
             </v-icon>
           </template>
         </v-avatar>
@@ -69,12 +69,12 @@
         <v-list-item-avatar>
           <template v-if="data.item.group === 'Inactive'">
             <v-icon color="red">
-              mdi-alert
+              {{ mdiAlert }}
             </v-icon>
           </template>
           <template v-else>
             <v-icon color="green">
-              mdi-checkbox-marked-circle
+              {{ mdiCheckboxMarkedCircle }}
             </v-icon>
           </template>
         </v-list-item-avatar>
@@ -96,6 +96,7 @@ import balanceService from '@/helpers/balanceService';
 import clientCasper from '@/helpers/clientCasper';
 import { API } from '@/helpers/env';
 import { CurrencyUtils, NoActiveKeyError, NoStakeBalanceError } from '@casperholders/core';
+import { mdiAlert, mdiCheckboxMarkedCircle } from '@mdi/js';
 import Big from 'big.js';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapState } from 'vuex';
@@ -126,6 +127,8 @@ export default {
   },
   data() {
     return {
+      mdiAlert,
+      mdiCheckboxMarkedCircle,
       /**
        * Rules for the amount text field
        */

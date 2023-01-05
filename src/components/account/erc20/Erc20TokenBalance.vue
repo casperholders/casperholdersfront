@@ -25,7 +25,7 @@
           @click="$emit('remove')"
         >
           <v-icon>
-            mdi-delete-outline
+            {{ mdiDeleteOutline }}
           </v-icon>
         </v-btn>
       </v-card-actions>
@@ -44,7 +44,7 @@
               v-on="on"
             >
               <v-icon left>
-                mdi-lock-open-check
+                {{ mdiLockOpenCheck }}
               </v-icon>
               Allowance
             </v-btn>
@@ -99,7 +99,7 @@
                             rel="noopener"
                           >
                             {{ truncate(allowance.spender) }}
-                            <v-icon x-small>mdi-open-in-new</v-icon>
+                            <v-icon x-small>{{ mdiOpenInNew }}</v-icon>
                           </a>
                         </v-list-item-title>
                         <v-tooltip bottom>
@@ -139,7 +139,7 @@
                           @click="onRevokeAllowance(allowance)"
                         >
                           <v-icon left>
-                            mdi-lock-remove
+                            {{ mdiLockRemove }}
                           </v-icon>
                           Revoke
                         </v-btn>
@@ -154,7 +154,7 @@
                           @click="onMaximizeAllowance(allowance)"
                         >
                           <v-icon left>
-                            mdi-lock-plus
+                            {{ mdiLockPlus }}
                           </v-icon>
                           Set max
                         </v-btn>
@@ -220,6 +220,13 @@ import computeFormattedTokenValue from '@/services/tokens/computeFormattedTokenV
 import convertErc20MotesToAmount from '@/services/tokens/convertErc20MotesToAmount';
 import findTokenGroup from '@/services/tokens/findTokenGroup';
 import nativeToken from '@/services/tokens/nativeToken';
+import {
+  mdiDeleteOutline,
+  mdiLockOpenCheck,
+  mdiLockPlus,
+  mdiLockRemove,
+  mdiOpenInNew,
+} from '@mdi/js';
 import Big from 'big.js';
 import { mapGetters, mapState } from 'vuex';
 
@@ -253,6 +260,11 @@ export default {
     },
   },
   data: () => ({
+    mdiDeleteOutline,
+    mdiLockPlus,
+    mdiLockRemove,
+    mdiOpenInNew,
+    mdiLockOpenCheck,
     CSPR_LIVE_URL,
     nativeToken,
     truncate,

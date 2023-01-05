@@ -56,7 +56,7 @@
             @click="$emit('closeDetailsBase')"
           >
             <v-icon>
-              mdi-close
+              {{ mdiClose }}
             </v-icon>
           </v-btn>
         </v-col>
@@ -67,6 +67,8 @@
 </template>
 
 <script>
+import { mdiClose } from '@mdi/js';
+
 export default {
   name: 'NFTDetailsBase',
   props: {
@@ -77,6 +79,7 @@ export default {
   },
   data() {
     return {
+      mdiClose,
       nft: this.nftData,
     };
   },

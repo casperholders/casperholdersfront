@@ -1,7 +1,7 @@
 <template>
   <div data-cy="nft-balance">
     <card-section-title
-      icon="mdi-account"
+      :icon="mdiAccount"
       title="My NFTs"
     >
       <template #action>
@@ -17,7 +17,7 @@
               v-on="on"
             >
               <v-icon>
-                mdi-plus
+                {{ mdiPlus }}
               </v-icon>
             </v-btn>
           </template>
@@ -42,7 +42,7 @@
               class="rounded-xl"
             >
               <v-icon left>
-                mdi-plus
+                {{ mdiPlus }}
               </v-icon>
               Add NFT
             </v-btn>
@@ -69,6 +69,7 @@ import AddNFTDialog from '@/components/account/nft/AddNFTDialog';
 import NFTSlideGroup from '@/components/account/nft/NFTSlideGroup.vue';
 import fetchTokens from '@/services/tokens/fetchTokens';
 import useNftTrackedTokens from '@/services/tokens/useNftTrackedTokens';
+import { mdiAccount, mdiPlus } from '@mdi/js';
 import { mapState } from 'vuex';
 
 /**
@@ -82,6 +83,8 @@ export default {
     CardSectionTitle,
   },
   data: () => ({
+    mdiAccount,
+    mdiPlus,
     loading: false,
     /**
      * The currently tracked tokens.

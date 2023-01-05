@@ -7,7 +7,7 @@
     :fee="transferFee"
     :amount="0"
     :cancel="true"
-    icon="mdi-send"
+    :icon="mdiSend"
     submit-title="Send NFT"
     title="Transfer NFT"
     @cancelOperationCard="$emit('closeTransfer')"
@@ -20,7 +20,7 @@
       :value="address"
       color="white"
       label="Send to address"
-      prepend-icon="mdi-account"
+      :prepend-icon="mdiAccount"
       required
     />
     <operation-summary
@@ -48,7 +48,7 @@
             @click="connectionRequest"
           >
             <v-icon left>
-              mdi-account-circle
+              {{ mdiAccountCircle }}
             </v-icon>
             Connect
           </v-btn>
@@ -74,6 +74,7 @@ import genericSendDeploy from '@/helpers/genericSendDeploy';
 import findTokenGroup from '@/services/tokens/findTokenGroup';
 import tokensGroups from '@/services/tokens/tokensGroups';
 import { InsufficientFunds, NoActiveKeyError } from '@casperholders/core';
+import { mdiAccount, mdiAccountCircle, mdiSend } from '@mdi/js';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 
@@ -92,6 +93,9 @@ export default {
   },
   data() {
     return {
+      mdiAccountCircle,
+      mdiAccount,
+      mdiSend,
       nft: this.nftData,
       addressRules: [
         (a) => !!a || 'Address is required',

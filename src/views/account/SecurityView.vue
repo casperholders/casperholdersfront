@@ -5,7 +5,7 @@
     :type="type"
     :balance="balance"
     :fee="keyManagementFee"
-    icon="mdi-key"
+    :icon="mdiKey"
     submit-title="Set security settings"
     title="Security"
     :beta="true"
@@ -25,7 +25,7 @@
     >
       <v-card-title>
         <v-icon left>
-          mdi-shield-key
+          {{ mdiShieldKey }}
         </v-icon>
         Threshold settings
       </v-card-title>
@@ -55,7 +55,7 @@
                 >
                   <template #activator="{ on }">
                     <v-icon v-on="on">
-                      mdi-help-circle-outline
+                      {{ mdiHelpCircleOutline }}
                     </v-icon>
                   </template>
                   Minimum weight needed to make key management operations
@@ -85,7 +85,7 @@
                 >
                   <template #activator="{ on }">
                     <v-icon v-on="on">
-                      mdi-help-circle-outline
+                      {{ mdiHelpCircleOutline }}
                     </v-icon>
                   </template>
                   Minimum weight needed to perform deployments
@@ -103,7 +103,7 @@
     >
       <v-card-title>
         <v-icon left>
-          mdi-key-chain
+          {{ mdiKeyChain }}
         </v-icon>
         Authorized keys
       </v-card-title>
@@ -143,7 +143,7 @@
           @click="onAdd"
         >
           <v-icon left>
-            mdi-plus
+            {{ mdiPlus }}
           </v-icon>
           Add key
         </v-btn>
@@ -157,7 +157,7 @@
           @click="resetKeyInfos"
         >
           <v-icon left>
-            mdi-refresh
+            {{ mdiRefresh }}
           </v-icon>
           Reset
         </v-btn>
@@ -170,7 +170,7 @@
     >
       <v-card-title>
         <v-icon left>
-          mdi-clipboard-list
+          {{ mdiClipboardList }}
         </v-icon>
         Summary
       </v-card-title>
@@ -351,7 +351,7 @@
             @click="connectionRequest"
           >
             <v-icon left>
-              mdi-account-circle
+              {{ mdiAccountCircle }}
             </v-icon>
             Connect
           </v-btn>
@@ -402,6 +402,16 @@ import {
   KeyManagementResult,
   NoActiveKeyError,
 } from '@casperholders/core';
+import {
+  mdiAccountCircle,
+  mdiClipboardList,
+  mdiHelpCircleOutline,
+  mdiKey,
+  mdiKeyChain,
+  mdiPlus,
+  mdiRefresh,
+  mdiShieldKey,
+} from '@mdi/js';
 import Big from 'big.js';
 import { Buffer } from 'buffer/';
 import { CLPublicKey } from 'casper-js-sdk';
@@ -415,6 +425,14 @@ export default {
   components: { OperationSummary, OperationCard, AuthorizedKeyInput },
   data() {
     return {
+      mdiKey,
+      mdiShieldKey,
+      mdiHelpCircleOutline,
+      mdiKeyChain,
+      mdiPlus,
+      mdiRefresh,
+      mdiClipboardList,
+      mdiAccountCircle,
       keyManagementThreshold: '',
       deployThreshold: '',
       loadingKeyInfo: false,

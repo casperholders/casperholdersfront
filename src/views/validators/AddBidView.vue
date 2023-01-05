@@ -11,7 +11,7 @@
     :balance="balance"
     :fee="bidFee"
     :amount="`-${amount}`"
-    icon="mdi-gavel"
+    :icon="mdiGavel"
     submit-title="Add bid"
     title="Add bid"
   >
@@ -23,7 +23,7 @@
         rel="noopener"
       >
         {{ signer.activeKey }}
-        <v-icon x-small>mdi-open-in-new</v-icon>
+        <v-icon x-small>{{ mdiOpenInNew }}</v-icon>
       </a>
       <br>
       <br>
@@ -82,7 +82,7 @@
             @click="connectionRequest"
           >
             <v-icon left>
-              mdi-account-circle
+              {{ mdiAccountCircle }}
             </v-icon>
             Connect
           </v-btn>
@@ -108,6 +108,7 @@ import balanceService from '@/helpers/balanceService';
 import { AUCTION_MANAGER_HASH, CSPR_LIVE_URL, NETWORK } from '@/helpers/env';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import { AddBid, AddBidResult, InsufficientFunds, NoActiveKeyError } from '@casperholders/core';
+import { mdiAccountCircle, mdiGavel, mdiOpenInNew } from '@mdi/js';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -121,6 +122,9 @@ export default {
   components: { OperationSummary, AmountInput, OperationCard },
   data() {
     return {
+      mdiGavel,
+      mdiOpenInNew,
+      mdiAccountCircle,
       minBid: 1,
       bidFee: 2.50001,
       amount: '1',

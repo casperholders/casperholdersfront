@@ -33,7 +33,7 @@
             {{ pendingDeploy.deployResult.name }} - {{ truncate(pendingDeploy.deployResult.hash) }}
             <template #actions>
               <v-icon color="error">
-                mdi-alert-circle
+                {{ mdiAlertCircle }}
               </v-icon>
             </template>
           </v-expansion-panel-header>
@@ -44,7 +44,7 @@
                   color="red"
                   left
                 >
-                  mdi-alert-circle
+                  {{ mdiAlertCircle }}
                 </v-icon>
                 Oops... A problem as occurred. <br>
                 Check the error message here (or on the cspr.live website) : <br>
@@ -62,7 +62,7 @@
                   color="white"
                   left
                 >
-                  mdi-reload
+                  {{ mdiReload }}
                 </v-icon>
                 Retry
               </v-btn>
@@ -78,7 +78,7 @@
                   color="white"
                   left
                 >
-                  mdi-send
+                  {{ mdiSend }}
                 </v-icon>
                 Force send
               </v-btn>
@@ -91,7 +91,7 @@
                   color="white"
                   left
                 >
-                  mdi-cancel
+                  {{ mdiCancel }}
                 </v-icon>
                 Cancel
               </v-btn>
@@ -112,6 +112,7 @@
 
 <script>
 import truncate from '@/helpers/strings/truncate';
+import { mdiAlertCircle, mdiCancel, mdiReload, mdiSend } from '@mdi/js';
 import { DeployUtil } from 'casper-js-sdk';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
@@ -127,6 +128,10 @@ export default {
   },
   data() {
     return {
+      mdiAlertCircle,
+      mdiSend,
+      mdiCancel,
+      mdiReload,
       retryDeploy: false,
     };
   },
