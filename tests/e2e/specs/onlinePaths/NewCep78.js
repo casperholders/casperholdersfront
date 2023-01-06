@@ -15,8 +15,8 @@ const args = {
   json_schema: ' ',
 };
 
-describe('Add bid', () => {
-  it('Should let you add bid', () => {
+describe('Deploy & test cep78', () => {
+  it('Deploy cep78', () => {
     cy.visit('http://localhost:8080/smartcontract');
     cy.get('[data-cy="download-Enhanced NFT CEP78"]')
       .should('be.visible')

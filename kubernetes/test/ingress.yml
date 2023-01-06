@@ -25,7 +25,7 @@ spec:
   routes:
     - match: Host(`director.test.casperholders.io`)
       middlewares:
-        - name: https-only
+        - name: kustomize-https-only
       kind: Rule
       services:
         - name: director-service
@@ -57,7 +57,7 @@ spec:
   routes:
     - match: Host(`cors-anywhere.test.casperholders.io`)
       middlewares:
-        - name: https-only
+        - name: kustomize-https-only
       kind: Rule
       services:
         - name: cors-anywhere-service
@@ -89,7 +89,7 @@ spec:
   routes:
     - match: Host(`api.test.casperholders.io`)
       middlewares:
-        - name: https-only
+        - name: kustomize-https-only
       kind: Rule
       services:
         - name: api-service
@@ -121,7 +121,7 @@ spec:
   routes:
     - match: Host(`nctl.test.casperholders.io`)
       middlewares:
-        - name: https-only
+        - name: kustomize-https-only
       kind: Rule
       services:
         - name: mynctl-service

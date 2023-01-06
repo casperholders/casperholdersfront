@@ -6,4 +6,12 @@ resources:
   - ingress.yml
   - certificate.yml
 
+helmChartInflationGenerator:
+  - chartName: casperparser
+    chartRepoUrl: https://casperholders.github.io/helm-charts
+    chartVersion: v0.2.0
+    releaseName: casperparser
+    releaseNamespace: test-casperholders
+    values: values.yaml
+
 namespace: test-casperholders

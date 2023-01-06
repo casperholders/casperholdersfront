@@ -14,8 +14,8 @@ const args = {
   contract_name: 'testCep47Contract',
 }
 
-describe('Add bid', () => {
-  it('Should let you add bid', () => {
+describe('Deploy and test cep47', () => {
+  it('Deploy cep47', () => {
     cy.visit('http://localhost:8080/smartcontract');
     cy.get('[data-cy="download-NFT CEP47"]').should('be.visible').click();
     cy.get('[data-cy="setArgs-NFT CEP47"]').should('be.visible').click();

@@ -32,3 +32,5 @@ stats.html
 .env.local
 
 tests/e2e/fixtures/downloads/
+
+kubernetes/test/charts/

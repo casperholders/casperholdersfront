@@ -15,17 +15,23 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up test namespace
-        uses: steebchen/kubectl@v2.0.0
+      - name: Install Helm
+        uses: azure/setup-helm@v3
         with:
-          config: ${{ secrets.KUBE_CONFIG }}
-          command: apply -k kubernetes/test/
+          version: v3.10.0
 
-      - name: Production - Update deployment
-        uses: steebchen/kubectl@v2.0.0
+      - uses: azure/setup-kubectl@v3
         with:
-          config: ${{ secrets.KUBE_CONFIG }}
-          command: wait deployment -n test-casperholders mynctl --for condition=Available=True --timeout=120s
+          version: 'v1.25.0'
+
+      - name: Set up test namespace
+        run: |
+          echo "$CONFIG" | base64 -d > /tmp/config
+          export KUBECONFIG=/tmp/config
+          kubectl kustomize kubernetes/test --enable-helm | kubectl apply -f -
+          kubectl wait deployment -n test-casperholders mynctl --for condition=Available=True --timeout=120s
+        env:
+          CONFIG: ${{ secrets.KUBE_CONFIG }}
 
       - name: Setup network
         run: ./.github/data/setupNetwork.sh https://nctl.test.casperholders.io
@@ -201,10 +207,21 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Delete test namespace
-        uses: steebchen/kubectl@v2.0.0
-        if: ${{ always() }}
+      - name: Install Helm
+        uses: azure/setup-helm@v3
         with:
-          config: ${{ secrets.KUBE_CONFIG }}
-          command: delete -k kubernetes/test/
+          version: v3.10.0
+
+      - uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.25.0'
+
+      - name: Delete test namespace
+        if: ${{ always() }}
+        run: |
+          echo "$CONFIG" | base64 -d > /tmp/config
+          export KUBECONFIG=/tmp/config
+          kubectl kustomize kubernetes/test --enable-helm | kubectl delete -f -
+        env:
+          CONFIG: ${{ secrets.KUBE_CONFIG }}
 
