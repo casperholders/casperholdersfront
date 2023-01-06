@@ -186,7 +186,7 @@ jobs:
           pnpm nyc merge multiple-coverage merged-output/merged-coverage.json
           pnpm nyc report -t merged-output --report-dir coverage --reporter=json --reporter=lcov --reporter=clover --reporter=json-summary
 
-      - uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v3
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
