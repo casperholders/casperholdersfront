@@ -1,5 +1,6 @@
 // vite.config.js
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
+import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill';
 import vue from '@vitejs/plugin-vue2';
 import path from 'path';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
@@ -62,9 +63,19 @@ export default defineConfig(({ mode }) => ({
       },
       // Enable esbuild polyfill plugins
       plugins: [
+        NodeModulesPolyfillPlugin(),
         NodeGlobalsPolyfillPlugin({
           buffer: true,
         }),
+        {
+          name: 'fix-node-globals-polyfill', // FIXME https://github.com/remorses/esbuild-plugins/issues/24
+          setup(build) {
+            build.onResolve(
+              { filter: /(_virtual-process-polyfill_|_buffer)\.js/ },
+              ({ path }) => ({ path }),
+            );
+          },
+        },
       ],
     },
   },

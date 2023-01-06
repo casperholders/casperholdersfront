@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "vite --port 8080",
+    "pree2e": "docker-compose up --force-recreate -d && .github/data/setupNetwork.sh http://localhost:11101",
+    "e2e": "vite --mode e2e --config vite.e2e.config.js --port 8080",
+    "poste2e": "docker-compose down",
     "dev:e2e": "vite build --mode e2e --config vite.e2e.config.js && vite preview --port 8080",
     "build": "vite build",
     "serve": "vite preview --port 8080",

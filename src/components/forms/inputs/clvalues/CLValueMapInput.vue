@@ -8,6 +8,7 @@
     <v-col cols="12">
       <CLTypeInput
         :cl-type="keyClType"
+        data-cy="mapKeyType"
         type-prefix="Key "
         @cltype="mapValues = []; mapKeysType = $event; $emit('value', [mapKeysType, mapValuesType])"
       />
@@ -18,6 +19,7 @@
       />
       <CLTypeInput
         :cl-type="valueClType"
+        data-cy="mapValueType"
         type-prefix="Value "
         @cltype="mapValues = [];
                  mapValuesType = $event;

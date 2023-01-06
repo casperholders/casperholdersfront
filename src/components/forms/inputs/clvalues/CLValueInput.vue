@@ -19,6 +19,7 @@
         cols="12"
       >
         <CLValueRawInput
+          data-cy="CLValueRawInput"
           :cl-type="type ? type : findType(clType)"
           @value="$emit('value', $event)"
         />
@@ -41,6 +42,7 @@
     <CLValueMapInput
       v-if="type === 'map'"
       @value="$emit('value', build($event))"
+      data-cy="CLValueMapInput"
     />
   </div>
 </template>

@@ -1,5 +1,6 @@
 <template>
   <v-card
+    :data-cy="`contract-${title}`"
     color="primary"
     class="d-flex flex-column"
   >

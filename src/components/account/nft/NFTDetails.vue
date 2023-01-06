@@ -42,6 +42,7 @@
               <a
                 :href="characteristicValue.toString()"
                 target="_blank"
+                rel="noopener"
               >
                 Link
               </a>

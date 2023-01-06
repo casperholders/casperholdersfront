@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  mynctl:
+    image: killianh/nctl:latest
+    container_name: mynctl
+    ports:
+      - 11101-11105:11101-11105
+      - 14101-14105:14101-14105
+      - 18101-18105:18101-18105
+    environment:
+      PREDEFINED_ACCOUNTS: 'true'
+      MINIMUM_ROUND_EXPONENT: '12'
+      MAXIMUM_ROUND_EXPONENT: '14'
+      DEPLOY_DELAY: '5sec'
+  redisnctl:
+    image: redis:latest
+    container_name: redisnctl
+  dbnctl:
+    image: postgres:latest
+    container_name: dbnctl
+    restart: always
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: 'trust'
+      POSTGRES_DB: 'api'
+  api:
+    image: killianh/casperholders:testnet-api
+    container_name: testnet-api
+    ports:
+      - 19101:3000
+    depends_on:
+      - redisnctl
+      - dbnctl
+      - mynctl
+    environment:
+      CASPER_RPC_URL: 'http://mynctl:11101/rpc'
+      ORIGIN: 'http://localhost:8080'
+      DATA_API: 'https://data.testnet.casperholders.com'
+      NODE_ENV: 'production'
+      NETWORK: 'casper-net-1'
+      ACCOUNT_INFO_HASH: '2f36a35edcbaabe17aba805e3fae42699a2bb80c2e0c15189756fdc4895356f8'
+      ACCOUNT_INFO_PACKAGE: 'b37227b83822aba42c72e9ee441e681f102929d608c7acf28d4bc2024dca0215'
+      REDIS_HOST: 'redisnctl'
+      REDIS_PORT: 6379
+      DASHBOARD_PORT: 3001
+      DATABASE_URL: 'postgres://postgres@dbnctl:5432/api'
+  cors-anywhere:
+    image: killianh/cors-anywhere:latest
+    container_name: cors-anywhere
+    tty: true
+    environment:
+      PORT: 11100
+    ports:
+      - 11100:11100
