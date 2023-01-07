@@ -72,7 +72,7 @@ export default {
         ),
       },
       approve: {
-        approveFee: 0.4,
+        approveFee: 2,
         approveResult: Erc20ApproveResult,
         makeDeployParameters: (
           { activeKey, amount, address, token },
@@ -109,7 +109,7 @@ export default {
         ),
       },
       approve: {
-        approveFee: 4,
+        approveFee: 5,
         approveResult: Erc20ApproveResult,
         makeDeployParameters: (
           { activeKey, amount, address, token },

@@ -3,7 +3,7 @@ export default function (cy, activeKey, isMultisig) {
     detail: {
       isUnlocked: true,
       isConnected: true,
-      activeKey: activeKey,
+      activeKey: activeKey.toLowerCase(),
     },
   };
   if (isMultisig) {

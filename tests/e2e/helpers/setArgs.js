@@ -24,7 +24,7 @@ export default function (cy, args) {
     } else {
       cy.get(`[data-cy=arg-panel-content-${key}]`)
         .find('[data-cy=CLValueRawInput]')
-        .type(value);
+        .type(`{selectall}{del}${value}`);
     }
   }
 }

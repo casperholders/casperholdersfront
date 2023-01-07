@@ -17,6 +17,7 @@
       type="text"
       :value="contractHash"
       :readonly="true"
+      data-cy="contractHash"
       required
     />
     <v-text-field
@@ -25,6 +26,7 @@
       type="text"
       :value="entrypoint"
       :readonly="true"
+      data-cy="entrypoint"
       required
     />
     <v-expansion-panels>
@@ -33,16 +35,19 @@
         :key="i"
         class="mt-2"
         style="border: thin solid rgba(255, 255, 255, 0.12)"
+        :data-cy="`arg-panel-${item.name || i + 1}`"
       >
         <v-expansion-panel-header>Argument {{ item.name || i + 1 }}</v-expansion-panel-header>
         <v-expansion-panel-content>
           <Argument
             :arg-name="item.name"
             :cl-type="checkClType(item.cl_type)"
+            :data-cy="`arg-panel-content-${item.name || i + 1}`"
             @value="item.value = $event"
             @name="item.name = $event"
           />
           <v-btn
+            :data-cy="`arg-delete-${item.name || i + 1}`"
             color="error"
             rounded
             @click="deployArgs.splice(i, 1);"
@@ -115,6 +120,7 @@
     </div>
     <v-alert
       v-if="errorBalance"
+      data-cy="errorBalance"
       class="mt-5"
       dense
       prominent

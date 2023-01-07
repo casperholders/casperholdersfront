@@ -21,7 +21,7 @@
       <v-tab :disabled="isLedgerConnected">
         New Smart Contract
       </v-tab>
-      <v-tab>
+      <v-tab data-cy="manageSmartContract">
         Manage smart contract
       </v-tab>
     </v-tabs>
@@ -192,322 +192,322 @@
 </template>
 
 <script>
-  import CardHorizontalList from '@/components/account/CardHorizontalList';
-  import ContractCard from '@/components/account/ContractCard';
-  import Amount from '@/components/forms/inputs/AmountInput';
-  import Argument from '@/components/forms/inputs/ArgumentInput';
-  import Operation from '@/components/operations/OperationCard';
-  import ManageStepper from '@/components/smartcontract/ManageStepper';
-  import balanceService from '@/helpers/balanceService';
-  import { NETWORK } from '@/helpers/env';
-  import genericSendDeploy from '@/helpers/genericSendDeploy';
-  import { LEDGER_SIGNER } from '@/helpers/signers';
-  import {
-    InsufficientFunds,
-    NoActiveKeyError,
-    SmartContractDeployParameters,
-    SmartContractResult,
-  } from '@casperholders/core';
-  import {
-    mdiAccountCircle,
-    mdiAlert,
-    mdiCircleMultiple,
-    mdiFileDocumentEdit,
-    mdiImage,
-    mdiImageFrame,
-    mdiPaperclip,
-  } from '@mdi/js';
-  import { mapGetters, mapState } from 'vuex';
+import CardHorizontalList from '@/components/account/CardHorizontalList';
+import ContractCard from '@/components/account/ContractCard';
+import Amount from '@/components/forms/inputs/AmountInput';
+import Argument from '@/components/forms/inputs/ArgumentInput';
+import Operation from '@/components/operations/OperationCard';
+import ManageStepper from '@/components/smartcontract/ManageStepper';
+import balanceService from '@/helpers/balanceService';
+import { NETWORK } from '@/helpers/env';
+import genericSendDeploy from '@/helpers/genericSendDeploy';
+import { LEDGER_SIGNER } from '@/helpers/signers';
+import {
+  InsufficientFunds,
+  NoActiveKeyError,
+  SmartContractDeployParameters,
+  SmartContractResult,
+} from '@casperholders/core';
+import {
+  mdiAccountCircle,
+  mdiAlert,
+  mdiCircleMultiple,
+  mdiFileDocumentEdit,
+  mdiImage,
+  mdiImageFrame,
+  mdiPaperclip,
+} from '@mdi/js';
+import { mapGetters, mapState } from 'vuex';
 
-  /**
+/**
    * SmartContract view
    * Contains two fields
    * - Amount of fee to deploy the smartcontract
    * - File input for the wasm smart contract
    */
-  export default {
-    name: 'SmartContractView',
-    components: {
-      CardHorizontalList,
-      ContractCard,
-      ManageStepper,
-      Argument,
-      Amount,
-      Operation,
+export default {
+  name: 'SmartContractView',
+  components: {
+    CardHorizontalList,
+    ContractCard,
+    ManageStepper,
+    Argument,
+    Amount,
+    Operation,
+  },
+  data() {
+    return {
+      mdiAlert,
+      mdiFileDocumentEdit,
+      mdiPaperclip,
+      mdiAccountCircle,
+      minPayment: 1,
+      contract: [],
+      amount: '1',
+      balance: '0',
+      errorBalance: null,
+      loadingSignAndDeploy: false,
+      errorDeploy: null,
+      loadingBalance: true,
+      type: SmartContractResult.getName(),
+      buffer: null,
+      tab: 0,
+      args: [],
+      contracts: [
+        {
+          title: 'ERC20',
+          githubUrl: 'https://github.com/casper-ecosystem/erc20',
+          description: 'Casper Fungible Tokens (ERC-20 Standard)',
+          icon: mdiCircleMultiple,
+          downloadUrl: '/contracts/erc20_token.wasm',
+          args: [
+            {
+              name: 'name',
+              type: 'string',
+            },
+            {
+              name: 'symbol',
+              type: 'string',
+            },
+            {
+              name: 'decimals',
+              type: 'u8',
+            },
+            {
+              name: 'total_supply',
+              type: 'u512',
+            },
+          ],
+        },
+        {
+          title: 'Uniswap ERC20',
+          githubUrl: 'https://github.com/Rengo-Labs/CasperLabs-UniswapV2-Core/tree/main/erc20',
+          description: 'ERC20 Implementation by Rengo Labs on Casper Network.',
+          icon: mdiCircleMultiple,
+          downloadUrl: '/contracts/uniswap_erc20_token.wasm',
+          args: [
+            {
+              name: 'public_key',
+              type: 'publicKey',
+            },
+            {
+              name: 'name',
+              type: 'string',
+            },
+            {
+              name: 'symbol',
+              type: 'string',
+            },
+            {
+              name: 'decimals',
+              type: 'u8',
+            },
+            {
+              name: 'initial_supply',
+              type: 'u256',
+            },
+            {
+              name: 'contract_name',
+              type: 'string',
+            },
+          ],
+        },
+        {
+          title: 'NFT CEP47',
+          githubUrl: 'https://github.com/casper-ecosystem/casper-nft-cep47',
+          description: 'CEP-47 is the NFT standard for the Casper blockchain. The equivalent NFT standard on Ethereum is ERC-721.',
+          icon: mdiImage,
+          downloadUrl: '/contracts/cep47_token.wasm',
+          args: [
+            {
+              name: 'name',
+              type: 'string',
+            },
+            {
+              name: 'symbol',
+              type: 'string',
+            },
+            {
+              name: 'meta',
+              type: 'map',
+            },
+            {
+              name: 'contract_name',
+              type: 'string',
+            },
+          ],
+        },
+        {
+          title: 'Enhanced NFT CEP78',
+          githubUrl: 'https://github.com/casper-ecosystem/cep-78-enhanced-nft',
+          description: 'CEP-78: Enhanced NFT standard',
+          icon: mdiImageFrame,
+          downloadUrl: '/contracts/cep78_token.wasm',
+          args: [
+            {
+              name: 'collection_name',
+              type: 'string',
+            },
+            {
+              name: 'collection_symbol',
+              type: 'string',
+            },
+            {
+              name: 'total_token_supply',
+              type: 'u64',
+            },
+            {
+              name: 'ownership_mode',
+              type: 'u8',
+            },
+            {
+              name: 'nft_kind',
+              type: 'u8',
+            },
+            {
+              name: 'nft_metadata_kind',
+              type: 'u8',
+            },
+            {
+              name: 'json_schema',
+              type: 'string',
+            },
+            {
+              name: 'identifier_mode',
+              type: 'u8',
+            },
+            {
+              name: 'metadata_mutability',
+              type: 'u8',
+            },
+          ],
+        },
+      ],
+    };
+  },
+  computed: {
+    ...mapState([
+      'signer',
+      'internet',
+      'signerType',
+    ]),
+    ...mapGetters([
+      'signerObject',
+      'signerOptionsFactory',
+      'activeKey',
+    ]),
+    isLedgerConnected() {
+      return this.signerType === LEDGER_SIGNER;
     },
-    data() {
-      return {
-        mdiAlert,
-        mdiFileDocumentEdit,
-        mdiPaperclip,
-        mdiAccountCircle,
-        minPayment: 1,
-        contract: [],
-        amount: '1',
-        balance: '0',
-        errorBalance: null,
-        loadingSignAndDeploy: false,
-        errorDeploy: null,
-        loadingBalance: true,
-        type: SmartContractResult.getName(),
-        buffer: null,
-        tab: 0,
-        args: [],
-        contracts: [
-          {
-            title: 'ERC20',
-            githubUrl: 'https://github.com/casper-ecosystem/erc20',
-            description: 'Casper Fungible Tokens (ERC-20 Standard)',
-            icon: mdiCircleMultiple,
-            downloadUrl: '/contracts/erc20_token.wasm',
-            args: [
-              {
-                name: 'name',
-                type: 'string',
-              },
-              {
-                name: 'symbol',
-                type: 'string',
-              },
-              {
-                name: 'decimals',
-                type: 'u8',
-              },
-              {
-                name: 'total_supply',
-                type: 'u512',
-              },
-            ],
-          },
-          {
-            title: 'Uniswap ERC20',
-            githubUrl: 'https://github.com/Rengo-Labs/CasperLabs-UniswapV2-Core/tree/main/erc20',
-            description: 'ERC20 Implementation by Rengo Labs on Casper Network.',
-            icon: mdiCircleMultiple,
-            downloadUrl: '/contracts/uniswap_erc20_token.wasm',
-            args: [
-              {
-                name: 'public_key',
-                type: 'publicKey',
-              },
-              {
-                name: 'name',
-                type: 'string',
-              },
-              {
-                name: 'symbol',
-                type: 'string',
-              },
-              {
-                name: 'decimals',
-                type: 'u8',
-              },
-              {
-                name: 'initial_supply',
-                type: 'u256',
-              },
-              {
-                name: 'contract_name',
-                type: 'string',
-              },
-            ],
-          },
-          {
-            title: 'NFT CEP47',
-            githubUrl: 'https://github.com/casper-ecosystem/casper-nft-cep47',
-            description: 'CEP-47 is the NFT standard for the Casper blockchain. The equivalent NFT standard on Ethereum is ERC-721.',
-            icon: mdiImage,
-            downloadUrl: '/contracts/cep47_token.wasm',
-            args: [
-              {
-                name: 'name',
-                type: 'string',
-              },
-              {
-                name: 'symbol',
-                type: 'string',
-              },
-              {
-                name: 'meta',
-                type: 'map',
-              },
-              {
-                name: 'contract_name',
-                type: 'string',
-              },
-            ],
-          },
-          {
-            title: 'Enhanced NFT CEP78',
-            githubUrl: 'https://github.com/casper-ecosystem/cep-78-enhanced-nft',
-            description: 'CEP-78: Enhanced NFT standard',
-            icon: mdiImageFrame,
-            downloadUrl: '/contracts/cep78_token.wasm',
-            args: [
-              {
-                name: 'collection_name',
-                type: 'string',
-              },
-              {
-                name: 'collection_symbol',
-                type: 'string',
-              },
-              {
-                name: 'total_token_supply',
-                type: 'u64',
-              },
-              {
-                name: 'ownership_mode',
-                type: 'u8',
-              },
-              {
-                name: 'nft_kind',
-                type: 'u8',
-              },
-              {
-                name: 'nft_metadata_kind',
-                type: 'u8',
-              },
-              {
-                name: 'json_schema',
-                type: 'string',
-              },
-              {
-                name: 'identifier_mode',
-                type: 'u8',
-              },
-              {
-                name: 'metadata_mutability',
-                type: 'u8',
-              },
-            ],
-          },
-        ],
-      };
+    remainingBalance() {
+      const result = this.balance - this.amount;
+      return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
     },
-    computed: {
-      ...mapState([
-        'signer',
-        'internet',
-        'signerType',
-      ]),
-      ...mapGetters([
-        'signerObject',
-        'signerOptionsFactory',
-        'activeKey',
-      ]),
-      isLedgerConnected() {
-        return this.signerType === LEDGER_SIGNER;
-      },
-      remainingBalance() {
-        const result = this.balance - this.amount;
-        return Math.trunc(result) >= 0 ? Number(result.toFixed(5)) : 0;
-      },
-      isInstanceOfNoActiveKeyError() {
-        return this.errorBalance instanceof NoActiveKeyError;
-      },
+    isInstanceOfNoActiveKeyError() {
+      return this.errorBalance instanceof NoActiveKeyError;
     },
-    watch: {
-      signerType() {
-        if (this.signerType === LEDGER_SIGNER) {
-          this.tab = 1;
-        }
-      },
-      'signer.activeKey': 'getBalance',
-      async internet(val) {
-        if (val) {
-          await this.getBalance();
-        }
-      },
-      /**
-       * Read the file selected by the user
-       */
-      contract() {
-        const reader = new FileReader();
-
-        reader.onload = (evt) => {
-          this.buffer = evt.target.result;
-        };
-
-        reader.onerror = (evt) => {
-          console.error('An error ocurred reading the file', evt);
-        };
-
-        reader.readAsArrayBuffer(this.contract, 'UTF-8');
-      },
-    },
-    async mounted() {
+  },
+  watch: {
+    signerType() {
       if (this.signerType === LEDGER_SIGNER) {
         this.tab = 1;
       }
-      await this.getBalance();
-      this.$root.$on('operationOnGoing', () => {
-        this.errorDeploy = null;
-      });
     },
-    methods: {
-      /**
+    'signer.activeKey': 'getBalance',
+    async internet(val) {
+      if (val) {
+        await this.getBalance();
+      }
+    },
+    /**
+       * Read the file selected by the user
+       */
+    contract() {
+      const reader = new FileReader();
+
+      reader.onload = (evt) => {
+        this.buffer = evt.target.result;
+      };
+
+      reader.onerror = (evt) => {
+        console.error('An error ocurred reading the file', evt);
+      };
+
+      reader.readAsArrayBuffer(this.contract, 'UTF-8');
+    },
+  },
+  async mounted() {
+    if (this.signerType === LEDGER_SIGNER) {
+      this.tab = 1;
+    }
+    await this.getBalance();
+    this.$root.$on('operationOnGoing', () => {
+      this.errorDeploy = null;
+    });
+  },
+  methods: {
+    /**
        * Get the user balance
        */
-      async getBalance() {
-        this.loadingBalance = true;
-        this.errorBalance = null;
-        this.balance = '0';
-        try {
-          this.balance = await balanceService.fetchBalance();
-          if (this.balance <= this.minPayment && this.internet) {
-            throw new InsufficientFunds(this.minPayment);
-          }
-        } catch (e) {
-          this.errorBalance = e;
+    async getBalance() {
+      this.loadingBalance = true;
+      this.errorBalance = null;
+      this.balance = '0';
+      try {
+        this.balance = await balanceService.fetchBalance();
+        if (this.balance <= this.minPayment && this.internet) {
+          throw new InsufficientFunds(this.minPayment);
         }
-        this.loadingBalance = false;
-      },
-      /**
+      } catch (e) {
+        this.errorBalance = e;
+      }
+      this.loadingBalance = false;
+    },
+    /**
        * Method used by the OperationDialog component when the user confirm the operation.
        * Use the prepareSignAndSendDeploy method from the core library
        * Update the store with a deploy result containing the deployhash of the deploy sent
        */
-      async sendDeploy() {
-        const args = {};
-        this.args.forEach((a) => {
-          args[a.name] = a.value;
-        });
-        const deployParameter = new SmartContractDeployParameters(
-          this.activeKey,
-          NETWORK,
-          this.buffer,
-          this.amount,
-          args,
-        );
-        const options = this.signerOptionsFactory.getOptionsForOperations();
-        this.errorDeploy = null;
-        this.loadingSignAndDeploy = true;
-        const result = await genericSendDeploy(
-          this.internet,
-          this.activeKey,
-          this.signer.activeKey,
-          this.signerObject,
-          deployParameter,
-          options,
-          '0',
-          this.amount,
-        );
-        if (result.error) {
-          console.log(result.error);
-          this.errorDeploy = result.error;
-        } else {
-          await this.$store.dispatch(result.event, result.data);
-        }
-        this.loadingSignAndDeploy = false;
-        this.$root.$emit('closeOperationDialog');
-        this.$root.$emit('operationFinished');
-      },
-      async connectionRequest() {
-        await this.$store.dispatch('openConnectDialog');
-      },
+    async sendDeploy() {
+      const args = {};
+      this.args.forEach((a) => {
+        args[a.name] = a.value;
+      });
+      const deployParameter = new SmartContractDeployParameters(
+        this.activeKey,
+        NETWORK,
+        this.buffer,
+        this.amount,
+        args,
+      );
+      const options = this.signerOptionsFactory.getOptionsForOperations();
+      this.errorDeploy = null;
+      this.loadingSignAndDeploy = true;
+      const result = await genericSendDeploy(
+        this.internet,
+        this.activeKey,
+        this.signer.activeKey,
+        this.signerObject,
+        deployParameter,
+        options,
+        '0',
+        this.amount,
+      );
+      if (result.error) {
+        console.log(result.error);
+        this.errorDeploy = result.error;
+      } else {
+        await this.$store.dispatch(result.event, result.data);
+      }
+      this.loadingSignAndDeploy = false;
+      this.$root.$emit('closeOperationDialog');
+      this.$root.$emit('operationFinished');
     },
-  };
+    async connectionRequest() {
+      await this.$store.dispatch('openConnectDialog');
+    },
+  },
+};
 </script>
 
 <style>
