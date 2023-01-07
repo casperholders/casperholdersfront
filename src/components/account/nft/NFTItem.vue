@@ -103,6 +103,7 @@
 </template>
 
 <script>
+import { getAnimation, getDescription, getImage, getName } from '@/helpers/nft/retrieveNft';
 import { mdiArrowExpandAll, mdiFire, mdiSend } from '@mdi/js';
 
 export default {
@@ -131,48 +132,16 @@ export default {
   },
   computed: {
     getImage() {
-      if (this.nft.loading === false) {
-        if (this.nft.metadata?.get('image')) {
-          const image = this.nft.metadata.get('image').replace('ipfs://', 'https://gateway.ipfs.io/ipfs/');
-          return image.match(/^http(s)*:\/\//) ? image : `https://gateway.ipfs.io/ipfs/${image}`;
-        }
-        if (this.nft.metadata?.get('ipfs_url')) {
-          return this.nft.metadata.get('ipfs_url').replace('ipfs://', 'https://gateway.ipfs.io/ipfs/');
-        }
-        if (this.nft.metadata?.get('pictureIpfs')) {
-          return `https://gateway.ipfs.io/ipfs/${this.nft.metadata.get('pictureIpfs').replace('ipfs://', '')}`;
-        }
-        if (this.nft.metadata?.get('asset') && !this.nft.metadata?.get('asset').match(/\.json$/)) {
-          return this.nft.metadata.get('asset').replace('ipfs://', 'https://gateway.ipfs.io/ipfs/');
-        }
-        if (this.getAnimation) {
-          return '/movie-open.svg';
-        }
-      }
-      return '/image-off.svg';
+      return getImage(this.nft);
     },
     getAnimation() {
-      if (this.nft) {
-        if (this.nft.metadata?.get('animation_url')) {
-          return this.nft.metadata.get('animation_url').replace('ipfs://', 'https://gateway.ipfs.io/ipfs/');
-        }
-      }
-      return null;
+      return getAnimation(this.nft);
     },
     getName() {
-      if (this.nft.metadata?.get('name')) {
-        return this.nft.metadata.get('name');
-      }
-      return this.nft.token_id;
+      return getName(this.nft);
     },
     getDescription() {
-      if (this.nft.metadata?.get('description')) {
-        return this.nft.metadata.get('description');
-      }
-      if (this.nft.metadata?.get('name')) {
-        return this.nft.token_id;
-      }
-      return this.nft.metadata?.get('name');
+      return getDescription(this.nft);
     },
   },
   watch: {

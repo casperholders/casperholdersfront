@@ -101,7 +101,7 @@
 <script>
 import NFTItem from '@/components/account/nft/NFTItem';
 import PaginationComponent from '@/components/account/nft/PaginationComponent';
-import retrieveNft from '@/helpers/nft/retrieveNft';
+import { retrieveNft } from '@/helpers/nft/retrieveNft';
 import { getDictionaryItemByURef, getItem, getStateRootHash } from '@/helpers/rpc.js';
 import findTokenGroup from '@/services/tokens/findTokenGroup';
 import tokensGroups from '@/services/tokens/tokensGroups';

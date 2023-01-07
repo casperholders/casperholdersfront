@@ -1,5 +1,59 @@
 import { getDictionaryItemByURef } from '@/helpers/rpc';
 
+function getAnimation(nft) {
+  if (nft) {
+    if (nft.metadata?.get('animation_url')) {
+      return nft.metadata.get('animation_url')
+        .replace('ipfs://', 'https://gateway.ipfs.io/ipfs/');
+    }
+  }
+  return null;
+}
+
+function getImage(nft) {
+  if (nft.loading === false) {
+    if (nft.metadata?.get('image')) {
+      const image = nft.metadata.get('image')
+        .replace('ipfs://', 'https://gateway.ipfs.io/ipfs/');
+      return image.match(/^http(s)*:\/\//) ? image : `https://gateway.ipfs.io/ipfs/${image}`;
+    }
+    if (nft.metadata?.get('ipfs_url')) {
+      return nft.metadata.get('ipfs_url')
+        .replace('ipfs://', 'https://gateway.ipfs.io/ipfs/');
+    }
+    if (nft.metadata?.get('pictureIpfs')) {
+      return `https://gateway.ipfs.io/ipfs/${nft.metadata.get('pictureIpfs')
+        .replace('ipfs://', '')}`;
+    }
+    if (nft.metadata?.get('asset') && !nft.metadata?.get('asset')
+      .match(/\.json$/)) {
+      return nft.metadata.get('asset')
+        .replace('ipfs://', 'https://gateway.ipfs.io/ipfs/');
+    }
+    if (getAnimation(nft)) {
+      return '/movie-open.svg';
+    }
+  }
+  return '/image-off.svg';
+}
+
+function getName(nft) {
+  if (nft.metadata?.get('name')) {
+    return nft.metadata.get('name');
+  }
+  return nft.token_id;
+}
+
+function getDescription(nft) {
+  if (nft.metadata?.get('description')) {
+    return nft.metadata.get('description');
+  }
+  if (nft.metadata?.get('name')) {
+    return nft.token_id;
+  }
+  return nft.metadata?.get('name');
+}
+
 function replaceIpfs(str) {
   return str.replace('ipfs://', 'https://gateway.ipfs.io/ipfs/')
     .replace('https://ipfs.io/ipfs/', 'https://gateway.ipfs.io/ipfs/');
@@ -22,7 +76,7 @@ async function parseTokenUri(nft, key) {
   return nft.metadata;
 }
 
-export default async function retrieveNft(
+async function retrieveNft(
   stateRootHash,
   contractKey,
   uref,
@@ -65,15 +119,17 @@ export default async function retrieveNft(
         Promise.all([
           parseTokenUri(nft, 'token_uri'),
           parseTokenUri(nft, 'ipfs_metadata_url'),
-          nft.metadata.get('asset') && nft.metadata.get('asset').match(/\.json$/)
+          nft.metadata.get('asset') && nft.metadata.get('asset')
+            .match(/\.json$/)
             ? parseTokenUri(nft, 'asset')
             : nft.metadata,
-        ]).then((allMetadata) => {
-          nft.metadata = allMetadata.reduce((newMetadata, metadata) => new Map(
-            [...newMetadata, ...metadata],
-          ), nft.metadata);
-          nft.loading = false;
-        });
+        ])
+          .then((allMetadata) => {
+            nft.metadata = allMetadata.reduce((newMetadata, metadata) => new Map(
+              [...newMetadata, ...metadata],
+            ), nft.metadata);
+            nft.loading = false;
+          });
         if (typeof nft.metadata.get('properties') === 'object') {
           const propMeta = new Map(Object.entries(nft.metadata.get('properties')));
           nft.metadata.delete('properties');
@@ -98,3 +154,5 @@ export default async function retrieveNft(
   }
   return undefined;
 }
+
+export { retrieveNft, getAnimation, getName, getImage, getDescription };
