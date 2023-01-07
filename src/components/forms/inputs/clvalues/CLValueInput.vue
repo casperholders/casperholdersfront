@@ -27,6 +27,7 @@
     </v-row>
     <CLValueListInput
       v-if="type === 'list'"
+      data-cy="CLValueListInput"
       @value="$emit('value', build($event))"
     />
     <CLValueTupleInput

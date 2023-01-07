@@ -42,6 +42,7 @@
               >
                 <n-f-t-item
                   :key="nft.token_id"
+                  :data-cy="`collection-${token.id}-nft-${nft.token_id}`"
                   :nft-data="nft"
                   :can-be-burned="canBeBurned"
                   :can-be-transferred="canBeTransferred"
@@ -68,6 +69,7 @@
     </v-alert>
     <v-alert
       v-else-if="emptyResults"
+      data-cy="noNft"
       type="info"
     >
       You don't own any nft's in this collection.

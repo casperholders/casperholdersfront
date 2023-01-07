@@ -8,6 +8,7 @@
     <v-col cols="12">
       <CLTypeInput
         :cl-type="clType"
+        data-cy="listType"
         type-prefix="List "
         @cltype="listValues = []; listValuesType = $event; $emit('value', listValues)"
       />
@@ -51,6 +52,7 @@
       <v-btn
         class="rounded-xl"
         color="primary"
+        data-cy="listNewValue"
         fab
         dark
         small

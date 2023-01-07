@@ -15,7 +15,14 @@ export default function (cy, args) {
             .find('[data-cy=CLValueMapInput]')
             .find('[data-cy="mapValueType"]')
             .type(value.valueType);
-          cy.get('.v-list-item__title').contains(value.keyType).click();
+          cy.get('.v-list-item__title').contains(value.valueType).click();
+          break;
+        case 'list':
+          cy.get(`[data-cy=arg-panel-content-${key}]`)
+            .find('[data-cy=CLValueListInput]')
+            .find('[data-cy="listType"]')
+            .type(value.type);
+          cy.get('.v-list-item__title').contains(value.type).click();
           break;
         default:
           cy.log(`${value.clType} CY Helper not implemented`);

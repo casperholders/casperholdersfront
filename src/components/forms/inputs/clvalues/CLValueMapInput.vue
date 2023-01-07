@@ -40,6 +40,7 @@
         <v-col cols="11">
           Key Data
           <CLValueInput
+            data-cy="mapKeyValue"
             :cl-type="mapKeysType"
             :inner-option-type="optionKeyType"
             :hide-type="true"
@@ -47,6 +48,7 @@
           />
           Value Data
           <CLValueInput
+            data-cy="mapValueValue"
             :cl-type="mapValuesType"
             :inner-option-type="optionValueType"
             :hide-type="true"
@@ -73,6 +75,7 @@
       <v-btn
         class="rounded-xl"
         color="primary"
+        data-cy="mapNewValue"
         fab
         dark
         small

@@ -54,6 +54,7 @@
       >
         <n-f-t-slide-group
           :key="t.id"
+          :data-cy="`collection-${t.id}`"
           :token="t"
           style="width: 100%"
           @delete="onRemoveNft"
