@@ -12,7 +12,9 @@
             color="primary"
             size="52"
           >
-            <v-icon size="24">{{ mdiNumericPositive1 }}</v-icon>
+            <v-icon size="24">
+              {{ mdiNumericPositive1 }}
+            </v-icon>
           </v-avatar>
           Next features
         </v-card-title>

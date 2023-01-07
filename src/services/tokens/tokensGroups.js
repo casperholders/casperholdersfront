@@ -57,7 +57,7 @@ export default {
         fetchBalance: (token) => balanceService.fetchBalanceOfErc20(token.id),
       },
       transfer: {
-        transferFee: 0.5,
+        transferFee: 2,
         transferResult: Erc20TransferResult,
         minimumAmount: (token) => (1 / (token.decimals ? (10 ** token.decimals) : 1)),
         transferID: false,

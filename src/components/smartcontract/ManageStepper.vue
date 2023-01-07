@@ -51,8 +51,8 @@
               <v-list-item
                 v-for="(contract, i) in contracts"
                 :key="i"
-                @click="e1 = 2; selectedContract = i;"
                 :data-cy="getContractName(contract)"
+                @click="e1 = 2; selectedContract = i;"
               >
                 <v-list-item-content>
                   <v-list-item-title>
@@ -76,8 +76,8 @@
                 <v-list-item
                   v-for="(entrypoint, i) in contracts[selectedContract].data.Contract.entry_points"
                   :key="i"
-                  @click="e1 = 3; selectedEntrypoint = i;"
                   :data-cy="capitalizeFirstLetter(entrypoint.name)"
+                  @click="e1 = 3; selectedEntrypoint = i;"
                 >
                   <v-list-item-content>
                     <v-list-item-title>
@@ -105,8 +105,8 @@
                 <v-list-item
                   v-for="(entrypoint, i) in selectedSearchContract.data.Contract.entry_points"
                   :key="i"
-                  @click="e1 = 3; selectedEntrypoint = i;"
                   :data-cy="capitalizeFirstLetter(entrypoint.name)"
+                  @click="e1 = 3; selectedEntrypoint = i;"
                 >
                   <v-list-item-content>
                     <v-list-item-title>

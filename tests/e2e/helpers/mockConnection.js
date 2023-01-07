@@ -9,7 +9,6 @@ export default function (cy, activeKey, isMultisig) {
   if (isMultisig) {
     msg.detail.isMultisig = isMultisig;
   }
-  console.log(msg);
   cy.window().then((win) => {
     win.dispatchEvent(new CustomEvent('signer:connected', msg));
   });

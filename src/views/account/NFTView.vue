@@ -9,7 +9,9 @@
         color="primary"
         size="52"
       >
-        <v-icon size="24">{{ mdiImageFrame }}</v-icon>
+        <v-icon size="24">
+          {{ mdiImageFrame }}
+        </v-icon>
       </v-avatar>
       NFTs
     </v-card-title>

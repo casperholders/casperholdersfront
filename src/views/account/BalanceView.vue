@@ -10,7 +10,9 @@
           color="primary"
           size="52"
         >
-          <v-icon size="24">{{ mdiWallet }}</v-icon>
+          <v-icon size="24">
+            {{ mdiWallet }}
+          </v-icon>
         </v-avatar>
         Balance
       </v-card-title>

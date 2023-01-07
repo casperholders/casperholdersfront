@@ -1,3 +1,4 @@
+import makeErc20Transfer from '../../helpers/makeErc20Transfer';
 import mockConnection from '../../helpers/mockConnection';
 import sendTransaction from '../../helpers/sendTransaction';
 import setArgs from '../../helpers/setArgs';
@@ -16,6 +17,10 @@ const approveArgs = {
   amount: '1000000000000000',
 };
 
+
+const ACTIVE_KEY = '0184f6d260F4EE6869DDB36affe15456dE6aE045278FA2f467bb677561cE0daD55';
+const TRANSFER_TO_KEY = '01a5A5B7328118681638BE3e06c8749609280Dba4c9DAF9AeB3D3464b8839B018a';
+
 let erc20Contract = '';
 
 describe('Deploy & test erc20', () => {
@@ -31,7 +36,7 @@ describe('Deploy & test erc20', () => {
       .as('erc20_token');
     cy.get('#smartContractFile')
       .selectFile('@erc20_token', { force: true });
-    mockConnection(cy, '0184f6d260F4EE6869DDB36affe15456dE6aE045278FA2f467bb677561cE0daD55');
+    mockConnection(cy, ACTIVE_KEY);
     setArgs(cy, args);
     cy.get('[data-cy=amount]')
       .type('{selectall}{del}100');
@@ -41,7 +46,7 @@ describe('Deploy & test erc20', () => {
 
   it('Approve erc20', () => {
     cy.visit('http://localhost:8080/smartcontract');
-    mockConnection(cy, '0184f6d260F4EE6869DDB36affe15456dE6aE045278FA2f467bb677561cE0daD55');
+    mockConnection(cy, ACTIVE_KEY);
     cy.get('[data-cy="manageSmartContract"]')
       .should('be.visible')
       .click();
@@ -74,7 +79,7 @@ describe('Deploy & test erc20', () => {
     cy.get('[data-cy=erc20-balance]')
       .should('not.exist');
 
-    mockConnection(cy, '0184f6d260F4EE6869DDB36affe15456dE6aE045278FA2f467bb677561cE0daD55');
+    mockConnection(cy, ACTIVE_KEY);
     cy.get('[data-cy=balance-not-connected]')
       .should('not.exist');
     cy.get('[data-cy=erc20-balance]')
@@ -105,15 +110,20 @@ describe('Deploy & test erc20', () => {
   });
 
   it('Should let you do a revoke/max of ERC20 allowance', () => {
-    const ACTIVE_KEY = '0184f6d260F4EE6869DDB36affe15456dE6aE045278FA2f467bb677561cE0daD55';
-    const ERC20_CONTRACT_UNIT = 'TESTERC20';
-
     testAllowanceUsing(
       ACTIVE_KEY,
       erc20Contract,
-      ERC20_CONTRACT_UNIT,
-      '9af628fe541a8ad58e020a79f7260228dc58745e295f5dfa2dedd497064e31df',
+      args.symbol,
+      approveArgs.spender,
     );
+  });
+
+  it('Should let you do a transfer of ERC20 tokens', () => {
+    cy.visit('http://localhost:8080/transfer');
+    makeErc20Transfer(ACTIVE_KEY, erc20Contract, TRANSFER_TO_KEY);
+
+    cy.visit('http://localhost:8080/transfer');
+    makeErc20Transfer(TRANSFER_TO_KEY, erc20Contract, ACTIVE_KEY, 'firstKey');
   });
 });
 

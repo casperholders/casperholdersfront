@@ -1,3 +1,4 @@
+import makeErc20Transfer from '../../helpers/makeErc20Transfer';
 import mockConnection from '../../helpers/mockConnection';
 import sendTransaction from '../../helpers/sendTransaction';
 import setArgs from '../../helpers/setArgs';
@@ -18,6 +19,9 @@ const approveArgs = {
   amount: '1000000000000000',
 };
 
+const ACTIVE_KEY = '0184f6d260F4EE6869DDB36affe15456dE6aE045278FA2f467bb677561cE0daD55';
+const TRANSFER_TO_KEY = '01a5A5B7328118681638BE3e06c8749609280Dba4c9DAF9AeB3D3464b8839B018a';
+
 let uniswapContract = '';
 
 describe('Deploy & test Uniswap erc20', () => {
@@ -27,7 +31,7 @@ describe('Deploy & test Uniswap erc20', () => {
     cy.get('[data-cy="setArgs-Uniswap ERC20"]').should('be.visible').click();
     cy.readFile('tests/e2e/fixtures/downloads/uniswap_erc20_token.wasm', { encoding: null }, {timeout: 2000}).as('uniswap_erc20_token');
     cy.get('#smartContractFile').selectFile('@uniswap_erc20_token', { force: true });
-    mockConnection(cy, '0184f6d260F4EE6869DDB36affe15456dE6aE045278FA2f467bb677561cE0daD55');
+    mockConnection(cy, ACTIVE_KEY);
     setArgs(cy, args);
     cy.get('[data-cy=amount]').type('{selectall}{del}200');
     waitForBalances(cy);
@@ -36,7 +40,7 @@ describe('Deploy & test Uniswap erc20', () => {
 
   it('Approve uniswap erc20', () => {
     cy.visit('http://localhost:8080/smartcontract');
-    mockConnection(cy, '0184f6d260F4EE6869DDB36affe15456dE6aE045278FA2f467bb677561cE0daD55');
+    mockConnection(cy, ACTIVE_KEY);
     cy.get('[data-cy="manageSmartContract"]')
       .should('be.visible')
       .click();
@@ -69,7 +73,7 @@ describe('Deploy & test Uniswap erc20', () => {
     cy.get('[data-cy=erc20-balance]')
       .should('not.exist');
 
-    mockConnection(cy, '0184f6d260F4EE6869DDB36affe15456dE6aE045278FA2f467bb677561cE0daD55');
+    mockConnection(cy, ACTIVE_KEY);
     cy.get('[data-cy=balance-not-connected]')
       .should('not.exist');
     cy.get('[data-cy=erc20-balance]')
@@ -100,14 +104,19 @@ describe('Deploy & test Uniswap erc20', () => {
   });
 
   it('Should let you do a revoke/max of Uniswap ERC20 allowance', () => {
-    const ACTIVE_KEY = '0184f6d260F4EE6869DDB36affe15456dE6aE045278FA2f467bb677561cE0daD55';
-    const ERC20_CONTRACT_UNIT = 'TESTUNISWAPERC20';
-
     testAllowanceUsing(
       ACTIVE_KEY,
       uniswapContract,
-      ERC20_CONTRACT_UNIT,
-      '9af628fe541a8ad58e020a79f7260228dc58745e295f5dfa2dedd497064e31df',
+      args.symbol,
+      approveArgs.spender,
     );
+  });
+
+  it('Should let you do a transfer of Uniswap ERC20 tokens', () => {
+    cy.visit('http://localhost:8080/transfer');
+    makeErc20Transfer(ACTIVE_KEY, uniswapContract, TRANSFER_TO_KEY);
+
+    cy.visit('http://localhost:8080/transfer');
+    makeErc20Transfer(TRANSFER_TO_KEY, uniswapContract, ACTIVE_KEY, 'firstKey');
   });
 });

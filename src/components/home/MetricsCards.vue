@@ -8,7 +8,9 @@
             color="primary"
             size="52"
           >
-            <v-icon size="24">{{ mdiChartAreaspline }}</v-icon>
+            <v-icon size="24">
+              {{ mdiChartAreaspline }}
+            </v-icon>
           </v-avatar>
           Metrics
         </v-card-title>

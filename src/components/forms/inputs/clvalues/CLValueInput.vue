@@ -41,8 +41,8 @@
     />
     <CLValueMapInput
       v-if="type === 'map'"
-      @value="$emit('value', build($event))"
       data-cy="CLValueMapInput"
+      @value="$emit('value', build($event))"
     />
   </div>
 </template>

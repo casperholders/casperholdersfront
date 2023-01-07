@@ -44,7 +44,7 @@
     </v-slide-y-transition>
     <AmountInput
       :balance="token ? tokenBalance : balance"
-      :fee="token ? transferFee : 0"
+      :fee="token === nativeToken ? transferFee : 0"
       :min="tokenMinimumAmount"
       :value="amount"
       class="mb-4"
@@ -135,6 +135,7 @@ export default {
   components: { OperationSummary, TokenInput, AmountInput, OperationCard },
   data() {
     return {
+      nativeToken,
       mdiSend,
       mdiAccount,
       mdiMusicAccidentalSharp,

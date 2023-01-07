@@ -37,12 +37,18 @@
         </v-avatar>
         <v-avatar left>
           <template v-if="data.item.group === 'Inactive'">
-            <v-icon color="red">
+            <v-icon
+              size="24"
+              color="red"
+            >
               {{ mdiAlert }}
             </v-icon>
           </template>
           <template v-else>
-            <v-icon color="green">
+            <v-icon
+              size="24"
+              color="green"
+            >
               {{ mdiCheckboxMarkedCircle }}
             </v-icon>
           </template>
@@ -68,12 +74,18 @@
         </v-list-item-avatar>
         <v-list-item-avatar>
           <template v-if="data.item.group === 'Inactive'">
-            <v-icon color="red">
+            <v-icon
+              size="24"
+              color="red"
+            >
               {{ mdiAlert }}
             </v-icon>
           </template>
           <template v-else>
-            <v-icon color="green">
+            <v-icon
+              size="24"
+              color="green"
+            >
               {{ mdiCheckboxMarkedCircle }}
             </v-icon>
           </template>
@@ -102,14 +114,14 @@ import { CLPublicKey } from 'casper-js-sdk';
 import { mapState } from 'vuex';
 
 /**
- * Validator component display the list of validators
- */
+   * Validator component display the list of validators
+   */
 export default {
   name: 'ValidatorInput',
   props: {
     /**
-     * Validator
-     */
+       * Validator
+       */
     value: {
       type: Object,
       default: undefined,
@@ -130,8 +142,8 @@ export default {
       mdiAlert,
       mdiCheckboxMarkedCircle,
       /**
-       * Rules for the amount text field
-       */
+         * Rules for the amount text field
+         */
       validatorRules: [
         (a) => !!a || 'You need to select a validator',
         (a) => {
@@ -157,15 +169,15 @@ export default {
       'signer',
     ]),
     /**
-     * Trick to send the current amount to the parent component (View)
-     * Because the prop value contain the amount, this computed property
-     * return the value of this.value when called.
-     * When the amount property is set we emit an event and in the
-     * parent component (View) we bind this event to the prop value
-     * Example :
-     * :value="amount"
-     * @input="amount = $event"
-     */
+       * Trick to send the current amount to the parent component (View)
+       * Because the prop value contain the amount, this computed property
+       * return the value of this.value when called.
+       * When the amount property is set we emit an event and in the
+       * parent component (View) we bind this event to the prop value
+       * Example :
+       * :value="amount"
+       * @input="amount = $event"
+       */
     validator: {
       get() {
         return this.value;
@@ -198,23 +210,25 @@ export default {
     filterObject(item, queryText, itemText) {
       if (item.name || item.publicKey) {
         return (
-          item.name.toLocaleLowerCase().indexOf(queryText.toLocaleLowerCase()) > -1
-          || item.publicKey.toLocaleLowerCase().indexOf(queryText.toLocaleLowerCase()) > -1
+          item.name.toLocaleLowerCase()
+            .indexOf(queryText.toLocaleLowerCase()) > -1
+            || item.publicKey.toLocaleLowerCase()
+              .indexOf(queryText.toLocaleLowerCase()) > -1
         );
       }
       return false;
     },
     /**
-     * Remove the current validator selected
-     */
+       * Remove the current validator selected
+       */
     remove() {
       this.validator = undefined;
     },
     /**
-     * Retrieve all validators with additional metadata
-     * from MAKE Account info smart contract if possible
-     * @returns {Promise<void>}
-     */
+       * Retrieve all validators with additional metadata
+       * from MAKE Account info smart contract if possible
+       * @returns {Promise<void>}
+       */
     async getValidators() {
       let userStake;
       try {
@@ -257,7 +271,7 @@ export default {
             );
           }
           validatorsData[i].disabled = !userStakedCurrentValidator
-            && validatorsData[i].numberOfDelegators >= 953;
+              && validatorsData[i].numberOfDelegators >= 953;
         }
       } catch (e) {
         console.log(e);
@@ -274,18 +288,22 @@ export default {
           if (validatorInfo.bid.delegators.length > 0) {
             totalStake = validatorInfo.bid.delegators.reduce(
               (prev, next) => ({
-                staked_amount: Big(prev.staked_amount).plus(next.staked_amount).toString(),
+                staked_amount: Big(prev.staked_amount)
+                  .plus(next.staked_amount)
+                  .toString(),
               }),
             ).staked_amount;
           }
-          totalStake = Big(totalStake).plus(validatorInfo.bid.staked_amount).toString();
+          totalStake = Big(totalStake)
+            .plus(validatorInfo.bid.staked_amount)
+            .toString();
           const stakedAmount = CurrencyUtils.convertMotesToCasper(totalStake);
           if (
             (this.undelegate
-              && userStake.some(
-                (stake) => stake.validator.toLowerCase() === validatorInfo.public_key.toLowerCase(),
-              ))
-            || !this.undelegate
+                && userStake.some(
+                  (s) => s.validator.toLowerCase() === validatorInfo.public_key.toLowerCase(),
+                ))
+              || !this.undelegate
           ) {
             let userStakedCurrentValidator = false;
             if (userStake) {
@@ -298,7 +316,8 @@ export default {
               publicKey: validatorInfo.public_key,
               group: validatorInfo.bid.inactive ? 'Inactive' : 'Active',
               delegation_rate: validatorInfo.bid.delegation_rate,
-              staked_amount: Big(stakedAmount).toFixed(2),
+              staked_amount: Big(stakedAmount)
+                .toFixed(2),
               currentEra: currentEra.includes(validatorInfo.public_key),
               nextEra: nextEra.includes(validatorInfo.public_key),
               disabled: validatorInfo.bid.delegators.length >= 953 && !userStakedCurrentValidator,
