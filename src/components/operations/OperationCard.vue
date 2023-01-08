@@ -92,6 +92,7 @@
           <v-spacer />
           <v-btn
             v-if="cancel"
+            data-cy="cancelOperation"
             title="Cancel"
             class="rounded-xl"
             color="quaternary"

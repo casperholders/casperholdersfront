@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@casperholders/core': ^3.13.2
+  '@casperholders/core': ^3.13.3
   '@cypress/code-coverage': ^3.10.0
   '@esbuild-plugins/node-globals-polyfill': ^0.1.1
   '@esbuild-plugins/node-modules-polyfill': ^0.1.4
@@ -56,7 +56,7 @@ specifiers:
   workbox-strategies: ^6.5.4
 
 dependencies:
-  '@casperholders/core': 3.13.2_eslint@8.31.0
+  '@casperholders/core': 3.13.3_eslint@8.31.0
   '@ethersproject/bytes': 5.7.0
   '@ledgerhq/hw-transport-web-ble': 6.27.9
   '@ledgerhq/hw-transport-webusb': 6.27.9
@@ -1270,8 +1270,8 @@ packages:
       '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
 
-  /@casperholders/core/3.13.2_eslint@8.31.0:
-    resolution: {integrity: sha512-6zd0gkCq9a96H3w0eJjziqbQMrrSilVxR4+/tc0Y2Hnql8eE5oy/6aV3+K1Ni9jKCRaTE/fE573kUYsQGr/ZaA==}
+  /@casperholders/core/3.13.3_eslint@8.31.0:
+    resolution: {integrity: sha512-R4+F48MnljJNg4kBAsn7FUsosxXjP6eKfJWyBtQOb9uMZ4hlcg+9SZpJDlzeUMiKSw+XevbIpAbNbSYtpKQfxA==}
     dependencies:
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/bytes': 5.7.0

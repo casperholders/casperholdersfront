@@ -49,6 +49,7 @@
           class="d-flex mr-4 my-auto"
         >
           <v-btn
+            data-cy="closeNFTDetails"
             title="Close NFT"
             text
             icon

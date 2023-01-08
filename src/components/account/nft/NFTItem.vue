@@ -56,6 +56,7 @@
             <v-spacer />
             <v-card-actions class="justify-center">
               <v-btn
+                data-cy="openNFT"
                 title="Open NFT"
                 icon
                 color="white"
@@ -68,6 +69,7 @@
               </v-btn>
               <v-btn
                 v-if="!nft.burn && canBeTransferred"
+                data-cy="transferNFT"
                 title="Transfer NFT"
                 icon
                 color="white"
@@ -80,6 +82,7 @@
               </v-btn>
               <v-btn
                 v-if="canBeBurned"
+                data-cy="burnNFT"
                 title="Burn NFT"
                 :icon="!nft.burn"
                 :text="nft.burn"

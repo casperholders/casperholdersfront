@@ -41,7 +41,7 @@
         {{ getName }}
       </v-card-title>
       <v-card-subtitle class="text-wrap d-flex d-md-block  justify-space-around">
-        test {{ getDescription }}
+        {{ getDescription }}
       </v-card-subtitle>
     </v-col>
   </v-row>

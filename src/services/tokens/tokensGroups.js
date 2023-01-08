@@ -128,7 +128,7 @@ export default {
     name: 'Casper Standard NFT',
     features: {
       transfer: {
-        transferFee: 1,
+        transferFee: 11,
         transferResult: NftTransferResult,
         makeDeployParameters: (
           { activeKey, tokenId, recipient, token },
@@ -141,7 +141,7 @@ export default {
         ),
       },
       burn: {
-        burnFee: 1,
+        burnFee: 10,
         burnResult: NftBurnResult,
         makeDeployParameters: (
           { activeKey, tokenId, token },
@@ -172,7 +172,7 @@ export default {
     name: 'Casper Enhanced Standard NFT',
     features: {
       transfer: {
-        transferFee: 1,
+        transferFee: 6,
         transferResult: NftTransferResult,
         makeDeployParameters: (
           { activeKey, tokenId, recipient, token },
@@ -185,7 +185,7 @@ export default {
         ),
       },
       burn: {
-        burnFee: 1,
+        burnFee: 3,
         burnResult: NftBurnResult,
         makeDeployParameters: (
           { activeKey, tokenId, token },

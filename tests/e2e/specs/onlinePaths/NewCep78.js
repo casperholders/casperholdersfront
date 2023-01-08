@@ -2,6 +2,7 @@ import mockConnection from '../../helpers/mockConnection';
 import sendTransaction from '../../helpers/sendTransaction';
 import setArgs from '../../helpers/setArgs';
 import waitForBalances from '../../helpers/waitForBalances';
+import 'cypress-real-events/support';
 
 const args = {
   collection_name: 'testCEP78',
@@ -16,6 +17,7 @@ const args = {
 };
 
 const ACTIVE_KEY = '0184f6d260F4EE6869DDB36affe15456dE6aE045278FA2f467bb677561cE0daD55';
+const TRANSFER_TO_KEY = '01a5A5B7328118681638BE3e06c8749609280Dba4c9DAF9AeB3D3464b8839B018a';
 
 const mintArgs = {
   token_owner: ACTIVE_KEY,
@@ -109,18 +111,21 @@ describe('Deploy & test cep78', () => {
       .type('{selectall}{del}10');
     waitForBalances(cy);
     sendTransaction(cy);
+    sendTransaction(cy);
+    sendTransaction(cy);
   });
 
   it('Check cep78 collection', () => {
+    cy.wait(5000);
     cy.visit('http://localhost:8080/nft');
     mockConnection(cy, ACTIVE_KEY);
     cy.get('[data-cy="nft-add-button"]')
       .should('be.visible')
-      .click();
+      .click({ force: true });
 
     cy.get('[data-cy=token-input]')
       .parent()
-      .click();
+      .click({ force: true });
     cy.get('[data-cy=token-input]')
       .type(cep78contract);
     cy.get(`.v-list-item__title[data-cy=token-contract-${cep78contract}]`)
@@ -130,6 +135,137 @@ describe('Deploy & test cep78', () => {
     cy.get(`[data-cy="collection-${cep78contract}"]`)
       .should('be.visible');
     cy.get(`[data-cy="collection-${cep78contract}-nft-0"]`)
+      .should('be.visible')
+      .should('have.length', 1)
+      .realHover('mouse')
+    cy.get(`[data-cy="collection-${cep78contract}-nft-0"]`)
+      .get('[data-cy="openNFT"]:visible')
+      .should('be.visible')
+      .should('have.length', 1)
+      .realClick();
+
+    cy.get('[data-cy=closeNFTDetails]')
+      .should('be.visible')
+      .click({ force: true });
+
+
+    cy.get(`[data-cy="collection-${cep78contract}-nft-1"]`)
+      .should('be.visible')
+      .should('have.length', 1)
+      .realHover('mouse');
+    cy.get(`[data-cy="collection-${cep78contract}-nft-1"]`)
+      .get('[data-cy="transferNFT"]:visible')
+      .should('have.length', 1)
+      .should('be.visible')
+      .realClick();
+
+    cy.get('[data-cy=cancelOperation]')
+      .should('be.visible')
+      .click({ force: true });
+
+    cy.get(`[data-cy="collection-${cep78contract}-nft-2"]`)
+      .should('be.visible')
+      .should('have.length', 1)
+      .realHover('mouse');
+    cy.get(`[data-cy="collection-${cep78contract}-nft-2"]`)
+      .get('[data-cy="burnNFT"]:visible')
+      .should('be.visible')
+      .should('have.length', 1)
+      .realClick();
+
+    cy.get('[data-cy=cancelOperation]')
+      .should('be.visible')
+      .click({ force: true });
+
+    cy.get(`[data-cy="collection-${cep78contract}-nft-1"]`)
+      .should('be.visible')
+      .should('have.length', 1)
+      .realHover('mouse');
+    cy.get(`[data-cy="collection-${cep78contract}-nft-1"]`)
+      .get('[data-cy="transferNFT"]:visible')
+      .should('be.visible')
+      .should('have.length', 1)
+      .realClick();
+
+    cy.get('[data-cy=address]').type(TRANSFER_TO_KEY);
+
+    waitForBalances(cy);
+    sendTransaction(cy);
+
+    cy.get('[data-cy=cancelOperation]')
+      .should('be.visible')
+      .click({ force: true });
+
+    cy.get(`[data-cy="collection-${cep78contract}-nft-2"]`)
+      .should('be.visible')
+      .should('have.length', 1)
+      .realHover('mouse');
+    cy.get(`[data-cy="collection-${cep78contract}-nft-2"]`)
+      .get('[data-cy="burnNFT"]:visible')
+      .should('have.length', 1)
+      .should('be.visible')
+      .realClick();
+
+    waitForBalances(cy);
+    sendTransaction(cy);
+  });
+
+
+  it('Check cep47 collection', () => {
+    cy.wait(5000);
+    cy.visit('http://localhost:8080/nft');
+    mockConnection(cy, ACTIVE_KEY);
+    cy.get('[data-cy="nft-add-button"]')
+      .should('be.visible')
+      .click({ force: true });
+
+    cy.get('[data-cy=token-input]')
+      .parent()
+      .click({ force: true });
+    cy.get('[data-cy=token-input]')
+      .type(cep78contract);
+    cy.get(`.v-list-item__title[data-cy=token-contract-${cep78contract}]`)
+      .click({ force: true });
+    cy.get('[data-cy=nft-add-submit]')
+      .click({ force: true });
+    cy.get(`[data-cy="collection-${cep78contract}"]`)
       .should('be.visible');
+    cy.get(`[data-cy="collection-${cep78contract}-nft-0"]`)
+      .should('have.length', 1)
+      .should('be.visible');
+    cy.get(`[data-cy="collection-${cep78contract}-nft-1"]`)
+      .should('not.exist');
+    cy.get(`[data-cy="collection-${cep78contract}-nft-2"]`)
+      .should('be.visible')
+      .should('have.length', 1)
+      .realHover('mouse');
+    cy.get(`[data-cy="collection-${cep78contract}-nft-2"]`)
+      .get('[data-cy="burnNFT"]:visible')
+      .should('be.visible')
+      .should('have.length', 1)
+      .contains('Burned');
+    mockConnection(cy, TRANSFER_TO_KEY, 'firstKey');
+    cy.get('[data-cy="nft-add-button"]')
+      .should('be.visible')
+      .click({ force: true });
+
+    cy.get('[data-cy=token-input]')
+      .parent()
+      .click({ force: true });
+    cy.get('[data-cy=token-input]')
+      .type(cep78contract);
+    cy.get(`.v-list-item__title[data-cy=token-contract-${cep78contract}]`)
+      .click({ force: true });
+    cy.get('[data-cy=nft-add-submit]')
+      .click({ force: true });
+    cy.get(`[data-cy="collection-${cep78contract}"]`)
+      .should('be.visible');
+    cy.get(`[data-cy="collection-${cep78contract}-nft-0"]`)
+      .should('not.exist');
+    cy.get(`[data-cy="collection-${cep78contract}-nft-1"]`)
+      .should('have.length', 1)
+      .should('be.visible');
+    cy.get(`[data-cy="collection-${cep78contract}-nft-2"]`)
+      .should('not.exist');
   });
 });
