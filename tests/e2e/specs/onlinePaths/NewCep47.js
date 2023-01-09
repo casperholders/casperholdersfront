@@ -22,6 +22,19 @@ const mintArgs = {
   recipient: ACTIVE_KEY,
 };
 
+const approveArgs = {
+  spender: TRANSFER_TO_KEY,
+};
+
+const updateTokenMetaArgs = {
+  token_id: '1',
+};
+
+const mintCopiesArgs = {
+  recipient: ACTIVE_KEY,
+  count: 1,
+};
+
 let cep47contract = '';
 
 describe('Deploy and test cep47', () => {
@@ -150,6 +163,131 @@ describe('Deploy and test cep47', () => {
     cy.get(`[data-cy=arg-panel-content-token_ids]`)
       .find('[data-cy=CLValueRawInput]')
       .type(`{selectall}{del}3`);
+    sendTransaction(cy);
+  });
+
+  it('Approve cep47 nft', () => {
+    cy.visit('http://localhost:8080/smartcontract');
+    mockConnection(cy, ACTIVE_KEY);
+    cy.get('[data-cy="manageSmartContract"]')
+      .should('be.visible')
+      .click();
+    cy.get(`[data-cy="${args.name}"]`)
+      .should('be.visible')
+      .click();
+    cy.get(`[data-cy="Approve"]`)
+      .should('be.visible')
+      .click();
+    setArgs(cy, approveArgs);
+    cy.get(`[data-cy=arg-panel-token_ids]`)
+      .should('have.length', 1)
+      .click();
+    cy.get(`[data-cy=arg-panel-content-token_ids]`)
+      .find('[data-cy=CLValueListInput]')
+      .find('[data-cy="listType"]')
+      .type('U256');
+    cy.get('.v-list-item__title').contains('U256').click();
+    cy.get('[data-cy="listNewValue"]').click();
+    cy.get(`[data-cy=arg-panel-content-token_ids]`)
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}1`);
+    cy.get('[data-cy=amount]:visible')
+      .type('{selectall}{del}10');
+    waitForBalances(cy);
+    sendTransaction(cy);
+  });
+
+  it('Set meta cep47 nft', () => {
+    cy.visit('http://localhost:8080/smartcontract');
+    mockConnection(cy, ACTIVE_KEY);
+    cy.get('[data-cy="manageSmartContract"]')
+      .should('be.visible')
+      .click();
+    cy.get(`[data-cy="${args.name}"]`)
+      .should('be.visible')
+      .click();
+    cy.get(`[data-cy="Update token meta"]`)
+      .should('be.visible')
+      .click();
+    setArgs(cy, updateTokenMetaArgs);
+    cy.get(`[data-cy=arg-panel-token_meta]`)
+      .should('have.length', 1)
+      .click();
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=CLValueMapInput]')
+      .find('[data-cy="mapKeyType"]')
+      .type('String');
+    cy.get('.v-list-item__title').contains('String').click();
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=CLValueMapInput]')
+      .find('[data-cy="mapValueType"]')
+      .type('String');
+    cy.get('.v-list-item__title').contains('String').click();
+    cy.get('[data-cy="mapNewValue"]').click();
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapKeyValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}TestKey`);
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValueValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}TestValue`);
+    cy.get('[data-cy=amount]:visible')
+      .type('{selectall}{del}10');
+    waitForBalances(cy);
+    sendTransaction(cy);
+  });
+
+  it('Mint copies cep47 nft', () => {
+    cy.visit('http://localhost:8080/smartcontract');
+    mockConnection(cy, ACTIVE_KEY);
+    cy.get('[data-cy="manageSmartContract"]')
+      .should('be.visible')
+      .click();
+    cy.get(`[data-cy="${args.name}"]`)
+      .should('be.visible')
+      .click();
+    cy.get(`[data-cy="Mint copies"]`)
+      .should('be.visible')
+      .click();
+    setArgs(cy, mintCopiesArgs);
+    cy.get(`[data-cy=arg-panel-token_ids]`)
+      .should('have.length', 1)
+      .click();
+    cy.get(`[data-cy=arg-panel-content-token_ids]`)
+      .find('[data-cy=CLValueListInput]')
+      .find('[data-cy="listType"]')
+      .type('U256');
+    cy.get('.v-list-item__title').contains('U256').click();
+    cy.get('[data-cy="listNewValue"]').click();
+    cy.get(`[data-cy=arg-panel-content-token_ids]`)
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}4`);
+    cy.get(`[data-cy=arg-panel-token_meta]`)
+      .should('have.length', 1)
+      .click();
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=CLValueMapInput]')
+      .find('[data-cy="mapKeyType"]')
+      .type('String');
+    cy.get('.v-list-item__title').contains('String').click();
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=CLValueMapInput]')
+      .find('[data-cy="mapValueType"]')
+      .type('String');
+    cy.get('.v-list-item__title').contains('String').click();
+    cy.get('[data-cy="mapNewValue"]').click();
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapKeyValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}TestKey`);
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValueValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}TestValue`);
+    cy.get('[data-cy=amount]:visible')
+      .type('{selectall}{del}10');
+    waitForBalances(cy);
     sendTransaction(cy);
   });
 

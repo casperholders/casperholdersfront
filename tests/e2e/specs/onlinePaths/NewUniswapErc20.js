@@ -19,6 +19,15 @@ const approveArgs = {
   amount: '1000000000000000',
 };
 
+const burnArgs = {
+  from: args.public_key,
+  amount: '10',
+};
+const mintArgs = {
+  to: args.public_key,
+  amount: '10',
+};
+
 const ACTIVE_KEY = '0184f6d260F4EE6869DDB36affe15456dE6aE045278FA2f467bb677561cE0daD55';
 const TRANSFER_TO_KEY = '01a5A5B7328118681638BE3e06c8749609280Dba4c9DAF9AeB3D3464b8839B018a';
 
@@ -58,6 +67,44 @@ describe('Deploy & test Uniswap erc20', () => {
         cy.log(uniswapContract);
       });
     setArgs(cy, approveArgs);
+    cy.get('[data-cy=amount]:visible')
+      .type('{selectall}{del}10');
+    waitForBalances(cy);
+    sendTransaction(cy);
+  });
+
+  it('Burn uniswap erc20', () => {
+    cy.visit('http://localhost:8080/smartcontract');
+    mockConnection(cy, ACTIVE_KEY);
+    cy.get('[data-cy="manageSmartContract"]')
+      .should('be.visible')
+      .click();
+    cy.get(`[data-cy="${args.name}"]`)
+      .should('be.visible')
+      .click();
+    cy.get(`[data-cy="Burn"]`)
+      .should('be.visible')
+      .click();
+    setArgs(cy, burnArgs);
+    cy.get('[data-cy=amount]:visible')
+      .type('{selectall}{del}10');
+    waitForBalances(cy);
+    sendTransaction(cy);
+  });
+
+  it('Mint uniswap erc20', () => {
+    cy.visit('http://localhost:8080/smartcontract');
+    mockConnection(cy, ACTIVE_KEY);
+    cy.get('[data-cy="manageSmartContract"]')
+      .should('be.visible')
+      .click();
+    cy.get(`[data-cy="${args.name}"]`)
+      .should('be.visible')
+      .click();
+    cy.get(`[data-cy="Mint"]`)
+      .should('be.visible')
+      .click();
+    setArgs(cy, mintArgs);
     cy.get('[data-cy=amount]:visible')
       .type('{selectall}{del}10');
     waitForBalances(cy);
