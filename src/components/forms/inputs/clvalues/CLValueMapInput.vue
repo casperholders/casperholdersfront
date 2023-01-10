@@ -34,6 +34,7 @@
     <v-col
       v-for="index in mapValues.length"
       :key="index"
+      :data-cy="`mapValues-${index}`"
       cols="12"
     >
       <v-row>

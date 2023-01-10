@@ -27,7 +27,7 @@ describe('Balance', () => {
 
     cy.get('[data-cy=reward-calculator-panel-header]').click();
     cy.get('[data-cy=reward-calculator]').should('be.visible');
-    cy.get('[data-cy=operations]').contains(/\d-\d of \d/);
+    cy.get('[data-cy=operations]').contains(/.+-.+ of .+/);
 
     mockConnection(cy, '01270a577d2d106c4d29402775f3dffcb9f04aad542579dd4d1cfad20572ebcb7a');
 

@@ -39,6 +39,35 @@
         </v-chip>
       </template>
     </v-toolbar-title>
+    <v-menu
+      v-if="e2e"
+      open-on-hover
+      left
+      offset-y
+    >
+      <template #activator="{ on, attrs }">
+        <v-btn
+          color="primary"
+          dark
+          v-bind="attrs"
+          v-on="on"
+        >
+          Select e2e key
+        </v-btn>
+      </template>
+
+      <v-list>
+        <v-list-item @click="dispatchE2Econnection(0)">
+          <v-list-item-title>Test Key 1</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="dispatchE2Econnection(1)">
+          <v-list-item-title>MultiSig Key 1</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="dispatchE2Econnection(2)">
+          <v-list-item-title>MultiSig Key 2</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
     <connect-dialog v-if="displayConnect" />
     <AccountPopup v-if="signer.activeKey" />
     <v-menu
@@ -174,13 +203,17 @@
 import AccountPopup from '@/components/layout/AccountPopup';
 import ConnectDialog from '@/components/layout/ConnectDialog';
 import { CSPR_LIVE_URL, HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
+import generateAsymmetricKey from '@/helpers/generateAsymmetricKey';
 import truncate from '@/helpers/strings/truncate';
 import { DeployResult } from '@casperholders/core';
 import {
   mdiAlertCircle,
   mdiBell,
-  mdiCheckboxMarkedCircle, mdiClock, mdiClose,
-  mdiHelpCircle, mdiOpenInNew,
+  mdiCheckboxMarkedCircle,
+  mdiClock,
+  mdiClose,
+  mdiHelpCircle,
+  mdiOpenInNew,
   mdiSwapHorizontal,
 } from '@mdi/js';
 import { mapGetters, mapState } from 'vuex';
@@ -200,6 +233,7 @@ export default {
     },
   },
   data: () => ({
+    e2e: import.meta.env.VITE_APP_E2E,
     mdiSwapHorizontal,
     mdiBell,
     mdiOpenInNew,
@@ -275,6 +309,24 @@ export default {
     this.displayConnect = this.signer.activeKey === null;
   },
   methods: {
+    dispatchE2Econnection(index) {
+      const e2eKeys = [
+        generateAsymmetricKey(import.meta.env.VITE_APP_FAKE_KEY),
+        generateAsymmetricKey(import.meta.env.VITE_APP_FAKE_MULTISIG_KEY),
+        generateAsymmetricKey(import.meta.env.VITE_APP_FAKE_SECOND_MULTISIG_KEY),
+      ];
+      const msg = {
+        detail: {
+          isUnlocked: true,
+          isConnected: true,
+          activeKey: e2eKeys[index].publicKey.toHex().toLowerCase(),
+        },
+      };
+      if (index > 0) {
+        msg.detail.isMultisig = index === 1 ? 'firstKey' : 'secondKey';
+      }
+      window.dispatchEvent(new CustomEvent('signer:connected', msg));
+    },
     toggleDrawer() {
       this.$root.$emit('toggleDrawer');
     },

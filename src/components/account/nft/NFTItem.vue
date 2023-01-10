@@ -4,8 +4,8 @@
     open-delay="200"
   >
     <v-card
-      color="background"
-      class="mt-5 fill-height position-relative"
+      color="primary"
+      class="mx-5 fill-height position-relative"
       min-width="200"
       max-width="200"
       min-height="200"
@@ -56,6 +56,7 @@
             <v-spacer />
             <v-card-actions class="justify-center">
               <v-btn
+                v-if="details"
                 data-cy="openNFT"
                 title="Open NFT"
                 icon
@@ -96,6 +97,32 @@
                 </v-icon>
                 {{ nft.burn ? 'Burned' : '' }}
               </v-btn>
+              <v-btn
+                v-if="canBeSell"
+                data-cy="sellNFT"
+                title="Sell NFT"
+                icon
+                color="white"
+                aria-label="expand"
+                @click="$emit('showSell')"
+              >
+                <v-icon>
+                  {{ mdiCurrencyUsd }}
+                </v-icon>
+              </v-btn>
+              <v-btn
+                v-if="canBeBid"
+                data-cy="bidNFT"
+                title="Bid NFT"
+                icon
+                color="white"
+                aria-label="expand"
+                @click="$emit('showAuction')"
+              >
+                <v-icon>
+                  {{ mdiGavel }}
+                </v-icon>
+              </v-btn>
             </v-card-actions>
             <v-spacer />
           </v-sheet>
@@ -107,7 +134,13 @@
 
 <script>
 import { getAnimation, getDescription, getImage, getName } from '@/helpers/nft/retrieveNft';
-import { mdiArrowExpandAll, mdiFire, mdiSend } from '@mdi/js';
+import {
+  mdiArrowExpandAll,
+  mdiCurrencyUsd,
+  mdiFire,
+  mdiGavel,
+  mdiSend,
+} from '@mdi/js';
 
 export default {
   name: 'NFTItem',
@@ -118,11 +151,23 @@ export default {
     },
     canBeBurned: {
       type: Boolean,
-      required: true,
+      required: false,
     },
     canBeTransferred: {
       type: Boolean,
-      required: true,
+      required: false,
+    },
+    details: {
+      type: Boolean,
+      required: false,
+    },
+    canBeSell: {
+      type: Boolean,
+      required: false,
+    },
+    canBeBid: {
+      type: Boolean,
+      required: false,
     },
   },
   data() {
@@ -130,6 +175,8 @@ export default {
       mdiArrowExpandAll,
       mdiSend,
       mdiFire,
+      mdiCurrencyUsd,
+      mdiGavel,
       nft: this.nftData,
     };
   },

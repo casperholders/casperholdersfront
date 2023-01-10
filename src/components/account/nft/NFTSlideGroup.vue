@@ -1,10 +1,14 @@
 <template>
-  <v-card>
+  <div>
     <card-section-title
+      v-if="!showSomething"
       :icon="mdiImage"
       :title="name"
     >
-      <template #action>
+      <template
+        v-if="deleteGroup"
+        #action
+      >
         <v-btn
           data-cy="nft-remove-collection"
           title="Untrack NFT collection"
@@ -44,11 +48,14 @@
                   :key="nft.token_id"
                   :data-cy="`collection-${token.id}-nft-${nft.token_id}`"
                   :nft-data="nft"
+                  :details="true"
                   :can-be-burned="canBeBurned"
                   :can-be-transferred="canBeTransferred"
+                  :can-be-sell="canBeSell"
                   @showDetails="showDetails = true; showDetailsNft = nft;"
                   @showTransfer="showTransfer = true; showTransferNft = nft;"
                   @showBurn="showBurn = true; showBurnNft = nft;"
+                  @showSell="showSell = true; showSellNft = nft;"
                 />
               </template>
             </template>
@@ -97,11 +104,20 @@
         @closeBurn="showBurn = false; showBurnNft = null;"
       />
     </v-slide-y-transition>
-  </v-card>
+    <v-slide-y-transition hide-on-leave>
+      <n-f-t-sell
+        v-if="showSell"
+        :nft-data="showSellNft"
+        :token="token"
+        @closeSell="showSell = false; showSellNft = null;"
+      />
+    </v-slide-y-transition>
+  </div>
 </template>
 
 <script>
 import NFTItem from '@/components/account/nft/NFTItem';
+import NFTSell from '@/components/account/nft/auctions/NFTSell.vue';
 import PaginationComponent from '@/components/account/nft/PaginationComponent';
 import { retrieveNft } from '@/helpers/nft/retrieveNft';
 import { getDictionaryItemByURef, getItem, getStateRootHash } from '@/helpers/rpc.js';
@@ -117,7 +133,7 @@ import { mapState } from 'vuex';
 
 export default {
   name: 'NFTSlideGroup',
-  components: { PaginationComponent, NFTItem },
+  components: { NFTSell, PaginationComponent, NFTItem },
   props: {
     token: {
       type: Object,
@@ -127,11 +143,15 @@ export default {
       type: Boolean,
       default: true,
     },
+    deleteGroup: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
   data: () => ({
     mdiImage,
     mdiDelete,
-    dialogs: {},
     totalNFTs: 0,
     itemsPerPage: 10,
     page: 1,
@@ -147,13 +167,15 @@ export default {
     showTransferNft: null,
     showBurn: false,
     showBurnNft: null,
+    showSell: false,
+    showSellNft: null,
   }),
   computed: {
     totalPages() {
       return Math.ceil(this.totalNFTs / this.itemsPerPage);
     },
     showSomething() {
-      return this.showDetails || this.showTransfer || this.showBurn;
+      return this.showDetails || this.showTransfer || this.showBurn || this.showSell;
     },
     getCurrentNFTS() {
       const offset = (this.page - 1) * this.itemsPerPage;
@@ -167,6 +189,9 @@ export default {
     },
     canBeTransferred() {
       return this.token.canBeTransferred;
+    },
+    canBeSell() {
+      return this.tokenGroup === tokensGroups.nftcep47;
     },
     contractHash() {
       return [this.token.id];

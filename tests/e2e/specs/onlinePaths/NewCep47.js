@@ -141,14 +141,57 @@ describe('Deploy and test cep47', () => {
       .type('String');
     cy.get('.v-list-item__title').contains('String').click();
     cy.get('[data-cy="mapNewValue"]').click();
+
     cy.get(`[data-cy=arg-panel-content-token_metas]`)
+      .find('[data-cy=mapValues-1]')
       .find('[data-cy=mapKeyValue]')
       .find('[data-cy=CLValueRawInput]')
       .type(`{selectall}{del}TestKey`);
     cy.get(`[data-cy=arg-panel-content-token_metas]`)
+      .find('[data-cy=mapValues-1]')
       .find('[data-cy=mapValueValue]')
       .find('[data-cy=CLValueRawInput]')
       .type(`{selectall}{del}TestValue`);
+
+    cy.get('[data-cy="mapNewValue"]').click();
+
+    cy.get(`[data-cy=arg-panel-content-token_metas]`)
+      .find('[data-cy=mapValues-2]')
+      .find('[data-cy=mapKeyValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}name`);
+    cy.get(`[data-cy=arg-panel-content-token_metas]`)
+      .find('[data-cy=mapValues-2]')
+      .find('[data-cy=mapValueValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}TestNft47`);
+
+    cy.get('[data-cy="mapNewValue"]').click();
+
+    cy.get(`[data-cy=arg-panel-content-token_metas]`)
+      .find('[data-cy=mapValues-3]')
+      .find('[data-cy=mapKeyValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}image`);
+    cy.get(`[data-cy=arg-panel-content-token_metas]`)
+      .find('[data-cy=mapValues-3]')
+      .find('[data-cy=mapValueValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}https://picsum.photos/500/400`);
+
+    cy.get('[data-cy="mapNewValue"]').click();
+
+    cy.get(`[data-cy=arg-panel-content-token_metas]`)
+      .find('[data-cy=mapValues-4]')
+      .find('[data-cy=mapKeyValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}description`);
+    cy.get(`[data-cy=arg-panel-content-token_metas]`)
+      .find('[data-cy=mapValues-4]')
+      .find('[data-cy=mapValueValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}TestDescription`);
+
     cy.get('[data-cy=amount]:visible')
       .type('{selectall}{del}10');
     waitForBalances(cy);
@@ -224,14 +267,57 @@ describe('Deploy and test cep47', () => {
       .type('String');
     cy.get('.v-list-item__title').contains('String').click();
     cy.get('[data-cy="mapNewValue"]').click();
+
     cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValues-1]')
       .find('[data-cy=mapKeyValue]')
       .find('[data-cy=CLValueRawInput]')
       .type(`{selectall}{del}TestKey`);
     cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValues-1]')
       .find('[data-cy=mapValueValue]')
       .find('[data-cy=CLValueRawInput]')
       .type(`{selectall}{del}TestValue`);
+
+    cy.get('[data-cy="mapNewValue"]').click();
+
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValues-2]')
+      .find('[data-cy=mapKeyValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}name`);
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValues-2]')
+      .find('[data-cy=mapValueValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}TestNft47`);
+
+    cy.get('[data-cy="mapNewValue"]').click();
+
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValues-3]')
+      .find('[data-cy=mapKeyValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}image`);
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValues-3]')
+      .find('[data-cy=mapValueValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}https://picsum.photos/500/400`);
+
+    cy.get('[data-cy="mapNewValue"]').click();
+
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValues-4]')
+      .find('[data-cy=mapKeyValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}description`);
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValues-4]')
+      .find('[data-cy=mapValueValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}TestDescription`);
+
     cy.get('[data-cy=amount]:visible')
       .type('{selectall}{del}10');
     waitForBalances(cy);
@@ -277,14 +363,57 @@ describe('Deploy and test cep47', () => {
       .type('String');
     cy.get('.v-list-item__title').contains('String').click();
     cy.get('[data-cy="mapNewValue"]').click();
+
     cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValues-1]')
       .find('[data-cy=mapKeyValue]')
       .find('[data-cy=CLValueRawInput]')
       .type(`{selectall}{del}TestKey`);
     cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValues-1]')
       .find('[data-cy=mapValueValue]')
       .find('[data-cy=CLValueRawInput]')
       .type(`{selectall}{del}TestValue`);
+
+    cy.get('[data-cy="mapNewValue"]').click();
+
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValues-2]')
+      .find('[data-cy=mapKeyValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}name`);
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValues-2]')
+      .find('[data-cy=mapValueValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}TestNft47Copies`);
+
+    cy.get('[data-cy="mapNewValue"]').click();
+
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValues-3]')
+      .find('[data-cy=mapKeyValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}image`);
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValues-3]')
+      .find('[data-cy=mapValueValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}https://picsum.photos/500/400`);
+
+    cy.get('[data-cy="mapNewValue"]').click();
+
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValues-4]')
+      .find('[data-cy=mapKeyValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}description`);
+    cy.get(`[data-cy=arg-panel-content-token_meta]`)
+      .find('[data-cy=mapValues-4]')
+      .find('[data-cy=mapValueValue]')
+      .find('[data-cy=CLValueRawInput]')
+      .type(`{selectall}{del}TestDescription`);
+
     cy.get('[data-cy=amount]:visible')
       .type('{selectall}{del}10');
     waitForBalances(cy);

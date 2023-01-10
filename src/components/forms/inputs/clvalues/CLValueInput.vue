@@ -36,6 +36,7 @@
     />
     <CLValueOptionInput
       v-if="type === 'option'"
+      data-cy="CLValueOptionInput"
       :cl-type="optionType"
       @value="$emit('value', build($event))"
       @none="$emit('value', build($event, true))"
@@ -76,6 +77,8 @@ const types = [
   { name: 'Option', type: 'option' },
   { name: 'Map', type: 'map' },
   { name: 'PublicKey', type: 'publicKey' },
+  { name: 'AccountHash', type: 'accountHash' },
+  { name: 'ContractHash', type: 'contractHash' },
   { name: 'ByteArray', type: 'byteArray' },
 ];
 

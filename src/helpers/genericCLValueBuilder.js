@@ -1,5 +1,11 @@
 import { Buffer } from 'buffer/';
-import { CLTypeBuilder, CLURef, CLValueBuilder, decodeBase16 } from 'casper-js-sdk';
+import {
+  CLByteArray,
+  CLTypeBuilder,
+  CLURef,
+  CLValueBuilder,
+  decodeBase16,
+} from 'casper-js-sdk';
 import { None, Some } from 'ts-results';
 
 export default function buildCLValue(cltype, rawValue, innerType = null) {
@@ -55,6 +61,24 @@ export default function buildCLValue(cltype, rawValue, innerType = null) {
       return CLValueBuilder[cltype](
         decodeBase16(rawValue).subarray(1),
         decodeBase16(rawValue)[0],
+      );
+    case 'accountHash':
+      return new CLByteArray(
+        Uint8Array.from(
+          Buffer.from(
+            CLValueBuilder.publicKey(
+              decodeBase16(rawValue).subarray(1),
+              decodeBase16(rawValue)[0],
+            ).toAccountRawHashStr(),
+            'hex',
+          ),
+        ),
+      );
+    case 'contractHash':
+      return new CLByteArray(
+        Uint8Array.from(
+          Buffer.from(rawValue, 'hex'),
+        ),
       );
     case 'byteArray':
       return CLValueBuilder[cltype](Buffer.concat([Buffer.from(rawValue)], 32));

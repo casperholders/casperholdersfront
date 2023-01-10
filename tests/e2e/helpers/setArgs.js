@@ -24,6 +24,23 @@ export default function (cy, args) {
             .type(value.type);
           cy.get('.v-list-item__title').contains(value.type).click();
           break;
+        case 'option':
+          cy.get(`[data-cy=arg-panel-content-${key}]`)
+            .find('[data-cy=CLValueOptionInput]')
+            .find('[data-cy="CLValueOptionType"]')
+            .type(value.type);
+          cy.get('.v-list-item__title').contains(value.type).click();
+          if (value.none) {
+            cy.get(`[data-cy=arg-panel-content-${key}]`)
+              .find('[data-cy=CLValueOptionInput]')
+              .find('[data-cy="CLValueOptionNone"]').click({force: true});
+          }
+          if (value.value) {
+            cy.get(`[data-cy=arg-panel-content-${key}]`)
+              .find('[data-cy=CLValueRawInput]')
+              .type(`{selectall}{del}${value.value}`);
+          }
+          break;
         default:
           cy.log(`${value.clType} CY Helper not implemented`);
           break;

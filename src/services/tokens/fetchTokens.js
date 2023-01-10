@@ -24,6 +24,7 @@ const mapTokens = (dataTokens) => dataTokens.map((dataToken) => {
   const token = {
     groupId: dataToken.type,
     id: dataToken.hash,
+    package: dataToken.package,
     name: findNamedKey(dataToken.named_keys, 'name', 'name')?.initial_value || findNamedKey(dataToken.named_keys, 'name', 'collection_name')?.initial_value,
     shortName: findNamedKey(dataToken.named_keys, 'name', 'symbol')?.initial_value || findNamedKey(dataToken.named_keys, 'name', 'collection_symbol')?.initial_value,
   };

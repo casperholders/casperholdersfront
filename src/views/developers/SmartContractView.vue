@@ -338,7 +338,7 @@ export default {
           ],
         },
         {
-          title: 'Enhanced NFT CEP78',
+          title: 'NFT CEP78',
           githubUrl: 'https://github.com/casper-ecosystem/cep-78-enhanced-nft',
           description: 'CEP-78: Enhanced NFT standard',
           icon: mdiImageFrame,

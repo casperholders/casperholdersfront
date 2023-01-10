@@ -78,7 +78,20 @@
 import wavesSvg from '@/assets/images/waves.svg';
 import AppBar from '@/components/layout/AppBar';
 import NavigationDrawer from '@/components/layout/NavigationDrawer';
-import { mdiAccount, mdiConnection, mdiFileDocumentEdit, mdiGavel, mdiWallet, mdiSend, mdiKey, mdiImageFrame, mdiSafe, mdiLockOpen, mdiFire } from '@mdi/js';
+import {
+  mdiAccount,
+  mdiConnection,
+  mdiFileDocumentEdit,
+  mdiGavel,
+  mdiWallet,
+  mdiSend,
+  mdiKey,
+  mdiImageFrame,
+  mdiSafe,
+  mdiLockOpen,
+  mdiFire,
+  mdiShopping,
+} from '@mdi/js';
 import { mapState } from 'vuex';
 
 /**
@@ -162,6 +175,17 @@ export default {
               text: 'Beta',
             },
           },
+          {
+            title: 'Marketplace',
+            icon: mdiShopping,
+            route: '/marketplace',
+            disabled: false,
+            subtitle: null,
+            chip: {
+              icon: mdiFire,
+              text: 'Beta',
+            },
+          },
         ],
         Staking: [
           {
@@ -206,6 +230,9 @@ export default {
 </script>
 
 <style lang="scss">
+  .v-avatar > .v-icon {
+    border-radius: 0 !important;
+  }
   .cspr {
     font-family: "Eczar", "Roboto", Helvetica, Arial, sans-serif;
     font-weight: bold;

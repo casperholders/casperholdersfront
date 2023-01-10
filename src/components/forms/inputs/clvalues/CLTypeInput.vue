@@ -56,6 +56,8 @@ export default {
         { name: 'Option', type: 'option' },
         { name: 'Map', type: 'map' },
         { name: 'PublicKey', type: 'publicKey' },
+        { name: 'AccountHash', type: 'accountHash' },
+        { name: 'ContractHash', type: 'contractHash' },
         { name: 'ByteArray', type: 'byteArray' },
       ],
     };

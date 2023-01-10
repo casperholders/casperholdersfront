@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@casperholders/core': ^3.13.3
+  '@casperholders/core': ^3.14.2
   '@cypress/code-coverage': ^3.10.0
   '@esbuild-plugins/node-globals-polyfill': ^0.1.1
   '@esbuild-plugins/node-modules-polyfill': ^0.1.4
@@ -15,7 +15,7 @@ specifiers:
   big.js: ^6.2.1
   blakejs: ^1.2.1
   buffer: ^6.0.3
-  casper-js-sdk: ^2.10.0
+  casper-js-sdk: ^2.10.2
   chart.js: ^4.1.1
   core-js: ^3.27.1
   cy2: 4.0.0-beta.9
@@ -47,6 +47,7 @@ specifiers:
   vue-eslint-parser: ^9.1.0
   vue-json-pretty: ^1.9.3
   vue-router: ^3.6.5
+  vue-status-indicator: ^1.2.1
   vue-template-compiler: ^2.7.14
   vuetify: ^2.6.13
   vuex: ^3.6.2
@@ -56,7 +57,7 @@ specifiers:
   workbox-strategies: ^6.5.4
 
 dependencies:
-  '@casperholders/core': 3.13.3_eslint@8.31.0
+  '@casperholders/core': 3.14.2_eslint@8.31.0
   '@ethersproject/bytes': 5.7.0
   '@ledgerhq/hw-transport-web-ble': 6.27.9
   '@ledgerhq/hw-transport-webusb': 6.27.9
@@ -65,7 +66,7 @@ dependencies:
   big.js: 6.2.1
   blakejs: 1.2.1
   buffer: 6.0.3
-  casper-js-sdk: 2.10.0_eslint@8.31.0
+  casper-js-sdk: 2.10.2_eslint@8.31.0
   chart.js: 4.1.1
   core-js: 3.27.1
   lodash.clonedeep: 4.5.0
@@ -78,6 +79,7 @@ dependencies:
   vue: 2.7.14
   vue-json-pretty: 1.9.3
   vue-router: 3.6.5_vue@2.7.14
+  vue-status-indicator: 1.2.1
   vuetify: 2.6.13_vue@2.7.14
   vuex: 3.6.2_vue@2.7.14
   workbox-core: 6.5.4
@@ -1270,14 +1272,14 @@ packages:
       '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
 
-  /@casperholders/core/3.13.3_eslint@8.31.0:
-    resolution: {integrity: sha512-R4+F48MnljJNg4kBAsn7FUsosxXjP6eKfJWyBtQOb9uMZ4hlcg+9SZpJDlzeUMiKSw+XevbIpAbNbSYtpKQfxA==}
+  /@casperholders/core/3.14.2_eslint@8.31.0:
+    resolution: {integrity: sha512-nm7VQjq3yzJgkdNm6c7H1gGB4OjbvTi8wo/1mTJ2/4mRyQ/R9LAEDluc0Hil0n0N8wgPyoxhPRpVbxxILbvrKQ==}
     dependencies:
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/bytes': 5.7.0
       big.js: 6.2.1
       blakejs: 1.2.1
-      casper-js-sdk: 2.10.0_eslint@8.31.0
+      casper-js-sdk: 2.10.2_eslint@8.31.0
       ts-results: 3.3.0
     transitivePeerDependencies:
       - '@swc/core'
@@ -1290,6 +1292,12 @@ packages:
       - uglify-js
       - utf-8-validate
       - webpack-cli
+    dev: false
+
+  /@casperlabs/ts-results/3.3.5:
+    resolution: {integrity: sha512-ymSQqqb4mOSet592li02u1Gd28LoOFJUm6R3jkdNQ+nqsnbHvN+izBigtP4aYmNwh6gFyCwDgjYporEJgDT4eA==}
+    dependencies:
+      tslib: 2.4.1
     dev: false
 
   /@colors/colors/1.5.0:
@@ -2903,8 +2911,8 @@ packages:
     resolution: {integrity: sha512-4tYFyifaFfGacoiObjJegolkwSU4xQNGbVgUiNYVUxbQ2x2lUsFvY4hVgVzGiIe6WLOPqycWXA40l+PWsxthUw==}
     dev: true
 
-  /casper-js-sdk/2.10.0_eslint@8.31.0:
-    resolution: {integrity: sha512-UYOxsIiAAekfR+OaC5rU84iCouWPrnIGEvXzcvXlh5TurI9KingC536fTrztR06Q3DVN1scTsnCy9imDHxTMbQ==}
+  /casper-js-sdk/2.10.2_eslint@8.31.0:
+    resolution: {integrity: sha512-/HEztcdxFZtqJ3Jz1fiZu6QilDosBbuhyau4qiA1trNeywg8vY2TrF+/A12N+JEXL9T5xcNxJG605d3rfBBAhQ==}
     dependencies:
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/bytes': 5.7.0
@@ -2920,7 +2928,7 @@ packages:
       humanize-duration: 3.27.3
       key-encoder: 2.0.3
       reflect-metadata: 0.1.13
-      ts-results: 3.3.0
+      ts-results: /@casperlabs/ts-results/3.3.5
       tweetnacl-ts: 1.0.3
       tweetnacl-util: 0.15.1
       typedjson: 1.8.0
@@ -5783,7 +5791,7 @@ packages:
       create-hash: 1.2.0
       drbg.js: 1.0.1
       elliptic: 6.5.4
-      nan: 2.14.0
+      nan: 2.17.0
       safe-buffer: 5.2.1
     dev: false
     optional: true
@@ -6533,6 +6541,12 @@ packages:
     resolution: {integrity: sha512-VYXZQLtjuvKxxcshuRAwjHnciqZVoXAjTjcqBTz4rKc8qih9g9pI3hbDjmqXaHdgL3v8pV6P8Z335XvHzESxLQ==}
     peerDependencies:
       vue: ^2
+    dependencies:
+      vue: 2.7.14
+    dev: false
+
+  /vue-status-indicator/1.2.1:
+    resolution: {integrity: sha512-SjkM+u+atOqwGXBzAFBia42l+5vH5mPMVo8U+6jbUc8Fjpu4cEsE7J9sSoK0lBHyVrZPfE799Kbz/CDaY3+diw==}
     dependencies:
       vue: 2.7.14
     dev: false

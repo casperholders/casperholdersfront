@@ -13,8 +13,6 @@
         v-if="!getAnimation"
         cover
         :src="getImage"
-        max-height="200px"
-        max-width="200px"
         class="text-center align-center align-content-center"
       />
       <div
@@ -34,7 +32,7 @@
     </v-col>
     <v-col
       cols="12"
-      md="9"
+      :md="!!$slots.additionalDetails ? 5 : 9"
       class="d-flex flex-column d-md-block"
     >
       <v-card-title class="text-wrap d-flex d-md-block justify-space-around">
@@ -43,6 +41,22 @@
       <v-card-subtitle class="text-wrap d-flex d-md-block  justify-space-around">
         {{ getDescription }}
       </v-card-subtitle>
+    </v-col>
+    <v-col
+      v-if="$slots.additionalDetails"
+      cols="12"
+      md="4"
+      class="d-flex flex-column d-md-block"
+    >
+      <v-card-text>
+        <slot name="additionalDetails" />
+      </v-card-text>
+    </v-col>
+    <v-col
+      cols="12"
+      class="d-flex flex-column d-md-block"
+    >
+      <slot />
     </v-col>
   </v-row>
 </template>

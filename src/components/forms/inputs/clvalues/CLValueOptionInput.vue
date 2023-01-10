@@ -14,6 +14,7 @@
           cols="2"
         >
           <CLTypeInput
+            data-cy="CLValueOptionType"
             type-prefix="Option "
             @cltype="type = $event;"
           />
@@ -21,6 +22,7 @@
         <v-col cols="2">
           <v-checkbox
             v-model="isNone"
+            data-cy="CLValueOptionNone"
             color="white"
             label="Is none ?"
             @click="isNone ? $emit('none', type) : false"
