@@ -63,7 +63,11 @@ export default {
       this.rawValue = '';
     },
     rawValue() {
-      this.$emit('value', buildCLValue(this.clType, this.rawValue));
+      try {
+        this.$emit('value', buildCLValue(this.clType, this.rawValue));
+      } catch {
+        this.$emit('value', undefined);
+      }
     },
   },
   methods: {},

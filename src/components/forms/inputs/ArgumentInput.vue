@@ -27,7 +27,7 @@
       <CLValueInput
         :cl-type="clType"
         type-prefix="Argument "
-        @value="$emit('value', test($event))"
+        @value="onValue"
       />
     </v-col>
   </v-row>
@@ -74,9 +74,8 @@ export default {
     },
   },
   methods: {
-    test(v) {
+    onValue(v) {
       this.rawValue = v;
-      return v;
     },
   },
 };
