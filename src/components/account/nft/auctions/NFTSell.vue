@@ -323,6 +323,10 @@ export default {
     token: 'fetchBalances',
     internet: 'fetchBalances',
     'signer.activeKey': 'fetchBalances',
+    activeKey: {
+      handler: 'setAddress',
+      immediate: true,
+    },
   },
   async mounted() {
     this.nft = this.nftData;
@@ -332,6 +336,9 @@ export default {
     });
   },
   methods: {
+    setAddress() {
+      this.address = this.activeKey;
+    },
     async fetchBalances() {
       if (this.internet) {
         await this.getBalance();

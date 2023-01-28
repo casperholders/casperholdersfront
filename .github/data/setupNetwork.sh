@@ -36,6 +36,14 @@ while check_block "$1" ; [ $? -ne 0 ];do
     sleep 1
 done
 
+deployHash=$(docker run --network host -v $(pwd)/secret.pem:/secret.pem -v $(pwd)/.github/data/get_system_contracts_call.wasm:/get_system_contracts_call.wasm killianh/casperclient  put-deploy \
+	--session-path /get_system_contracts_call.wasm \
+	--node-address "$1" \
+	--secret-key /secret.pem \
+	--chain-name casper-net-1 \
+	--payment-amount 10000000000 \
+	| jq -r '.result.deploy_hash')
+
 docker run --network host -v $(pwd)/secret.pem:/secret.pem killianh/casperclient  transfer \
 	--transfer-id 1 \
 	--node-address "$1" \
@@ -45,13 +53,6 @@ docker run --network host -v $(pwd)/secret.pem:/secret.pem killianh/casperclient
 	--target-account 01a5A5B7328118681638BE3e06c8749609280Dba4c9DAF9AeB3D3464b8839B018a \
 	--payment-amount 10000
 
-deployHash=$(docker run --network host -v $(pwd)/secret.pem:/secret.pem -v $(pwd)/.github/data/get_system_contracts_call.wasm:/get_system_contracts_call.wasm killianh/casperclient  put-deploy \
-	--session-path /get_system_contracts_call.wasm \
-	--node-address "$1" \
-	--secret-key /secret.pem \
-	--chain-name casper-net-1 \
-	--payment-amount 10000000000 \
-	| jq -r '.result.deploy_hash')
 
 echo Deploy hash : $deployHash
 

@@ -30,22 +30,22 @@
         <v-card-text>
           <div class="d-flex justify-space-around flex-wrap">
             <template
-              v-for="(nft, index) in nfts.filter(n => !n.finalized)"
+              v-for="(nft) in nfts.filter(n => !n.finalized)"
             >
               <n-f-t-item
-                :key="auctionsData[index].hash"
+                :key="auctionsData[nft.auctionIndex].hash"
                 :data-cy="`collection-${nft.token_hash}-nft-${nft.token_id}`"
                 :nft-data="nft"
                 :can-be-bid="true"
                 @showAuction="showAuction = true;
                               showAuctionNft = nft;
-                              showAuctionData = auctionsData[index];"
+                              showAuctionData = auctionsData[nft.auctionIndex];"
               />
             </template>
           </div>
           <v-expansion-panels>
             <v-expansion-panel>
-              <v-expansion-panel-header>
+              <v-expansion-panel-header data-cy="pastAuctions">
                 Past auctions ({{ nfts.filter(n => n.finalized).length }})
               </v-expansion-panel-header>
               <v-expansion-panel-content>
@@ -53,20 +53,14 @@
                   <template
                     v-for="(nft, index) in nfts.filter(n => n.finalized)"
                   >
-                    <v-card-text
-                      v-if="!nft.finalized"
-                      :key="auctionsData[index].hash+'test'"
-                    >
-                      {{ nft.finalized }}
-                    </v-card-text>
                     <n-f-t-item
-                      :key="auctionsData[index].hash"
-                      :data-cy="`collection-${nft.token_hash}-nft-${nft.token_id}`"
+                      :key="auctionsData[nft.auctionIndex].hash"
+                      :data-cy="`ended-collection-${nft.token_hash}-nft-${nft.token_id}-${index}`"
                       :nft-data="nft"
                       :can-be-bid="true"
                       @showAuction="showAuction = true;
                                     showAuctionNft = nft;
-                                    showAuctionData = auctionsData[index];"
+                                    showAuctionData = auctionsData[nft.auctionIndex];"
                     />
                   </template>
                 </div>
@@ -210,6 +204,8 @@ export default {
                 if (nft) {
                   // eslint-disable-next-line no-param-reassign
                   nft.finalized = await this.getInitialValue(this.auctionsData[i], 'finalized', true);
+                  // eslint-disable-next-line no-param-reassign
+                  nft.auctionIndex = i;
                   // eslint-disable-next-line no-param-reassign
                   nft.token_hash = contract;
                   // eslint-disable-next-line no-param-reassign

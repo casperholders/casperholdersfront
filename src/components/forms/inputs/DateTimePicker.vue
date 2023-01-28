@@ -115,7 +115,7 @@ export default {
       const initDate = this.minRequirement
         ? this.minRequirement
         : Date.now();
-      return new Date(initDate + (60 * 1000));
+      return new Date(initDate + (120 * 1000));
     },
     minDate() {
       return this.currentComputedDate.toISOString().substring(0, 10);

@@ -135,6 +135,7 @@
         >
           <generic-deploy-operation
             v-if="selectedContract !== undefined && selectedEntrypoint !== undefined"
+            :contract-package-hash="contracts[selectedContract].package"
             :contract-hash="contracts[selectedContract].hash"
             :entrypoint="
               contracts[selectedContract].data.Contract.entry_points[selectedEntrypoint].name"
@@ -142,6 +143,7 @@
           />
           <generic-deploy-operation
             v-if="selectedSearchContract !== undefined && selectedEntrypoint !== undefined"
+            :contract-package-hash="selectedSearchContract.package"
             :contract-hash="selectedSearchContract.hash"
             :entrypoint="
               selectedSearchContract.data.Contract.entry_points[selectedEntrypoint].name"

@@ -13,6 +13,15 @@
   >
     <v-text-field
       color="white"
+      label="Contract Package Hash"
+      type="text"
+      :value="contractPackageHash"
+      :readonly="true"
+      data-cy="contractPackageHash"
+      required
+    />
+    <v-text-field
+      color="white"
       label="Contract Hash"
       type="text"
       :value="contractHash"
@@ -183,6 +192,10 @@ export default {
   name: 'GenericDeployOperation',
   components: { Argument, Amount, Operation },
   props: {
+    contractPackageHash: {
+      type: String,
+      required: true,
+    },
     contractHash: {
       type: String,
       required: true,

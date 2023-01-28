@@ -1,6 +1,19 @@
 <template>
   <n-f-t-details-operation :nft-data="nft">
     <template #additionalDetails>
+      <div class="d-flex justify-end mb-4">
+        <v-btn
+          text
+          data-cy="backToAuctionList"
+          aria-label="Back to auction list"
+          @click="$emit('closeBid')"
+        >
+          <v-icon left>
+            {{ mdiArrowLeftCircle }}
+          </v-icon>
+          Return to auction list
+        </v-btn>
+      </div>
       <v-card
         class="balance-amount-card"
         color="primary"
@@ -10,6 +23,7 @@
             Current price
           </span>
           <token-amount
+            data-cy="currentPrice"
             :amount="{isAmount: true, value: auctionInfos?.winning_bid}"
             class="white--text amount"
             style="font-size: 1.10rem"
@@ -19,6 +33,7 @@
             Minimum bid
           </span>
           <token-amount
+            data-cy="minBid"
             :amount="{isAmount: true, value: formatCasper(minBid)}"
             class="white--text amount"
             style="font-size: 1.10rem"
@@ -36,7 +51,10 @@
                 {{ mdiClock }}
               </v-icon>
             </v-avatar>
-            <span class="text-truncate">
+            <span
+              class="text-truncate"
+              data-cy="timeLeft"
+            >
               {{ countdown ?? 'Checking end time...' }}
             </span>
           </div>
@@ -53,7 +71,10 @@
                 {{ mdiAccountCircle }}
               </v-icon>
             </v-avatar>
-            <span class="text-truncate">
+            <span
+              class="text-truncate"
+              data-cy="nbBidders"
+            >
               {{ currentBids }} bidder(s) so far
             </span>
           </div>
@@ -73,7 +94,10 @@
                 {{ mdiCrown }}
               </v-icon>
             </v-avatar>
-            <span class="text-truncate">
+            <span
+              class="text-truncate"
+              data-cy="winner"
+            >
               You're the current winner !
             </span>
           </div>
@@ -87,6 +111,7 @@
           currentAuctionStatus < auctionStatuses.ended
           || (currentAuctionStatus === auctionStatuses.ended && isOwner)
         )"
+      data-cy="operationTabs"
     >
       <v-tabs
         v-model="tab"
@@ -105,6 +130,7 @@
               v-on="on"
             >
               <v-tab
+                data-cy="bidTabButton"
                 :disabled="currentAuctionStatus === auctionStatuses.ended ||
                   currentAuctionStatus === auctionStatuses.notStarted"
               >
@@ -124,6 +150,7 @@
               v-on="on"
             >
               <v-tab
+                data-cy="cancelBidTabButton"
                 :disabled="!haveBid || currentAuctionStatus !== auctionStatuses.live"
               >
                 Cancel Bid
@@ -143,6 +170,7 @@
               v-on="on"
             >
               <v-tab
+                data-cy="cancelAuctionTabButton"
                 :disabled="currentAuctionStatus !== auctionStatuses.live && isOwner"
               >
                 Cancel Auction
@@ -166,6 +194,7 @@
               v-on="on"
             >
               <v-tab
+                data-cy="finalizeAuctionTabButton"
                 :disabled="currentAuctionStatus !== auctionStatuses.ended && isOwner"
               >
                 Finalize auction
@@ -183,6 +212,7 @@
             :min-bid="minBid"
             :auction-data="auction"
             :nft-data="nft"
+            data-cy="bidTab"
           />
         </v-tab-item>
         <v-tab-item>
@@ -190,6 +220,7 @@
             v-if="haveBid && currentAuctionStatus === auctionStatuses.live"
             :auction-data="auction"
             :nft-data="nft"
+            data-cy="cancelBidTab"
           />
         </v-tab-item>
         <v-tab-item v-if="isOwner">
@@ -197,6 +228,7 @@
             v-if="currentAuctionStatus === auctionStatuses.live && isOwner"
             :auction-data="auction"
             :nft-data="nft"
+            data-cy="cancelAuctionTab"
           />
         </v-tab-item>
         <v-tab-item v-if="isOwner">
@@ -207,6 +239,7 @@
                 isOwner"
             :auction-data="auction"
             :nft-data="nft"
+            data-cy="finalizeAuctionTab"
           />
         </v-tab-item>
       </v-tabs-items>
@@ -217,6 +250,7 @@
         <v-chip
           color="primary"
           class="ml-3"
+          data-cy="livenessIndicator"
         >
           <status-indicator
             :status="auctionStatusColor"
@@ -308,7 +342,14 @@ import NFTFinalizeAuction from '@/components/account/nft/auctions/NFTFinalizeAuc
 import NFTDetailsOperation from '@/components/account/nft/NFTDetailsOperation.vue';
 import { DATA_API } from '@/helpers/env';
 import { getDictionaryItemByURef, getItem, getStateRootHash } from '@/helpers/rpc';
-import { mdiAccountCircle, mdiClock, mdiCrown, mdiFileSign, mdiGavel } from '@mdi/js';
+import {
+  mdiAccountCircle,
+  mdiArrowLeftCircle,
+  mdiClock,
+  mdiCrown,
+  mdiFileSign,
+  mdiGavel,
+} from '@mdi/js';
 import Big from 'big.js';
 import { CLPublicKey } from 'casper-js-sdk';
 import { StatusIndicator } from 'vue-status-indicator';
@@ -341,6 +382,7 @@ export default {
       mdiAccountCircle,
       mdiFileSign,
       mdiClock,
+      mdiArrowLeftCircle,
       nft: this.nftData,
       auction: this.auctionData,
       loadingAuctionInfos: true,
@@ -389,6 +431,7 @@ export default {
       deep: true,
       immediate: true,
     },
+    currentAuctionStatus: 'updateTab',
     auctionData: 'refreshAuction',
   },
   async mounted() {
@@ -399,6 +442,15 @@ export default {
   methods: {
     formatCasper(value = undefined) {
       return value ? `${Big(value).toFormat(5)} CSPR` : '- CSPR';
+    },
+    updateTab() {
+      if (this.currentAuctionStatus === 0 || this.currentAuctionStatus === 4) {
+        this.tab = null;
+      } else if (this.currentAuctionStatus < 3) {
+        this.tab = 0;
+      } else {
+        this.tab = 3;
+      }
     },
     async refreshOwner() {
       const auctionOwner = (await (await fetch(`${DATA_API}/contracts?select=from&hash=eq.${this.auctionData.hash}`)).json())[0]?.from;
@@ -502,6 +554,9 @@ export default {
         if (Date.now() > cancelTime.getTime() || finalized) {
           this.cancelTab = `Cancellation time expired at ${cancelTime.toLocaleDateString()} ${cancelTime.toLocaleTimeString()}`;
           cancelTimeText = 'Not anymore';
+        } else if (Date.now() < startTime.getTime()) {
+          this.cancelTab = 'Auction not yet started';
+          cancelTimeText = `Not until ${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString()}`;
         } else {
           cancelTimeText = `Yes until ${cancelTime.toLocaleDateString()} ${cancelTime.toLocaleTimeString()}`;
         }
