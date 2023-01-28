@@ -3,7 +3,7 @@
     v-scroll="onScroll"
     :class="{'appbar__top': isWindowTop}"
     class="appbar"
-    color="transparent"
+    color="#00012a"
     app
     elevate-on-scroll
   >
@@ -361,10 +361,6 @@ export default {
 <style scoped>
     .appbar__top {
         background: transparent !important;
-    }
-
-    .appbar {
-        background: linear-gradient(90deg, #00012a, #00126b, #ff473e)
     }
 
     .notification-badge ::v-deep .v-badge__badge .v-icon {

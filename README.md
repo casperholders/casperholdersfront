@@ -10,15 +10,17 @@
 
 Built with :
 - [pnpm](https://pnpm.io/)
-- [Vite](https://vitejs.dev/)
-- [VueJS](https://v2.vuejs.org/)
-- [Vuetify](https://vuetifyjs.com/en/)
+- [Vite 4](https://vitejs.dev/)
+- [VueJS 2](https://v2.vuejs.org/)
+- [Vuetify 2](https://vuetifyjs.com/en/)
 - [Vuex](https://vuex.vuejs.org/)
 - [Cypress](https://www.cypress.io/)
+- **[Node 16](https://nodejs.org/en/) Important ! Blocking issue for the CI with Node 18**
+- **[Docker](https://www.docker.com/) Important ! Needed for E2E local tests**
 
-We plan to refactor a lot of things in the next release. (Vue3 / ~~Vite~~ / Vuetify 3 / Pinia etc.)
+We plan to refactor a lot of things in the next release. (Vue3 / Vuetify 3 / Pinia etc.)
 
-### CasperHolders is not affiliated with CasperNetwork / CasperAssociation.This is a project from a community member.
+### CasperHolders is not affiliated with CasperNetwork / CasperAssociation. This is a project from a community member.
 
 This project contains the sources files for the CasperHolders website.
 
@@ -49,7 +51,7 @@ pnpm dev
 
 ### !! Important !!
 
-In order to run correctly the tests locally create a file name .env.local with the following content :
+In order to run correctly the tests locally create a file name .env.e2e.local with the following content :
 
 ```
 VITE_APP_FAKE_KEY="<TestnetPrivateKeyWithoutPem>"
@@ -57,19 +59,33 @@ VITE_APP_FAKE_VALIDATOR_KEY="<TestnetValidatorPrivateKeyWithoutPem>"
 VITE_APP_FAKE_MULTISIG_KEY="<TestnetMultiSigPrivateKeyWithoutPem>"
 VITE_APP_FAKE_SECOND_MULTISIG_KEY="<TestnetSecondMultisigPrivateKeyWithoutPem>"
 VITE_APP_E2E=true
+
+VITE_APP_FAKE_KEY="<TestnetPrivateKeyWithoutPem>" # will enable you to test all users interactions (Transfer / Stake / Unstake)  
+VITE_APP_FAKE_PUBLIC_KEY="<TestnetPublicKeyHex>" # for ease of use if needed
+VITE_APP_FAKE_VALIDATOR_KEY="<TestnetPrivateKeyWithoutPem>" # will enable you to test all validators operations (Add & Withdraw bid)
+VITE_APP_FAKE_VALIDATOR_PUBLIC_KEY="<TestnetPublicKeyHex>" # for ease of use if needed
+VITE_APP_FAKE_MULTISIG_KEY="<TestnetPrivateKeyWithoutPem>" # main test multisig account.
+VITE_APP_FAKE_MULTISIG_PUBLIC_KEY="<TestnetPublicKeyHex>" # for ease of use if needed
+VITE_APP_FAKE_SECOND_MULTISIG_KEY="<TestnetPrivateKeyWithoutPem>" # authorized key for the multisig account
+VITE_APP_FAKE_SECOND_MULTISIG_PUBLIC_KEY="<TestnetPublicKeyHex>" # for ease of use if needed
+VITE_APP_AUCTION_MANAGER_HASH=<SystemContractAuctionHash> # Set automatically with the .github/data/setupNetwork.sh
+VITE_APP_RPC=http://localhost:11100/http://mynctl:11101/rpc
+VITE_APP_EVENTS=http://localhost:11100/http://mynctl:18101/events/main?start_from=0
+VITE_APP_API=http://localhost:19101
+VITE_APP_DATA_API=http://localhost:3000
+VITE_APP_E2E=true # tell the app to run in E2E mode and will bypass the casper signer to use a local signer with the fake keys provided.
+# Check the globalPlugin.js to see how it works.  
+VITE_COVERAGE=true
 ```
 
-The first env variable will enable you to test all users interactions (Transfer / Stake / Unstake)  
-The second env variable will enable you to test all validators operations (Add & Withdraw bid)  
-The third env variable will be a main test multisig account.
-The fourth env variable will be an authorized key for the multisig account.
-The last one will tell the app to run in E2E mode and will bypass the casper signer to use a local signer with the fake keys provided.  
-Check the globalPlugin.js to see how it works.  
-Only the positive path for sending smart contract is not tested. See issue #10
-
 ### Run tests
+#### Prerequisites
 ```bash
-pnpm vite --port 8080
+pnpm config set enable-pre-post-scripts true 
+```
+
+```bash
+pnpm e2e
 pnpm test:e2e
 ```
 
@@ -123,28 +139,21 @@ The nginx reverse proxy configuration **is not open source** as this simple to d
 ## CasperHolders Core
 Contains almost all the CasperHolders logic. [Link](https://github.com/casperholders/casperholderscore)
 
-## CasperData
+## CasperParser
 
 Parse the whole blockchain into a database.
 
-This is used to retrieve users operations and calculate the APY faster on the API. [Link](https://github.com/casperholders/casperdata)
+This is used to retrieve users operations / smart contracts and calculate the APY faster on the API. [Link](https://github.com/casperholders/casperparser)
 
 ## CasperHolders API
 
 [Link](https://github.com/casperholders/casperholdersapi)
 
-Only contains 5 endpoints to generate and consume prometheus metrics from operations that are done on the CasperHolders Website
-and also retrieve validator metadata and the APY on the network.
+Used to retrieve validator metadata, the APY on the network and store multisig deploys.
 
-This API is useless if you don't need / want metrics.
-
-The frontend can work flawlessly without the API. 
-
-It will not impact any feature (Except the metrics graph on the front page) on the website.
+Can impact the metrics graph on the front page on the website and the ability to send/retrieve multisigs.
 
 You may get some errors in the javascript console by not providing the API url.
-
-Maybe in the future this API will contain more features.
     
 # Notes
 (* Every component hosted on casperholders.io is Open Source and every component hosted on casperholders.com is Closed Source)

@@ -5,13 +5,93 @@
       :advanced="advanced"
     />
     <AppBar :links="links" />
-    <v-main>
-      <div id="wave">
-        <img
-          :src="wavesSvg"
-          alt=""
+    <svg
+      id="waveSvg"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      x="0px"
+      y="0px"
+      width="100%"
+      height="100vh"
+      viewBox="0 0 1600 900"
+      preserveAspectRatio="xMidYMax slice"
+    >
+      <defs>
+        <linearGradient id="bg">
+          <stop
+            offset="0%"
+            style="stop-color:rgba(114, 222, 255, 0.06)"
+          />
+          <stop
+            offset="50%"
+            style="stop-color:rgba(114, 222, 255, 0.4)"
+          />
+          <stop
+            offset="100%"
+            style="stop-color:rgba(114, 222, 255, 0.2)"
+          />
+        </linearGradient>
+        <path
+          id="wave"
+          fill="url(#bg)"
+          d="M-363.852,502.589c0,0,236.988-41.997,505.475,0
+  s371.981,38.998,575.971,0s293.985-39.278,505.474,5.859s493.475,
+  48.368,716.963-4.995v560.106H-363.852V502.589z"
+        />
+      </defs>
+      <g>
+        <use
+          xlink:href="#wave"
+          opacity=".3"
         >
-      </div>
+          <animateTransform
+            attributeName="transform"
+            attributeType="XML"
+            type="translate"
+            dur="20s"
+            calcMode="spline"
+            values="270 230; -334 180; 270 230"
+            keyTimes="0; .5; 1"
+            keySplines="0.42, 0, 0.58, 1.0;0.42, 0, 0.58, 1.0"
+            repeatCount="indefinite"
+          />
+        </use>
+        <use
+          xlink:href="#wave"
+          opacity=".6"
+        >
+          <animateTransform
+            attributeName="transform"
+            attributeType="XML"
+            type="translate"
+            dur="16s"
+            calcMode="spline"
+            values="-270 230;243 220;-270 230"
+            keyTimes="0; .6; 1"
+            keySplines="0.42, 0, 0.58, 1.0;0.42, 0, 0.58, 1.0"
+            repeatCount="indefinite"
+          />
+        </use>
+        <use
+          xlink:href="#wave"
+          opacty=".9"
+        >
+          <animateTransform
+            attributeName="transform"
+            attributeType="XML"
+            type="translate"
+            dur="12s"
+            calcMode="spline"
+            values="0 230;-140 200;0 230"
+            keyTimes="0; .4; 1"
+            keySplines="0.42, 0, 0.58, 1.0;0.42, 0, 0.58, 1.0"
+            repeatCount="indefinite"
+          />
+        </use>
+      </g>
+    </svg>
+    <v-main>
       <v-container class="app__wrapper container__small">
         <v-alert
           v-if="impersonatePublicKey"
@@ -75,22 +155,21 @@
 </template>
 
 <script>
-import wavesSvg from '@/assets/images/waves.svg';
 import AppBar from '@/components/layout/AppBar';
 import NavigationDrawer from '@/components/layout/NavigationDrawer';
 import {
   mdiAccount,
   mdiConnection,
   mdiFileDocumentEdit,
-  mdiGavel,
-  mdiWallet,
-  mdiSend,
-  mdiKey,
-  mdiImageFrame,
-  mdiSafe,
-  mdiLockOpen,
   mdiFire,
+  mdiGavel,
+  mdiImageFrame,
+  mdiKey,
+  mdiLockOpen,
+  mdiSafe,
+  mdiSend,
   mdiShopping,
+  mdiWallet,
 } from '@mdi/js';
 import { mapState } from 'vuex';
 
@@ -103,12 +182,6 @@ import { mapState } from 'vuex';
 export default {
   name: 'App',
   components: { AppBar, NavigationDrawer },
-  data: () => ({
-    wavesSvg,
-    /**
-     * Links with their associated text & icons to be displayed in the appbar and navigation drawer
-     */
-  }),
   computed: {
     ...mapState(['signerType', 'impersonatePublicKey']),
     advanced() {
@@ -233,6 +306,7 @@ export default {
   .v-avatar > .v-icon {
     border-radius: 0 !important;
   }
+
   .cspr {
     font-family: "Eczar", "Roboto", Helvetica, Arial, sans-serif;
     font-weight: bold;
@@ -244,34 +318,21 @@ export default {
 
     background-color: #00126b;
 
-    &::before {
-      content: " ";
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      background-color: #00126b;
-      background-image: url("@/assets/images/background.svg");
-      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.2));
-      background-size: cover;
-      will-change: transform;
-    }
-
     .app__wrapper {
       position: relative;
       z-index: 1;
     }
   }
 
-  #wave {
+  #waveSvg {
     position: fixed;
-    z-index: 0;
-    height: 100%;
-    left: 0;
-    right: 0;
     top: 0;
-    transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1) left;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    box-sizing: border-box;
+    display: block;
+    background-color: #00126b;
   }
 
   a {
