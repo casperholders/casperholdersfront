@@ -4,7 +4,7 @@
       :icon="mdiSafe"
       title="Staking detail"
     />
-    <card-horizontal-list class="px-6 pb-4">
+    <card-horizontal-list>
       <template v-if="loading">
         <balance-amount-card
           v-for="index in 3"

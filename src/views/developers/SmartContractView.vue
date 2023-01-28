@@ -28,15 +28,15 @@
 
     <v-tabs-items v-model="tab">
       <v-tab-item>
-        <card-horizontal-list class="py-3 justify-space-around">
+        <card-horizontal-list>
           <contract-card
             v-for="(c, i) in contracts"
             :key="i"
-            style="max-width: 400px"
             :title="c.title"
             :description="c.description"
             :github-url="c.githubUrl"
             :icon="c.icon"
+            class="contract-card"
           >
             <template #actions>
               <v-card-actions
@@ -219,11 +219,11 @@ import {
 import { mapGetters, mapState } from 'vuex';
 
 /**
-   * SmartContract view
-   * Contains two fields
-   * - Amount of fee to deploy the smartcontract
-   * - File input for the wasm smart contract
-   */
+ * SmartContract view
+ * Contains two fields
+ * - Amount of fee to deploy the smartcontract
+ * - File input for the wasm smart contract
+ */
 export default {
   name: 'SmartContractView',
   components: {
@@ -419,8 +419,8 @@ export default {
       }
     },
     /**
-       * Read the file selected by the user
-       */
+     * Read the file selected by the user
+     */
     contract() {
       const reader = new FileReader();
 
@@ -446,8 +446,8 @@ export default {
   },
   methods: {
     /**
-       * Get the user balance
-       */
+     * Get the user balance
+     */
     async getBalance() {
       this.loadingBalance = true;
       this.errorBalance = null;
@@ -463,10 +463,10 @@ export default {
       this.loadingBalance = false;
     },
     /**
-       * Method used by the OperationDialog component when the user confirm the operation.
-       * Use the prepareSignAndSendDeploy method from the core library
-       * Update the store with a deploy result containing the deployhash of the deploy sent
-       */
+     * Method used by the OperationDialog component when the user confirm the operation.
+     * Use the prepareSignAndSendDeploy method from the core library
+     * Update the store with a deploy result containing the deployhash of the deploy sent
+     */
     async sendDeploy() {
       const args = {};
       this.args.forEach((a) => {
@@ -512,6 +512,11 @@ export default {
 <style>
     .v-slide-group__next--disabled, .v-slide-group__prev--disabled {
         display: none !important;
+    }
+
+    .contract-card {
+        min-width: 350px;
+        width: 350px;
     }
 
     .card-actions {
