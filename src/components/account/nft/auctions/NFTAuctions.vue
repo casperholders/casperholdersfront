@@ -215,8 +215,6 @@ export default {
                 return undefined;
               }),
             );
-            console.log(i);
-            console.log(tokenId);
           }
         }
         this.nfts.push(...((await Promise.all(promises)).filter((n) => n)));

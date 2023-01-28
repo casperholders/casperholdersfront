@@ -5,7 +5,7 @@
   >
     <v-card
       color="primary"
-      class="mx-5 fill-height position-relative"
+      class="ma-2 fill-height position-relative"
       min-width="200"
       max-width="200"
       min-height="200"

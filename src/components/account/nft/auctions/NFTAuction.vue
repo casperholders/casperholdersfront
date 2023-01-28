@@ -469,7 +469,6 @@ export default {
     },
     async fetchAuctionInfos() {
       this.loadingAuctionInfos = true;
-      console.log(await this.getInitialValue('english_format'));
       const format = (await this.getInitialValue('english_format')) ? 'English' : 'Dutch';
       const marketplace = `account-hash-${await this.getInitialValue('marketplace_account')}`;
       const marketplaceCommission = await this.getInitialValue('marketplace_commission');

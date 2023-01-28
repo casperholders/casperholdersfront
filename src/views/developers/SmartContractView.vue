@@ -28,10 +28,11 @@
 
     <v-tabs-items v-model="tab">
       <v-tab-item>
-        <card-horizontal-list class="pa-4">
+        <card-horizontal-list class="py-3 justify-space-around">
           <contract-card
             v-for="(c, i) in contracts"
             :key="i"
+            style="max-width: 400px"
             :title="c.title"
             :description="c.description"
             :github-url="c.githubUrl"
@@ -39,7 +40,7 @@
           >
             <template #actions>
               <v-card-actions
-                class="mt-auto"
+                class="mt-auto justify-space-between"
               >
                 <a
                   :href="c.downloadUrl"
@@ -47,7 +48,6 @@
                   :data-cy="`download-${c.title}`"
                 >
                   <v-btn
-                    class="flex-grow-1 flex-shrink-1"
                     color="secondary"
                     rounded
                   >
@@ -56,7 +56,6 @@
                 </a>
                 <v-btn
                   :data-cy="`setArgs-${c.title}`"
-                  class="flex-grow-1 flex-shrink-1"
                   color="secondary"
                   rounded
                   @click="args = c.args"

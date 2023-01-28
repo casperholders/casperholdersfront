@@ -205,8 +205,6 @@ export default {
       const options = this.signerOptionsFactory.getOptionsForOperations();
       this.errorDeploy = null;
       this.loadingSignAndDeploy = true;
-      console.log(this.activeKey);
-      console.log(this.signer.activeKey);
       const result = await genericSendDeploy(
         this.internet,
         this.activeKey,
