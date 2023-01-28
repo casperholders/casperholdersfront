@@ -62,7 +62,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -96,7 +96,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [ 1, 2, 3 ]
+        containers: [ 1, 2, 3, 4 ]
     steps:
       - uses: actions/checkout@v3
 
@@ -116,7 +116,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -141,6 +141,7 @@ jobs:
           command: pnpm cy2 run --parallel --browser chrome --record --key test --ci-build-id test
           start: pnpm vite preview --port 8080
           wait-on: http://localhost:8080
+          wait-on-timeout: 240
         env:
           CYPRESS_API_URL: https://director.test.casperholders.io/
           NODE_OPTIONS: --max-old-space-size=8192
@@ -179,7 +180,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: 'pnpm'
 
       - name: Install dependencies
