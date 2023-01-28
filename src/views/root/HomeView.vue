@@ -30,7 +30,7 @@
           large
           left
         >
-          mdi-download
+          {{ mdiDownload }}
         </v-icon>
         Download Casper Signer
       </v-btn>
@@ -41,7 +41,7 @@
       >
         <template #activator="{ on, attrs }">
           <v-btn
-            id="tutorial"
+            data-cy="tutorial"
             class="mb-8 mx-auto"
             color="secondary"
             large
@@ -54,14 +54,14 @@
               large
               left
             >
-              mdi-account-circle
+              {{ mdiAccountCircle }}
             </v-icon>
             CasperHolders tutorial
           </v-btn>
         </template>
 
         <v-card
-          id="tutorialDialog"
+          data-cy="tutorialDialog"
           class="rounded-xl primary"
         >
           <v-card-title class="text-h5">
@@ -71,7 +71,7 @@
           <v-card-text>
             <v-carousel
               hide-delimiter-background
-              delimiter-icon="mdi-minus"
+              :delimiter-icon="mdiMinus"
             >
               <v-carousel-item>
                 <v-row
@@ -186,7 +186,7 @@
                     After being connected you'll see a confirmation text just under this text.<br>
                     <template v-if="publicKey">
                       <v-icon color="green">
-                        mdi-checkbox-marked-circle
+                        {{ mdiCheckboxMarkedCircle }}
                       </v-icon>
                       Congrats ! You're connected
                     </template>
@@ -215,7 +215,7 @@
                             @click="copyPublicKey"
                             v-on="on"
                           >
-                            <v-icon>mdi-content-copy</v-icon>
+                            <v-icon>{{ mdiContentCopy }}</v-icon>
                           </v-btn>
                         </template>
 
@@ -235,7 +235,7 @@
                     </template>
                     <template v-else>
                       <v-icon color="red">
-                        mdi-alert-circle
+                        {{ mdiAlertCircle }}
                       </v-icon>
                       Oops... You don't seems to be connected or you don't have
                       selected an account.<br>
@@ -254,7 +254,7 @@
 
           <v-card-actions>
             <v-btn
-              id="closeTutorial"
+              data-cy="closeTutorial"
               color="quaternary"
               rounded
               @click="dialog = false"
@@ -283,7 +283,7 @@
         large
         left
       >
-        mdi-github
+        {{ mdiGithub }}
       </v-icon>
       Technical information
     </v-btn>
@@ -299,7 +299,7 @@
         large
         left
       >
-        mdi-swap-horizontal-bold
+        {{ mdiSwapHorizontalBold }}
       </v-icon>
       Switch to {{ swapNetworkName }}
     </v-btn>
@@ -308,12 +308,22 @@
 
 <script>
 
+import logoSvg from '@/assets/images/logo.svg';
 import FeaturesCards from '@/components/home/FeaturesCards';
 import MetricsCards from '@/components/home/MetricsCards';
 import RoadmapCard from '@/components/home/RoadmapCard';
 import { NETWORK } from '@/helpers/env';
+import {
+  mdiAccountCircle,
+  mdiAlertCircle,
+  mdiCheckboxMarkedCircle,
+  mdiContentCopy,
+  mdiDownload,
+  mdiGithub,
+  mdiMinus,
+  mdiSwapHorizontalBold,
+} from '@mdi/js';
 import { mapState } from 'vuex';
-import logoSvg from '@/assets/images/logo.svg';
 
 /**
  * Home view
@@ -324,6 +334,14 @@ export default {
   name: 'HomeView',
   components: { MetricsCards, RoadmapCard, FeaturesCards },
   data: () => ({
+    mdiAccountCircle,
+    mdiAlertCircle,
+    mdiCheckboxMarkedCircle,
+    mdiContentCopy,
+    mdiDownload,
+    mdiGithub,
+    mdiMinus,
+    mdiSwapHorizontalBold,
     logoSvg,
     carousel: 0,
     dialog: false,

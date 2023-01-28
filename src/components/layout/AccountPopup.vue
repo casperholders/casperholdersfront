@@ -5,14 +5,14 @@
   >
     <template #activator="{ on, attrs }">
       <v-btn
-        id="account"
+        data-cy="account"
         v-bind="attrs"
         icon
         aria-label="Account"
         v-on="on"
       >
         <v-icon dark>
-          mdi-account
+          {{ mdiAccount }}
         </v-icon>
       </v-btn>
     </template>
@@ -22,7 +22,7 @@
     >
       <v-card-title class="flex-nowrap">
         <v-icon left>
-          mdi-key
+          {{ mdiKey }}
         </v-icon>
         Account info
         <v-btn
@@ -31,7 +31,7 @@
           @click="closeDialog"
         >
           <v-icon>
-            mdi-close
+            {{ mdiClose }}
           </v-icon>
         </v-btn>
       </v-card-title>
@@ -63,13 +63,13 @@
             v-if="!copied"
             left
           >
-            mdi-content-copy
+            {{ mdiContentCopy }}
           </v-icon>
           <v-icon
             v-if="copied"
             left
           >
-            mdi-checkbox-marked-circle
+            {{ mdiCheckboxMarkedCircle }}
           </v-icon>
           <template v-if="!copied">
             Copy to clipboard
@@ -85,12 +85,12 @@
       </v-card-text>
       <v-card-actions class="d-block text-center">
         <v-btn
-          id="logout"
+          data-cy="logout"
           color="primary"
           @click="logout"
         >
           <v-icon left>
-            mdi-close
+            {{ mdiClose }}
           </v-icon>
           Logout
         </v-btn>
@@ -102,6 +102,7 @@
 <script>
 import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER, TORUS_SIGNER } from '@/helpers/signers';
 import { torusOptions } from '@/store';
+import { mdiAccount, mdiCheckboxMarkedCircle, mdiClose, mdiContentCopy, mdiKey } from '@mdi/js';
 import QrcodeVue from 'qrcode.vue';
 import { mapState } from 'vuex';
 
@@ -114,6 +115,11 @@ export default {
     QrcodeVue,
   },
   data: () => ({
+    mdiAccount,
+    mdiKey,
+    mdiClose,
+    mdiContentCopy,
+    mdiCheckboxMarkedCircle,
     accountDialog: false,
     copied: false,
   }),

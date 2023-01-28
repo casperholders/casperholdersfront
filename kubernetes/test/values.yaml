@@ -1,0 +1,20 @@
+casperNetwork: net-1
+
+casperparser:
+  rpc: "http://mynctl-service:11101/rpc"
+  events: "http://mynctl-service:18101/events/main"
+
+postgres:
+  volume:
+    enabled: false
+
+asynqmon:
+  metrics:
+    enabled: false
+
+traefik:
+  certmanager:
+    domain: data.net1.casperholders.com
+
+cron:
+  enabled: false

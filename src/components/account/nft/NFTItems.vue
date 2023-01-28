@@ -1,7 +1,7 @@
 <template>
   <div data-cy="nft-balance">
     <card-section-title
-      icon="mdi-account"
+      :icon="mdiAccount"
       title="My NFTs"
     >
       <template #action>
@@ -17,7 +17,7 @@
               v-on="on"
             >
               <v-icon>
-                mdi-plus
+                {{ mdiPlus }}
               </v-icon>
             </v-btn>
           </template>
@@ -42,7 +42,7 @@
               class="rounded-xl"
             >
               <v-icon left>
-                mdi-plus
+                {{ mdiPlus }}
               </v-icon>
               Add NFT
             </v-btn>
@@ -50,36 +50,15 @@
         </template>
       </add-n-f-t-dialog>
       <template
-        v-for="t in tokens.filter((t) => t.groupId === 'nftcep78')"
-      >
-        <n-f-t-c-e-p78-slide-group
-          :key="t.id"
-          :name="t.shortName + ' - ' + t.name"
-          :contract-hash="[t.id]"
-          style="width: 100%"
-          :metadata-uref="t.metadata"
-          :named-keys="t.namedKeys"
-          @delete="onRemoveNft"
-        />
-      </template>
-      <template
-        v-for="t in tokens.filter((t) => t.groupId === 'nftcep47')"
+        v-for="t in tokens"
       >
         <n-f-t-slide-group
           :key="t.id"
-          :name="t.shortName + ' - ' + t.name"
+          :data-cy="`collection-${t.id}`"
+          :token="t"
           style="width: 100%"
-          :metadata-uref="t.metadata"
-          :contract-hash="[t.id]"
           @delete="onRemoveNft"
         />
-        <!--
-          todo
-          get
-          all
-          contract
-          hashes
-          -->
       </template>
     </div>
   </div>
@@ -88,10 +67,10 @@
 <script>
 import CardSectionTitle from '@/components/account/CardSectionTitle';
 import AddNFTDialog from '@/components/account/nft/AddNFTDialog';
-import NFTCEP78SlideGroup from '@/components/account/nft/NFTCEP78SlideGroup';
-import NFTSlideGroup from '@/components/account/nft/NFTSlideGroup';
+import NFTSlideGroup from '@/components/account/nft/NFTSlideGroup.vue';
 import fetchTokens from '@/services/tokens/fetchTokens';
 import useNftTrackedTokens from '@/services/tokens/useNftTrackedTokens';
+import { mdiAccount, mdiPlus } from '@mdi/js';
 import { mapState } from 'vuex';
 
 /**
@@ -101,11 +80,12 @@ export default {
   name: 'NFTItems',
   components: {
     NFTSlideGroup,
-    NFTCEP78SlideGroup,
     AddNFTDialog,
     CardSectionTitle,
   },
   data: () => ({
+    mdiAccount,
+    mdiPlus,
     loading: false,
     /**
      * The currently tracked tokens.
@@ -164,7 +144,6 @@ export default {
      * @param {object[]} tokens
      */
     onAddNft(tokens) {
-      console.log(tokens);
       const filteredTokens = tokens.filter((t) => !this.tokens.some(({ id }) => id === t.id));
       if (filteredTokens.length) {
         this.tokens.push(...filteredTokens);

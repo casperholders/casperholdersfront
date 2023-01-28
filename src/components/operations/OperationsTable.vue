@@ -1,5 +1,5 @@
 <template>
-  <div class="operations">
+  <div data-cy="operations">
     <v-data-table
       :headers="operationHeaders"
       :items="operations"
@@ -46,12 +46,12 @@
       <template #[`item.result`]="{ item }">
         <template v-if="item.result === true">
           <v-icon color="green">
-            mdi-checkbox-marked-circle
+            {{ mdiCheckboxMarkedCircle }}
           </v-icon>
         </template>
         <template v-else>
           <v-icon color="red">
-            mdi-alert-circle
+            {{ mdiAlertCircle }}
           </v-icon>
         </template>
       </template>
@@ -189,6 +189,7 @@ import { CSPR_LIVE_URL, DATA_API } from '@/helpers/env';
 import parseContentRange from '@/helpers/parseContentRange';
 import truncate from '@/helpers/strings/truncate';
 import { CurrencyUtils } from '@casperholders/core';
+import { mdiAlertCircle, mdiCheckboxMarkedCircle } from '@mdi/js';
 import { debounce } from 'chart.js/helpers';
 import { mapState } from 'vuex';
 
@@ -199,6 +200,8 @@ export default {
   name: 'OperationsTable',
   data() {
     return {
+      mdiCheckboxMarkedCircle,
+      mdiAlertCircle,
       operationHeaders: [
         { text: 'Hash', value: 'hash', sortable: false },
         { text: 'From', value: 'from', sortable: false },

@@ -1,10 +1,10 @@
 <template>
   <div>
     <card-section-title
-      icon="mdi-safe"
+      :icon="mdiSafe"
       title="Staking detail"
     />
-    <card-horizontal-list class="px-6 pb-4">
+    <card-horizontal-list>
       <template v-if="loading">
         <balance-amount-card
           v-for="index in 3"
@@ -60,6 +60,7 @@ import RewardCalculatorPanel from '@/components/chart/RewardCalculatorPanel';
 import balanceService from '@/helpers/balanceService';
 import { API } from '@/helpers/env';
 import truncate from '@/helpers/strings/truncate';
+import { mdiSafe } from '@mdi/js';
 import Big from 'big.js';
 import { mapState } from 'vuex';
 
@@ -70,6 +71,7 @@ export default {
   name: 'ValidatorsBalance',
   components: { RewardCalculatorPanel, CardHorizontalList, BalanceAmountCard, CardSectionTitle },
   data: () => ({
+    mdiSafe,
     loading: false,
     /**
      * The currently tracked validators.

@@ -1,0 +1,153 @@
+version: '3'
+
+services:
+  mynctl:
+    image: killianh/nctl:latest
+    container_name: mynctl
+    healthcheck:
+      test: [ "CMD", "/home/casper/casper-client-rs/target/release/casper-client", "get-block", "--node-address", "http://localhost:11101" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    ports:
+      - 11101-11105:11101-11105
+      - 14101-14105:14101-14105
+      - 18101-18105:18101-18105
+    environment:
+      PREDEFINED_ACCOUNTS: 'true'
+      MINIMUM_ROUND_EXPONENT: '12'
+      MAXIMUM_ROUND_EXPONENT: '14'
+      DEPLOY_DELAY: '5sec'
+  redisnctl:
+    image: redis:latest
+    container_name: redisnctl
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+  dbnctl:
+    image: postgres:latest
+    container_name: dbnctl
+    restart: always
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: 'trust'
+      POSTGRES_DB: 'api'
+  api:
+    image: killianh/casperholders:testnet-api
+    container_name: testnet-api
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://localhost:3000/validators/accountinfos", "||", "exit", "1"  ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    ports:
+      - 19101:3000
+    depends_on:
+      redisnctl:
+        condition: service_healthy
+      dbnctl:
+        condition: service_healthy
+      mynctl:
+        condition: service_healthy
+    environment:
+      CASPER_RPC_URL: 'http://mynctl:11101/rpc'
+      ORIGIN: 'http://localhost:8080'
+      DATA_API: 'https://data.testnet.casperholders.com'
+      NODE_ENV: 'production'
+      NETWORK: 'casper-net-1'
+      ACCOUNT_INFO_HASH: '2f36a35edcbaabe17aba805e3fae42699a2bb80c2e0c15189756fdc4895356f8'
+      ACCOUNT_INFO_PACKAGE: 'b37227b83822aba42c72e9ee441e681f102929d608c7acf28d4bc2024dca0215'
+      REDIS_HOST: 'redisnctl'
+      REDIS_PORT: 6379
+      DASHBOARD_PORT: 3001
+      DATABASE_URL: 'postgres://postgres@dbnctl:5432/api'
+  cors-anywhere:
+    image: killianh/cors-anywhere:latest
+    container_name: cors-anywhere
+    tty: true
+    environment:
+      PORT: 11100
+    ports:
+      - 11100:11100
+  dbparser:
+    image: postgres:latest
+    container_name: dbparser
+    restart: always
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: 'trust'
+      POSTGRES_DB: 'casperparser'
+  asynqmon:
+    depends_on:
+      redisnctl:
+        condition: service_healthy
+    image: hibiken/asynqmon
+    container_name: asynqmon
+    environment:
+      REDIS_ADDR: "redisnctl:6379"
+    ports:
+      - 8081:8080
+  postgrest:
+    depends_on:
+      dbparser:
+        condition: service_healthy
+      casperparser-client:
+        condition: service_started
+      casperparser-worker:
+        condition: service_started
+    image: postgrest/postgrest
+    container_name: postgrest
+    environment:
+      PGRST_DB_URI: "postgres://postgres@dbparser:5432/casperparser"
+      PGRST_DB_SCHEMA: "public"
+      PGRST_DB_ANON_ROLE: "web_anon"
+      PGRST_OPENAPI_MODE: "ignore-privileges"
+      PGRST_DB_MAX_ROWS: "100"
+    ports:
+      - 3000:3000
+  casperparser-client:
+    depends_on:
+      redisnctl:
+        condition: service_healthy
+      dbparser:
+        condition: service_healthy
+      mynctl:
+        condition: service_healthy
+    image: killianh/casperparser
+    volumes:
+      - ${PWD}/tests/e2e/fixtures/.casperParser.yaml:/root/.casperParser.yaml
+    command: client
+    container_name: casperparser-client
+    environment:
+      CASPER_PARSER_REDIS: "redisnctl:6379"
+      CASPER_PARSER_RPC: "http://mynctl:11101/rpc"
+      CASPER_PARSER_DATABASE: "postgres://postgres@dbparser:5432/casperparser?sslmode=disable"
+      CASPER_PARSER_EVENT: "http://mynctl:18101/events/main"
+  casperparser-worker:
+    depends_on:
+      redisnctl:
+        condition: service_healthy
+      dbparser:
+        condition: service_healthy
+      mynctl:
+        condition: service_healthy
+    image: killianh/casperparser
+    volumes:
+      - ${PWD}/tests/e2e/fixtures/.casperParser.yaml:/root/.casperParser.yaml
+    command: worker
+    container_name: casperparser-worker
+    environment:
+      CASPER_PARSER_REDIS: "redisnctl:6379"
+      CASPER_PARSER_RPC: "http://mynctl:11101/rpc"
+      CASPER_PARSER_DATABASE: "postgres://postgres@dbparser:5432/casperparser?sslmode=disable"
+      CASPER_PARSER_EVENT: "http://mynctl:18101/events/main"

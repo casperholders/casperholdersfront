@@ -6,7 +6,7 @@
   >
     <template #activator="{ on, attrs }">
       <v-btn
-        id="submitOperation"
+        data-cy="submitOperation"
         v-bind="attrs"
         :disabled="operationOnGoing || offline"
         :loading="operationOnGoing"
@@ -44,7 +44,7 @@
       </v-card-text>
       <v-card-actions class="pa-5">
         <v-btn
-          id="disagree"
+          data-cy="disagree"
           class="rounded-xl"
           color="secondary"
           @click="closePopup"
@@ -52,7 +52,7 @@
           Disagree
         </v-btn>
         <v-btn
-          id="agreeAndSign"
+          data-cy="agreeAndSign"
           :loading="loadingSignAndDeploy"
           class="rounded-xl ml-5"
           color="quaternary"

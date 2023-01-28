@@ -9,7 +9,9 @@
           color="primary"
           size="52"
         >
-          <v-icon>mdi-account</v-icon>
+          <v-icon size="24">
+            {{ mdiAccount }}
+          </v-icon>
         </v-avatar>
         <v-card-title class="pl-4">
           Privacy
@@ -115,7 +117,11 @@
           identifiable information may include, but is not limited to:
         </p>
         <ul>
-          <li>Usage Data - only on the Native Mobile application (Expo includes some libraries that access the Device ID see : <a href="https://docs.expo.dev/distribution/app-stores/PrivacyView.vue">here</a>) </li>
+          <li>
+            Usage Data - only on the Native Mobile application (Expo includes some libraries that
+            access the Device ID see :
+            <a href="https://docs.expo.dev/distribution/app-stores/PrivacyView.vue">here</a>)
+          </li>
           <li>None on the website</li>
         </ul>
         <h3>Usage Data</h3>
@@ -342,11 +348,14 @@
           </li>
           <li>
             <p>
-              By visiting this page on our website: <a
+              By visiting this page on our website:
+              <a
                 href="https://casperholders.io/contact"
                 rel="external nofollow noopener"
                 target="_blank"
-              >https://casperholders.io/contact</a>
+              >
+                https://casperholders.io/contact
+              </a>
             </p>
           </li>
         </ul>
@@ -357,10 +366,15 @@
 
 <script>
 
+import { mdiAccount } from '@mdi/js';
+
 /**
  * Privacy view
  */
 export default {
   name: 'PrivacyView',
+  data: () => ({
+    mdiAccount,
+  }),
 };
 </script>

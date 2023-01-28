@@ -8,6 +8,7 @@
     <v-col cols="12">
       <CLTypeInput
         :cl-type="keyClType"
+        data-cy="mapKeyType"
         type-prefix="Key "
         @cltype="mapValues = []; mapKeysType = $event; $emit('value', [mapKeysType, mapValuesType])"
       />
@@ -18,6 +19,7 @@
       />
       <CLTypeInput
         :cl-type="valueClType"
+        data-cy="mapValueType"
         type-prefix="Value "
         @cltype="mapValues = [];
                  mapValuesType = $event;
@@ -32,12 +34,14 @@
     <v-col
       v-for="index in mapValues.length"
       :key="index"
+      :data-cy="`mapValues-${index}`"
       cols="12"
     >
       <v-row>
         <v-col cols="11">
           Key Data
           <CLValueInput
+            data-cy="mapKeyValue"
             :cl-type="mapKeysType"
             :inner-option-type="optionKeyType"
             :hide-type="true"
@@ -45,6 +49,7 @@
           />
           Value Data
           <CLValueInput
+            data-cy="mapValueValue"
             :cl-type="mapValuesType"
             :inner-option-type="optionValueType"
             :hide-type="true"
@@ -61,7 +66,7 @@
             @click="mapValues.splice((index - 1), 1);"
           >
             <v-icon>
-              mdi-minus
+              {{ mdiMinus }}
             </v-icon>
           </v-btn>
         </v-col>
@@ -71,13 +76,14 @@
       <v-btn
         class="rounded-xl"
         color="primary"
+        data-cy="mapNewValue"
         fab
         dark
         small
         @click="mapValues.push({key: null, value: null})"
       >
         <v-icon>
-          mdi-plus
+          {{ mdiPlus }}
         </v-icon>
       </v-btn>
     </v-col>
@@ -86,6 +92,7 @@
 
 <script>
 import CLTypeInput from '@/components/forms/inputs/clvalues/CLTypeInput';
+import { mdiMinus, mdiPlus } from '@mdi/js';
 
 export default {
   name: 'CLValueMapInput',
@@ -104,6 +111,8 @@ export default {
   },
   data() {
     return {
+      mdiMinus,
+      mdiPlus,
       optionKeyType: null,
       optionValueType: null,
       mapKeysType: null,

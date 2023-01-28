@@ -7,16 +7,26 @@
     :send-deploy="sendDeploy"
     :type="type"
     :balance="balance"
-    icon="mdi-file-document-edit"
+    :icon="mdiFileDocumentEdit"
     submit-title="Deploy"
     title="Send smart contract"
   >
+    <v-text-field
+      color="white"
+      label="Contract Package Hash"
+      type="text"
+      :value="contractPackageHash"
+      :readonly="true"
+      data-cy="contractPackageHash"
+      required
+    />
     <v-text-field
       color="white"
       label="Contract Hash"
       type="text"
       :value="contractHash"
       :readonly="true"
+      data-cy="contractHash"
       required
     />
     <v-text-field
@@ -25,24 +35,28 @@
       type="text"
       :value="entrypoint"
       :readonly="true"
+      data-cy="entrypoint"
       required
     />
     <v-expansion-panels>
       <v-expansion-panel
         v-for="(item,i) in deployArgs"
-        :key="i"
+        :key="item.lid"
         class="mt-2"
         style="border: thin solid rgba(255, 255, 255, 0.12)"
+        :data-cy="`arg-panel-${item.name || i + 1}`"
       >
         <v-expansion-panel-header>Argument {{ item.name || i + 1 }}</v-expansion-panel-header>
         <v-expansion-panel-content>
           <Argument
             :arg-name="item.name"
             :cl-type="checkClType(item.cl_type)"
+            :data-cy="`arg-panel-content-${item.name || i + 1}`"
             @value="item.value = $event"
             @name="item.name = $event"
           />
           <v-btn
+            :data-cy="`arg-delete-${item.name || i + 1}`"
             color="error"
             rounded
             @click="deployArgs.splice(i, 1);"
@@ -57,7 +71,7 @@
         color="primary"
         class="mt-5"
         rounded
-        @click="deployArgs.push({})"
+        @click="onAddArgument"
       >
         Add argument
       </v-btn>
@@ -115,6 +129,7 @@
     </div>
     <v-alert
       v-if="errorBalance"
+      data-cy="errorBalance"
       class="mt-5"
       dense
       prominent
@@ -131,7 +146,7 @@
             @click="connectionRequest"
           >
             <v-icon left>
-              mdi-account-circle
+              {{ mdiAccountCircle }}
             </v-icon>
             Connect
           </v-btn>
@@ -155,6 +170,7 @@ import Argument from '@/components/forms/inputs/ArgumentInput';
 import Operation from '@/components/operations/OperationCard';
 import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
+import generateLid from '@/helpers/generateLid';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import {
   GenericContractDeployParameters,
@@ -162,6 +178,7 @@ import {
   NoActiveKeyError,
   SmartContractResult,
 } from '@casperholders/core';
+import { mdiAccountCircle, mdiFileDocumentEdit } from '@mdi/js';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -176,6 +193,10 @@ export default {
   name: 'GenericDeployOperation',
   components: { Argument, Amount, Operation },
   props: {
+    contractPackageHash: {
+      type: String,
+      required: true,
+    },
     contractHash: {
       type: String,
       required: true,
@@ -191,6 +212,8 @@ export default {
   },
   data() {
     return {
+      mdiFileDocumentEdit,
+      mdiAccountCircle,
       minPayment: 1,
       contract: [],
       amount: '1',
@@ -198,7 +221,7 @@ export default {
       errorBalance: null,
       loadingSignAndDeploy: false,
       errorDeploy: null,
-      loadingBalance: false,
+      loadingBalance: true,
       type: SmartContractResult.getName(),
       buffer: null,
       deployArgs: this.args,
@@ -256,6 +279,14 @@ export default {
     });
   },
   methods: {
+    /**
+     * Add a new arg to the list.
+     */
+    onAddArgument() {
+      this.deployArgs.push({
+        lid: generateLid(this.deployArgs.map(({ lid }) => lid)),
+      });
+    },
     /**
      * Get the user balance
      */

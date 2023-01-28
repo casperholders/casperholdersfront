@@ -2,14 +2,23 @@ import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
 import convertErc20AmountToMotes from '@/services/tokens/convertErc20AmountToMotes';
 import {
-  Erc20Transfer,
   Erc20Approve,
-  UniswapErc20Transfer,
-  UniswapErc20Approve,
-  Erc20TransferResult,
   Erc20ApproveResult,
+  Erc20Transfer,
+  Erc20TransferResult,
+  NftApprove,
+  NftApproveResult,
+  NftBurn,
+  NftBurnResult,
+  NftCEP78Approve,
+  NftCEP78Burn,
+  NftCEP78Transfer,
+  NftTransfer,
+  NftTransferResult,
   TransferDeployParameters,
   TransferResult,
+  UniswapErc20Approve,
+  UniswapErc20Transfer,
 } from '@casperholders/core';
 
 /**
@@ -48,7 +57,7 @@ export default {
         fetchBalance: (token) => balanceService.fetchBalanceOfErc20(token.id),
       },
       transfer: {
-        transferFee: 0.5,
+        transferFee: 2,
         transferResult: Erc20TransferResult,
         minimumAmount: (token) => (1 / (token.decimals ? (10 ** token.decimals) : 1)),
         transferID: false,
@@ -63,7 +72,7 @@ export default {
         ),
       },
       approve: {
-        approveFee: 0.4,
+        approveFee: 2,
         approveResult: Erc20ApproveResult,
         makeDeployParameters: (
           { activeKey, amount, address, token },
@@ -100,7 +109,7 @@ export default {
         ),
       },
       approve: {
-        approveFee: 4,
+        approveFee: 5,
         approveResult: Erc20ApproveResult,
         makeDeployParameters: (
           { activeKey, amount, address, token },
@@ -118,12 +127,88 @@ export default {
     id: 'nftcep47',
     name: 'Casper Standard NFT',
     features: {
+      transfer: {
+        transferFee: 11,
+        transferResult: NftTransferResult,
+        makeDeployParameters: (
+          { activeKey, tokenId, recipient, token },
+        ) => new NftTransfer(
+          activeKey,
+          tokenId,
+          recipient,
+          NETWORK,
+          token.id,
+        ),
+      },
+      burn: {
+        burnFee: 10,
+        burnResult: NftBurnResult,
+        makeDeployParameters: (
+          { activeKey, tokenId, token },
+        ) => new NftBurn(
+          activeKey,
+          tokenId,
+          NETWORK,
+          token.id,
+        ),
+      },
+      approve: {
+        approveFee: 1,
+        approveResult: NftApproveResult,
+        makeDeployParameters: (
+          { activeKey, tokenId, spender, token },
+        ) => new NftApprove(
+          activeKey,
+          tokenId,
+          spender,
+          NETWORK,
+          token.id,
+        ),
+      },
     },
   },
   nftcep78: {
     id: 'nftcep78',
     name: 'Casper Enhanced Standard NFT',
     features: {
+      transfer: {
+        transferFee: 6,
+        transferResult: NftTransferResult,
+        makeDeployParameters: (
+          { activeKey, tokenId, recipient, token },
+        ) => new NftCEP78Transfer(
+          activeKey,
+          tokenId,
+          recipient,
+          NETWORK,
+          token.id,
+        ),
+      },
+      burn: {
+        burnFee: 3,
+        burnResult: NftBurnResult,
+        makeDeployParameters: (
+          { activeKey, tokenId, token },
+        ) => new NftCEP78Burn(
+          activeKey,
+          tokenId,
+          NETWORK,
+          token.id,
+        ),
+      },
+      approve: {
+        approveFee: 1,
+        approveResult: NftApproveResult,
+        makeDeployParameters: (
+          { activeKey, tokenId, spender, token },
+        ) => new NftCEP78Approve(
+          activeKey,
+          tokenId,
+          spender,
+          NETWORK,
+          token.id,
+        ),
+      },
     },
   },
 };

@@ -16,7 +16,7 @@
       >
         <v-list-item-icon>
           <v-icon>
-            {{ minified ? 'mdi-chevron-right' : 'mdi-chevron-left' }}
+            {{ minified ? mdiChevronRight : mdiChevronLeft }}
           </v-icon>
         </v-list-item-icon>
         <v-list-item-content>
@@ -33,7 +33,7 @@
         exact
       >
         <v-list-item-icon>
-          <v-icon>mdi-home</v-icon>
+          <v-icon>{{ mdiHome }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>Home</v-list-item-title>
@@ -48,7 +48,7 @@
           exact
         >
           <v-list-item-icon>
-            <v-icon>mdi-swap-horizontal</v-icon>
+            <v-icon>{{ mdiSwapHorizontal }}</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title>Switch to {{ swapNetworkName }}</v-list-item-title>
@@ -63,7 +63,7 @@
         exact
       >
         <v-list-item-icon>
-          <v-icon>mdi-cog</v-icon>
+          <v-icon>{{ mdiCog }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>Settings</v-list-item-title>
@@ -135,7 +135,7 @@
         <template #activator="{ attrs, on }">
           <v-list-group
             v-bind="attrs"
-            prepend-icon="mdi-hammer-wrench"
+            :prepend-icon="mdiHammerWrench"
             v-on="on"
           >
             <template #activator>
@@ -175,7 +175,7 @@
                   small
                 >
                   <v-icon left>
-                    mdi-fire
+                    {{ mdiFire }}
                   </v-icon>
                   Beta
                 </v-chip>
@@ -194,6 +194,14 @@ import NavigationDrawerList from '@/components/layout/NavigationDrawerList';
 import NavigationDrawerListHeader from '@/components/layout/NavigationDrawerListHeader';
 import NavigationDrawerListItem from '@/components/layout/NavigationDrawerListItem';
 import { HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
+import {
+  mdiChevronLeft, mdiChevronRight,
+  mdiCog,
+  mdiFire,
+  mdiHammerWrench,
+  mdiHome,
+  mdiSwapHorizontal,
+} from '@mdi/js';
 
 /**
  * NavigationDrawer component
@@ -213,6 +221,13 @@ export default {
   },
   data() {
     return {
+      mdiChevronRight,
+      mdiChevronLeft,
+      mdiHome,
+      mdiSwapHorizontal,
+      mdiCog,
+      mdiHammerWrench,
+      mdiFire,
       minified: false,
       drawer: !this.$vuetify.breakpoint.mobile,
       HUMAN_READABLE_NETWORK,

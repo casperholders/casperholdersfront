@@ -7,7 +7,7 @@
       v-if="isLedgerConnected"
       color="warning"
       dense
-      icon="mdi-alert"
+      :icon="mdiAlert"
       class="mx-5"
     >
       You're connected with ledger. You can't deploy new smart contract.
@@ -21,14 +21,14 @@
       <v-tab :disabled="isLedgerConnected">
         New Smart Contract
       </v-tab>
-      <v-tab>
+      <v-tab data-cy="manageSmartContract">
         Manage smart contract
       </v-tab>
     </v-tabs>
 
     <v-tabs-items v-model="tab">
       <v-tab-item>
-        <card-horizontal-list class="pa-4">
+        <card-horizontal-list>
           <contract-card
             v-for="(c, i) in contracts"
             :key="i"
@@ -36,15 +36,18 @@
             :description="c.description"
             :github-url="c.githubUrl"
             :icon="c.icon"
+            class="contract-card"
           >
             <template #actions>
-              <v-card-actions class="mt-auto">
+              <v-card-actions
+                class="mt-auto justify-space-between"
+              >
                 <a
                   :href="c.downloadUrl"
                   download
+                  :data-cy="`download-${c.title}`"
                 >
                   <v-btn
-                    class="flex-grow-1 flex-shrink-1"
                     color="secondary"
                     rounded
                   >
@@ -52,10 +55,10 @@
                   </v-btn>
                 </a>
                 <v-btn
-                  class="flex-grow-1 flex-shrink-1"
+                  :data-cy="`setArgs-${c.title}`"
                   color="secondary"
                   rounded
-                  @click="args = c.args"
+                  @click="onSetArguments(c.args)"
                 >
                   Set arguments
                 </v-btn>
@@ -71,7 +74,7 @@
           :send-deploy="sendDeploy"
           :type="type"
           :balance="balance"
-          icon="mdi-file-document-edit"
+          :icon="mdiFileDocumentEdit"
           submit-title="Deploy"
           title="Send smart contract"
         >
@@ -85,7 +88,7 @@
             label="Smart Contracts"
             outlined
             placeholder="Select your contracts"
-            prepend-icon="mdi-paperclip"
+            :prepend-icon="mdiPaperclip"
           >
             <template #selection="{ text }">
               {{ text }}
@@ -94,7 +97,8 @@
           <v-expansion-panels>
             <v-expansion-panel
               v-for="(item,i) in args"
-              :key="i"
+              :key="item.lid"
+              :data-cy="`arg-panel-${item.name || i + 1}`"
               class="mt-2"
               style="border: thin solid rgba(255, 255, 255, 0.12)"
             >
@@ -103,10 +107,12 @@
                 <Argument
                   :arg-name="item.name"
                   :cl-type="item.type"
+                  :data-cy="`arg-panel-content-${item.name || i + 1}`"
                   @value="item.value = $event"
                   @name="item.name = $event"
                 />
                 <v-btn
+                  :data-cy="`arg-delete-${item.name || i + 1}`"
                   color="error"
                   rounded
                   @click="args.splice(i, 1);"
@@ -121,7 +127,7 @@
               color="primary"
               class="mt-5"
               rounded
-              @click="args.push({})"
+              @click="onAddArgument"
             >
               Add argument
             </v-btn>
@@ -134,51 +140,16 @@
             class="mb-4"
             @input="amount = $event"
           />
-          <div class="mx-n1">
-            <v-row
-              class="white-bottom-border"
-            >
-              <v-col>Payment amount for the smart contract</v-col>
-              <v-col class="text-right cspr">
-                {{ amount }} CSPR
-              </v-col>
-            </v-row>
-            <v-row
-              class="white-bottom-border"
-            >
-              <v-col>Balance</v-col>
-              <v-col class="text-right cspr">
-                <template v-if="loadingBalance">
-                  Loading balance ...
-                  <v-progress-circular
-                    class="ml-3"
-                    color="white"
-                    indeterminate
-                    size="14"
-                  />
-                </template>
-                <template v-else>
-                  {{ balance }} CSPR
-                </template>
-              </v-col>
-            </v-row>
-            <v-row
-              class="white-bottom-border"
-            >
-              <v-col>Total cost</v-col>
-              <v-col class="text-right cspr">
-                {{ amount }} CSPR
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>Balance after operation</v-col>
-              <v-col class="text-right cspr">
-                {{ remainingBalance }} CSPR
-              </v-col>
-            </v-row>
-          </div>
+          <operation-summary
+            :balance-loading="loadingBalance"
+            :balance="balance"
+            :fee="Number(0)"
+            :amount="`-${amount}`"
+            class="mx-n1"
+          />
           <v-alert
             v-if="errorBalance"
+            data-cy="errorBalance"
             class="mt-5"
             dense
             prominent
@@ -195,7 +166,7 @@
                   @click="connectionRequest"
                 >
                   <v-icon left>
-                    mdi-account-circle
+                    {{ mdiAccountCircle }}
                   </v-icon>
                   Connect
                 </v-btn>
@@ -228,6 +199,7 @@ import Operation from '@/components/operations/OperationCard';
 import ManageStepper from '@/components/smartcontract/ManageStepper';
 import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
+import generateLid from '@/helpers/generateLid';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import { LEDGER_SIGNER } from '@/helpers/signers';
 import {
@@ -236,6 +208,15 @@ import {
   SmartContractDeployParameters,
   SmartContractResult,
 } from '@casperholders/core';
+import {
+  mdiAccountCircle,
+  mdiAlert,
+  mdiCircleMultiple,
+  mdiFileDocumentEdit,
+  mdiImage,
+  mdiImageFrame,
+  mdiPaperclip,
+} from '@mdi/js';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -246,9 +227,20 @@ import { mapGetters, mapState } from 'vuex';
  */
 export default {
   name: 'SmartContractView',
-  components: { CardHorizontalList, ContractCard, ManageStepper, Argument, Amount, Operation },
+  components: {
+    CardHorizontalList,
+    ContractCard,
+    ManageStepper,
+    Argument,
+    Amount,
+    Operation,
+  },
   data() {
     return {
+      mdiAlert,
+      mdiFileDocumentEdit,
+      mdiPaperclip,
+      mdiAccountCircle,
       minPayment: 1,
       contract: [],
       amount: '1',
@@ -256,7 +248,7 @@ export default {
       errorBalance: null,
       loadingSignAndDeploy: false,
       errorDeploy: null,
-      loadingBalance: false,
+      loadingBalance: true,
       type: SmartContractResult.getName(),
       buffer: null,
       tab: 0,
@@ -266,7 +258,7 @@ export default {
           title: 'ERC20',
           githubUrl: 'https://github.com/casper-ecosystem/erc20',
           description: 'Casper Fungible Tokens (ERC-20 Standard)',
-          icon: 'mdi-circle-multiple',
+          icon: mdiCircleMultiple,
           downloadUrl: '/contracts/erc20_token.wasm',
           args: [
             {
@@ -291,7 +283,7 @@ export default {
           title: 'Uniswap ERC20',
           githubUrl: 'https://github.com/Rengo-Labs/CasperLabs-UniswapV2-Core/tree/main/erc20',
           description: 'ERC20 Implementation by Rengo Labs on Casper Network.',
-          icon: 'mdi-circle-multiple',
+          icon: mdiCircleMultiple,
           downloadUrl: '/contracts/uniswap_erc20_token.wasm',
           args: [
             {
@@ -324,7 +316,7 @@ export default {
           title: 'NFT CEP47',
           githubUrl: 'https://github.com/casper-ecosystem/casper-nft-cep47',
           description: 'CEP-47 is the NFT standard for the Casper blockchain. The equivalent NFT standard on Ethereum is ERC-721.',
-          icon: 'mdi-image',
+          icon: mdiImage,
           downloadUrl: '/contracts/cep47_token.wasm',
           args: [
             {
@@ -346,10 +338,10 @@ export default {
           ],
         },
         {
-          title: 'Enhanced NFT CEP78',
+          title: 'NFT CEP78',
           githubUrl: 'https://github.com/casper-ecosystem/cep-78-enhanced-nft',
           description: 'CEP-78: Enhanced NFT standard',
-          icon: 'mdi-image-frame',
+          icon: mdiImageFrame,
           downloadUrl: '/contracts/cep78_token.wasm',
           args: [
             {
@@ -455,6 +447,27 @@ export default {
   },
   methods: {
     /**
+     * Add a new arg to the list.
+     */
+    onAddArgument() {
+      this.args.push({
+        lid: generateLid(this.args.map(({ lid }) => lid)),
+      });
+    },
+    /**
+     * Set arguments.
+     *
+     * @param args
+     */
+    onSetArguments(args) {
+      const newArgs = [];
+      args.forEach((arg) => {
+        newArgs.push({ ...arg, lid: generateLid(newArgs) });
+      });
+
+      this.args = newArgs;
+    },
+    /**
      * Get the user balance
      */
     async getBalance() {
@@ -521,6 +534,11 @@ export default {
 <style>
     .v-slide-group__next--disabled, .v-slide-group__prev--disabled {
         display: none !important;
+    }
+
+    .contract-card {
+        min-width: 350px;
+        width: 350px;
     }
 
     .card-actions {

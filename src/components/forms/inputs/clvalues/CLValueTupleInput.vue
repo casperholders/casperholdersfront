@@ -27,7 +27,7 @@
             @click="removeTuple(index - 1)"
           >
             <v-icon>
-              mdi-minus
+              {{ mdiMinus }}
             </v-icon>
           </v-btn>
         </v-col>
@@ -44,7 +44,7 @@
         @click="addTupleValue()"
       >
         <v-icon>
-          mdi-plus
+          {{ mdiPlus }}
         </v-icon>
       </v-btn>
     </v-col>
@@ -52,6 +52,8 @@
 </template>
 
 <script>
+
+import { mdiMinus, mdiPlus } from '@mdi/js';
 
 export default {
   name: 'CLValueTupleInput',
@@ -64,6 +66,8 @@ export default {
   },
   data() {
     return {
+      mdiMinus,
+      mdiPlus,
       tupleValues: [''],
     };
   },

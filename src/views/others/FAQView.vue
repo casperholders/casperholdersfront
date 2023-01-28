@@ -8,7 +8,9 @@
         color="primary"
         size="52"
       >
-        <v-icon>mdi-help</v-icon>
+        <v-icon size="24">
+          {{ mdiHelp }}
+        </v-icon>
       </v-avatar>
       <v-card-title
         class="pl-4"
@@ -76,10 +78,15 @@
 </template>
 
 <script>
+import { mdiHelp } from '@mdi/js';
+
 /**
  * FAQ View
  */
 export default {
   name: 'FAQView',
+  data: () => ({
+    mdiHelp,
+  }),
 };
 </script>

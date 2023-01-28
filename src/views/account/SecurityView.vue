@@ -5,7 +5,7 @@
     :type="type"
     :balance="balance"
     :fee="keyManagementFee"
-    icon="mdi-key"
+    :icon="mdiKey"
     submit-title="Set security settings"
     title="Security"
     :beta="true"
@@ -25,7 +25,7 @@
     >
       <v-card-title>
         <v-icon left>
-          mdi-shield-key
+          {{ mdiShieldKey }}
         </v-icon>
         Threshold settings
       </v-card-title>
@@ -40,6 +40,7 @@
             <v-text-field
               v-model="keyManagementThreshold"
               :value="keyManagementThreshold"
+              data-cy="keyManagementThreshold"
               color="white"
               label="Key management threshold"
               type="number"
@@ -54,7 +55,7 @@
                 >
                   <template #activator="{ on }">
                     <v-icon v-on="on">
-                      mdi-help-circle-outline
+                      {{ mdiHelpCircleOutline }}
                     </v-icon>
                   </template>
                   Minimum weight needed to make key management operations
@@ -69,6 +70,7 @@
             <v-text-field
               v-model="deployThreshold"
               :value="deployThreshold"
+              data-cy="deployThreshold"
               color="white"
               label="Deploy threshold"
               type="number"
@@ -83,7 +85,7 @@
                 >
                   <template #activator="{ on }">
                     <v-icon v-on="on">
-                      mdi-help-circle-outline
+                      {{ mdiHelpCircleOutline }}
                     </v-icon>
                   </template>
                   Minimum weight needed to perform deployments
@@ -101,12 +103,15 @@
     >
       <v-card-title>
         <v-icon left>
-          mdi-key-chain
+          {{ mdiKeyChain }}
         </v-icon>
         Authorized keys
       </v-card-title>
       <v-list>
-        <template v-if="loadingKeyInfo">
+        <div
+          v-if="loadingKeyInfo"
+          data-cy="loadingKeyInfo"
+        >
           Loading key info ...
           <v-progress-circular
             class="ml-3"
@@ -114,7 +119,7 @@
             indeterminate
             size="14"
           />
-        </template>
+        </div>
         <v-list-item
           v-for="(authorizedInput, index) in authorizedInputs"
           :key="index"
@@ -138,7 +143,7 @@
           @click="onAdd"
         >
           <v-icon left>
-            mdi-plus
+            {{ mdiPlus }}
           </v-icon>
           Add key
         </v-btn>
@@ -152,7 +157,7 @@
           @click="resetKeyInfos"
         >
           <v-icon left>
-            mdi-refresh
+            {{ mdiRefresh }}
           </v-icon>
           Reset
         </v-btn>
@@ -165,7 +170,7 @@
     >
       <v-card-title>
         <v-icon left>
-          mdi-clipboard-list
+          {{ mdiClipboardList }}
         </v-icon>
         Summary
       </v-card-title>
@@ -346,7 +351,7 @@
             @click="connectionRequest"
           >
             <v-icon left>
-              mdi-account-circle
+              {{ mdiAccountCircle }}
             </v-icon>
             Connect
           </v-btn>
@@ -397,8 +402,18 @@ import {
   KeyManagementResult,
   NoActiveKeyError,
 } from '@casperholders/core';
+import {
+  mdiAccountCircle,
+  mdiClipboardList,
+  mdiHelpCircleOutline,
+  mdiKey,
+  mdiKeyChain,
+  mdiPlus,
+  mdiRefresh,
+  mdiShieldKey,
+} from '@mdi/js';
 import Big from 'big.js';
-import { Buffer } from 'buffer';
+import { Buffer } from 'buffer/';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 
@@ -410,6 +425,14 @@ export default {
   components: { OperationSummary, OperationCard, AuthorizedKeyInput },
   data() {
     return {
+      mdiKey,
+      mdiShieldKey,
+      mdiHelpCircleOutline,
+      mdiKeyChain,
+      mdiPlus,
+      mdiRefresh,
+      mdiClipboardList,
+      mdiAccountCircle,
       keyManagementThreshold: '',
       deployThreshold: '',
       loadingKeyInfo: false,
@@ -421,7 +444,7 @@ export default {
       errorBalance: null,
       loadingSignAndDeploy: false,
       errorDeploy: null,
-      loadingBalance: false,
+      loadingBalance: true,
       type: KeyManagementResult.getName(),
       authorizedInputs: [],
       /**

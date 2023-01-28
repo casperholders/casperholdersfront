@@ -1,5 +1,6 @@
 import clientCasper from '@/helpers/clientCasper';
 import deployManager from '@/helpers/deployManager';
+import generateAsymmetricKey from '@/helpers/generateAsymmetricKey';
 import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER, TORUS_SIGNER } from '@/helpers/signers';
 import {
   KeyManagementResult,
@@ -9,7 +10,7 @@ import {
   CasperSigner,
 } from '@casperholders/core';
 import cloneDeep from 'lodash.clonedeep';
-import { CLPublicKey, Keys, Signer } from 'casper-js-sdk';
+import { CLPublicKey, Signer } from 'casper-js-sdk';
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -22,19 +23,6 @@ const debug = !import.meta.env.PROD;
 let randomKey;
 let validatorKey;
 let multiSigKeys;
-
-/**
- * Generate a random fake asymmetric key for E2E tests
- * @param fakeKey
- * @returns {AsymmetricKey}
- */
-function generateAsymmetricKey(fakeKey) {
-  const privateKey = Keys.Ed25519.parsePrivateKey(
-    Keys.Ed25519.readBase64WithPEM(fakeKey),
-  );
-  const publicKey = Keys.Ed25519.privateToPublicKey(privateKey);
-  return Keys.Ed25519.parseKeyPair(publicKey, privateKey);
-}
 
 /**
  * Store the casperApp if the user is connected with ledger

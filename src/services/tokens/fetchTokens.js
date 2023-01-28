@@ -24,6 +24,7 @@ const mapTokens = (dataTokens) => dataTokens.map((dataToken) => {
   const token = {
     groupId: dataToken.type,
     id: dataToken.hash,
+    package: dataToken.package,
     name: findNamedKey(dataToken.named_keys, 'name', 'name')?.initial_value || findNamedKey(dataToken.named_keys, 'name', 'collection_name')?.initial_value,
     shortName: findNamedKey(dataToken.named_keys, 'name', 'symbol')?.initial_value || findNamedKey(dataToken.named_keys, 'name', 'collection_symbol')?.initial_value,
   };
@@ -33,7 +34,9 @@ const mapTokens = (dataTokens) => dataTokens.map((dataToken) => {
   if (token.groupId.includes('nft')) {
     token.namedKeys = dataToken.named_keys;
     if (token.groupId.includes('nftcep47')) {
-      token.metadata = findNamedKey(dataToken.named_keys, 'name', 'metadata')?.uref;
+      token.metadata = 'metadata';
+      token.canBeTransferred = true;
+      token.canBeBurned = true;
     }
     if (token.groupId.includes('nftcep78')) {
       const metadataKind = findNamedKey(dataToken.named_keys, 'name', 'nft_metadata_kind')?.initial_value;
@@ -52,10 +55,11 @@ const mapTokens = (dataTokens) => dataTokens.map((dataToken) => {
           metadataNamedKey = 'metadata_custom_validated';
           break;
         default:
-          metadataNamedKey = '';
           break;
       }
-      token.metadata = findNamedKey(dataToken.named_keys, 'name', metadataNamedKey)?.uref;
+      token.canBeTransferred = findNamedKey(dataToken.named_keys, 'name', 'ownership_mode')?.initial_value === 2;
+      token.canBeBurned = findNamedKey(dataToken.named_keys, 'name', 'burn_mode')?.initial_value === 0;
+      token.metadata = metadataNamedKey;
     }
   }
   return token;

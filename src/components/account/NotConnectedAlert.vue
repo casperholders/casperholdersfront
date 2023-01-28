@@ -1,7 +1,10 @@
 <template>
   <v-alert type="error">
     <div class="d-flex flex-wrap flex-sm-nowrap">
-      <span class="mr-sm-2">
+      <span
+        data-cy="notConnected"
+        class="mr-sm-2"
+      >
         Not connected.
       </span>
       <v-btn
@@ -11,7 +14,7 @@
         @click="onConnectionRequest"
       >
         <v-icon left>
-          mdi-account-circle
+          {{ mdiAccountCircle }}
         </v-icon>
         {{ signer.lock ? 'Unlock' : 'Connect' }}
       </v-btn>
@@ -20,10 +23,14 @@
 </template>
 
 <script>
+import { mdiAccountCircle } from '@mdi/js';
 import { mapState } from 'vuex';
 
 export default {
   name: 'NotConnectedAlert',
+  data: () => ({
+    mdiAccountCircle,
+  }),
   computed: {
     ...mapState(['signer']),
   },

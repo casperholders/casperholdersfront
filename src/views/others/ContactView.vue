@@ -9,7 +9,9 @@
           color="primary"
           size="52"
         >
-          <v-icon>mdi-mail</v-icon>
+          <v-icon size="24">
+            {{ mdiMail }}
+          </v-icon>
         </v-avatar>
         <v-card-title class="pl-4">
           Contact
@@ -42,7 +44,7 @@
             dark
             left
           >
-            mdi-discord
+            {{ mdiPhone }}
           </v-icon>
           Join the discord
         </v-btn>
@@ -58,7 +60,7 @@
             dark
             left
           >
-            mdi-send
+            {{ mdiSend }}
           </v-icon>
           Join the Casper Telegram
         </v-btn>
@@ -74,7 +76,7 @@
             dark
             left
           >
-            mdi-send
+            {{ mdiSend }}
           </v-icon>
           Join the DEVxDAO Telegram
         </v-btn>
@@ -85,10 +87,17 @@
 
 <script>
 
+import { mdiMail, mdiSend, mdiPhone } from '@mdi/js';
+
 /**
  * Contact view
  */
 export default {
   name: 'ContactView',
+  data: () => ({
+    mdiMail,
+    mdiPhone,
+    mdiSend,
+  }),
 };
 </script>

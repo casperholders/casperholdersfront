@@ -19,7 +19,7 @@
               style="border-radius: 4px !important;"
               @click="model=1"
             >
-              <v-icon>mdi-chevron-double-left</v-icon>
+              <v-icon>{{ mdiChevronDoubleLeft }}</v-icon>
             </v-btn>
           </li>
           <li>
@@ -32,7 +32,7 @@
               style="border-radius: 4px !important;"
               @click="model--"
             >
-              <v-icon>mdi-chevron-left</v-icon>
+              <v-icon>{{ mdiChevronLeft }}</v-icon>
             </v-btn>
           </li>
           <li>
@@ -55,7 +55,7 @@
               style="border-radius: 4px !important;"
               @click="model++"
             >
-              <v-icon>mdi-chevron-right</v-icon>
+              <v-icon>{{ mdiChevronRight }}</v-icon>
             </v-btn>
           </li>
           <li>
@@ -68,7 +68,7 @@
               style="border-radius: 4px !important;"
               @click="model=max"
             >
-              <v-icon>mdi-chevron-double-right</v-icon>
+              <v-icon>{{ mdiChevronDoubleRight }}</v-icon>
             </v-btn>
           </li>
         </ul>
@@ -85,7 +85,7 @@
         type="number"
         min="1"
         :max="max"
-        :append-inner-icon="'mdi-arrow-right'"
+        :append-inner-icon="mdiArrowRight"
         density="compact"
         color="fff"
         :hint="`Page 1-${max}`"
@@ -99,6 +99,14 @@
 </template>
 
 <script>
+import {
+  mdiArrowRight,
+  mdiChevronDoubleLeft,
+  mdiChevronDoubleRight,
+  mdiChevronLeft,
+  mdiChevronRight,
+} from '@mdi/js';
+
 export default {
   name: 'PaginationComponent',
   props: {
@@ -116,6 +124,11 @@ export default {
   emits: ['update:modelValue'],
   data() {
     return {
+      mdiChevronDoubleLeft,
+      mdiChevronLeft,
+      mdiChevronRight,
+      mdiChevronDoubleRight,
+      mdiArrowRight,
       searchPage: '',
     };
   },

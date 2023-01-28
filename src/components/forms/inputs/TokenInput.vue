@@ -8,7 +8,7 @@
     :clearable="!isOnlyNativeToken"
     :filter="filter"
     :multiple="multiple"
-    prepend-icon="mdi-circle-multiple-outline"
+    :prepend-icon="mdiCircleMultipleOutline"
     label="Token"
     color="white"
     item-value="id"
@@ -96,6 +96,7 @@ import { DATA_API } from '@/helpers/env';
 import fetchTokens from '@/services/tokens/fetchTokens';
 import nativeToken from '@/services/tokens/nativeToken';
 import tokensGroups from '@/services/tokens/tokensGroups';
+import { mdiCircleMultipleOutline } from '@mdi/js';
 import { CLPublicKey } from 'casper-js-sdk';
 import { debounce } from 'chart.js/helpers';
 import { mapGetters } from 'vuex';
@@ -153,6 +154,7 @@ export default {
   },
   data() {
     return {
+      mdiCircleMultipleOutline,
       /**
        * Loading state for tokens fetching.
        */

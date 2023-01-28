@@ -8,7 +8,9 @@
             color="primary"
             size="52"
           >
-            <v-icon>mdi-chart-areaspline</v-icon>
+            <v-icon size="24">
+              {{ mdiChartAreaspline }}
+            </v-icon>
           </v-avatar>
           Metrics
         </v-card-title>
@@ -27,7 +29,7 @@
             >
               <v-progress-circular
                 v-if="loading"
-                id="metrics-loading"
+                data-cy="metrics-loading"
                 color="primary"
                 size="128"
                 width="10"
@@ -36,8 +38,8 @@
             </v-layout>
             <line-chart
               v-else-if="chartData"
-              id="metrics-chart"
               key="chart"
+              data-cy="metrics-chart"
               :chart-data="chartData"
               :chart-options="chartOptions"
               style="width: 100%;height: 500px;"
@@ -61,6 +63,7 @@
 <script>
 import LineChart from '@/components/chart/LineChart';
 import { DATA_API } from '@/helpers/env';
+import { mdiChartAreaspline } from '@mdi/js';
 import colors from 'vuetify/lib/util/colors';
 
 /**
@@ -72,6 +75,7 @@ export default {
   components: { LineChart },
   data() {
     return {
+      mdiChartAreaspline,
       loading: true,
       chartData: {},
     };

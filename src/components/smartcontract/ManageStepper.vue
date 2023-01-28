@@ -42,7 +42,7 @@
             item-value="hash"
             label="Contracts"
             placeholder="Start typing to Search"
-            prepend-icon="mdi-database-search"
+            :prepend-icon="mdiDatabaseSearch"
             return-object
           />
           <v-list>
@@ -51,6 +51,7 @@
               <v-list-item
                 v-for="(contract, i) in contracts"
                 :key="i"
+                :data-cy="getContractName(contract)"
                 @click="e1 = 2; selectedContract = i;"
               >
                 <v-list-item-content>
@@ -75,6 +76,7 @@
                 <v-list-item
                   v-for="(entrypoint, i) in contracts[selectedContract].data.Contract.entry_points"
                   :key="i"
+                  :data-cy="capitalizeFirstLetter(entrypoint.name)"
                   @click="e1 = 3; selectedEntrypoint = i;"
                 >
                   <v-list-item-content>
@@ -103,6 +105,7 @@
                 <v-list-item
                   v-for="(entrypoint, i) in selectedSearchContract.data.Contract.entry_points"
                   :key="i"
+                  :data-cy="capitalizeFirstLetter(entrypoint.name)"
                   @click="e1 = 3; selectedEntrypoint = i;"
                 >
                   <v-list-item-content>
@@ -132,6 +135,7 @@
         >
           <generic-deploy-operation
             v-if="selectedContract !== undefined && selectedEntrypoint !== undefined"
+            :contract-package-hash="contracts[selectedContract].package"
             :contract-hash="contracts[selectedContract].hash"
             :entrypoint="
               contracts[selectedContract].data.Contract.entry_points[selectedEntrypoint].name"
@@ -139,6 +143,7 @@
           />
           <generic-deploy-operation
             v-if="selectedSearchContract !== undefined && selectedEntrypoint !== undefined"
+            :contract-package-hash="selectedSearchContract.package"
             :contract-hash="selectedSearchContract.hash"
             :entrypoint="
               selectedSearchContract.data.Contract.entry_points[selectedEntrypoint].name"
@@ -160,6 +165,7 @@
 import GenericDeployOperation from '@/components/smartcontract/GenericDeployOperation';
 import clientCasper from '@/helpers/clientCasper';
 import { DATA_API } from '@/helpers/env';
+import { mdiDatabaseSearch } from '@mdi/js';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters } from 'vuex';
 
@@ -168,6 +174,7 @@ export default {
   components: { GenericDeployOperation },
   data() {
     return {
+      mdiDatabaseSearch,
       e1: 1,
       contracts: [],
       selectedContract: undefined,
@@ -195,7 +202,6 @@ export default {
       this.isLoading = false;
     },
     selectedSearchContract(val) {
-      console.log(val);
       if (val) {
         this.e1 = 2;
       }

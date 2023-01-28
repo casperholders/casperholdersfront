@@ -57,6 +57,11 @@ const routes = [
     component: () => import('@/views/account/NFTView'),
   },
   {
+    path: '/marketplace',
+    name: 'Marketplace',
+    component: () => import('@/views/account/MarketplaceView'),
+  },
+  {
     path: '/addbid',
     name: 'Add Bid',
     component: () => import('@/views/validators/AddBidView'),

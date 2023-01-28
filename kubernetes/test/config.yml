@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config
+data:
+  CASPER_RPC_URL: http://mynctl-service:11101/rpc
+  ORIGIN: http://localhost:8080
+  PORT: "80"
+  DATA_API: https://data.testnet.casperholders.com
+  NODE_ENV: "production"
+  NETWORK: "casper-net-1"
+  ACCOUNT_INFO_HASH: "2f36a35edcbaabe17aba805e3fae42699a2bb80c2e0c15189756fdc4895356f8"
+  ACCOUNT_INFO_PACKAGE: "b37227b83822aba42c72e9ee441e681f102929d608c7acf28d4bc2024dca0215"
+  DATABASE_URL: "postgres://postgres@postgres-service:5432/api"
+  REDIS_HOST: "redis-service"

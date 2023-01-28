@@ -6,7 +6,7 @@
     <template #activator="{ on, attrs }">
       <template v-if="$vuetify.breakpoint.mobile">
         <v-btn
-          id="connect"
+          data-cy="connect"
           fab
           small
           color="primary"
@@ -15,13 +15,13 @@
           v-on="on"
         >
           <v-icon dark>
-            mdi-lightning-bolt
+            {{ mdiLightningBolt }}
           </v-icon>
         </v-btn>
       </template>
       <template v-else>
         <v-btn
-          id="connect"
+          data-cy="connect"
           rounded
           color="primary"
           v-bind="attrs"
@@ -31,7 +31,7 @@
             dark
             left
           >
-            mdi-lightning-bolt
+            {{ mdiLightningBolt }}
           </v-icon>
           Connect
         </v-btn>
@@ -39,12 +39,12 @@
     </template>
 
     <v-card
-      id="connectDialog"
+      data-cy="connectDialog"
       width="100%"
     >
       <v-card-title class="flex-nowrap">
         <v-icon left>
-          mdi-wallet
+          {{ mdiWallet }}
         </v-icon>
         Connect to a wallet
         <v-btn
@@ -53,7 +53,7 @@
           @click="closeDialog"
         >
           <v-icon>
-            mdi-close
+            {{ mdiClose }}
           </v-icon>
         </v-btn>
       </v-card-title>
@@ -91,7 +91,7 @@
                   <div>Native wallet for the Casper Network</div>
                 </div>
                 <v-icon class="ml-auto">
-                  mdi-chevron-right
+                  {{ mdiChevronRight }}
                 </v-icon>
               </v-card-text>
             </v-card>
@@ -103,7 +103,7 @@
               @click="ledgerType = true"
             >
               <v-card-text
-                id="connectLedger"
+                data-cy="connectLedger"
                 class="d-flex align-center"
               >
                 <img
@@ -117,7 +117,7 @@
                   <div>Unlock your ledger and open the Casper app first.</div>
                 </div>
                 <v-icon class="ml-auto">
-                  mdi-chevron-right
+                  {{ mdiChevronRight }}
                 </v-icon>
               </v-card-text>
             </v-card>
@@ -142,7 +142,7 @@
                   <div>Non-custodial Key Management, Meets Passwordless Auth.</div>
                 </div>
                 <v-icon class="ml-auto">
-                  mdi-chevron-right
+                  {{ mdiChevronRight }}
                 </v-icon>
               </v-card-text>
             </v-card>
@@ -159,7 +159,7 @@
               @click="ledgerConnect(true)"
             >
               <v-card-text
-                id="connectLedgerUSB"
+                data-cy="connectLedgerUSB"
                 class="d-flex align-center"
               >
                 <img
@@ -173,7 +173,7 @@
                   <div>Support Nano S/X on Web & Android Chrome (OTG)</div>
                 </div>
                 <v-icon class="ml-auto">
-                  mdi-chevron-right
+                  {{ mdiChevronRight }}
                 </v-icon>
               </v-card-text>
             </v-card>
@@ -185,7 +185,7 @@
               @click="ledgerConnect(false)"
             >
               <v-card-text
-                id="connectLedgerBLE"
+                data-cy="connectLedgerBLE"
                 class="d-flex align-center"
               >
                 <img
@@ -199,7 +199,7 @@
                   <div>Support Nano X on Web & Mobile</div>
                 </div>
                 <v-icon class="ml-auto">
-                  mdi-chevron-right
+                  {{ mdiChevronRight }}
                 </v-icon>
               </v-card-text>
             </v-card>
@@ -259,12 +259,12 @@
                     expand
                     class="secondary"
                   >
-                    <v-expansion-panel-header class="reward-calculator-panel-header">
+                    <v-expansion-panel-header>
                       <div class="d-flex align-center text-overline">
                         <v-icon
                           left
                         >
-                          mdi-currency-usd
+                          {{ mdiCurrencyUsd }}
                         </v-icon>
                         Keys with funds ({{ ledgerKeys.funds.length }})
                       </div>
@@ -286,19 +286,19 @@
                             <div>
                               <span class="text-body-1">
                                 <v-icon>
-                                  mdi-account
+                                  {{ mdiAccount }}
                                 </v-icon>
                                 {{ truncateText(ledgerKey.key) }}
                               </span>
                               <div class="text-left">
                                 <v-icon>
-                                  mdi-currency-usd
+                                  {{ mdiCurrencyUsd }}
                                 </v-icon>
                                 {{ ledgerKey.balance }} CSPR
                               </div>
                             </div>
                             <v-icon class="ml-auto">
-                              mdi-chevron-right
+                              {{ mdiChevronRight }}
                             </v-icon>
                           </v-card-text>
                         </v-card>
@@ -310,12 +310,12 @@
                     expand
                     class="secondary"
                   >
-                    <v-expansion-panel-header class="reward-calculator-panel-header">
+                    <v-expansion-panel-header>
                       <div class="d-flex align-center text-overline">
                         <v-icon
                           left
                         >
-                          mdi-currency-usd-off
+                          {{ mdiCurrencyUsdOff }}
                         </v-icon>
                         Keys without funds ({{ ledgerKeys.noFunds.length }})
                       </div>
@@ -337,19 +337,19 @@
                             <div>
                               <span class="text-body-1">
                                 <v-icon>
-                                  mdi-account
+                                  {{ mdiAccount }}
                                 </v-icon>
                                 {{ truncateText(ledgerKey.key) }}
                               </span>
                               <div class="text-left">
                                 <v-icon>
-                                  mdi-currency-usd
+                                  {{ mdiCurrencyUsd }}
                                 </v-icon>
                                 {{ ledgerKey.balance }} CSPR
                               </div>
                             </div>
                             <v-icon class="ml-auto">
-                              mdi-chevron-right
+                              {{ mdiChevronRight }}
                             </v-icon>
                           </v-card-text>
                         </v-card>
@@ -387,7 +387,7 @@
                   size="32"
                   class="mx-auto mt-3"
                 >
-                  mdi-check-circle
+                  {{ mdiCheckCircle }}
                 </v-icon>
               </v-card-text>
             </v-card>
@@ -411,7 +411,7 @@
                   size="32"
                   class="mx-auto mt-3"
                 >
-                  mdi-alert-circle
+                  {{ mdiAlertCircle }}
                 </v-icon>
                 <div class="mt-3">
                   <v-btn
@@ -457,6 +457,14 @@ import truncate from '@/helpers/strings/truncate';
 import { ledgerOptions, torusOptions } from '@/store';
 import TransportWebBLE from '@ledgerhq/hw-transport-web-ble';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
+import {
+  mdiAccount, mdiAlertCircle,
+  mdiCheckCircle,
+  mdiChevronRight,
+  mdiClose,
+  mdiCurrencyUsd, mdiCurrencyUsdOff, mdiLightningBolt,
+  mdiWallet,
+} from '@mdi/js';
 import Torus from '@toruslabs/casper-embed';
 import CasperApp from '@zondax/ledger-casper';
 import Big from 'big.js';
@@ -469,6 +477,15 @@ import { mapState } from 'vuex';
 export default {
   name: 'ConnectDialog',
   data: () => ({
+    mdiLightningBolt,
+    mdiWallet,
+    mdiClose,
+    mdiChevronRight,
+    mdiCurrencyUsd,
+    mdiAccount,
+    mdiCheckCircle,
+    mdiAlertCircle,
+    mdiCurrencyUsdOff,
     loading: false,
     connected: false,
     timeout: false,

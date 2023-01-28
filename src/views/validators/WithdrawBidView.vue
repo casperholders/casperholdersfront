@@ -12,7 +12,7 @@
     :balance="balance"
     :fee="bidFee"
     :amount="amount"
-    icon="mdi-connection"
+    :icon="mdiConnection"
     submit-title="Withdraw bid"
     title="Withdraw bid"
   >
@@ -24,7 +24,7 @@
         rel="noopener"
       >
         {{ signer.activeKey }}
-        <v-icon x-small>mdi-open-in-new</v-icon>
+        <v-icon x-small>{{ mdiOpenInNew }}</v-icon>
       </a>
       <br>
       <br>
@@ -56,6 +56,7 @@
     />
     <v-alert
       v-if="errorBalance"
+      data-cy="errorBalance"
       class="mt-5"
       dense
       prominent
@@ -72,7 +73,7 @@
             @click="connectionRequest"
           >
             <v-icon left>
-              mdi-account-circle
+              {{ mdiAccountCircle }}
             </v-icon>
             Connect
           </v-btn>
@@ -103,6 +104,7 @@ import {
   WithdrawBid,
   WithdrawBidResult,
 } from '@casperholders/core';
+import { mdiAccountCircle, mdiConnection, mdiOpenInNew } from '@mdi/js';
 import { mapGetters, mapState } from 'vuex';
 
 /**
@@ -115,6 +117,9 @@ export default {
   components: { OperationSummary, AmountInput, OperationCard },
   data() {
     return {
+      mdiConnection,
+      mdiOpenInNew,
+      mdiAccountCircle,
       minBid: 1,
       bidFee: 0.00001,
       amount: '1',
@@ -124,7 +129,7 @@ export default {
       errorBalance: null,
       loadingSignAndDeploy: false,
       errorDeploy: null,
-      loadingBalance: false,
+      loadingBalance: true,
       type: WithdrawBidResult.getName(),
     };
   },

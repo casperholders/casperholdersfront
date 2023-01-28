@@ -9,7 +9,9 @@
           color="primary"
           size="52"
         >
-          <v-icon>mdi-key-chain</v-icon>
+          <v-icon size="24">
+            {{ mdiKeyChain }}
+          </v-icon>
         </v-avatar>
         <v-card-title
           class="pl-4"
@@ -26,7 +28,7 @@
         >
           <v-card-title>
             <v-icon left>
-              mdi-clipboard-list
+              {{ mdiClipboardList }}
             </v-icon>
             Summary
           </v-card-title>
@@ -105,7 +107,7 @@
                 color="success"
                 left
               >
-                mdi-checkbox-marked-circle
+                {{ mdiCheckboxMarkedCircle }}
               </v-icon>
               Account authorized to sign this deploy.
             </template>
@@ -114,7 +116,7 @@
                 color="error"
                 left
               >
-                mdi-alert-circle
+                {{ mdiAlertCircle }}
               </v-icon>
               Account not authorized to sign this deploy.
             </template>
@@ -124,7 +126,7 @@
               color="info"
               left
             >
-              mdi-information
+              {{ mdiInformation }}
             </v-icon>
             Current deploy weight : {{ currentWeight }}
           </p>
@@ -133,7 +135,7 @@
               color="info"
               left
             >
-              mdi-information
+              {{ mdiInformation }}
             </v-icon>
             Current key weight : {{ currentKeyWeight }}
           </p>
@@ -142,7 +144,7 @@
               color="info"
               left
             >
-              mdi-information
+              {{ mdiInformation }}
             </v-icon>
             Weight needed : {{ weightNeeded }}
           </p>
@@ -151,7 +153,7 @@
               color="success"
               left
             >
-              mdi-checkbox-marked-circle
+              {{ mdiCheckboxMarkedCircle }}
             </v-icon>
             This deploy is still valid, but it will expire in {{ countdown }}.
           </p>
@@ -163,7 +165,7 @@
                 color="success"
                 left
               >
-                mdi-checkbox-marked-circle
+                {{ mdiCheckboxMarkedCircle }}
               </v-icon>
               Deploy will be sent right after you sign it since it will reach the required weight.
             </template>
@@ -172,7 +174,7 @@
                 color="error"
                 left
               >
-                mdi-alert-circle
+                {{ mdiAlertCircle }}
               </v-icon>
               The deploy will still miss {{ weightNeeded - currentWeight - currentKeyWeight }}
               weight before sending it.
@@ -185,7 +187,7 @@
               color="error"
               left
             >
-              mdi-alert-circle
+              {{ mdiAlertCircle }}
             </v-icon>
             Unfortunately this deploy is expired.
           </p>
@@ -194,7 +196,7 @@
               color="success"
               left
             >
-              mdi-checkbox-marked-circle
+              {{ mdiCheckboxMarkedCircle }}
             </v-icon>
             You already signed this deploy.
           </p>
@@ -211,7 +213,7 @@
       </v-card-text>
       <v-card-actions class="pa-4">
         <v-btn
-          id="agreeAndSign"
+          data-cy="agreeAndSign"
           class="rounded-xl"
           color="primary"
           dark
@@ -221,7 +223,7 @@
           @click="signMultisig"
         >
           <v-icon left>
-            mdi-draw
+            {{ mdiDraw }}
           </v-icon>
           Agree & Sign
         </v-btn>
@@ -247,6 +249,13 @@ import deployManager from '@/helpers/deployManager';
 import { API } from '@/helpers/env';
 import { KeyManagementResult, TransferResult } from '@casperholders/core';
 import deployResultsMap from '@casperholders/core/src/services/results/deployResultsMap';
+import {
+  mdiAlertCircle,
+  mdiCheckboxMarkedCircle,
+  mdiClipboardList, mdiDraw,
+  mdiInformation,
+  mdiKeyChain,
+} from '@mdi/js';
 import Big from 'big.js';
 import { CLPublicKey, DeployUtil } from 'casper-js-sdk';
 import parse from 'parse-duration';
@@ -267,6 +276,12 @@ export default {
   },
   data() {
     return {
+      mdiKeyChain,
+      mdiClipboardList,
+      mdiCheckboxMarkedCircle,
+      mdiAlertCircle,
+      mdiInformation,
+      mdiDraw,
       deploy: {},
       notFound: false,
       keyInfo: null,

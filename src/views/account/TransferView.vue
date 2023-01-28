@@ -8,7 +8,7 @@
     :token="token"
     :fee="transferFee"
     :amount="`-${amount}`"
-    icon="mdi-send"
+    :icon="mdiSend"
     submit-title="Send Transaction"
     title="Transfer"
   >
@@ -19,32 +19,32 @@
       :initial-token="$route.params.token"
     />
     <v-text-field
-      id="address"
       v-model="address"
+      data-cy="address"
       :rules="addressRules"
       :value="address"
       color="white"
       label="Send to address"
-      prepend-icon="mdi-account"
+      :prepend-icon="mdiAccount"
       required
     />
     <v-slide-y-transition leave-absolute>
       <v-text-field
         v-if="tokenGroup.features.transfer.transferID"
-        id="transferID"
         v-model="transferID"
+        data-cy="transferID"
         :rules="transferIDRules"
         :value="transferID"
         color="white"
         hint="Set to 0 if not known"
         label="Transfer ID"
-        prepend-icon="mdi-music-accidental-sharp"
+        :prepend-icon="mdiMusicAccidentalSharp"
         required
       />
     </v-slide-y-transition>
     <AmountInput
       :balance="token ? tokenBalance : balance"
-      :fee="token ? transferFee : 0"
+      :fee="token === nativeToken ? transferFee : 0"
       :min="tokenMinimumAmount"
       :value="amount"
       class="mb-4"
@@ -61,6 +61,7 @@
     />
     <v-alert
       v-if="errorBalance"
+      data-cy="errorBalance"
       class="mt-5"
       dense
       prominent
@@ -77,7 +78,7 @@
             @click="connectionRequest"
           >
             <v-icon left>
-              mdi-account-circle
+              {{ mdiAccountCircle }}
             </v-icon>
             Connect
           </v-btn>
@@ -118,6 +119,7 @@ import findTokenGroup from '@/services/tokens/findTokenGroup';
 import nativeToken from '@/services/tokens/nativeToken';
 import tokensGroups from '@/services/tokens/tokensGroups';
 import { InsufficientFunds, NoActiveKeyError } from '@casperholders/core';
+import { mdiAccount, mdiAccountCircle, mdiMusicAccidentalSharp, mdiSend } from '@mdi/js';
 import { CLPublicKey } from 'casper-js-sdk';
 import { mapGetters, mapState } from 'vuex';
 
@@ -133,6 +135,11 @@ export default {
   components: { OperationSummary, TokenInput, AmountInput, OperationCard },
   data() {
     return {
+      nativeToken,
+      mdiSend,
+      mdiAccount,
+      mdiMusicAccidentalSharp,
+      mdiAccountCircle,
       addressRules: [
         (a) => !!a || 'Address is required',
         (a) => a.length >= 2 || 'Address is too short',
@@ -159,7 +166,7 @@ export default {
       tokenBalance: '0',
       loadingSignAndDeploy: false,
       errorDeploy: null,
-      loadingBalance: false,
+      loadingBalance: true,
     };
   },
   computed: {

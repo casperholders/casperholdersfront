@@ -1,0 +1,233 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: director
+  name: director
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: director
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: director
+        name: director
+    spec:
+      containers:
+        - name: director
+          image: agoldis/sorry-cypress-director
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 1234
+          env:
+            - name: ALLOWED_KEYS
+              value: "test"
+          resources: { }
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mynctl
+  name: mynctl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mynctl
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mynctl
+        name: mynctl
+    spec:
+      containers:
+        - name: mynctl
+          image: killianh/nctl:latest
+          imagePullPolicy: Always
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - /home/casper/casper-client-rs/target/release/casper-client get-block --node-address http://localhost:11101
+            initialDelaySeconds: 10
+            periodSeconds: 1
+            failureThreshold: 100
+          ports:
+            - containerPort: 11101
+            - containerPort: 14101
+            - containerPort: 18101
+          env:
+            - name: PREDEFINED_ACCOUNTS
+              value: "true"
+            - name: MINIMUM_ROUND_EXPONENT
+              value: "12"
+            - name: MAXIMUM_ROUND_EXPONENT
+              value: "14"
+            - name: DEPLOY_DELAY
+              value: "5sec"
+          resources: { }
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cors-anywhere
+  name: cors-anywhere
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cors-anywhere
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: cors-anywhere
+        name: cors-anywhere
+    spec:
+      containers:
+        - name: cors-anywhere
+          image: killianh/cors-anywhere:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 11100
+          env:
+            - name: PORT
+              value: "11100"
+          resources: { }
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: postgres
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: postgres
+        name: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 10
+          env:
+            - name: POSTGRES_HOST_AUTH_METHOD
+              value: "trust"
+            - name: POSTGRES_DB
+              value: "api"
+          resources: { }
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: redis
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: redis
+        name: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis
+          ports:
+            - containerPort: 6379
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - redis-cli ping
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 10
+          resources: { }
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: api
+  name: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: api
+        name: api
+    spec:
+      initContainers:
+      - name: check-db-ready
+        image: postgres:latest
+        command: ['sh', '-c',
+          'until pg_isready -h postgres-service -p 5432; 
+          do echo waiting for database; sleep 2; done;']
+      containers:
+        - name: api
+          image: killianh/casperholders:testnet-api
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+            - containerPort: 3001
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - curl --fail http://localhost:80/validators/accountinfos || exit 1
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 10
+          envFrom:
+            - configMapRef:
+                name: config
+          resources: {}
+      restartPolicy: Always

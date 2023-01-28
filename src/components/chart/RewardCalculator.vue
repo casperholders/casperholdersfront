@@ -1,5 +1,5 @@
 <template>
-  <div class="reward-calculator">
+  <div data-cy="reward-calculator">
     <div class="d-flex align-center justify-center flex-wrap body-2 mb-3">
       <v-tooltip bottom>
         <template #activator="{ attrs, on }">
@@ -13,7 +13,7 @@
               small
               left
             >
-              mdi-alert
+              {{ mdiAlert }}
             </v-icon>
             <strong>APY</strong>: {{ formatPercentage(apy) }}
           </div>
@@ -101,6 +101,7 @@
 <script>
 import LineChart from '@/components/chart/LineChart';
 import { API } from '@/helpers/env';
+import { mdiAlert } from '@mdi/js';
 import Big from 'big.js';
 
 const MONTH_NAMES = [
@@ -125,6 +126,7 @@ export default {
     },
   },
   data: () => ({
+    mdiAlert,
     loading: true,
     casperUsdFactor: undefined,
     apy: undefined,

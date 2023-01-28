@@ -1,5 +1,6 @@
 <template>
   <v-card
+    :data-cy="`contract-${title}`"
     color="primary"
     class="d-flex flex-column"
   >
@@ -11,7 +12,7 @@
           size="32"
           class="my-1 mr-3"
         >
-          <v-icon>
+          <v-icon size="24">
             {{ icon }}
           </v-icon>
         </v-avatar>
@@ -22,7 +23,7 @@
           class="my-1 mr-3"
         >
           <v-icon dark>
-            mdi-help
+            {{ mdiHelp }}
           </v-icon>
         </v-avatar>
         <span
@@ -36,7 +37,7 @@
               rel="noopener"
             >
               {{ title }}
-              <v-icon x-small>mdi-open-in-new</v-icon>
+              <v-icon x-small>{{ mdiOpenInNew }}</v-icon>
             </a>
           </template>
           <template v-else>
@@ -53,6 +54,8 @@
 </template>
 
 <script>
+import { mdiHelp, mdiOpenInNew } from '@mdi/js';
+
 export default {
   name: 'ContractCard',
   props: {
@@ -73,5 +76,9 @@ export default {
       default: '',
     },
   },
+  data: () => ({
+    mdiHelp,
+    mdiOpenInNew,
+  }),
 };
 </script>

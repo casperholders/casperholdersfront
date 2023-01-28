@@ -1,0 +1,128 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: director-tls
+spec:
+  entryPoints:
+    - secure
+  routes:
+    - match: Host(`director.test.casperholders.io`)
+      kind: Rule
+      services:
+        - name: director-service
+          port: 80
+  tls:
+    secretName: director-cert
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: director-http
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`director.test.casperholders.io`)
+      middlewares:
+        - name: kustomize-https-only
+      kind: Rule
+      services:
+        - name: director-service
+          port: 80
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: cors-anywhere-tls
+spec:
+  entryPoints:
+    - secure
+  routes:
+    - match: Host(`cors-anywhere.test.casperholders.io`)
+      kind: Rule
+      services:
+        - name: cors-anywhere-service
+          port: 80
+  tls:
+    secretName: cors-anywhere-cert
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: cors-anywhere-http
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`cors-anywhere.test.casperholders.io`)
+      middlewares:
+        - name: kustomize-https-only
+      kind: Rule
+      services:
+        - name: cors-anywhere-service
+          port: 80
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: api-tls
+spec:
+  entryPoints:
+    - secure
+  routes:
+    - match: Host(`api.test.casperholders.io`)
+      kind: Rule
+      services:
+        - name: api-service
+          port: 80
+  tls:
+    secretName: api-cert
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: api-http
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`api.test.casperholders.io`)
+      middlewares:
+        - name: kustomize-https-only
+      kind: Rule
+      services:
+        - name: api-service
+          port: 80
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nctl-tls
+spec:
+  entryPoints:
+    - secure
+  routes:
+    - match: Host(`nctl.test.casperholders.io`)
+      kind: Rule
+      services:
+        - name: mynctl-service
+          port: 11101
+  tls:
+    secretName: nctl-cert
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nctl-http
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`nctl.test.casperholders.io`)
+      middlewares:
+        - name: kustomize-https-only
+      kind: Rule
+      services:
+        - name: mynctl-service
+          port: 11101

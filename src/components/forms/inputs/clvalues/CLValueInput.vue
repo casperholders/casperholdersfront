@@ -19,6 +19,7 @@
         cols="12"
       >
         <CLValueRawInput
+          data-cy="CLValueRawInput"
           :cl-type="type ? type : findType(clType)"
           @value="$emit('value', $event)"
         />
@@ -26,6 +27,7 @@
     </v-row>
     <CLValueListInput
       v-if="type === 'list'"
+      data-cy="CLValueListInput"
       @value="$emit('value', build($event))"
     />
     <CLValueTupleInput
@@ -34,12 +36,14 @@
     />
     <CLValueOptionInput
       v-if="type === 'option'"
+      data-cy="CLValueOptionInput"
       :cl-type="optionType"
       @value="$emit('value', build($event))"
       @none="$emit('value', build($event, true))"
     />
     <CLValueMapInput
       v-if="type === 'map'"
+      data-cy="CLValueMapInput"
       @value="$emit('value', build($event))"
     />
   </div>
@@ -73,6 +77,8 @@ const types = [
   { name: 'Option', type: 'option' },
   { name: 'Map', type: 'map' },
   { name: 'PublicKey', type: 'publicKey' },
+  { name: 'AccountHash', type: 'accountHash' },
+  { name: 'ContractHash', type: 'contractHash' },
   { name: 'ByteArray', type: 'byteArray' },
 ];
 
@@ -133,10 +139,14 @@ export default {
   },
   methods: {
     build(value, none = false) {
-      if (none) {
-        return buildCLValue(this.type, null, value);
+      try {
+        if (none) {
+          return buildCLValue(this.type, null, value);
+        }
+        return buildCLValue(this.type, value);
+      } catch {
+        return undefined;
       }
-      return buildCLValue(this.type, value);
     },
     findType(searchType) {
       if (searchType) {

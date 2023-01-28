@@ -58,7 +58,6 @@ export default {
   }),
   methods: {
     onSubmit() {
-      console.log(this.token);
       if (this.token.length) {
         this.$emit('add', this.token);
       }
