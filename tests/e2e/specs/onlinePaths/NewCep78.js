@@ -30,9 +30,11 @@ describe('Deploy & test cep78', () => {
   it('Deploy cep78', () => {
     cy.visit('http://localhost:8080/smartcontract');
     cy.get('[data-cy="download-NFT CEP78"]')
+      .scrollIntoView()
       .should('be.visible')
       .click();
     cy.get('[data-cy="setArgs-NFT CEP78"]')
+      .scrollIntoView()
       .should('be.visible')
       .click();
     cy.readFile('tests/e2e/fixtures/downloads/cep78_token.wasm', { encoding: null }, { timeout: 2000 })

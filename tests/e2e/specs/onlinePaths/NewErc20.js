@@ -27,9 +27,11 @@ describe('Deploy & test erc20', () => {
   it('Deploy erc20', () => {
     cy.visit('http://localhost:8080/smartcontract');
     cy.get('[data-cy=download-ERC20]')
+      .scrollIntoView()
       .should('be.visible')
       .click();
     cy.get('[data-cy="setArgs-ERC20"]')
+      .scrollIntoView()
       .should('be.visible')
       .click();
     cy.readFile('tests/e2e/fixtures/downloads/erc20_token.wasm', { encoding: null }, { timeout: 2000 })

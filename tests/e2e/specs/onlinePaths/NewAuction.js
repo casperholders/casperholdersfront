@@ -27,8 +27,8 @@ let cep47contractPackage = '';
 describe('Deploy and test cep47', () => {
   it('Deploy cep47', () => {
     cy.visit('http://localhost:8080/smartcontract');
-    cy.get('[data-cy="download-NFT CEP47"]').should('be.visible').click();
-    cy.get('[data-cy="setArgs-NFT CEP47"]').should('be.visible').click();
+    cy.get('[data-cy="download-NFT CEP47"]').scrollIntoView().should('be.visible').click();
+    cy.get('[data-cy="setArgs-NFT CEP47"]').scrollIntoView().should('be.visible').click();
     cy.readFile('tests/e2e/fixtures/downloads/cep47_token.wasm', { encoding: null }, { timeout: 2000 }).as('cep47_token');
     cy.get('#smartContractFile').selectFile('@cep47_token', { force: true });
     mockConnection(cy, ACTIVE_KEY);

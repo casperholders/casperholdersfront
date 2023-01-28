@@ -36,8 +36,8 @@ let uniswapContract = '';
 describe('Deploy & test Uniswap erc20', () => {
   it('Deploy uniswap erc20', () => {
     cy.visit('http://localhost:8080/smartcontract');
-    cy.get('[data-cy="download-Uniswap ERC20"]').should('be.visible').click();
-    cy.get('[data-cy="setArgs-Uniswap ERC20"]').should('be.visible').click();
+    cy.get('[data-cy="download-Uniswap ERC20"]').scrollIntoView().should('be.visible').click();
+    cy.get('[data-cy="setArgs-Uniswap ERC20"]').scrollIntoView().should('be.visible').click();
     cy.readFile('tests/e2e/fixtures/downloads/uniswap_erc20_token.wasm', { encoding: null }, {timeout: 2000}).as('uniswap_erc20_token');
     cy.get('#smartContractFile').selectFile('@uniswap_erc20_token', { force: true });
     mockConnection(cy, ACTIVE_KEY);
