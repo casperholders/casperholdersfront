@@ -139,10 +139,14 @@ export default {
   },
   methods: {
     build(value, none = false) {
-      if (none) {
-        return buildCLValue(this.type, null, value);
+      try {
+        if (none) {
+          return buildCLValue(this.type, null, value);
+        }
+        return buildCLValue(this.type, value);
+      } catch {
+        return undefined;
       }
-      return buildCLValue(this.type, value);
     },
     findType(searchType) {
       if (searchType) {
