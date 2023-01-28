@@ -58,7 +58,7 @@
                   :data-cy="`setArgs-${c.title}`"
                   color="secondary"
                   rounded
-                  @click="args = c.args"
+                  @click="onSetArguments(c.args)"
                 >
                   Set arguments
                 </v-btn>
@@ -97,7 +97,7 @@
           <v-expansion-panels>
             <v-expansion-panel
               v-for="(item,i) in args"
-              :key="i"
+              :key="item.lid"
               :data-cy="`arg-panel-${item.name || i + 1}`"
               class="mt-2"
               style="border: thin solid rgba(255, 255, 255, 0.12)"
@@ -127,7 +127,7 @@
               color="primary"
               class="mt-5"
               rounded
-              @click="args.push({})"
+              @click="onAddArgument"
             >
               Add argument
             </v-btn>
@@ -199,6 +199,7 @@ import Operation from '@/components/operations/OperationCard';
 import ManageStepper from '@/components/smartcontract/ManageStepper';
 import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
+import generateLid from '@/helpers/generateLid';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import { LEDGER_SIGNER } from '@/helpers/signers';
 import {
@@ -445,6 +446,27 @@ export default {
     });
   },
   methods: {
+    /**
+     * Add a new arg to the list.
+     */
+    onAddArgument() {
+      this.args.push({
+        lid: generateLid(this.args.map(({ lid }) => lid)),
+      });
+    },
+    /**
+     * Set arguments.
+     *
+     * @param args
+     */
+    onSetArguments(args) {
+      const newArgs = [];
+      args.forEach((arg) => {
+        newArgs.push({ ...arg, lid: generateLid(newArgs) });
+      });
+
+      this.args = newArgs;
+    },
     /**
      * Get the user balance
      */

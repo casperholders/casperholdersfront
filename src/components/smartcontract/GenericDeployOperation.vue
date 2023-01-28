@@ -41,7 +41,7 @@
     <v-expansion-panels>
       <v-expansion-panel
         v-for="(item,i) in deployArgs"
-        :key="i"
+        :key="item.lid"
         class="mt-2"
         style="border: thin solid rgba(255, 255, 255, 0.12)"
         :data-cy="`arg-panel-${item.name || i + 1}`"
@@ -71,7 +71,7 @@
         color="primary"
         class="mt-5"
         rounded
-        @click="deployArgs.push({})"
+        @click="onAddArgument"
       >
         Add argument
       </v-btn>
@@ -170,6 +170,7 @@ import Argument from '@/components/forms/inputs/ArgumentInput';
 import Operation from '@/components/operations/OperationCard';
 import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
+import generateLid from '@/helpers/generateLid';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
 import {
   GenericContractDeployParameters,
@@ -278,6 +279,14 @@ export default {
     });
   },
   methods: {
+    /**
+     * Add a new arg to the list.
+     */
+    onAddArgument() {
+      this.deployArgs.push({
+        lid: generateLid(this.deployArgs.map(({ lid }) => lid)),
+      });
+    },
     /**
      * Get the user balance
      */
