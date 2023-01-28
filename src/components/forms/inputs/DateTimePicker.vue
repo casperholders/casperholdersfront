@@ -104,7 +104,7 @@ export default {
       mdiCalendar,
       mdiClockTimeFourOutline,
       dateMenu: false,
-      date: currentDate.toISOString().substr(0, 10),
+      date: currentDate.toISOString().substring(0, 10),
       timeMenu: false,
       minRequirement: this.min,
       time: `${currentDate.getUTCHours() > 9 ? currentDate.getUTCHours() : `0${currentDate.getUTCHours()}`}:${currentDate.getMinutes() > 9 ? currentDate.getMinutes() : `0${currentDate.getMinutes()}`}`,
