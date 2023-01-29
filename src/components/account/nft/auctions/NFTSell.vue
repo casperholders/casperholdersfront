@@ -380,8 +380,6 @@ export default {
         this.bidderCountCap,
         this.auctionTimerExtension,
         this.minimumBidStep,
-        this.activeKey,
-        '75',
         NETWORK,
         auction.buffer,
       );

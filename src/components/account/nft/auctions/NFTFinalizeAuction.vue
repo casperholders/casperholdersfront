@@ -13,10 +13,17 @@
     @cancelOperationCard="$emit('closeBid')"
   >
     <operation-summary
+      :prepend-values="[
+        { name: 'Winning bid', value: currentUserBid },
+        {
+          name: `Marketplace fee ${marketPlaceCommission/1000*100}%`,
+          value: currentUserBid/1000*marketPlaceCommission
+        }
+      ]"
       :balance-loading="loadingBalance"
       :balance="balance"
       :fee="bidFee"
-      :amount="0"
+      :amount="currentUserBid-(currentUserBid/1000*marketPlaceCommission)"
       class="mx-n1"
     />
     <v-alert
@@ -81,6 +88,16 @@ export default {
     auctionData: {
       type: Object,
       required: true,
+    },
+    currentUserBid: {
+      type: String,
+      required: false,
+      default: '0',
+    },
+    marketPlaceCommission: {
+      type: Number,
+      required: false,
+      default: 0,
     },
   },
   data() {

@@ -212,6 +212,8 @@
             :min-bid="minBid"
             :auction-data="auction"
             :nft-data="nft"
+            :is-current-user-winner="isCurrentUserWinner"
+            :current-user-bid="auctionInfos?.winning_bid_raw"
             data-cy="bidTab"
           />
         </v-tab-item>
@@ -220,6 +222,7 @@
             v-if="haveBid && currentAuctionStatus === auctionStatuses.live"
             :auction-data="auction"
             :nft-data="nft"
+            :current-user-bid="auctionInfos?.winning_bid_raw"
             data-cy="cancelBidTab"
           />
         </v-tab-item>
@@ -239,6 +242,8 @@
                 isOwner"
             :auction-data="auction"
             :nft-data="nft"
+            :current-user-bid="auctionInfos?.winning_bid_raw"
+            :market-place-commission="auctionInfos?.marketplace_commission"
             data-cy="finalizeAuctionTab"
           />
         </v-tab-item>
@@ -317,7 +322,7 @@
                     </td>
                     <td>
                       <template v-if="entry.key === 'bid'">
-                        {{ formatCasper(entry.value) }}
+                        {{ formatCasper(entry.value, true) }}
                       </template>
                       <template v-else>
                         {{ entry.value }}
@@ -342,6 +347,7 @@ import NFTFinalizeAuction from '@/components/account/nft/auctions/NFTFinalizeAuc
 import NFTDetailsOperation from '@/components/account/nft/NFTDetailsOperation.vue';
 import { DATA_API } from '@/helpers/env';
 import { getDictionaryItemByURef, getItem, getStateRootHash } from '@/helpers/rpc';
+import { CurrencyUtils } from '@casperholders/core';
 import {
   mdiAccountCircle,
   mdiArrowLeftCircle,
@@ -440,8 +446,12 @@ export default {
     await this.fetchAuctionInfos();
   },
   methods: {
-    formatCasper(value = undefined) {
-      return value ? `${Big(value).toFormat(5)} CSPR` : '- CSPR';
+    formatCasper(value = undefined, convert = false) {
+      let cspr = value;
+      if (convert) {
+        cspr = CurrencyUtils.convertMotesToCasper(value).toString();
+      }
+      return cspr ? `${Big(cspr).toFormat(5)} CSPR` : '- CSPR';
     },
     updateTab() {
       if (this.currentAuctionStatus === 0 || this.currentAuctionStatus === 4) {
@@ -473,17 +483,17 @@ export default {
       const marketplace = `account-hash-${await this.getInitialValue('marketplace_account')}`;
       const marketplaceCommission = await this.getInitialValue('marketplace_commission');
       let minimumBidStep = await this.getInitialValue('minimum_bid_step');
-      const startingPrice = await this.getInitialValue('starting_price');
-      const reservePrice = await this.getInitialValue('reserve_price');
+      const startingPrice = CurrencyUtils.convertMotesToCasper(Big((await this.getInitialValue('starting_price')) || 0)).toString();
+      const reservePrice = CurrencyUtils.convertMotesToCasper(Big((await this.getInitialValue('reserve_price')) || 0)).toString();
       const startTime = new Date(await this.getInitialValue('start_time'));
       const cancelTime = new Date(await this.getInitialValue('cancellation_time', true));
       const endTime = new Date(await this.getInitialValue('end_time', true));
-      const auctionTimerExtension = await this.getInitialValue('auction_timer_extension');
+      const auctionTimerExtension = Big((await this.getInitialValue('auction_timer_extension')) || 0).div(1000).toString();
       const tokenOwner = (await this.getInitialValue('token_owner')).Account;
       const beneficiaryAccount = (await this.getInitialValue('beneficiary_account')).Account;
       const currentWinner = await this.getInitialValue('current_winner', true);
       const bidderCountCap = await this.getInitialValue('bidder_count_cap');
-      const winningBid = await this.getInitialValue('winning_bid', true);
+      const winningBid = CurrencyUtils.convertMotesToCasper(Big((await this.getInitialValue('winning_bid', true)) || 0)).toString();
       const finalized = await this.getInitialValue('finalized', true);
       const auctionEventsCount = await this.getInitialValue('auction_events_count', true);
       const str = await getStateRootHash();
@@ -511,7 +521,8 @@ export default {
         token_owner: tokenOwner,
         beneficiary_account: beneficiaryAccount,
         current_winner: currentWinner || 'No current winner',
-        winning_bid: winningBid ? this.formatCasper(winningBid) : 'No winning bid',
+        winning_bid: currentWinner ? this.formatCasper(winningBid) : 'No winning bid',
+        winning_bid_raw: currentWinner ? winningBid : '0',
         auction_events_count: auctionEventsCount,
       };
       if (format !== 'English') {
@@ -519,6 +530,8 @@ export default {
       }
       if (!minimumBidStep) {
         minimumBidStep = 1;
+      } else {
+        minimumBidStep = Number(CurrencyUtils.convertMotesToCasper(Big(minimumBidStep)).toString());
       }
       this.auctionInfos.minimum_bid_step = this.formatCasper(minimumBidStep);
       if (auctionTimerExtension) {
@@ -531,7 +544,7 @@ export default {
       if (format !== 'English') {
         this.minBid = Big(startingPrice);
       } else {
-        this.minBid = winningBid
+        this.minBid = currentWinner
           ? Big(winningBid).plus(Big(minimumBidStep)).toString()
           : Big(reservePrice).plus(Big(minimumBidStep)).toString();
       }

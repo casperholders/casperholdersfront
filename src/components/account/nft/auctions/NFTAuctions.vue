@@ -141,7 +141,7 @@ export default {
           data: [],
         };
       }
-      const response = await fetch(`${DATA_API}/contracts_list?type=eq.casperprivateauction&limit=10&select=*,named_keys(*)&order=timestamp.desc&offset=${this.page * 10}`, {
+      const response = await fetch(`${DATA_API}/auctions_list?type=eq.casperprivateauction&limit=10&select=*,named_keys(*)&order=timestamp.desc&offset=${this.page * 10}`, {
         headers: new Headers({
           Prefer: 'count=exact',
           'Range-Unit': 'items',

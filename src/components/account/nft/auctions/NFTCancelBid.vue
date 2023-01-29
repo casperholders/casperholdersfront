@@ -16,7 +16,7 @@
       :balance-loading="loadingBalance"
       :balance="balance"
       :fee="bidFee"
-      :amount="0"
+      :amount="currentUserBid"
       class="mx-n1"
     />
     <v-alert
@@ -81,6 +81,11 @@ export default {
     auctionData: {
       type: Object,
       required: true,
+    },
+    currentUserBid: {
+      type: String,
+      required: false,
+      default: '0',
     },
   },
   data() {

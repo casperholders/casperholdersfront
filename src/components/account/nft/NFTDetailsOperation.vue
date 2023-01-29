@@ -32,7 +32,7 @@
     </v-col>
     <v-col
       cols="12"
-      :md="!!$slots.additionalDetails ? 4 : 9"
+      :md="!!$slots.additionalDetails ? 4 : 8"
       class="d-flex flex-column d-md-block"
     >
       <v-card-title class="text-wrap d-flex d-md-block justify-space-around">

@@ -5,7 +5,7 @@
     :type="operationType"
     :balance="balance"
     :fee="bidFee"
-    :amount="bid"
+    :amount="`-${bid}`"
     :cancel="true"
     :icon="mdiGavel"
     submit-title="Add bid"
@@ -24,11 +24,20 @@
       hint="In CSPR"
       required
     />
+    <v-alert
+      v-if="isCurrentUserWinner"
+      dense
+      type="info"
+      style="overflow-wrap: anywhere!important;"
+    >
+      You're the current winner, only the difference with
+      your current bid will be deducted from your balance.
+    </v-alert>
     <operation-summary
       :balance-loading="loadingBalance"
       :balance="balance"
       :fee="bidFee"
-      :amount="bid"
+      :amount="`-${balanceAfterOperationForBid}`"
       class="mx-n1"
     />
     <v-alert
@@ -69,6 +78,7 @@
 
 <script>
 import Bid from '@/assets/smartcontracts/bid-purse.wasm?url';
+import OperationCard from '@/components/operations/OperationCard.vue';
 import OperationSummary from '@/components/operations/OperationSummary.vue';
 import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
@@ -79,11 +89,12 @@ import {
   NoActiveKeyError,
 } from '@casperholders/core';
 import { mdiAccountCircle, mdiCurrencyUsd, mdiGavel } from '@mdi/js';
+import Big from 'big.js';
 import { mapGetters, mapState } from 'vuex';
 
 export default {
   name: 'NFTBid',
-  components: { OperationSummary },
+  components: { OperationCard, OperationSummary },
   props: {
     nftData: {
       type: Object,
@@ -96,6 +107,16 @@ export default {
     minBid: {
       type: String,
       required: true,
+    },
+    isCurrentUserWinner: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    currentUserBid: {
+      type: String,
+      required: false,
+      default: '0',
     },
   },
   data() {
@@ -110,7 +131,7 @@ export default {
       loadingSignAndDeploy: false,
       errorDeploy: null,
       operationType: NftBidResult.getName(),
-      bidFee: 27,
+      bidFee: 35,
       bid: this.minBid,
       bidRules: [],
       loadingBalance: true,
@@ -128,6 +149,9 @@ export default {
     ]),
     minimumFundsNeeded() {
       return this.bidFee;
+    },
+    balanceAfterOperationForBid() {
+      return Big(this.bid).minus(this.currentUserBid).toString();
     },
     isInstanceOfNoActiveKeyError() {
       return this.errorBalance instanceof NoActiveKeyError;
