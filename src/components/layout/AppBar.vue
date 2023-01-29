@@ -68,7 +68,10 @@
         </v-list-item>
       </v-list>
     </v-menu>
-    <connect-dialog v-if="displayConnect" />
+    <connect-dialog
+      v-if="displayConnect"
+      :is-window-top="isWindowTop"
+    />
     <AccountPopup v-if="signer.activeKey" />
     <v-menu
       left

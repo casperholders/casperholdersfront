@@ -9,7 +9,7 @@
           data-cy="connect"
           fab
           small
-          color="primary"
+          :color="isWindowTop ? 'secondary' : 'primary'"
           aria-label="Connection"
           v-bind="attrs"
           v-on="on"
@@ -23,7 +23,7 @@
         <v-btn
           data-cy="connect"
           rounded
-          color="primary"
+          :color="isWindowTop ? 'secondary' : 'primary'"
           v-bind="attrs"
           v-on="on"
         >
@@ -476,6 +476,13 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'ConnectDialog',
+  props: {
+    isWindowTop: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+  },
   data: () => ({
     mdiLightningBolt,
     mdiWallet,
