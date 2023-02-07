@@ -4,7 +4,7 @@ function getAnimation(nft) {
   if (nft) {
     if (nft.metadata?.get('animation_url')) {
       return nft.metadata.get('animation_url')
-        .replace('ipfs://', 'https://gateway.ipfs.io/ipfs/');
+        .replace('ipfs://', 'https://w3s.link/ipfs/');
     }
   }
   return null;
@@ -14,21 +14,21 @@ function getImage(nft) {
   if (nft.loading === false) {
     if (nft.metadata?.get('image')) {
       const image = nft.metadata.get('image')
-        .replace('ipfs://', 'https://gateway.ipfs.io/ipfs/');
-      return image.match(/^http(s)*:\/\//) ? image : `https://gateway.ipfs.io/ipfs/${image}`;
+        .replace('ipfs://', 'https://w3s.link/ipfs/');
+      return image.match(/^http(s)*:\/\//) ? image : `https://w3s.link/ipfs/${image}`;
     }
     if (nft.metadata?.get('ipfs_url')) {
       return nft.metadata.get('ipfs_url')
-        .replace('ipfs://', 'https://gateway.ipfs.io/ipfs/');
+        .replace('ipfs://', 'https://w3s.link/ipfs/');
     }
     if (nft.metadata?.get('pictureIpfs')) {
-      return `https://gateway.ipfs.io/ipfs/${nft.metadata.get('pictureIpfs')
+      return `https://w3s.link/ipfs/${nft.metadata.get('pictureIpfs')
         .replace('ipfs://', '')}`;
     }
     if (nft.metadata?.get('asset') && !nft.metadata?.get('asset')
       .match(/\.json$/)) {
       return nft.metadata.get('asset')
-        .replace('ipfs://', 'https://gateway.ipfs.io/ipfs/');
+        .replace('ipfs://', 'https://w3s.link/ipfs/');
     }
     if (getAnimation(nft)) {
       return '/movie-open.svg';
@@ -55,8 +55,8 @@ function getDescription(nft) {
 }
 
 function replaceIpfs(str) {
-  return str.replace('ipfs://', 'https://gateway.ipfs.io/ipfs/')
-    .replace('https://ipfs.io/ipfs/', 'https://gateway.ipfs.io/ipfs/');
+  return str.replace('ipfs://', 'https://w3s.link/ipfs/')
+    .replace('https://ipfs.io/ipfs/', 'https://w3s.link/ipfs/');
 }
 
 async function parseTokenUri(nft, key) {
