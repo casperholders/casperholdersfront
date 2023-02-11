@@ -100,7 +100,13 @@
 </template>
 
 <script>
-import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER, TORUS_SIGNER } from '@/helpers/signers';
+import {
+  CASPER_SIGNER,
+  LEDGER_SIGNER,
+  LOCAL_SIGNER,
+  METAMASK_SIGNER,
+  TORUS_SIGNER,
+} from '@/helpers/signers';
 import { torusOptions } from '@/store';
 import { mdiAccount, mdiCheckboxMarkedCircle, mdiClose, mdiContentCopy, mdiKey } from '@mdi/js';
 import QrcodeVue from 'qrcode.vue';
@@ -126,6 +132,9 @@ export default {
   computed: {
     ...mapState(['signer', 'signerType']),
     humanReadableSigner() {
+      if (this.signerType === METAMASK_SIGNER) {
+        return 'Metamask';
+      }
       if (this.signerType === CASPER_SIGNER) {
         return 'Casper Signer';
       }

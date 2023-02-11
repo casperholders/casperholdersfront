@@ -4,4 +4,5 @@
 export const CASPER_SIGNER = 'casperSigner';
 export const LOCAL_SIGNER = 'localSigner';
 export const LEDGER_SIGNER = 'ledgerSigner';
+export const METAMASK_SIGNER = 'metamaskSigner';
 export const TORUS_SIGNER = 'torusSigner';

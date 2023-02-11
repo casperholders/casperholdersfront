@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="connectDialog"
-    width="500"
+    width="600"
   >
     <template #activator="{ on, attrs }">
       <template v-if="$vuetify.breakpoint.mobile">
@@ -73,6 +73,76 @@
               elevation="3"
               link
               class="mb-4"
+            >
+              <v-card-text
+                id="connectCasperWallet"
+                class="d-flex align-center"
+                @click="metamaskConnect"
+              >
+                <img
+                  :src="metaMaskFlask"
+                  width="32"
+                  alt="Metamask Flask Logo"
+                  class="mr-3"
+                >
+                <div>
+                  <span class="text-body-1">
+                    Metamask Flask
+                  </span>
+                  <div>The leading self-custodial wallet</div>
+                </div>
+                <v-icon class="ml-auto">
+                  {{ mdiChevronRight }}
+                </v-icon>
+              </v-card-text>
+              <div class="pb-3 px-3 d-flex align-center">
+                <v-icon left>
+                  {{ mdiInformation }}
+                </v-icon>
+                MetaMask Flask is the experimental version of MetaMask.
+                <v-spacer />
+                <a
+                  href="https://metamask.io/flask/#flask-fa-qs"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Learn more
+                </a>
+              </div>
+            </v-card>
+            <v-card
+              outlined
+              elevation="3"
+              link
+              class="mb-4"
+              @click="casperWalletConnect"
+            >
+              <v-card-text
+                id="connectCasperWallet"
+                class="d-flex align-center"
+              >
+                <img
+                  :src="casperWalletSvg"
+                  width="32"
+                  alt="Casper Wallet Logo"
+                  class="mr-3"
+                >
+                <div>
+                  <span class="text-body-1">
+                    Casper Wallet
+                  </span>
+                  <div>Native wallet for the Casper Network</div>
+                </div>
+                <v-icon class="ml-auto">
+                  {{ mdiChevronRight }}
+                </v-icon>
+              </v-card-text>
+            </v-card>
+            <v-card
+              outlined
+              elevation="3"
+              link
+              class="mb-4"
               @click="signerConnect"
             >
               <v-card-text
@@ -88,7 +158,7 @@
                 <div>
                   <span class="text-body-1">Casper
                     Signer{{ signer.version ? ' - v' + signer.version : '' }}</span>
-                  <div>Native wallet for the Casper Network</div>
+                  <div>Legacy wallet for the Casper Network</div>
                 </div>
                 <v-icon class="ml-auto">
                   {{ mdiChevronRight }}
@@ -449,20 +519,27 @@
 
 <script>
 import casper from '@/assets/images/casper_logo.svg';
+import casperWalletSvg from '@/assets/images/casperWallet.svg';
 import ledger from '@/assets/images/ledger_logo.png';
+import metaMaskFlask from '@/assets/images/metaMaskFlask.svg';
 import torus from '@/assets/images/torus.svg';
 import balanceService from '@/helpers/balanceService';
 import getTorusNetwork from '@/helpers/getTorusNetwork';
+import { getAccount, getSnap, installSnap } from '@/helpers/metamask/metamask';
 import truncate from '@/helpers/strings/truncate';
 import { ledgerOptions, torusOptions } from '@/store';
 import TransportWebBLE from '@ledgerhq/hw-transport-web-ble';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import {
-  mdiAccount, mdiAlertCircle,
+  mdiAccount,
+  mdiAlertCircle,
   mdiCheckCircle,
   mdiChevronRight,
   mdiClose,
-  mdiCurrencyUsd, mdiCurrencyUsdOff, mdiLightningBolt,
+  mdiCurrencyUsd,
+  mdiCurrencyUsdOff,
+  mdiInformation,
+  mdiLightningBolt,
   mdiWallet,
 } from '@mdi/js';
 import Torus from '@toruslabs/casper-embed';
@@ -491,6 +568,7 @@ export default {
     mdiCurrencyUsd,
     mdiAccount,
     mdiCheckCircle,
+    mdiInformation,
     mdiAlertCircle,
     mdiCurrencyUsdOff,
     loading: false,
@@ -498,6 +576,8 @@ export default {
     timeout: false,
     ledgerType: false,
     chooseLedgerKey: false,
+    metaMaskFlask,
+    casperWalletSvg,
     casper,
     ledger,
     torus,
@@ -538,6 +618,27 @@ export default {
     },
   },
   methods: {
+    async metamaskConnect() {
+      setTimeout(() => {
+        if (this.signer.activeKey === null) {
+          this.timeout = true;
+          this.loading = false;
+        }
+      }, 60000);
+      this.loading = true;
+      try {
+        await installSnap();
+        await getSnap();
+        const publicKey = await getAccount();
+        await this.$store.dispatch('updateFromMetamaskEvent', { publicKey, addressIndex: 0 });
+      } catch {
+        this.timeout = true;
+        this.loading = false;
+      }
+    },
+    async casperWalletConnect() {
+      await this.signerConnect();
+    },
     async signerConnect() {
       setTimeout(() => {
         if (this.signer.activeKey === null) {

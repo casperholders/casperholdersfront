@@ -1,7 +1,14 @@
 import clientCasper from '@/helpers/clientCasper';
 import deployManager from '@/helpers/deployManager';
 import generateAsymmetricKey from '@/helpers/generateAsymmetricKey';
-import { CASPER_SIGNER, LEDGER_SIGNER, LOCAL_SIGNER, TORUS_SIGNER } from '@/helpers/signers';
+import { MetaMaskSigner } from '@/helpers/metamask/metamask';
+import {
+  CASPER_SIGNER,
+  LEDGER_SIGNER,
+  LOCAL_SIGNER,
+  METAMASK_SIGNER,
+  TORUS_SIGNER,
+} from '@/helpers/signers';
 import {
   KeyManagementResult,
   TorusSigner,
@@ -55,6 +62,7 @@ const SIGNER_TYPES = {
   [CASPER_SIGNER]: CasperSigner,
   [LOCAL_SIGNER]: LocalSigner,
   [LEDGER_SIGNER]: LedgerSigner,
+  [METAMASK_SIGNER]: MetaMaskSigner,
   [TORUS_SIGNER]: TorusSigner,
 };
 
@@ -74,6 +82,23 @@ const SIGNER_OPTIONS_FACTORIES = {
     getOptionsForValidatorOperations: () => ({
       activeKey: state.signer.activeKey,
       to: state.signer.activeKey,
+    }),
+  }),
+  [METAMASK_SIGNER]: (state) => ({
+    getOptionsForTransfer: () => ({
+      snapID: undefined,
+      publicKey: state.signer.activeKey,
+      addressIndex: state.metamask.addressIndex,
+    }),
+    getOptionsForOperations: () => ({
+      snapID: undefined,
+      publicKey: state.signer.activeKey,
+      addressIndex: state.metamask.addressIndex,
+    }),
+    getOptionsForValidatorOperations: () => ({
+      snapID: undefined,
+      publicKey: state.signer.activeKey,
+      addressIndex: state.metamask.addressIndex,
     }),
   }),
   [LEDGER_SIGNER]: (state) => ({
@@ -141,6 +166,9 @@ const initialState = () => ({
   ledger: {
     keyPath: 0,
   },
+  metamask: {
+    addressIndex: 0,
+  },
   internet: true,
   impersonatePublicKey: '',
 });
@@ -167,6 +195,13 @@ const mutations = {
       state.multisig = multisig;
     }
     state.signerType = import.meta.env.VITE_APP_E2E === 'true' ? LOCAL_SIGNER : CASPER_SIGNER;
+  },
+  updateMetamask(state, { options }) {
+    state.signer.activeKey = options.publicKey;
+    state.signer.lock = false;
+    state.signer.connected = true;
+    state.signerType = METAMASK_SIGNER;
+    state.metamask.addressIndex = options.addressIndex;
   },
   updateLedger(state, { options }) {
     state.signer.activeKey = options.activeKey.key;
@@ -275,6 +310,9 @@ const actions = {
       });
       context.commit('updateSignerLock', { lock: !detail.isUnlocked });
     }
+  },
+  updateFromMetamaskEvent(context, options) {
+    context.commit('updateMetamask', { options });
   },
   updateFromLedgerEvent(context, options) {
     context.commit('updateLedger', { options });
