@@ -102,6 +102,7 @@
 <script>
 import {
   CASPER_SIGNER,
+  CASPER_WALLET_SIGNER,
   LEDGER_SIGNER,
   LOCAL_SIGNER,
   METAMASK_SIGNER,
@@ -134,6 +135,9 @@ export default {
     humanReadableSigner() {
       if (this.signerType === METAMASK_SIGNER) {
         return 'Metamask';
+      }
+      if (this.signerType === CASPER_WALLET_SIGNER) {
+        return 'Casper Wallet';
       }
       if (this.signerType === CASPER_SIGNER) {
         return 'Casper Signer';

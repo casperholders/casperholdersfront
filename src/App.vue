@@ -284,9 +284,18 @@ export default {
    * the VueX store accordingly to the data received from the Casper Signer extension.
    */
   mounted() {
+    if (!window.CasperWalletInstance) {
+      const CasperWalletInstance = window.CasperWalletProvider();
+      if (CasperWalletInstance) {
+        window.CasperWalletInstance = CasperWalletInstance;
+      }
+    }
     this.$nextTick(() => {
       this.$store.dispatch('initSignerStatus');
       this.$store.dispatch('initConnectivityStatus');
+      if (window.CasperWalletEventTypes != null) {
+        Object.values(window.CasperWalletEventTypes).forEach((e) => window.addEventListener(e, (msg) => this.$store.dispatch('updateFromCasperWalletEvent', JSON.parse(msg.detail))));
+      }
       window.addEventListener('signer:initialState', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
       window.addEventListener('signer:connected', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));
       window.addEventListener('signer:disconnected', (msg) => this.$store.dispatch('updateFromSignerEvent', msg.detail));

@@ -130,6 +130,7 @@
                 <div>
                   <span class="text-body-1">
                     Casper Wallet
+                    {{ casperWalletVersion !== '' ? ' - v' + casperWalletVersion : '' }}
                   </span>
                   <div>Native wallet for the Casper Network</div>
                 </div>
@@ -576,6 +577,7 @@ export default {
     timeout: false,
     ledgerType: false,
     chooseLedgerKey: false,
+    casperWalletVersion: '',
     metaMaskFlask,
     casperWalletSvg,
     casper,
@@ -617,6 +619,9 @@ export default {
       },
     },
   },
+  async mounted() {
+    this.casperWalletVersion = (await window.CasperWalletInstance?.getVersion()) ?? '';
+  },
   methods: {
     async metamaskConnect() {
       setTimeout(() => {
@@ -637,7 +642,33 @@ export default {
       }
     },
     async casperWalletConnect() {
-      await this.signerConnect();
+      try {
+        setTimeout(() => {
+          if (this.signer.activeKey === null) {
+            this.timeout = true;
+            this.loading = false;
+          }
+        }, 60000);
+        this.loading = true;
+        const casperWallet = window.CasperWalletInstance;
+        const isConnected = await casperWallet.isConnected();
+        if (isConnected) {
+          try {
+            const pk = await casperWallet.getActivePublicKey();
+            await this.$store.dispatch('updateFromCasperWalletEvent', {
+              activeKey: pk,
+              isConnected: true,
+              isUnlocked: true,
+            });
+          } catch (e) {
+            window.CasperWalletInstance.requestConnection();
+          }
+        } else {
+          window.CasperWalletInstance.requestConnection();
+        }
+      } catch (e) {
+        console.log(e);
+      }
     },
     async signerConnect() {
       setTimeout(() => {

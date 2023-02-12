@@ -1,23 +1,25 @@
+import CasperWalletSigner from '@/helpers/casperWallet/casperWallet';
 import clientCasper from '@/helpers/clientCasper';
 import deployManager from '@/helpers/deployManager';
 import generateAsymmetricKey from '@/helpers/generateAsymmetricKey';
 import { MetaMaskSigner } from '@/helpers/metamask/metamask';
 import {
   CASPER_SIGNER,
+  CASPER_WALLET_SIGNER,
   LEDGER_SIGNER,
   LOCAL_SIGNER,
   METAMASK_SIGNER,
   TORUS_SIGNER,
 } from '@/helpers/signers';
 import {
-  KeyManagementResult,
-  TorusSigner,
-  LocalSigner,
-  LedgerSigner,
   CasperSigner,
+  KeyManagementResult,
+  LedgerSigner,
+  LocalSigner,
+  TorusSigner,
 } from '@casperholders/core';
-import cloneDeep from 'lodash.clonedeep';
 import { CLPublicKey, Signer } from 'casper-js-sdk';
+import cloneDeep from 'lodash.clonedeep';
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -62,6 +64,7 @@ const SIGNER_TYPES = {
   [CASPER_SIGNER]: CasperSigner,
   [LOCAL_SIGNER]: LocalSigner,
   [LEDGER_SIGNER]: LedgerSigner,
+  [CASPER_WALLET_SIGNER]: CasperWalletSigner,
   [METAMASK_SIGNER]: MetaMaskSigner,
   [TORUS_SIGNER]: TorusSigner,
 };
@@ -99,6 +102,17 @@ const SIGNER_OPTIONS_FACTORIES = {
       snapID: undefined,
       publicKey: state.signer.activeKey,
       addressIndex: state.metamask.addressIndex,
+    }),
+  }),
+  [CASPER_WALLET_SIGNER]: (state) => ({
+    getOptionsForTransfer: () => ({
+      publicKey: state.signer.activeKey,
+    }),
+    getOptionsForOperations: () => ({
+      publicKey: state.signer.activeKey,
+    }),
+    getOptionsForValidatorOperations: () => ({
+      publicKey: state.signer.activeKey,
     }),
   }),
   [LEDGER_SIGNER]: (state) => ({
@@ -195,6 +209,12 @@ const mutations = {
       state.multisig = multisig;
     }
     state.signerType = import.meta.env.VITE_APP_E2E === 'true' ? LOCAL_SIGNER : CASPER_SIGNER;
+  },
+  updateCasperWallet(state, { connected, activeKey, multisig }) {
+    state.signer.connected = connected;
+    state.signer.activeKey = activeKey;
+    state.multisig = multisig;
+    state.signerType = CASPER_WALLET_SIGNER;
   },
   updateMetamask(state, { options }) {
     state.signer.activeKey = options.publicKey;
@@ -314,6 +334,16 @@ const actions = {
   updateFromMetamaskEvent(context, options) {
     context.commit('updateMetamask', { options });
   },
+  updateFromCasperWalletEvent(context, detail) {
+    if (this.state.signerType === CASPER_WALLET_SIGNER || this.state.signerType === LOCAL_SIGNER || this.state.signerType === '') {
+      context.commit('updateCasperWallet', {
+        connected: detail.isConnected,
+        activeKey: detail.activeKey,
+        multisig: detail.isMultisig ? detail.isMultisig : false,
+      });
+      context.commit('updateSignerLock', { lock: detail.isLocked });
+    }
+  },
   updateFromLedgerEvent(context, options) {
     context.commit('updateLedger', { options });
   },
@@ -396,7 +426,10 @@ const actions = {
         context.state.offlineDeploys[index].deploy,
         context.state.offlineDeploys[index].deployResultType,
       );
-      context.commit('addDeployResult', { deployResult, token: context.state.offlineDeploys[index] });
+      context.commit('addDeployResult', {
+        deployResult,
+        token: context.state.offlineDeploys[index],
+      });
       context.commit('removePendingDeploy', { index });
     } catch (e) {
       context.commit('addErrorPendingDeploy', { index, e });
