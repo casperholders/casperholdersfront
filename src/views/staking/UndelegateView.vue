@@ -95,7 +95,7 @@ export default {
   data() {
     return {
       minimumCSPRUnstake: 1,
-      undelegateFee: 0.00001,
+      undelegateFee: 2.5,
       amount: '1',
       errorBalance: null,
       balance: '0',
