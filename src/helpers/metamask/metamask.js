@@ -4,7 +4,7 @@ import { AbstractSigner, SignError } from '@casperholders/core';
 import { Buffer } from 'buffer/';
 import { CLPublicKey, DeployUtil, Keys } from 'casper-js-sdk';
 
-const SNAP_ID = 'local:http://localhost:9000';
+const SNAP_ID = 'npm:@casperholders/casper-snap';
 
 async function installSnap(snapID = SNAP_ID) {
   await window.ethereum.request({
