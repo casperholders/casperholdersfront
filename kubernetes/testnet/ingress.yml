@@ -5,7 +5,7 @@ metadata:
   name: testnet-casperholders-tls
 spec:
   entryPoints:
-    - secure
+    - websecure
   routes:
     - match: Host(`testnet.casperholders.io`)
       kind: Rule
