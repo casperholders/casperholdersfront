@@ -5,7 +5,7 @@ metadata:
   name: casperholders-tls
 spec:
   entryPoints:
-    - secure
+    - websecure
   routes:
     - match: Host(`casperholders.io`)
       kind: Rule
@@ -37,7 +37,7 @@ metadata:
   name: casperholders-www-tls
 spec:
   entryPoints:
-    - secure
+    - websecure
   routes:
     - match: Host(`www.casperholders.io`)
       kind: Rule
