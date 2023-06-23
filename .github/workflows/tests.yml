@@ -9,7 +9,7 @@ concurrency:
 
 jobs:
   set_network:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     outputs:
       auction: ${{ steps.auction.outputs.auction }}
     steps:
@@ -44,7 +44,7 @@ jobs:
           echo $VITE_APP_AUCTION_MANAGER_HASH
           echo "auction=$VITE_APP_AUCTION_MANAGER_HASH" >> $GITHUB_OUTPUT
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: set_network
     steps:
       - uses: actions/checkout@v3
@@ -91,7 +91,8 @@ jobs:
           path: dist
           retention-days: 1
   e2e:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    container: cypress/browsers:node16.17.0-chrome106
     needs: build
     strategy:
       fail-fast: false
@@ -163,7 +164,7 @@ jobs:
 
   coverage:
     needs: e2e
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
 
@@ -204,7 +205,7 @@ jobs:
   cleanup:
     needs: e2e
     if: ${{ always() }}
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
 

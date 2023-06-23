@@ -9,7 +9,7 @@ resources:
 helmChartInflationGenerator:
   - chartName: casperparser
     chartRepoUrl: https://casperholders.github.io/helm-charts
-    chartVersion: v0.2.0
+    chartVersion: v0.3.0
     releaseName: casperparser
     releaseNamespace: test-casperholders
     values: values.yaml
