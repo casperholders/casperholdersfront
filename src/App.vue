@@ -285,7 +285,7 @@ export default {
    */
   mounted() {
     if (!window.CasperWalletInstance) {
-      const CasperWalletInstance = window.CasperWalletProvider();
+      const CasperWalletInstance = window.CasperWalletProvider?.();
       if (CasperWalletInstance) {
         window.CasperWalletInstance = CasperWalletInstance;
       }
