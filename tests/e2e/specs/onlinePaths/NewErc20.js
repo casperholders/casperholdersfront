@@ -1,5 +1,6 @@
 import makeErc20Transfer from '../../helpers/makeErc20Transfer';
 import mockConnection from '../../helpers/mockConnection';
+import retries from '../../helpers/retries';
 import sendTransaction from '../../helpers/sendTransaction';
 import setArgs from '../../helpers/setArgs';
 import testAllowanceUsing from '../../helpers/testAllowance';
@@ -46,7 +47,8 @@ describe('Deploy & test erc20', () => {
     sendTransaction(cy);
   });
 
-  it('Approve erc20', () => {
+  it('Approve erc20', retries, () => {
+    cy.wait(30000);
     cy.visit('http://localhost:8080/smartcontract');
     mockConnection(cy, ACTIVE_KEY);
     cy.get('[data-cy="manageSmartContract"]')

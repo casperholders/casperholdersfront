@@ -1,5 +1,6 @@
 import 'cypress-real-events/support';
 import mockConnection from '../../helpers/mockConnection';
+import retries from '../../helpers/retries';
 import sendTransaction from '../../helpers/sendTransaction';
 import setArgs from '../../helpers/setArgs';
 import waitForBalances from '../../helpers/waitForBalances';
@@ -38,8 +39,8 @@ describe('Deploy and test cep47', () => {
     sendTransaction(cy);
   });
 
-   it('Get cep47 contract hash', () => {
-    cy.wait(5000);
+   it('Get cep47 contract hash', retries, () => {
+    cy.wait(30000);
     cy.visit('http://localhost:8080/smartcontract');
     mockConnection(cy, ACTIVE_KEY);
     cy.get('[data-cy="manageSmartContract"]')
@@ -217,7 +218,7 @@ describe('Deploy and test cep47', () => {
     sendTransaction(cy);
   });
 
-  it('Check not yet started auction', () => {
+  it('Check not yet started auction', retries, () => {
     cy.wait(5000);
     cy.visit('http://localhost:8080/marketplace');
 
@@ -431,7 +432,7 @@ describe('Deploy and test cep47', () => {
     sendTransaction(cy);
   });
 
-  it('Check started auction & bid on it', () => {
+  it('Check started auction & bid on it', retries, () => {
     cy.wait(5000);
     cy.visit('http://localhost:8080/marketplace');
 

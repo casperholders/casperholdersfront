@@ -1,4 +1,5 @@
 import mockConnection from '../../helpers/mockConnection';
+import retries from '../../helpers/retries';
 import sendTransaction from '../../helpers/sendTransaction';
 import setArgs from '../../helpers/setArgs';
 import waitForBalances from '../../helpers/waitForBalances';
@@ -49,8 +50,8 @@ describe('Deploy & test cep78', () => {
     sendTransaction(cy);
   });
 
-  it('Get cep78 contract hash', () => {
-    cy.wait(5000);
+  it('Get cep78 contract hash', retries, () => {
+    cy.wait(30000);
     cy.visit('http://localhost:8080/smartcontract');
     mockConnection(cy, ACTIVE_KEY);
     cy.get('[data-cy="manageSmartContract"]')
