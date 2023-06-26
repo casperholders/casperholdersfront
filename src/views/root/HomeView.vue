@@ -4,11 +4,11 @@
       <img
         width="120px"
         :src="logoSvg"
-        alt="Casper Holders Logo"
+        alt="Div3 Logo"
       >
     </div>
-    <div class="d-flex align-center mx-auto text-h3  mb-6 text-center text--white pb-4 ">
-      Casper Holders
+    <div class="d-flex align-center mx-auto text-h3 font-weight-bold text-center text--white">
+      Div3
     </div>
     <div class="mx-auto text-h5 text-center text--white pb-6">
       <p>
@@ -56,7 +56,7 @@
             >
               {{ mdiAccountCircle }}
             </v-icon>
-            CasperHolders tutorial
+            Div3 tutorial
           </v-btn>
         </template>
 
@@ -65,7 +65,7 @@
           class="rounded-xl primary"
         >
           <v-card-title class="text-h5">
-            CasperHolders Tutorial
+            Div3 Tutorial
           </v-card-title>
 
           <v-card-text>
@@ -231,7 +231,7 @@
                       After you've transferred some funds (this could take a few minutes) check your
                       <a href="/balance">balance</a><br>
                       Or <a href="/stake">stake</a> with us or do any operations
-                      you want on CasperHolders. Enjoy !
+                      you want on Div3. Enjoy !
                     </template>
                     <template v-else>
                       <v-icon color="red">
@@ -267,52 +267,13 @@
     </div>
 
     <FeaturesCards />
-    <RoadmapCard />
-    <MetricsCards />
-    <v-btn
-      class="mb-3 mt-10 mx-auto"
-      color="tertiary"
-      href="https://github.com/casperholders/casperholdersfront"
-      large
-      rounded
-      target="_blank"
-      rel="noopener"
-    >
-      <v-icon
-        class="mr-3"
-        large
-        left
-      >
-        {{ mdiGithub }}
-      </v-icon>
-      Technical information
-    </v-btn>
-    <v-btn
-      class="mb-3 mt-10 mx-auto"
-      color="secondary"
-      :href="swapCasperHoldersUrl"
-      large
-      rounded
-    >
-      <v-icon
-        class="mr-3"
-        large
-        left
-      >
-        {{ mdiSwapHorizontalBold }}
-      </v-icon>
-      Switch to {{ swapNetworkName }}
-    </v-btn>
   </div>
 </template>
 
 <script>
 
 import logoSvg from '@/assets/images/logo.svg';
-import FeaturesCards from '@/components/home/FeaturesCards';
-import MetricsCards from '@/components/home/MetricsCards';
-import RoadmapCard from '@/components/home/RoadmapCard';
-import { NETWORK } from '@/helpers/env';
+import FeaturesCards from '@/components/home/FeatureCard.vue';
 import {
   mdiAccountCircle,
   mdiAlertCircle,
@@ -332,7 +293,7 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'HomeView',
-  components: { MetricsCards, RoadmapCard, FeaturesCards },
+  components: { FeaturesCards },
   data: () => ({
     mdiAccountCircle,
     mdiAlertCircle,
@@ -351,12 +312,6 @@ export default {
     ...mapState(['signer']),
     publicKey() {
       return this.signer.activeKey;
-    },
-    swapNetworkName() {
-      return NETWORK === 'casper' ? 'Testnet' : 'Mainnet';
-    },
-    swapCasperHoldersUrl() {
-      return NETWORK === 'casper' ? 'https://testnet.casperholders.io' : 'https://casperholders.io';
     },
   },
   methods: {

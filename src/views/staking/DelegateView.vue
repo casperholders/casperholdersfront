@@ -9,6 +9,7 @@
     :icon="mdiSafe"
     submit-title="Stake"
     title="Stake"
+    :disable-title="true"
   >
     <ValidatorInput
       v-model="validator"

@@ -12,9 +12,9 @@ const routes = [
     component: () => import('@/views/root/HomeView'),
   },
   {
-    path: '/settings',
-    name: 'settings',
-    component: () => import('@/views/root/SettingsView'),
+    path: '/account',
+    name: 'Account',
+    component: () => import('@/views/root/AccountView'),
   },
   {
     path: '/balance',
@@ -37,19 +37,14 @@ const routes = [
     component: () => import('@/views/account/TransferView'),
   },
   {
-    path: '/account',
-    name: 'Account Info',
-    component: () => import('@/views/account/AccountInfoView'),
-  },
-  {
     path: '/stake/:validator?',
-    name: 'Stake',
-    component: () => import('@/views/staking/DelegateView'),
+    name: 'Staking operations',
+    component: () => import('@/views/staking/StakingView'),
   },
   {
     path: '/unstake/:validator?',
-    name: 'Unstake',
-    component: () => import('@/views/staking/UndelegateView'),
+    name: 'Unstaking operations',
+    component: () => import('@/views/staking/StakingView'),
   },
   {
     path: '/nft',
@@ -64,12 +59,12 @@ const routes = [
   {
     path: '/addbid',
     name: 'Add Bid',
-    component: () => import('@/views/validators/AddBidView'),
+    component: () => import('@/views/validators/ValidatorsView'),
   },
   {
     path: '/withdrawbid',
     name: 'Withdraw Bid',
-    component: () => import('@/views/validators/WithdrawBidView'),
+    component: () => import('@/views/validators/ValidatorsView'),
   },
   {
     path: '/smartcontract',

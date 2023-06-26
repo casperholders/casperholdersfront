@@ -8,7 +8,7 @@ import Big from 'big.js';
  *
  * @returns {string}
  */
-export default function (token, amount) {
+export default function convertErc20MotesToAmount(token, amount) {
   return token.decimals
     ? Big(amount).div(Big(10).pow(Big(token.decimals).toNumber())).toString()
     : amount;

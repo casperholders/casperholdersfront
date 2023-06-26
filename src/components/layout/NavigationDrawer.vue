@@ -57,36 +57,23 @@
       </template>
       <navigation-drawer-list-item
         :minified="minified"
-        tooltip="Settings"
-        to="/settings"
+        tooltip="Account"
+        to="/account"
         link
         exact
       >
         <v-list-item-icon>
-          <v-icon>{{ mdiCog }}</v-icon>
+          <v-icon>{{ mdiAccount }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title>Settings</v-list-item-title>
+          <v-list-item-title>Account</v-list-item-title>
         </v-list-item-content>
       </navigation-drawer-list-item>
-    </navigation-drawer-list>
-
-    <template v-for="(items, name) in links">
-      <v-divider
-        :key="`nav-group-${name}-divider`"
-        role="presentation"
-      />
-      <navigation-drawer-list-header
-        :key="`nav-group-${name}-header`"
-        :minified="minified"
-      >
-        {{ name }}
-      </navigation-drawer-list-header>
-      <navigation-drawer-list :key="`nav-group-${name}-items`">
+      <template v-for="(item, index) in links">
         <navigation-drawer-list-item
-          v-for="(item, index) in items"
-          :id="`nav-group-${name}-items-${index}`"
-          :key="`nav-group-${name}-items-${index}`"
+          v-if="!item.hide"
+          :id="`nav-group-items-${index}`"
+          :key="`nav-group-items-${index}`"
           :minified="minified"
           :tooltip="item.title"
           :to="item.route"
@@ -123,80 +110,19 @@
             </v-chip>
           </v-list-item-action>
         </navigation-drawer-list-item>
-      </navigation-drawer-list>
-    </template>
-
-    <v-divider role="presentation" />
-    <navigation-drawer-list>
-      <v-tooltip
-        :disabled="!minified"
-        right
-      >
-        <template #activator="{ attrs, on }">
-          <v-list-group
-            v-bind="attrs"
-            :prepend-icon="mdiHammerWrench"
-            v-on="on"
-          >
-            <template #activator>
-              <v-list-item-title>Advanced</v-list-item-title>
-            </template>
-            <navigation-drawer-list-item
-              v-for="(item, index) in advanced"
-              :id="`nav-group-advanced-items-${index}`"
-              :key="`nav-group-advanced-items-${index}`"
-              :minified="minified"
-              :tooltip="item.title"
-              :to="item.route"
-              link
-              exact
-              :disabled="item.disabled"
-            >
-              <v-list-item-icon>
-                <v-icon>
-                  {{ item.icon }}
-                </v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ item.title }}
-                </v-list-item-title>
-                <v-list-item-subtitle
-                  v-if="item.subtitle !== null"
-                >
-                  {{ item.subtitle }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-              <v-list-item-action
-                v-if="item.beta"
-              >
-                <v-chip
-                  outlined
-                  small
-                >
-                  <v-icon left>
-                    {{ mdiFire }}
-                  </v-icon>
-                  Beta
-                </v-chip>
-              </v-list-item-action>
-            </navigation-drawer-list-item>
-          </v-list-group>
-        </template>
-        <span>Advanced</span>
-      </v-tooltip>
+      </template>
     </navigation-drawer-list>
   </v-navigation-drawer>
 </template>
 
 <script>
 import NavigationDrawerList from '@/components/layout/NavigationDrawerList';
-import NavigationDrawerListHeader from '@/components/layout/NavigationDrawerListHeader';
 import NavigationDrawerListItem from '@/components/layout/NavigationDrawerListItem';
 import { HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
 import {
-  mdiChevronLeft, mdiChevronRight,
-  mdiCog,
+  mdiAccount,
+  mdiChevronLeft,
+  mdiChevronRight,
   mdiFire,
   mdiHammerWrench,
   mdiHome,
@@ -208,13 +134,9 @@ import {
  */
 export default {
   name: 'NavigationDrawer',
-  components: { NavigationDrawerListHeader, NavigationDrawerListItem, NavigationDrawerList },
+  components: { NavigationDrawerListItem, NavigationDrawerList },
   props: {
     links: {
-      type: Object,
-      required: true,
-    },
-    advanced: {
       type: Array,
       required: true,
     },
@@ -225,7 +147,7 @@ export default {
       mdiChevronLeft,
       mdiHome,
       mdiSwapHorizontal,
-      mdiCog,
+      mdiAccount,
       mdiHammerWrench,
       mdiFire,
       minified: false,

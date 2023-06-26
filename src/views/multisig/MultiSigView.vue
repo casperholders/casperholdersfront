@@ -416,7 +416,7 @@ export default {
       try {
         let options = this.signerOptionsFactory.getOptionsForOperations();
         if (this.deploy.deployResult.name === TransferResult.getName()) {
-          options = this.signerOptionsFactory.getOptionsForTransfer(DeployUtil.deployFromJson(this.deploy.deploy).val.session.getArgByName('target').toHex());
+          options = this.signerOptionsFactory.getOptionsForTransfer(DeployUtil.deployFromJson(this.deploy.deploy).val.session.getArgByName('target').toHex(false));
         }
         const signedDeploy = await this.signerObject
           .sign(DeployUtil.deployFromJson(this.deploy.deploy).val, options);

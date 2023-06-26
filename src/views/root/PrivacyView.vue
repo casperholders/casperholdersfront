@@ -56,14 +56,14 @@
           <li>
             <p>
               <strong>Application</strong> means the software program provided by the Company
-              downloaded by You on any electronic device, named CasperHolders
+              downloaded by You on any electronic device, named Div3
             </p>
           </li>
           <li>
             <p>
               <strong>Company</strong>
               (referred to as either &quot;the Company&quot;, &quot;We&quot;,
-              &quot;Us&quot; or &quot;Our&quot; in this Agreement) refers to CasperHolders.
+              &quot;Us&quot; or &quot;Our&quot; in this Agreement) refers to Div3.
             </p>
           </li>
           <li>
@@ -350,11 +350,11 @@
             <p>
               By visiting this page on our website:
               <a
-                href="https://casperholders.io/contact"
+                href="/contact"
                 rel="external nofollow noopener"
                 target="_blank"
               >
-                https://casperholders.io/contact
+                Contact Page
               </a>
             </p>
           </li>

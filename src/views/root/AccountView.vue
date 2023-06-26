@@ -9,17 +9,18 @@
         size="52"
       >
         <v-icon size="24">
-          {{ mdiCog }}
+          {{ mdiAccount }}
         </v-icon>
       </v-avatar>
       <v-card-title
         class="pl-4"
         style="word-break: break-word"
       >
-        Settings
+        Account
       </v-card-title>
     </v-card-title>
     <v-card-text>
+      <AccountDetailsCard v-if="signer.activeKey" />
       <v-card
         outlined
         elevation="3"
@@ -211,18 +212,32 @@
       >
         Settings are saved automatically
       </v-alert>
+      <v-card
+        outlined
+        elevation="3"
+        class="mb-4"
+      >
+        <v-card-title>
+          <v-icon left>
+            {{ mdiAccount }}
+          </v-icon>
+          Set account informations
+        </v-card-title>
+        <AccountInfoView />
+      </v-card>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
+import AccountDetailsCard from '@/components/account/AccountDetailsCard.vue';
 import clientCasper from '@/helpers/clientCasper';
+import AccountInfoView from '@/views/account/AccountInfoView.vue';
 import {
   mdiAccount,
   mdiAccountCircle,
   mdiAlertCircle,
   mdiCheckboxMarkedCircle,
-  mdiCog,
   mdiWifi,
 } from '@mdi/js';
 
@@ -233,9 +248,9 @@ import { CLPublicKey } from 'casper-js-sdk';
 import { mapState } from 'vuex';
 
 export default {
-  name: 'SettingsView',
+  name: 'AccountView',
+  components: { AccountInfoView, AccountDetailsCard },
   data: () => ({
-    mdiCog,
     mdiAlertCircle,
     mdiCheckboxMarkedCircle,
     mdiWifi,

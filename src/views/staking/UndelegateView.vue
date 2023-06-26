@@ -10,6 +10,8 @@
     :icon="mdiLockOpen"
     submit-title="Unstake"
     title="Unstake"
+    :disable-title="true"
+    data-cy="unstakeOperation"
   >
     <ValidatorInput
       v-model="validator"

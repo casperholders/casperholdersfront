@@ -9,7 +9,7 @@ describe('Add bid', () => {
     cy.get('[data-cy=errorBalance]').should('have.length', 1);
     cy.get('[data-cy=errorBalance]').should('contain', ' Unable to retrieve your Validator balance. Make sure that you are correctly bonded to the network. ');
     mockConnection(cy, '0124bfdae2ed128fa5e4057bc398e4933329570e47240e57fc92f5611a6178eba5')
-    cy.get('.v-alert').should('have.length', 0);
+    cy.get('.v-alert .error').should('have.length', 0);
     cy.get('[data-cy=submitOperation]').click();
     cy.get('[data-cy=amount]').type('9999999').parents('.v-input__control').find('.v-messages__message')
       .should('contain', 'Amount must equal or bellow');

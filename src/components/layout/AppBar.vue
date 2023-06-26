@@ -18,10 +18,10 @@
       class="mr-auto align-center d-flex pl-0"
     >
       <router-link
-        class="text-decoration-none"
+        class="text-decoration-none font-weight-bold"
         to="/"
       >
-        Casper Holders
+        Div3
       </router-link>
       <template v-if="!$vuetify.breakpoint.xs">
         <v-chip
@@ -72,7 +72,18 @@
       v-if="displayConnect"
       :is-window-top="isWindowTop"
     />
-    <AccountPopup v-if="signer.activeKey" />
+
+    <v-btn
+      v-if="signer.activeKey"
+      data-cy="account"
+      icon
+      aria-label="Account"
+      to="/account"
+    >
+      <v-icon dark>
+        {{ mdiAccount }}
+      </v-icon>
+    </v-btn>
     <v-menu
       left
       offset-y
@@ -203,13 +214,13 @@
 </template>
 
 <script>
-import AccountPopup from '@/components/layout/AccountPopup';
 import ConnectDialog from '@/components/layout/ConnectDialog';
 import { CSPR_LIVE_URL, HUMAN_READABLE_NETWORK, NETWORK } from '@/helpers/env';
 import generateAsymmetricKey from '@/helpers/generateAsymmetricKey';
 import truncate from '@/helpers/strings/truncate';
 import { DeployResult } from '@casperholders/core';
 import {
+  mdiAccount,
   mdiAlertCircle,
   mdiBell,
   mdiCheckboxMarkedCircle,
@@ -228,13 +239,7 @@ import { mapGetters, mapState } from 'vuex';
  */
 export default {
   name: 'AppBar',
-  components: { AccountPopup, ConnectDialog },
-  props: {
-    links: {
-      type: Object,
-      required: true,
-    },
-  },
+  components: { ConnectDialog },
   data: () => ({
     e2e: import.meta.env.VITE_APP_E2E,
     mdiSwapHorizontal,
@@ -242,6 +247,7 @@ export default {
     mdiOpenInNew,
     mdiClose,
     mdiClock,
+    mdiAccount,
     isWindowTop: true,
     displayConnect: false,
     copied: false,
@@ -322,7 +328,7 @@ export default {
         detail: {
           isUnlocked: true,
           isConnected: true,
-          activeKey: e2eKeys[index].publicKey.toHex().toLowerCase(),
+          activeKey: e2eKeys[index].publicKey.toHex(false).toLowerCase(),
         },
       };
       if (index > 0) {

@@ -5,6 +5,7 @@
       width="100%"
     >
       <v-card-title
+        v-if="!disableTitle"
         class="align-center"
       >
         <v-avatar
@@ -43,7 +44,7 @@
           >
             You are disconnect from internet and
             have disabled sending deploy when you're offline.<br>
-            You can change this settings <a href="/settings"> here</a>.
+            You can change this settings <a href="/account"> here</a>.
           </v-alert>
           <v-alert
             v-if="!internet & signerType === TORUS_SIGNER"
@@ -68,7 +69,7 @@
             sending deploy when you are offline.<br>
             We can't verify your balance before sending the deploy
             so it may fail when you get back online<br>
-            You can change this settings <a href="/settings"> here</a>.
+            You can change this settings <a href="/account"> here</a>.
           </v-alert>
         </v-card-text>
 
@@ -142,6 +143,14 @@ export default {
   name: 'OperationCard',
   components: { OperationPendingWeight, OperationPending, OperationDialog, OperationResult },
   props: {
+    /**
+     * Disable title
+     */
+    disableTitle: {
+      required: false,
+      type: Boolean,
+      default: false,
+    },
     /**
      * The icon of the operation
      */

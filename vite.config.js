@@ -51,8 +51,8 @@ export default defineConfig(({ mode }) => ({
       filename: 'service-worker.js',
       includeAssets: ['img/icons/favicon.ico', 'img/icons/apple-touch-icon-180x180.png', 'img/icons/safari-pinned-tab.svg'],
       manifest: {
-        name: 'Casper Holders',
-        short_name: 'CasperHolders',
+        name: 'Div3',
+        short_name: 'Div3',
         description: 'Interact with the Casper Blockchain',
         theme_color: '#00126b',
         icons: [

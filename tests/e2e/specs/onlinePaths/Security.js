@@ -90,7 +90,7 @@ describe('Security', () => {
 
 describe('Impersonation', () => {
   it('Should verify impersonation & multisig multi-key transfer', () => {
-    cy.visit('http://localhost:8080/settings');
+    cy.visit('http://localhost:8080/account');
     cy.wrap(Cypress.automation('remote:debugger:protocol', {
       command: 'Browser.grantPermissions',
       params: {
@@ -106,7 +106,7 @@ describe('Impersonation', () => {
     cy.get('#accountAuthorization').should('contain', 'Account authorized.');
 
     cy.get('#toggleDrawer').click();
-    cy.get('#nav-group-Account-items-1').click();
+    cy.get('#nav-group-items-1').click();
 
     cy.get('[data-cy=address]').type('0124bfdae2ed128fa5e4057bc398e4933329570e47240e57fc92f5611a6178eba5');
 

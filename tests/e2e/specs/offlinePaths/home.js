@@ -10,13 +10,9 @@ describe('Home', () => {
       .should('be.visible');
     cy.get('[data-cy=closeTutorial]').click();
     cy.get('[data-cy=tutorialDialog]').should('not.be.visible');
-    cy.get('[data-cy=metrics-loading]')
-      .should('not.exist');
-    cy.get('[data-cy=metrics-chart]')
-      .should('be.visible');
     cy.get('[data-cy=account]')
       .should('be.visible').click();
-    cy.get('[data-cy=logout]').scrollIntoView().should('be.visible').click();
+    cy.get('[data-cy=logout]').should('be.visible').click();
     cy.get('[data-cy=account]')
       .should('not.exist');
     cy.get('[data-cy=connect]')

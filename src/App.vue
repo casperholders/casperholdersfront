@@ -2,9 +2,8 @@
   <v-app>
     <NavigationDrawer
       :links="links"
-      :advanced="advanced"
     />
-    <AppBar :links="links" />
+    <AppBar />
     <svg
       id="waveSvg"
       version="1.1"
@@ -117,7 +116,7 @@
             href="/"
           >
             <strong>
-              CasperHolders
+              Div3
             </strong>
           </a>
           /
@@ -136,19 +135,54 @@
           Hosted by OVH - 2 rue Kellermann - 59100 Roubaix - France - 1077 (+33 9
           72 10 10 07) - Powered by CoinGecko
         </p>
-        <p class="mb-0 text-center text-caption">
-          <router-link to="/privacy">
+        <div class="text-center">
+          <v-btn
+            to="/privacy"
+            text
+          >
+            <v-icon
+              left
+            >
+              {{ mdiGithub }}
+            </v-icon>
             Privacy
-          </router-link>
-          -
-          <router-link to="/faq">
+          </v-btn>
+          <v-btn
+            to="/faq"
+            text
+          >
+            <v-icon
+              left
+            >
+              {{ mdiFrequentlyAskedQuestions }}
+            </v-icon>
             FAQ
-          </router-link>
-          -
-          <router-link to="/contact">
+          </v-btn>
+          <v-btn
+            to="/contact"
+            text
+          >
+            <v-icon
+              left
+            >
+              {{ mdiEmail }}
+            </v-icon>
             Contact
-          </router-link>
-        </p>
+          </v-btn>
+          <v-btn
+            href="https://github.com/casperholders/casperholdersfront"
+            target="_blank"
+            rel="noopener"
+            text
+          >
+            <v-icon
+              left
+            >
+              {{ mdiGithub }}
+            </v-icon>
+            GitHub
+          </v-btn>
+        </div>
       </div>
     </v-footer>
   </v-app>
@@ -157,15 +191,17 @@
 <script>
 import AppBar from '@/components/layout/AppBar';
 import NavigationDrawer from '@/components/layout/NavigationDrawer';
+import { NETWORK } from '@/helpers/env';
 import {
-  mdiAccount,
-  mdiConnection,
+  mdiEmail,
   mdiFileDocumentEdit,
   mdiFire,
+  mdiFrequentlyAskedQuestions,
   mdiGavel,
+  mdiGithub,
   mdiImageFrame,
+  mdiIncognito,
   mdiKey,
-  mdiLockOpen,
   mdiSafe,
   mdiSend,
   mdiShopping,
@@ -182,101 +218,83 @@ import { mapState } from 'vuex';
 export default {
   name: 'App',
   components: { AppBar, NavigationDrawer },
+  data: () => ({
+    mdiGithub,
+    mdiIncognito,
+    mdiEmail,
+    mdiFrequentlyAskedQuestions,
+  }),
   computed: {
     ...mapState(['signerType', 'impersonatePublicKey']),
-    advanced() {
+    /**
+     * Return the links available.
+     */
+    links() {
       return [
         {
-          title: 'Account info',
-          icon: mdiAccount,
-          route: '/account',
+          title: 'Balance',
+          icon: mdiWallet,
+          route: '/balance',
+          disabled: false,
+          subtitle: null,
         },
         {
-          title: 'Add Bid',
+          title: 'Transfer',
+          icon: mdiSend,
+          route: '/transfer',
+          disabled: false,
+          subtitle: null,
+        },
+        {
+          title: 'Staking',
+          icon: mdiSafe,
+          route: '/stake',
+          disabled: false,
+          subtitle: null,
+        },
+        {
+          title: 'Security',
+          icon: mdiKey,
+          route: '/security',
+          chip: {
+            icon: mdiFire,
+            text: 'Beta',
+          },
+        },
+        {
+          title: 'NFTs',
+          icon: mdiImageFrame,
+          route: '/nft',
+          disabled: false,
+          subtitle: null,
+          chip: {
+            icon: mdiFire,
+            text: 'Beta',
+          },
+        },
+        {
+          title: 'Marketplace',
+          icon: mdiShopping,
+          route: '/marketplace',
+          disabled: false,
+          hide: NETWORK === 'casper',
+          subtitle: null,
+          chip: {
+            icon: mdiFire,
+            text: 'Beta',
+          },
+        },
+        {
+          title: 'Validator',
           icon: mdiGavel,
           route: '/addbid',
         },
         {
-          title: 'Withdraw Bid',
-          icon: mdiConnection,
-          route: '/withdrawbid',
-        },
-        {
-          title: 'Send smart contract',
+          title: 'Smart contracts',
           icon: mdiFileDocumentEdit,
           route: '/smartcontract',
         },
       ];
-    },
-    /**
-     * Return the links available. Dynamically adjusted until ledger support any operations.
-     */
-    links() {
-      return {
-        Account: [
-          {
-            title: 'Balance',
-            icon: mdiWallet,
-            route: '/balance',
-            disabled: false,
-            subtitle: null,
-          },
-          {
-            title: 'Transfer',
-            icon: mdiSend,
-            route: '/transfer',
-            disabled: false,
-            subtitle: null,
-          },
-          {
-            title: 'Security',
-            icon: mdiKey,
-            route: '/security',
-            chip: {
-              icon: mdiFire,
-              text: 'Beta',
-            },
-          },
-          {
-            title: 'NFTs',
-            icon: mdiImageFrame,
-            route: '/nft',
-            disabled: false,
-            subtitle: null,
-            chip: {
-              icon: mdiFire,
-              text: 'Beta',
-            },
-          },
-          {
-            title: 'Marketplace',
-            icon: mdiShopping,
-            route: '/marketplace',
-            disabled: false,
-            subtitle: null,
-            chip: {
-              icon: mdiFire,
-              text: 'Beta',
-            },
-          },
-        ],
-        Staking: [
-          {
-            title: 'Stake',
-            icon: mdiSafe,
-            route: '/stake',
-            disabled: false,
-            subtitle: null,
-          },
-          {
-            title: 'Unstake',
-            icon: mdiLockOpen,
-            route: '/unstake',
-            disabled: false,
-            subtitle: null,
-          },
-        ],
-      };
     },
   },
   /**

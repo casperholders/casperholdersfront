@@ -15,8 +15,13 @@
     :icon="mdiConnection"
     submit-title="Withdraw bid"
     title="Withdraw bid"
+    :disable-title="true"
+    data-cy="withdrawOperation"
   >
-    <p class="text-body-1">
+    <v-alert
+      v-if="signer.activeKey"
+      type="info"
+    >
       Here's your validator :
       <a
         :href="validatorUrl"
@@ -25,15 +30,13 @@
       >
         {{ signer.activeKey }}
         <v-icon x-small>{{ mdiOpenInNew }}</v-icon>
-      </a>
-      <br>
-      <br>
-      Actually there's a commission rate of {{ commission }}%.
+      </a><br>
+      Actually there's a commission rate of <b>{{ commission }}%.</b>
       (Applies on the staking rewards only.)<br>
       Example : if your delegators receive 100 CSPR rewards from staking,
       you will received {{ commission }} CSPR and they will get
       {{ 100 - commission }} CSPR.
-    </p>
+    </v-alert>
     <AmountInput
       :balance="validatorBalance"
       :fee="bidFee"

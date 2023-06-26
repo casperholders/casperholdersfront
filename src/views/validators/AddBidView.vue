@@ -14,8 +14,12 @@
     :icon="mdiGavel"
     submit-title="Add bid"
     title="Add bid"
+    :disable-title="true"
   >
-    <p class="text-body-1">
+    <v-alert
+      v-if="signer.activeKey"
+      type="info"
+    >
       Here's your validator :
       <a
         :href="validatorUrl"
@@ -24,16 +28,13 @@
       >
         {{ signer.activeKey }}
         <v-icon x-small>{{ mdiOpenInNew }}</v-icon>
-      </a>
-      <br>
-      <br>
-      Actually there's a commission rate of {{ commission }}%.
-      (Applies on the staking rewards only.)
-      <br>
+      </a><br>
+      Actually there's a commission rate of <b>{{ commission }}%.</b>
+      (Applies on the staking rewards only.)<br>
       Example : if your delegators receive 100 CSPR rewards from staking,
-      you will received {{ commission }} CSPR and they will
-      get {{ 100 - commission }} CSPR.
-    </p>
+      you will received {{ commission }} CSPR and they will get
+      {{ 100 - commission }} CSPR.
+    </v-alert>
     <AmountInput
       :balance="balance"
       :fee="bidFee"

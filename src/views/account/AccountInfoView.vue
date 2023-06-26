@@ -8,18 +8,17 @@
     :icon="mdiAccount"
     submit-title="Set url"
     title="Account info"
+    :disable-title="true"
   >
-    <p class="text-body-1">
+    <v-alert type="info">
       Set url for the Account Info Smart Contract. See
       <a
         href="https://github.com/make-software/casper-account-info-standard#how-does-it-work"
         target="_blank"
         rel="noopener"
-      >here</a> for more details.
-    </p>
-    <p>
+      >here</a> for more details.<br>
       First deploy cost 10 CSPR, updates cost 0.5 CSPR. This is automatically calculated.
-    </p>
+    </v-alert>
     <v-text-field
       id="url"
       v-model="url"

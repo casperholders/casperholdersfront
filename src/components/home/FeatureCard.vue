@@ -1,11 +1,20 @@
 <template>
-  <v-row>
-    <v-col
-      cols="12"
-      lg="3"
-      md="6"
-    >
-      <v-card class="d-flex flex-column align-center fill-height rounded-xl secondary">
+  <div class="secondary rounded-xl">
+    <v-card-title>
+      <v-avatar
+        class="mr-4"
+        color="primary"
+        size="52"
+      >
+        <v-icon size="24">
+          {{ mdiNumericPositive1 }}
+        </v-icon>
+      </v-avatar>
+      Features
+    </v-card-title>
+    <v-divider />
+    <div class="d-flex flex-wrap justify-space-around">
+      <div class="feature d-flex flex-column align-center fill-height rounded-xl">
         <v-card-title class="align-center">
           <v-avatar
             color="primary"
@@ -32,14 +41,8 @@
             Check your balance
           </v-btn>
         </v-card-actions>
-      </v-card>
-    </v-col>
-    <v-col
-      cols="12"
-      lg="3"
-      md="6"
-    >
-      <v-card class="d-flex flex-column align-center fill-height rounded-xl secondary">
+      </div>
+      <div class="feature d-flex flex-column align-center fill-height rounded-xl">
         <v-card-title class="align-center">
           <v-avatar
             color="primary"
@@ -66,14 +69,8 @@
             Transfer funds
           </v-btn>
         </v-card-actions>
-      </v-card>
-    </v-col>
-    <v-col
-      cols="12"
-      lg="3"
-      md="6"
-    >
-      <v-card class="d-flex flex-column align-center fill-height rounded-xl secondary">
+      </div>
+      <div class="feature d-flex flex-column align-center fill-height rounded-xl">
         <v-card-title class="align-center">
           <v-avatar
             color="primary"
@@ -100,14 +97,8 @@
             Stake now
           </v-btn>
         </v-card-actions>
-      </v-card>
-    </v-col>
-    <v-col
-      cols="12"
-      lg="3"
-      md="6"
-    >
-      <v-card class="d-flex flex-column align-center fill-height rounded-xl secondary">
+      </div>
+      <div class="feature d-flex flex-column align-center fill-height rounded-xl">
         <v-card-title class="align-center">
           <v-avatar
             color="primary"
@@ -135,14 +126,8 @@
             Unstake now
           </v-btn>
         </v-card-actions>
-      </v-card>
-    </v-col>
-    <v-col
-      cols="12"
-      lg="3"
-      md="6"
-    >
-      <v-card class="d-flex flex-column align-center fill-height rounded-xl secondary">
+      </div>
+      <div class="feature d-flex flex-column align-center fill-height rounded-xl">
         <v-card-title class="align-center">
           <v-avatar
             color="primary"
@@ -169,14 +154,8 @@
             Add bid
           </v-btn>
         </v-card-actions>
-      </v-card>
-    </v-col>
-    <v-col
-      cols="12"
-      lg="3"
-      md="6"
-    >
-      <v-card class="d-flex flex-column align-center fill-height rounded-xl secondary">
+      </div>
+      <div class="feature d-flex flex-column align-center fill-height rounded-xl">
         <v-card-title class="align-center">
           <v-avatar
             color="primary"
@@ -204,14 +183,8 @@
             Withdraw now
           </v-btn>
         </v-card-actions>
-      </v-card>
-    </v-col>
-    <v-col
-      cols="12"
-      lg="3"
-      md="6"
-    >
-      <v-card class="d-flex flex-column align-center fill-height rounded-xl secondary">
+      </div>
+      <div class="feature d-flex flex-column align-center fill-height rounded-xl">
         <v-card-title class="align-center">
           <v-avatar
             color="primary"
@@ -238,14 +211,8 @@
             Deploy Now
           </v-btn>
         </v-card-actions>
-      </v-card>
-    </v-col>
-    <v-col
-      cols="12"
-      lg="3"
-      md="6"
-    >
-      <v-card class="d-flex flex-column align-center fill-height rounded-xl secondary">
+      </div>
+      <div class="feature d-flex flex-column align-center fill-height rounded-xl">
         <v-card-title class="align-center">
           <v-avatar
             color="primary"
@@ -261,12 +228,78 @@
         </v-card-title>
         <v-card-text class="text-body-1 text-center">
           Enjoy full platform metrics hover all the different
-          types of operations available on the website.
+          types of operations available on our explorer.
         </v-card-text>
         <v-spacer />
-      </v-card>
-    </v-col>
-  </v-row>
+        <v-card-actions class="justify-center">
+          <v-btn
+            color="primary"
+            rounded
+            href="https://div3.in/stats"
+          >
+            Div3.in explorer
+          </v-btn>
+        </v-card-actions>
+      </div>
+      <div class="feature d-flex flex-column align-center fill-height rounded-xl">
+        <v-card-title class="align-center">
+          <v-avatar
+            color="primary"
+            size="52"
+          >
+            <v-icon size="24">
+              {{ mdiLock }}
+            </v-icon>
+          </v-avatar>
+          <v-card-title class="pl-4">
+            Security
+          </v-card-title>
+        </v-card-title>
+        <v-card-text class="text-body-1 text-center">
+          Manage your account security easily by adding or removing authorized keys and setting
+          thresholds.
+        </v-card-text>
+        <v-spacer />
+        <v-card-actions class="justify-center">
+          <v-btn
+            color="primary"
+            rounded
+            to="security"
+          >
+            Security settings
+          </v-btn>
+        </v-card-actions>
+      </div>
+      <div class="feature d-flex flex-column align-center fill-height rounded-xl">
+        <v-card-title class="align-center">
+          <v-avatar
+            color="primary"
+            size="52"
+          >
+            <v-icon size="24">
+              {{ mdiLaptop }}
+            </v-icon>
+          </v-avatar>
+          <v-card-title class="pl-4">
+            Desktop & Mobile
+          </v-card-title>
+        </v-card-title>
+        <v-card-text class="text-body-1 text-center">
+          Install the application directly on your desktop or mobile !
+        </v-card-text>
+        <v-spacer />
+        <v-card-actions class="justify-center">
+          <v-btn
+            color="primary"
+            rounded
+            to="smartcontract"
+          >
+            Install Now
+          </v-btn>
+        </v-card-actions>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -274,8 +307,8 @@
 import {
   mdiFileDocumentEdit,
   mdiGavel,
-  mdiHeartPulse,
-  mdiLockOpen,
+  mdiHeartPulse, mdiLaptop, mdiLock,
+  mdiLockOpen, mdiNumericPositive1,
   mdiSafe,
   mdiSend,
   mdiWallet,
@@ -285,7 +318,7 @@ import {
  * Features component display on the homepage
  */
 export default {
-  name: 'FeaturesCards',
+  name: 'FeatureCard',
   data: () => ({
     mdiWallet,
     mdiSend,
@@ -294,6 +327,19 @@ export default {
     mdiGavel,
     mdiFileDocumentEdit,
     mdiHeartPulse,
+    mdiLock,
+    mdiLaptop,
+    mdiNumericPositive1,
   }),
 };
 </script>
+
+<style scoped>
+  .feature {
+      min-width: 280px;
+      width: 18%;
+      max-width: 18%;
+      height: 240px;
+      margin: 10px;
+  }
+</style>

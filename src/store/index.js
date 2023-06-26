@@ -1,8 +1,6 @@
-import CasperWalletSigner from '@/helpers/casperWallet/casperWallet';
 import clientCasper from '@/helpers/clientCasper';
 import deployManager from '@/helpers/deployManager';
 import generateAsymmetricKey from '@/helpers/generateAsymmetricKey';
-import { MetaMaskSigner } from '@/helpers/metamask/metamask';
 import {
   CASPER_SIGNER,
   CASPER_WALLET_SIGNER,
@@ -17,6 +15,8 @@ import {
   LedgerSigner,
   LocalSigner,
   TorusSigner,
+  MetaMaskSigner,
+  CasperWalletSigner,
 } from '@casperholders/core';
 import { CLPublicKey, Signer } from 'casper-js-sdk';
 import cloneDeep from 'lodash.clonedeep';

@@ -68,212 +68,37 @@
             v-if="!loading && !connected && !timeout && !chooseLedgerKey && !ledgerType"
             key="wallets"
           >
-            <v-card
-              outlined
-              elevation="3"
-              link
-              class="mb-4"
-            >
-              <v-card-text
-                id="connectCasperWallet"
-                class="d-flex align-center"
-                @click="metamaskConnect"
-              >
-                <img
-                  :src="metaMaskFlask"
-                  width="32"
-                  alt="Metamask Flask Logo"
-                  class="mr-3"
-                >
-                <div>
-                  <span class="text-body-1">
-                    Metamask Flask
-                  </span>
-                  <div>The leading self-custodial wallet</div>
-                </div>
-                <v-icon class="ml-auto">
-                  {{ mdiChevronRight }}
-                </v-icon>
-              </v-card-text>
-              <div class="pb-3 px-3 d-flex align-center">
-                <v-icon left>
-                  {{ mdiInformation }}
-                </v-icon>
-                MetaMask Flask is the experimental version of MetaMask.
-                <v-spacer />
-                <a
-                  href="https://metamask.io/flask/#flask-fa-qs"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  Learn more
-                </a>
-              </div>
-            </v-card>
-            <v-card
-              outlined
-              elevation="3"
-              link
-              class="mb-4"
-              @click="casperWalletConnect"
-            >
-              <v-card-text
-                id="connectCasperWallet"
-                class="d-flex align-center"
-              >
-                <img
-                  :src="casperWalletSvg"
-                  width="32"
-                  alt="Casper Wallet Logo"
-                  class="mr-3"
-                >
-                <div>
-                  <span class="text-body-1">
-                    Casper Wallet
-                    {{ casperWalletVersion !== '' ? ' - v' + casperWalletVersion : '' }}
-                  </span>
-                  <div>Native wallet for the Casper Network</div>
-                </div>
-                <v-icon class="ml-auto">
-                  {{ mdiChevronRight }}
-                </v-icon>
-              </v-card-text>
-            </v-card>
-            <v-card
-              outlined
-              elevation="3"
-              link
-              class="mb-4"
-              @click="signerConnect"
-            >
-              <v-card-text
-                id="connectCasperSigner"
-                class="d-flex align-center"
-              >
-                <img
-                  :src="casper"
-                  width="32"
-                  alt="Casper Logo"
-                  class="mr-3"
-                >
-                <div>
-                  <span class="text-body-1">Casper
-                    Signer{{ signer.version ? ' - v' + signer.version : '' }}</span>
-                  <div>Legacy wallet for the Casper Network</div>
-                </div>
-                <v-icon class="ml-auto">
-                  {{ mdiChevronRight }}
-                </v-icon>
-              </v-card-text>
-            </v-card>
-            <v-card
-              outlined
-              elevation="3"
-              link
-              class="mb-4"
-              @click="ledgerType = true"
-            >
-              <v-card-text
-                data-cy="connectLedger"
-                class="d-flex align-center"
-              >
-                <img
-                  :src="ledger"
-                  width="32"
-                  alt="Ledger Logo"
-                  class="mr-3"
-                >
-                <div>
-                  <span class="text-body-1">Ledger</span>
-                  <div>Unlock your ledger and open the Casper app first.</div>
-                </div>
-                <v-icon class="ml-auto">
-                  {{ mdiChevronRight }}
-                </v-icon>
-              </v-card-text>
-            </v-card>
-            <v-card
-              outlined
-              elevation="3"
-              link
-              @click="torusConnect"
-            >
-              <v-card-text
-                id="connectTorus"
-                class="d-flex align-center"
-              >
-                <img
-                  :src="torus"
-                  width="32"
-                  alt="Torus Logo"
-                  class="mr-3"
-                >
-                <div>
-                  <span class="text-body-1">Torus</span>
-                  <div>Non-custodial Key Management, Meets Passwordless Auth.</div>
-                </div>
-                <v-icon class="ml-auto">
-                  {{ mdiChevronRight }}
-                </v-icon>
-              </v-card-text>
-            </v-card>
+            <WalletCard
+              v-for="(wallet, walletID) in SIGNERS_INFO"
+              :key="walletID"
+              :title="wallet.title"
+              :icon="wallet.icon"
+              :description="wallet.description"
+              :wallet-id="wallet.walletId"
+              :info="wallet.info"
+              :info-link="wallet.infoLink"
+              :disabled="wallet.disabled"
+              :download="wallet.download"
+              @connect="connectWallet(walletID)"
+            />
           </div>
           <div
             v-if="ledgerType"
             key="loader"
           >
-            <v-card
-              outlined
-              elevation="3"
-              link
-              class="mb-4"
-              @click="ledgerConnect(true)"
-            >
-              <v-card-text
-                data-cy="connectLedgerUSB"
-                class="d-flex align-center"
-              >
-                <img
-                  :src="ledger"
-                  width="32"
-                  alt="Ledger Logo"
-                  class="mr-3"
-                >
-                <div>
-                  <span class="text-body-1">Ledger USB</span>
-                  <div>Support Nano S/X on Web & Android Chrome (OTG)</div>
-                </div>
-                <v-icon class="ml-auto">
-                  {{ mdiChevronRight }}
-                </v-icon>
-              </v-card-text>
-            </v-card>
-            <v-card
-              outlined
-              elevation="3"
-              link
-              class="mb-4"
-              @click="ledgerConnect(false)"
-            >
-              <v-card-text
-                data-cy="connectLedgerBLE"
-                class="d-flex align-center"
-              >
-                <img
-                  :src="ledger"
-                  width="32"
-                  alt="Ledger Logo"
-                  class="mr-3"
-                >
-                <div>
-                  <span class="text-body-1">Ledger Bluetooth</span>
-                  <div>Support Nano X on Web & Mobile</div>
-                </div>
-                <v-icon class="ml-auto">
-                  {{ mdiChevronRight }}
-                </v-icon>
-              </v-card-text>
-            </v-card>
+            <WalletCard
+              v-for="(ledgerConType, ledgerId) in LEDGER_TYPES"
+              :key="ledgerId"
+              :title="ledgerConType.title"
+              :icon="ledgerConType.icon"
+              :description="ledgerConType.description"
+              :wallet-id="ledgerConType.walletId"
+              :info="ledgerConType.info"
+              :info-link="ledgerConType.infoLink"
+              :disabled="ledgerConType.disabled"
+              :download="ledgerConType.download"
+              @connect="connectWallet(ledgerId)"
+            />
             <div class="d-flex justify-center">
               <v-btn
                 class="primary"
@@ -524,11 +349,18 @@ import casperWalletSvg from '@/assets/images/casperWallet.svg';
 import ledger from '@/assets/images/ledger_logo.png';
 import metaMaskFlask from '@/assets/images/metaMaskFlask.svg';
 import torus from '@/assets/images/torus.svg';
+import WalletCard from '@/components/layout/WalletCard.vue';
 import balanceService from '@/helpers/balanceService';
 import getTorusNetwork from '@/helpers/getTorusNetwork';
-import { getAccount, getSnap, installSnap } from '@/helpers/metamask/metamask';
+import {
+  CASPER_SIGNER, CASPER_WALLET_SIGNER,
+  LEDGER_SIGNER,
+  LEDGER_TYPES, METAMASK_SIGNER,
+  SIGNERS_INFO, TORUS_SIGNER,
+} from '@/helpers/signers';
 import truncate from '@/helpers/strings/truncate';
 import { ledgerOptions, torusOptions } from '@/store';
+import { getAccount, getSnap, installSnap } from '@casperholders/casper-snap-helper';
 import TransportWebBLE from '@ledgerhq/hw-transport-web-ble';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import {
@@ -554,6 +386,7 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'ConnectDialog',
+  components: { WalletCard },
   props: {
     isWindowTop: {
       type: Boolean,
@@ -592,6 +425,12 @@ export default {
     panels: undefined,
   }),
   computed: {
+    LEDGER_TYPES() {
+      return LEDGER_TYPES;
+    },
+    SIGNERS_INFO() {
+      return SIGNERS_INFO;
+    },
     ...mapState(['signer', 'internet']),
     connectDialog: {
       get() {
@@ -623,6 +462,34 @@ export default {
     this.casperWalletVersion = (await window.CasperWalletInstance?.getVersion()) ?? '';
   },
   methods: {
+    connectWallet(walletID) {
+      switch (walletID) {
+        case METAMASK_SIGNER:
+          this.metamaskConnect();
+          break;
+        case CASPER_WALLET_SIGNER:
+          this.casperWalletConnect();
+          break;
+        case CASPER_SIGNER:
+          this.signerConnect();
+          break;
+        case LEDGER_SIGNER:
+          this.ledgerType = true;
+          break;
+        case 'LEDGER_BLE':
+          this.ledgerConnect(false);
+          break;
+        case 'LEDGER_USB':
+          this.ledgerConnect(true);
+          break;
+        case TORUS_SIGNER:
+          this.torusConnect();
+          break;
+        default:
+          console.log('Not supported wallet');
+          break;
+      }
+    },
     async metamaskConnect() {
       setTimeout(() => {
         if (this.signer.activeKey === null) {
