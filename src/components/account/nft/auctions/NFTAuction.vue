@@ -614,7 +614,7 @@ export default {
     },
     async getInitialValue(namedKey, force = false) {
       const name = this.auction.named_keys?.filter((n) => n.name === namedKey);
-      if (name[0] && name[0].initial_value && !force) {
+      if (name[0]?.initial_value && !force) {
         return name[0].initial_value;
       }
       return name[0]
