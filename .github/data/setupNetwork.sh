@@ -16,17 +16,6 @@ $FAKE_KEY
 EOF
 fi
 
-
-
-check_rpc () {
-	curl --fail "$1"/rpc
-}
-
-while check_rpc "$1" ; [ $? -ne 0 ];do
-    echo Waiting for rpc...
-    sleep 1
-done
-
 check_block () {
 	docker run --network host killianh/casperclient  get-block --node-address "$1"
 }

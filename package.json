@@ -19,8 +19,7 @@
     "testnet": "vite preview --mode testnet"
   },
   "dependencies": {
-    "@casperholders/casper-snap-helper": "^1.0.6",
-    "@casperholders/core": "^3.17.0",
+    "@casperholders/core": "^3.18.0",
     "@ethersproject/bytes": "^5.7.0",
     "@ledgerhq/hw-transport-web-ble": "^6.27.15",
     "@ledgerhq/hw-transport-webusb": "^6.27.15",
@@ -29,7 +28,8 @@
     "big.js": "^6.2.1",
     "blakejs": "^1.2.1",
     "buffer": "^6.0.3",
-    "casper-js-sdk": "^2.13.2",
+    "casper-js-sdk": "^2.14.0",
+    "casper-manager-helper": "^1.0.3",
     "chart.js": "^4.3.0",
     "core-js": "^3.31.0",
     "lodash.clonedeep": "^4.5.0",

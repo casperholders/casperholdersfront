@@ -363,10 +363,7 @@ export default {
       const res = await fetch(`${API}/deploys/${this.$route.params.deployHash}`);
       if (res.ok) {
         this.deploy = await res.json();
-        const latestBlock = await clientCasper.casperRPC.getLatestBlockInfo();
-        const stateRootHash = await clientCasper.casperRPC.getStateRootHash(
-          latestBlock.block.hash,
-        );
+        const stateRootHash = await clientCasper.casperRPC.getStateRootHash();
         this.keyInfo = await clientCasper.casperRPC.getBlockState(
           stateRootHash,
           CLPublicKey.fromHex(this.deploy.deploy.deploy.header.account).toAccountHashStr(),

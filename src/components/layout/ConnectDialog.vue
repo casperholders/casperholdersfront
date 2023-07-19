@@ -360,7 +360,7 @@ import {
 } from '@/helpers/signers';
 import truncate from '@/helpers/strings/truncate';
 import { ledgerOptions, torusOptions } from '@/store';
-import { getAccount, getSnap, installSnap } from '@casperholders/casper-snap-helper';
+import { getAccount, getSnap, installSnap } from 'casper-manager-helper';
 import TransportWebBLE from '@ledgerhq/hw-transport-web-ble';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import {
@@ -501,7 +501,7 @@ export default {
       try {
         await installSnap();
         await getSnap();
-        const publicKey = await getAccount();
+        const publicKey = (await getAccount()).toHex();
         await this.$store.dispatch('updateFromMetamaskEvent', { publicKey, addressIndex: 0 });
       } catch {
         this.timeout = true;

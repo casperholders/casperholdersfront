@@ -4,10 +4,7 @@ import Big from 'big.js';
 import { CLPublicKey, DeployUtil } from 'casper-js-sdk';
 
 async function getActiveKeyInfo(activeKey) {
-  const latestBlock = await clientCasper.casperRPC.getLatestBlockInfo();
-  const stateRootHash = await clientCasper.casperRPC.getStateRootHash(
-    latestBlock.block.hash,
-  );
+  const stateRootHash = await clientCasper.casperRPC.getStateRootHash();
   return clientCasper.casperRPC.getBlockState(
     stateRootHash,
     CLPublicKey.fromHex(activeKey).toAccountHashStr(),

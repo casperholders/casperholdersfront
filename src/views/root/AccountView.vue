@@ -310,10 +310,7 @@ export default {
       if (accountHashImpersonation !== '') {
         this.loadingKeyInfo = true;
         try {
-          const latestBlock = await clientCasper.casperRPC.getLatestBlockInfo();
-          const stateRootHash = await clientCasper.casperRPC.getStateRootHash(
-            latestBlock.block.hash,
-          );
+          const stateRootHash = await clientCasper.casperRPC.getStateRootHash();
           this.keyInfo = await clientCasper.casperRPC.getBlockState(
             stateRootHash,
             `account-hash-${accountHashImpersonation}`,

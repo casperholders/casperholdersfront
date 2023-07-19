@@ -103,9 +103,9 @@ export default {
     return {
       mdiSafe,
       mdiAccountCircle,
-      minimumCSPRStake: 1,
+      minimumCSPRStake: 500,
       delegationFee: 2.5,
-      amount: '1',
+      amount: '500',
       errorBalance: null,
       balance: '0',
       loadingSignAndDeploy: false,
