@@ -61,6 +61,8 @@
           :amount="0"
           :fee="amount"
           :loading-sign-and-deploy="loadingSignAndDeploy"
+          :loading-simulate="loadingSimulate"
+          :simulate-deploy="simulateFees"
           :remaining-balance="remainingBalance"
           :send-deploy="sendDeploy"
           :type="type"
@@ -136,8 +138,30 @@
             :balance="balance"
             :fee="Number(0)"
             :amount="`-${amount}`"
-            class="mx-n1"
+            class="mx-n1 mb-4"
+            :append-values="[
+              { name: 'Simulated Result', value: simulatedResult },
+            ]"
           />
+          <v-row
+            class="white-top-border ma-n4"
+          >
+            <v-col>Estimated deploy fee</v-col>
+            <v-col class="text-right cspr">
+              {{ specExecFee }}
+              <v-btn
+                v-if="specExecFee !== 'N/A'"
+                small
+                class="primary default-font font-weight-bold"
+                @click="amount = specExecFee"
+              >
+                <v-icon left>
+                  {{ mdiDownloadOutline }}
+                </v-icon>
+                Apply
+              </v-btn>
+            </v-col>
+          </v-row>
           <v-alert
             v-if="errorBalance"
             data-cy="errorBalance"
@@ -192,16 +216,18 @@ import balanceService from '@/helpers/balanceService';
 import { NETWORK } from '@/helpers/env';
 import generateLid from '@/helpers/generateLid';
 import genericSendDeploy from '@/helpers/genericSendDeploy';
+import specExec from '@/helpers/specExec';
 import {
   InsufficientFunds,
   NoActiveKeyError,
   SmartContractDeployParameters,
   SmartContractResult,
 } from '@casperholders/core';
+import CurrencyUtils from '@casperholders/core/src/services/helpers/currencyUtils';
 import {
   mdiAccountCircle,
   mdiAlert,
-  mdiCircleMultiple,
+  mdiCircleMultiple, mdiDownloadOutline,
   mdiFileDocumentEdit,
   mdiImage,
   mdiImageFrame,
@@ -231,18 +257,22 @@ export default {
       mdiFileDocumentEdit,
       mdiPaperclip,
       mdiAccountCircle,
-      minPayment: 1,
+      mdiDownloadOutline,
+      minPayment: 0,
       contract: [],
       amount: '1',
       balance: '0',
       errorBalance: null,
       loadingSignAndDeploy: false,
+      loadingSimulate: false,
       errorDeploy: null,
       loadingBalance: true,
       type: SmartContractResult.getName(),
       buffer: null,
       tab: 0,
       args: [],
+      specExecFee: 'N/A',
+      simulatedResult: 'N/A',
       contracts: [
         {
           title: 'ERC20',
@@ -461,6 +491,45 @@ export default {
         this.errorBalance = e;
       }
       this.loadingBalance = false;
+    },
+    /**
+     * Method used by the OperationSimulateDialog component when the user confirm the operation.
+     * Simulate the deploy against the network.
+     */
+    async simulateFees() {
+      this.loadingSimulate = true;
+      this.simulatedResult = 'N/A';
+      this.specExecFee = 'N/A';
+      try {
+        const args = {};
+        this.args.forEach((a) => {
+          args[a.name] = a.value;
+        });
+        const deployParameter = new SmartContractDeployParameters(
+          this.activeKey,
+          NETWORK,
+          this.buffer,
+          this.balance,
+          args,
+        );
+        const signedDeploy = await this.signerObject
+          .sign(deployParameter.makeDeploy, this.signerOptionsFactory.getOptionsForOperations());
+        const result = await specExec.casperClient.speculativeDeploy(signedDeploy);
+        console.log(result);
+        const error = result.execution_result.Failure?.error_message;
+        let cost = result.execution_result.Success?.cost;
+        if (!cost) {
+          cost = result.execution_result.Failure.cost;
+        }
+        this.specExecFee = CurrencyUtils.convertMotesToCasper(cost);
+        this.simulatedResult = error || 'Deploy executed successfully';
+      } catch (e) {
+        console.log(e);
+        this.simulatedResult = 'This deploy is invalid.';
+      } finally {
+        this.$root.$emit('closeSimulateDialog');
+        this.loadingSimulate = false;
+      }
     },
     /**
      * Method used by the OperationDialog component when the user confirm the operation.

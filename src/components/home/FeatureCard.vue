@@ -149,7 +149,7 @@
           <v-btn
             color="primary"
             rounded
-            to="unstake"
+            to="addbid"
           >
             Add bid
           </v-btn>
@@ -178,7 +178,7 @@
           <v-btn
             color="primary"
             rounded
-            to="unstake"
+            to="withdrawbid"
           >
             Withdraw now
           </v-btn>

@@ -1,6 +1,6 @@
 <template>
   <span
-    :class="{ 'cspr': amount.isAmount }"
+    class="cspr"
     v-text="amount.value"
   />
 </template>

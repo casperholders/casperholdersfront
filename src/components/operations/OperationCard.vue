@@ -90,6 +90,21 @@
             :append-values="appendValues"
             @operationCanceled="operationOnGoing = false"
           />
+          <OperationSimulateDialog
+            v-if="simulateDeploy"
+            :icon="icon"
+            :loading-simulate="loadingSimulate"
+            :open-popup="openPopup"
+            :simulate-deploy="simulateDeploy"
+            :title="submitTitle"
+            :balance="balance"
+            :token-balance="tokenBalance"
+            :token="token"
+            :fee="fee"
+            :amount="amount"
+            :prepend-values="prependValues"
+            :append-values="appendValues"
+          />
           <v-spacer />
           <v-btn
             v-if="cancel"
@@ -125,6 +140,7 @@ import OperationDialog from '@/components/operations/OperationDialog';
 import OperationPending from '@/components/operations/OperationPending';
 import OperationPendingWeight from '@/components/operations/OperationPendingWeight';
 import OperationResult from '@/components/operations/OperationResult';
+import OperationSimulateDialog from '@/components/operations/OperationSimulateDialog.vue';
 import { TORUS_SIGNER } from '@/helpers/signers';
 import nativeToken from '@/services/tokens/nativeToken';
 import { mdiClose, mdiFire } from '@mdi/js';
@@ -141,7 +157,13 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'OperationCard',
-  components: { OperationPendingWeight, OperationPending, OperationDialog, OperationResult },
+  components: {
+    OperationSimulateDialog,
+    OperationPendingWeight,
+    OperationPending,
+    OperationDialog,
+    OperationResult,
+  },
   props: {
     /**
      * Disable title
@@ -191,10 +213,27 @@ export default {
       type: Function,
     },
     /**
+     * Function to use when the user confirm the operation.
+     * At the end the operation must be sent to the casper blockchain.
+     */
+    simulateDeploy: {
+      required: false,
+      type: Function,
+      default: undefined,
+    },
+    /**
      * Used to know if the Deploy is being signed & deployed.
      */
     loadingSignAndDeploy: {
       required: true,
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Used to know if the Deploy is being signed & deployed.
+     */
+    loadingSimulate: {
+      required: false,
       type: Boolean,
       default: false,
     },

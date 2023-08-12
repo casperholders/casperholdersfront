@@ -13,15 +13,15 @@ export default function computeTokenValue(value) {
   }
 
   if (typeof value === 'object') {
-    return { value: value.toFormat(5), isAmount: true };
+    return { value: value.toFormat(), isAmount: true };
   }
 
   if (typeof value === 'number') {
-    return { value: value.toFixed(5), isAmount: true };
+    return { value: value.toFixed(), isAmount: true };
   }
 
   if (typeof value === 'string' && !Number.isNaN(Number(value))) {
-    return { value: Big(value).toFormat(5), isAmount: true };
+    return { value: Big(value).toFormat(), isAmount: true };
   }
 
   return { value, isAmount: false };

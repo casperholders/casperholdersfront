@@ -8,7 +8,7 @@
       :min="min"
       :rules="amountRules"
       :value="amount"
-      maxlength="10"
+      maxlength="20"
       :append-outer-icon="mdiPlus"
       color="white"
       label="Amount"
@@ -126,7 +126,7 @@ export default {
        */
       amountRules: [
         (a) => !!a || 'Amount is required',
-        (a) => /[0-9]+\.?[0-9]*/.test(a) || 'Amount must be a number',
+        (a) => /^\d+\.?\d{0,9}$/.test(a) || 'Amount must be a number with max 9 decimals',
         (a) => this.mustBeAtLeast(a),
         (a) => this.mustBeBellow(a),
         (a) => this.enoughFunds(a),

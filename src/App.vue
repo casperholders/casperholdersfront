@@ -340,6 +340,10 @@ export default {
     font-style: normal;
   }
 
+  .default-font {
+    font-family: "Roboto", Helvetica, Arial, sans-serif;
+  }
+
   #app {
     font-family: "Roboto", Helvetica, Arial, sans-serif;
 
