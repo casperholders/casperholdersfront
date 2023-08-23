@@ -217,18 +217,18 @@ const mutations = {
     state.signerType = CASPER_WALLET_SIGNER;
   },
   updateMetamask(state, { options }) {
-    state.signer.activeKey = options.publicKey;
+    state.signer.activeKey = options.activeKey.key;
     state.signer.lock = false;
     state.signer.connected = true;
     state.signerType = METAMASK_SIGNER;
-    state.metamask.addressIndex = options.addressIndex;
+    state.metamask.addressIndex = options.activeKey.keyPath;
   },
   updateLedger(state, { options }) {
     state.signer.activeKey = options.activeKey.key;
     state.signer.lock = false;
     state.signer.connected = true;
     state.signerType = LEDGER_SIGNER;
-    state.ledger.keyPath = options.keyPath;
+    state.ledger.keyPath = options.activeKey.keyPath;
   },
   updateTorus(state, { publicKey }) {
     state.signer.activeKey = publicKey;

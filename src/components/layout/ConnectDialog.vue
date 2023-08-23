@@ -65,7 +65,12 @@
           group
         >
           <div
-            v-if="!loading && !connected && !timeout && !chooseLedgerKey && !ledgerType"
+            v-if="!loading &&
+              !connected &&
+              !timeout &&
+              !chooseLedgerKey &&
+              !chooseMetamaskKey &&
+              !ledgerType"
             key="wallets"
           >
             <WalletCard
@@ -135,134 +140,26 @@
             key="loader"
             class="text-center"
           >
-            <v-card
-              outlined
-              elevation="3"
-            >
-              <v-card-text>
-                <div class="text-body-1 text-center mb-4">
-                  Choose your Ledger Key
-                </div>
-                <v-expansion-panels
-                  v-model="panels"
-                  :v-show="!initKeys"
-                  accordion
-                  flat
-                  tile
-                >
-                  <v-expansion-panel
-                    v-model="panels"
-                    expand
-                    class="secondary"
-                  >
-                    <v-expansion-panel-header>
-                      <div class="d-flex align-center text-overline">
-                        <v-icon
-                          left
-                        >
-                          {{ mdiCurrencyUsd }}
-                        </v-icon>
-                        Keys with funds ({{ ledgerKeys.funds.length }})
-                      </div>
-                    </v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                      <template v-for="(ledgerKey, index) in ledgerKeys.funds">
-                        <v-card
-                          :key="index"
-                          outlined
-                          elevation="3"
-                          link
-                          class="mb-4"
-                          @click="setLedgerKey(ledgerKey, ledgerKey.keyPath)"
-                        >
-                          <v-card-text
-                            id="connectCasperSigner"
-                            class="d-flex align-start"
-                          >
-                            <div>
-                              <span class="text-body-1">
-                                <v-icon>
-                                  {{ mdiAccount }}
-                                </v-icon>
-                                {{ truncateText(ledgerKey.key) }}
-                              </span>
-                              <div class="text-left">
-                                <v-icon>
-                                  {{ mdiCurrencyUsd }}
-                                </v-icon>
-                                {{ ledgerKey.balance }} CSPR
-                              </div>
-                            </div>
-                            <v-icon class="ml-auto">
-                              {{ mdiChevronRight }}
-                            </v-icon>
-                          </v-card-text>
-                        </v-card>
-                      </template>
-                    </v-expansion-panel-content>
-                  </v-expansion-panel>
-                  <v-expansion-panel
-                    v-model="panels"
-                    expand
-                    class="secondary"
-                  >
-                    <v-expansion-panel-header>
-                      <div class="d-flex align-center text-overline">
-                        <v-icon
-                          left
-                        >
-                          {{ mdiCurrencyUsdOff }}
-                        </v-icon>
-                        Keys without funds ({{ ledgerKeys.noFunds.length }})
-                      </div>
-                    </v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                      <template v-for="(ledgerKey, index) in ledgerKeys.noFunds">
-                        <v-card
-                          :key="index"
-                          outlined
-                          elevation="3"
-                          link
-                          class="mb-4"
-                          @click="setLedgerKey(ledgerKey, ledgerKey.keyPath)"
-                        >
-                          <v-card-text
-                            id="connectCasperSigner"
-                            class="d-flex align-start"
-                          >
-                            <div>
-                              <span class="text-body-1">
-                                <v-icon>
-                                  {{ mdiAccount }}
-                                </v-icon>
-                                {{ truncateText(ledgerKey.key) }}
-                              </span>
-                              <div class="text-left">
-                                <v-icon>
-                                  {{ mdiCurrencyUsd }}
-                                </v-icon>
-                                {{ ledgerKey.balance }} CSPR
-                              </div>
-                            </div>
-                            <v-icon class="ml-auto">
-                              {{ mdiChevronRight }}
-                            </v-icon>
-                          </v-card-text>
-                        </v-card>
-                      </template>
-                    </v-expansion-panel-content>
-                  </v-expansion-panel>
-                </v-expansion-panels>
-                <v-btn
-                  color="primary"
-                  rounded
-                  :loading="loadingKeys"
-                  @click="loadMoreLedgerKeys"
-                >
-                  Load more keys
-                </v-btn>
-              </v-card-text>
-            </v-card>
+            <MultipleKeysCard
+              :set-key="setLedgerKey"
+              :keys="ledgerKeys"
+              :load-more-keys="loadMoreLedgerKeys"
+              :loading-keys="loadingLedgerKeys"
+              :init-keys="initLedgerKeys"
+            />
+          </div>
+          <div
+            v-if="!connected && !loading && chooseMetamaskKey"
+            key="loader"
+            class="text-center"
+          >
+            <MultipleKeysCard
+              :set-key="setMetamaskKey"
+              :keys="metamaskKeys"
+              :load-more-keys="loadMoreMetamaskKeys"
+              :loading-keys="loadingMetamaskKeys"
+              :init-keys="initMetamaskKeys"
+            />
           </div>
           <div
             v-if="connected && !loading"
@@ -349,18 +246,20 @@ import casperWalletSvg from '@/assets/images/casperWallet.svg';
 import ledger from '@/assets/images/ledger_logo.png';
 import metaMaskFlask from '@/assets/images/metaMaskFlask.svg';
 import torus from '@/assets/images/torus.svg';
+import MultipleKeysCard from '@/components/account/MultipleKeysCard.vue';
 import WalletCard from '@/components/layout/WalletCard.vue';
 import balanceService from '@/helpers/balanceService';
 import getTorusNetwork from '@/helpers/getTorusNetwork';
 import {
-  CASPER_SIGNER, CASPER_WALLET_SIGNER,
+  CASPER_SIGNER,
+  CASPER_WALLET_SIGNER,
   LEDGER_SIGNER,
-  LEDGER_TYPES, METAMASK_SIGNER,
-  SIGNERS_INFO, TORUS_SIGNER,
+  LEDGER_TYPES,
+  METAMASK_SIGNER,
+  SIGNERS_INFO,
+  TORUS_SIGNER,
 } from '@/helpers/signers';
-import truncate from '@/helpers/strings/truncate';
 import { ledgerOptions, torusOptions } from '@/store';
-import { getAccount, getSnap, installSnap } from 'casper-manager-helper';
 import TransportWebBLE from '@ledgerhq/hw-transport-web-ble';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import {
@@ -379,6 +278,7 @@ import Torus from '@toruslabs/casper-embed';
 import CasperApp from '@zondax/ledger-casper';
 import Big from 'big.js';
 import { Signer } from 'casper-js-sdk';
+import { getAccount, getSnap, installSnap } from 'casper-manager-helper';
 import { mapState } from 'vuex';
 
 /**
@@ -386,7 +286,7 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'ConnectDialog',
-  components: { WalletCard },
+  components: { MultipleKeysCard, WalletCard },
   props: {
     isWindowTop: {
       type: Boolean,
@@ -410,6 +310,7 @@ export default {
     timeout: false,
     ledgerType: false,
     chooseLedgerKey: false,
+    chooseMetamaskKey: false,
     casperWalletVersion: '',
     metaMaskFlask,
     casperWalletSvg,
@@ -420,9 +321,14 @@ export default {
       funds: [],
       noFunds: [],
     },
-    loadingKeys: false,
-    initKeys: true,
-    panels: undefined,
+    metamaskKeys: {
+      funds: [],
+      noFunds: [],
+    },
+    loadingLedgerKeys: false,
+    loadingMetamaskKeys: false,
+    initLedgerKeys: true,
+    initMetamaskKeys: true,
   }),
   computed: {
     LEDGER_TYPES() {
@@ -491,7 +397,11 @@ export default {
       }
     },
     async metamaskConnect() {
-      setTimeout(() => {
+      this.metamaskKeys = {
+        funds: [],
+        noFunds: [],
+      };
+      const inactivity = setTimeout(() => {
         if (this.signer.activeKey === null) {
           this.timeout = true;
           this.loading = false;
@@ -501,12 +411,23 @@ export default {
       try {
         await installSnap();
         await getSnap();
-        const publicKey = (await getAccount()).toHex();
-        await this.$store.dispatch('updateFromMetamaskEvent', { publicKey, addressIndex: 0 });
+        const key = (await getAccount()).toHex();
+        const balance = await balanceService.fetchBalanceOfPublicKey(key);
+        if (Big(balance).gt(0)) {
+          this.metamaskKeys.funds.push({ key, balance, keyPath: 0 });
+        } else {
+          this.metamaskKeys.noFunds.push({ key, balance, keyPath: 0 });
+        }
+        this.chooseMetamaskKey = true;
+        this.loading = false;
+        clearTimeout(inactivity);
       } catch {
         this.timeout = true;
         this.loading = false;
       }
+    },
+    async setMetamaskKey(activeKey) {
+      await this.$store.dispatch('updateFromMetamaskEvent', { activeKey });
     },
     async casperWalletConnect() {
       try {
@@ -581,10 +502,8 @@ export default {
         const balance = await balanceService.fetchBalanceOfPublicKey(key);
         if (Big(balance).gt(0)) {
           this.ledgerKeys.funds.push({ key, balance, keyPath: 0 });
-          this.panels = 0;
         } else {
           this.ledgerKeys.noFunds.push({ key, balance, keyPath: 0 });
-          this.panels = 1;
         }
         ledgerOptions.casperApp = app;
         this.loading = false;
@@ -598,8 +517,8 @@ export default {
       }
     },
     async loadMoreLedgerKeys() {
-      if (this.loadingKeys === false) {
-        this.loadingKeys = true;
+      if (this.loadingLedgerKeys === false) {
+        this.loadingLedgerKeys = true;
         const nextKeyPath = this.ledgerKeys.funds.length + this.ledgerKeys.noFunds.length;
         for (let i = nextKeyPath; i < nextKeyPath + 4; i++) {
           // eslint-disable-next-line no-await-in-loop
@@ -613,12 +532,31 @@ export default {
             this.ledgerKeys.noFunds.push({ key, balance, keyPath: i });
           }
         }
-        this.initKeys = false;
-        this.loadingKeys = false;
+        this.initLedgerKeys = false;
+        this.loadingLedgerKeys = false;
       }
     },
-    async setLedgerKey(activeKey, keyPath) {
-      await this.$store.dispatch('updateFromLedgerEvent', { activeKey, keyPath });
+    async loadMoreMetamaskKeys() {
+      if (this.loadingMetamaskKeys === false) {
+        this.loadingMetamaskKeys = true;
+        const nextKeyPath = this.metamaskKeys.funds.length + this.metamaskKeys.noFunds.length;
+        for (let i = nextKeyPath; i < nextKeyPath + 4; i++) {
+          // eslint-disable-next-line no-await-in-loop
+          const key = (await getAccount(i)).toHex();
+          // eslint-disable-next-line no-await-in-loop
+          const balance = await balanceService.fetchBalanceOfPublicKey(key);
+          if (Big(balance).gt(0)) {
+            this.metamaskKeys.funds.push({ key, balance, keyPath: i });
+          } else {
+            this.metamaskKeys.noFunds.push({ key, balance, keyPath: i });
+          }
+        }
+        this.initMetamaskKeys = false;
+        this.loadingMetamaskKeys = false;
+      }
+    },
+    async setLedgerKey(activeKey) {
+      await this.$store.dispatch('updateFromLedgerEvent', { activeKey });
       this.chooseLedgerKey = true;
     },
     async torusConnect() {
@@ -637,9 +575,6 @@ export default {
         this.timeout = true;
         this.loading = false;
       }
-    },
-    truncateText(str) {
-      return truncate(str, { size: 23 });
     },
     async closeDialog() {
       await this.$store.dispatch('closeConnectDialog');
