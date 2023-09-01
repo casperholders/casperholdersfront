@@ -271,7 +271,7 @@ export default {
             );
           }
           validatorsData[i].disabled = !userStakedCurrentValidator
-              && validatorsData[i].numberOfDelegators >= 953;
+              && validatorsData[i].numberOfDelegators >= 1200;
         }
       } catch (e) {
         console.log(e);
@@ -320,7 +320,7 @@ export default {
                 .toFixed(2),
               currentEra: currentEra.includes(validatorInfo.public_key),
               nextEra: nextEra.includes(validatorInfo.public_key),
-              disabled: validatorInfo.bid.delegators.length >= 953 && !userStakedCurrentValidator,
+              disabled: validatorInfo.bid.delegators.length >= 1200 && !userStakedCurrentValidator,
             });
           }
         }
