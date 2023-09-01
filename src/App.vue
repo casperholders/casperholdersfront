@@ -91,6 +91,17 @@
       </g>
     </svg>
     <v-main>
+      <v-alert
+        v-model="alert"
+        border="left"
+        close-text="Close"
+        class="ma-4"
+        dark
+        dismissible
+      >
+        Welcome to Div3 ! The new name of CasperHolders 🌊
+        We're currently rebranding the whole project under this new name.
+      </v-alert>
       <v-container class="app__wrapper container__small">
         <v-alert
           v-if="impersonatePublicKey"
@@ -223,6 +234,7 @@ export default {
     mdiIncognito,
     mdiEmail,
     mdiFrequentlyAskedQuestions,
+    alert: true,
   }),
   computed: {
     ...mapState(['signerType', 'impersonatePublicKey']),
