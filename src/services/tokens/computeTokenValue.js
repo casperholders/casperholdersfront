@@ -17,7 +17,7 @@ export default function computeTokenValue(value) {
   }
 
   if (typeof value === 'number') {
-    return { value: value.toFixed(), isAmount: true };
+    return { value: value.toString(), isAmount: true };
   }
 
   if (typeof value === 'string' && !Number.isNaN(Number(value))) {
