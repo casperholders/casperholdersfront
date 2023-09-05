@@ -244,7 +244,7 @@
 import casper from '@/assets/images/casper_logo.svg';
 import casperWalletSvg from '@/assets/images/casperWallet.svg';
 import ledger from '@/assets/images/ledger_logo.png';
-import metaMaskFlask from '@/assets/images/metaMaskFlask.svg';
+import metaMask from '@/assets/images/metaMask.svg';
 import torus from '@/assets/images/torus.svg';
 import MultipleKeysCard from '@/components/account/MultipleKeysCard.vue';
 import WalletCard from '@/components/layout/WalletCard.vue';
@@ -312,7 +312,7 @@ export default {
     chooseLedgerKey: false,
     chooseMetamaskKey: false,
     casperWalletVersion: '',
-    metaMaskFlask,
+    metaMask,
     casperWalletSvg,
     casper,
     ledger,

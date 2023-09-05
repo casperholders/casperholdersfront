@@ -1,7 +1,7 @@
 import casper from '@/assets/images/casper_logo.svg';
 import casperWalletSvg from '@/assets/images/casperWallet.svg';
 import ledger from '@/assets/images/ledger_logo.png';
-import metaMaskFlask from '@/assets/images/metaMaskFlask.svg';
+import metaMask from '@/assets/images/metaMask.svg';
 import torus from '@/assets/images/torus.svg';
 
 /**
@@ -16,14 +16,12 @@ export const TORUS_SIGNER = 'torusSigner';
 
 export const SIGNERS_INFO = {
   metamaskSigner: {
-    title: 'Metamask Flask',
-    icon: metaMaskFlask,
+    title: 'Metamask',
+    icon: metaMask,
     description: 'The leading self-custodial wallet',
     walletId: 'connectCasperWallet',
-    info: 'MetaMask Flask is the experimental version of MetaMask.',
-    infoLink: 'https://metamask.io/flask/#flask-fa-qs',
     disabled: () => !window.ethereum,
-    download: 'https://chrome.google.com/webstore/detail/metamask-flask-developmen/ljfoeinjpaedjfecbmggjgodbgkmjkjk',
+    download: 'https://metamask.io/',
   },
   casperWalletSigner: {
     title: 'Casper Wallet',
