@@ -225,10 +225,10 @@
           New to casper?
         </p>
         <a
-          href="https://casper.network/docs/workflow/signer-guide"
+          href="https://www.casperwallet.io/user-guide/getting-started"
           target="_blank"
           rel="noopener"
-        >Create a new wallet with Casper Signer</a>
+        >Create a new wallet with Casper Wallet</a>
         <br>
         <a
           href="https://casper.network/docs/workflow/ledger-setup"
