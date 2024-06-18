@@ -505,11 +505,12 @@ export default {
         this.args.forEach((a) => {
           args[a.name] = a.value;
         });
+
         const deployParameter = new SmartContractDeployParameters(
           this.activeKey,
           NETWORK,
           this.buffer,
-          this.balance,
+          this.balance > 4000 ? 4000 : this.balance,
           args,
         );
         const signedDeploy = await this.signerObject
