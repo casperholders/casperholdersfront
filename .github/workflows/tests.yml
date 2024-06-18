@@ -13,16 +13,16 @@ jobs:
     outputs:
       auction: ${{ steps.auction.outputs.auction }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install Helm
-        uses: azure/setup-helm@v3
+        uses: azure/setup-helm@v4.2.0
         with:
           version: v3.10.0
 
       - uses: azure/setup-kubectl@v3
         with:
-          version: 'v1.25.0'
+          version: 'v1.29.0'
 
       - name: Set up test namespace
         run: |
@@ -47,20 +47,19 @@ jobs:
     runs-on: self-hosted
     needs: set_network
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Test auction hash
         run: echo ${{needs.set_network.outputs.auction}}
 
-      - uses: pnpm/action-setup@v2.2.4
+      - uses: pnpm/action-setup@v4
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 7
           run_install: false
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: 'pnpm'
@@ -84,7 +83,7 @@ jobs:
           NODE_OPTIONS: --max-old-space-size=8192
 
       - name: Save build folder
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist
           if-no-files-found: error
@@ -92,30 +91,29 @@ jobs:
           retention-days: 1
   e2e:
     runs-on: self-hosted
-    container: cypress/browsers:node16.17.0-chrome106
+    container: cypress/browsers:latest
     needs: build
     strategy:
       fail-fast: false
       matrix:
         containers: [ 1, 2, 3, 4 ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Download the build
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist
 
-      - uses: pnpm/action-setup@v2.2.4
+      - uses: pnpm/action-setup@v4
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 7
           run_install: false
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: 'pnpm'
@@ -123,7 +121,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Setup cypress cache
         with:
           path: |
@@ -136,7 +134,7 @@ jobs:
         run: ./node_modules/.bin/cypress install --force
 
       - name: Cypress run
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
           install: false
           command: pnpm cy2 run --parallel --browser chrome --record --key test --ci-build-id test
@@ -147,7 +145,7 @@ jobs:
           CYPRESS_API_URL: https://director.test.casperholders.io/
           NODE_OPTIONS: --max-old-space-size=8192
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: cypress-screenshots
@@ -157,7 +155,7 @@ jobs:
         run: mv coverage/coverage-final.json coverage/coverage-final-${{ matrix.containers }}.json
 
       - name: Archive code coverage results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report-${{ matrix.containers }}
           path: coverage
@@ -166,20 +164,20 @@ jobs:
     needs: e2e
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Download all workflow run artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
-      - uses: pnpm/action-setup@v2.2.4
+      - uses: pnpm/action-setup@v4
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 7
+          version: 9
           run_install: false
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: 'pnpm'
@@ -194,7 +192,7 @@ jobs:
           pnpm nyc merge multiple-coverage merged-output/merged-coverage.json
           pnpm nyc report -t merged-output --report-dir coverage --reporter=json --reporter=lcov --reporter=clover --reporter=json-summary
 
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
@@ -207,16 +205,16 @@ jobs:
     if: ${{ always() }}
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install Helm
-        uses: azure/setup-helm@v3
+        uses: azure/setup-helm@v4.2.0
         with:
           version: v3.10.0
 
       - uses: azure/setup-kubectl@v3
         with:
-          version: 'v1.25.0'
+          version: 'v1.29.0'
 
       - name: Delete test namespace
         if: ${{ always() }}

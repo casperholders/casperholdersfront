@@ -2,7 +2,7 @@ FROM node:lts as build-stage
 ARG mode
 WORKDIR /app
 COPY package*.json pnpm-lock.yaml ./
-RUN corepack enable && corepack prepare pnpm@7.5.0 --activate && pnpm install --prod --frozen-lockfile && pnpm add vite
+RUN corepack enable && corepack prepare pnpm@9.4.0 --activate && pnpm install --prod --frozen-lockfile && pnpm add vite
 COPY ./ .
 RUN NODE_OPTIONS=--max-old-space-size=8192 pnpm build-${mode}
 
