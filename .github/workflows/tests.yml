@@ -20,7 +20,7 @@ jobs:
         with:
           version: v3.10.0
 
-      - uses: azure/setup-kubectl@v3
+      - uses: azure/setup-kubectl@v4
         with:
           version: 'v1.29.0'
 
@@ -212,7 +212,7 @@ jobs:
         with:
           version: v3.10.0
 
-      - uses: azure/setup-kubectl@v3
+      - uses: azure/setup-kubectl@v4
         with:
           version: 'v1.29.0'
 

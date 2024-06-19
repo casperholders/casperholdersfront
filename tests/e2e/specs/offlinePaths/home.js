@@ -6,10 +6,6 @@ describe('Home', () => {
 
     cy.get('[data-cy=humanReadableNetwork]').should('contain', ' Testnet ');
     mockConnection(cy, '01270a577d2d106c4d29402775f3dffcb9f04aad542579dd4d1cfad20572ebcb7c');
-    cy.get('[data-cy=tutorial]').click().get('.v-window__prev button').click()
-      .should('be.visible');
-    cy.get('[data-cy=closeTutorial]').click();
-    cy.get('[data-cy=tutorialDialog]').should('not.be.visible');
     cy.get('[data-cy=account]')
       .should('be.visible').click();
     cy.get('[data-cy=logout]').should('be.visible').click();

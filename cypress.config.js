@@ -13,6 +13,8 @@ module.exports = defineConfig({
       bundler: 'vite',
     },
     video: false,
+    viewportWidth: 1920,
+    viewportHeight: 1080,
     supportFile: 'tests/e2e/support/index.js',
     fixturesFolder: 'tests/e2e/fixtures/',
     downloadsFolder: 'tests/e2e/fixtures/downloads/',

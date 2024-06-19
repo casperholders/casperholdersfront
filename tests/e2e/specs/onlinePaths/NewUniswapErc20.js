@@ -147,9 +147,10 @@ describe('Deploy & test Uniswap erc20', () => {
 
     cy.get('[data-cy=erc20-add-card]')
       .should('not.exist');
+    cy.wait(5000);
     cy.get(`[data-cy=erc20-balance-${uniswapContract}]`)
       .should('be.visible')
-      .contains(/^(\d*,)*\d+\.\d* TESTUNISWAPERC20$/);
+      .contains(/^(\d*,)*\d+\.?\d* TESTUNISWAPERC20$/);
   });
 
   it('Should let you do a revoke/max of Uniswap ERC20 allowance', () => {

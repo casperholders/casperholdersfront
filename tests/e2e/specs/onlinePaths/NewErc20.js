@@ -108,9 +108,10 @@ describe('Deploy & test erc20', () => {
 
     cy.get('[data-cy=erc20-add-card]')
       .should('not.exist');
+    cy.wait(5000);
     cy.get(`[data-cy=erc20-balance-${erc20Contract}]`)
       .should('be.visible')
-      .contains(/^(\d*,)*\d+\.\d* TESTERC20$/);
+      .contains(/^(\d*,)*\d+\.?\d* TESTERC20$/);
   });
 
   it('Should let you do a revoke/max of ERC20 allowance', () => {

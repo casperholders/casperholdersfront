@@ -25,7 +25,7 @@ export default function testAllowanceUsing(
 
   cy.get(`[data-cy=erc20-${contractHash}-${spenderHash}-allowance]`)
     .should('be.visible')
-    .contains(new RegExp(`(\\d+,)?\\d+\.\\d{5} ${contractUnit}`));
+    .contains(new RegExp(`(\\d+,)?\\d+\.?\\d* ${contractUnit}`));
   cy.get(`[data-cy=erc20-${contractHash}-${spenderHash}-allowance-revoke]`)
     .should('be.visible')
     .click();

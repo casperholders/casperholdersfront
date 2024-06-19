@@ -9,7 +9,7 @@ describe('Delegate', () => {
     cy.get('[data-cy=errorBalance]').should('have.length', 1);
     cy.get('[data-cy=errorBalance]').should('contain', ' Insufficient funds. You must have more than 502.5 CSPR on your wallet. ');
     mockConnection(cy, '01270a577d2d106c4d29402775f3dffcb9f04aad542579dd4d1cfad20572ebcb7c');
-    cy.get('.v-alert').should('have.length', 0);
+    cy.get('[data-cy=errorBalance]').should('have.length', 0);
     cy.get('[data-cy=submitOperation]').click();
     cy.get('[data-cy=amount]').type('9999999999').parents('.v-input__control').find('.v-messages__message')
       .should('contain', 'Amount must equal or bellow');

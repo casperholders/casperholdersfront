@@ -32,7 +32,7 @@
       <v-card-actions>
         <v-dialog
           v-model="allowancesDialog"
-          width="500"
+          width="600"
         >
           <template #activator="{ attrs, on }">
             <v-btn
